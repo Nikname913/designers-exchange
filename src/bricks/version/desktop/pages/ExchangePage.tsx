@@ -184,7 +184,7 @@ const ExchangePage: React.FC = () => {
             required={false}
             widthType={'px'}
             widthValue={142}
-            label={"От"}
+            label={"Цена от"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
@@ -203,7 +203,7 @@ const ExchangePage: React.FC = () => {
             required={false}
             widthType={'px'}
             widthValue={142}
-            label={"До"}
+            label={"Цена до"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}

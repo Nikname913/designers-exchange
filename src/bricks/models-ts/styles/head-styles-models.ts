@@ -1,5 +1,5 @@
 export interface IHeaderStyleProps {
-  backgroundColor: any
+  backgroundColor: string
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

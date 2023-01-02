@@ -1,7 +1,10 @@
 import React from 'react'
 import { useAppSelector } from '../../../store/hooks'
+import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
 import FormGroup from '@mui/material/FormGroup'
+import ButtonComponent from '../comps/button/Button'
+import ChapterController from '../views/localViews/СhapterController'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import SelectField from '../comps/select/SelectFieldPercentWidth'
@@ -17,6 +20,8 @@ const { MenuContainer,
 const CreateTaskPage: React.FC = () => {
 
   const inputBackground = useAppSelector(state => state.theme.white)
+  const uploadButtonBackground = useAppSelector(state => state.theme.blue3)
+  const blackColor = useAppSelector(state => state.theme.black)
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -167,7 +172,7 @@ const CreateTaskPage: React.FC = () => {
             </FormGroup>
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle>Условия</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '30px' }}>Условия</TextFieldTitle>
         <TextFieldSubTitle mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
           <InputComponent
@@ -275,7 +280,7 @@ const CreateTaskPage: React.FC = () => {
             />
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle>Данные об объекте</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '30px' }}>Данные об объекте</TextFieldTitle>
         <TextFieldContainerLine style={{ marginTop: '8px' }}>
           <SelectField 
             placeholder={"Вид строительства"}
@@ -426,8 +431,8 @@ const CreateTaskPage: React.FC = () => {
           <span style={spanDelimiterCSS} />
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
-        <TextFieldTitle>Описание задачи</TextFieldTitle>
-        <TextFieldContainerLine style={{ marginBottom: '23px' }}>
+        <TextFieldTitle style={{ marginTop: '30px' }}>Описание задачи</TextFieldTitle>
+        <TextFieldContainerLine>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE'}
             valueType='text'
@@ -443,12 +448,80 @@ const CreateTaskPage: React.FC = () => {
               fontSize: '12px',
               position: 'relative',
               boxSizing: 'border-box',
-              marginBottom: '16px',
+              marginBottom: '0px',
               marginTop: '8px',
               backgroundColor: inputBackground
             }}
           />
         </TextFieldContainerLine>
+        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '28px' }}>
+          <div style={{ ...divHalfWidthCSS }}>
+            <TextFieldTitle>Техническое задание</TextFieldTitle>
+          </div>
+          <span style={spanDelimiterCSS}></span>
+          <div style={{ ...divHalfWidthCSS }}>
+            <TextFieldTitle>Вложения</TextFieldTitle>
+          </div>
+        </TextFieldContainerLine>
+        <TextFieldContainerLine style={{ marginBottom: '2px' }}>
+          <div style={{ ...divHalfWidthCSS }}>
+            <ButtonComponent
+              inner={'Добавить файлы'} 
+              type='UPLOAD' 
+              action={() => console.log('this is button')}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: uploadButtonBackground,
+                color: blackColor,
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '12px'
+              }}
+            />
+          </div>
+          <span style={spanDelimiterCSS}></span>
+          <div style={{ ...divHalfWidthCSS }}>
+            <ButtonComponent
+              inner={'Добавить файлы'} 
+              type='UPLOAD' 
+              action={() => console.log('this is button')}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: uploadButtonBackground,
+                color: blackColor,
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '12px'
+              }}
+            />
+          </div>
+        </TextFieldContainerLine>
+        <TextFieldTitle style={{ marginTop: '28px', marginBottom: '42px' }}>Разделы [ дальнейшая разработка ]</TextFieldTitle>
+        { false && <TextFieldContainerLine>
+          <ChapterController></ChapterController>
+        </TextFieldContainerLine> }
       </CustExecContentInnerArea>
     </ContentArea>
   )

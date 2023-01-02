@@ -53,7 +53,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     },
     '& .MuiFormLabel-root': {
       fontSize: '15px',
-      marginTop: '-3px'
+      marginLeft: '2px',
+      marginTop: '-2px',
     },
     '& label.Mui-focused': {
       color: '#2E2E2E',
