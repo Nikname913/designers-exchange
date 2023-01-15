@@ -24,8 +24,8 @@ const css = {
     box-sizing: border-box;
     width: 100%;
     height: 105px;
-    padding-left: 100px;
-    padding-right: 120px;
+    padding-left: 200px;
+    padding-right: 220px;
     background-color: ${props => props.backgroundColor};
   `,
   HeadWrapperShadow: styled.div`
@@ -52,7 +52,6 @@ const css = {
     align-items: center;
     justify-content: flex-start;
     position: relative;
-    margin-left: 100px;
   `,
   HeadControllers: styled.div`
     display: flex;
@@ -72,7 +71,6 @@ const css = {
     height: 34px;
     border-radius: 50%;
     background-color: ${props => props.backgroundColor};
-    margin-right: 10px;
   `,
   HeadControllersAvatar: styled.span<IHeaderStyleProps>`
     display: block;

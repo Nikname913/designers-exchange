@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { CSSProperties } from 'styled-components'
+import Button from '@mui/material/Button'
+import ButtonGroup from '@mui/material/ButtonGroup'
 import css from '../../styles/views/footer.css'
 import EmailIcon from '@mui/icons-material/Email'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setActiveRole } from '../../../../store/slices/role-type-slice'
 import ButtonComponent from '../../comps/button/Button'
 
 const { FooterWrapper, 
@@ -19,6 +22,9 @@ const Footer: React.FC = () => {
   const buttonColor = useAppSelector(state => state.theme.grey)
   const lineColor = useAppSelector(state => state.theme.white)
 
+  const [ activeButton, setActiveButton ] = useState<Array<boolean>>([ false, false, true ])
+  const dispatch = useAppDispatch()
+
   const logoDivStyle: CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
@@ -26,6 +32,19 @@ const Footer: React.FC = () => {
     justifyContent: 'flex-start',
     position: 'relative',
   }
+
+  const activeOne = (): void => {
+    setActiveButton([ true, false, false ])
+    dispatch(setActiveRole('CUSTOMER'))
+  }
+  const activeTwo = (): void => {
+    setActiveButton([ false, true, false ])
+    dispatch(setActiveRole("EXECUTOR"))
+  }
+  const activeThree = (): void => {
+    setActiveButton([ false, false, true ])
+    dispatch(setActiveRole("UNDEFINED"))
+  } 
 
   return (
     <React.Fragment>
@@ -37,6 +56,35 @@ const Footer: React.FC = () => {
             <MenuItem color={LogoColor}>Основы работы системы</MenuItem>
           </MemuItemsContainer>
         </div>
+        <ButtonGroup variant="contained" aria-label="outlined button group" color="inherit">
+          <Button 
+            onClick={activeOne}
+            style={{ 
+              backgroundColor: 
+                activeButton[0] ? '#00BFA8' : 'rgba(0, 0, 0, 0.08)', 
+              fontSize: '13px',
+              color: '#D9E7F0'
+              }}
+            >CUST</Button>
+          <Button 
+            onClick={activeTwo}
+            style={{ 
+              backgroundColor: 
+                activeButton[1] ? '#00BFA8' : 'rgba(0, 0, 0, 0.08)', 
+              fontSize: '13px',
+              color: '#D9E7F0'
+              }}
+            >EXEC</Button>
+          <Button 
+            onClick={activeThree}
+            style={{ 
+              backgroundColor: 
+                activeButton[2] ? '#00BFA8' : 'rgba(0, 0, 0, 0.08)', 
+              fontSize: '13px',
+              color: '#D9E7F0'
+              }}
+            >GUES</Button>
+        </ButtonGroup>
         <ButtonComponent
           inner={'Обратиться в поддержку'} 
           type='CONTAINED_DEFAULT' 

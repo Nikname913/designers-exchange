@@ -2,7 +2,6 @@ import React from 'react'
 import Button from '@mui/material/Button'
 import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
-import AlarmIcon from '@mui/icons-material/Alarm'
 import { IButton } from '../../../../models-ts/comps/comps-models'
 import css from './button-style'
 
@@ -38,7 +37,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
               onClick={() => action(actionData && actionData)} 
               style={{
                 ...css,
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >{ inner }</Button> 
           : type === 'OUTLINED'
@@ -47,7 +48,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
               onClick={() => action(actionData && actionData)} 
               style={{
                 ...css,
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '16px'
               }}
             >{ inner }</Button>
           : type === 'CONTAINED_DISABLED' 
@@ -59,7 +62,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 cursor: 'wait',
                 filter: 'grayscale(1)',
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >{ inner }</Button> 
           : type === 'OUTLINED_DISABLED' 
@@ -71,7 +76,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 cursor: 'wait',
                 filter: 'grayscale(1)',
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >{ inner }</Button>
           : type === 'UPLOAD' 
@@ -81,7 +88,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
               onClick={() => action(actionData && actionData)} 
               style={{
                 ...css,
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >
               <input 
@@ -101,6 +110,15 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
             >
               <MuiIconChildren sx={{ fontSize: muiIconSize }}/>
             </IconButton>
+          : type === 'ICON_BUTTON_CHAT_SUBMIT' 
+          ? <IconButton 
+              color="primary" 
+              aria-label="add an alarm"
+              onClick={() => action(actionData && actionData)} 
+              style={{ ...css, borderRadius: '4px' }}
+            >
+              <MuiIconChildren sx={{ fontSize: muiIconSize, color: 'white' }}/>
+            </IconButton>
           : type === 'ICON_BUTTON_DISABLED' 
           ? <IconButton 
               disabled
@@ -118,7 +136,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
               onClick={() => action(actionData && actionData)} 
               style={{
                 ...css,
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >
               <input 
@@ -138,7 +158,9 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 cursor: 'wait',
                 filter: 'grayscale(1)',
-                width: '100%'
+                width: '100%',
+                textTransform: 'none',
+                fontSize: '15px'
               }}
             >{ inner }</LoadingButton>
           : <React.Fragment></React.Fragment> }

@@ -541,6 +541,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Базовое текстовое поле"}
           isError={false}
           isDisabled={false}
@@ -559,6 +560,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Поле с рамкой"}
           isError={false}
           isDisabled={false}
@@ -577,6 +579,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Заблокированное поле"}
           isError={false}
           isDisabled={true}
@@ -595,6 +598,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Базовое поле типа Пароль"}
           isError={false}
           isDisabled={false}
@@ -613,6 +617,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Умное поле ввода пароля"}
           isError={false}
           isDisabled={false}
@@ -631,6 +636,7 @@ const ElementsUI: React.FC = () => {
           required={true}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Обязательное поле типа Пароль"}
           isError={false}
           isDisabled={false}
@@ -649,6 +655,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Базовое поле типа Поиск"}
           isError={false}
           isDisabled={false}
@@ -667,6 +674,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Ошибка валидации"}
           isError={true}
           isDisabled={false}
@@ -685,6 +693,7 @@ const ElementsUI: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={340}
+          heightValue={'50px'}
           label={"Поле ввода с пометкой"}
           isError={false}
           isDisabled={false}

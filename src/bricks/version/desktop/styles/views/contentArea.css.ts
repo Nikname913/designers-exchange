@@ -11,8 +11,8 @@ const css = {
     position: relative;
     width: 100%;
     height: auto;
-    padding-left: 100px;
-    padding-right: 110px;
+    padding-left: 200px;
+    padding-right: 210px;
     box-sizing: border-box;
   `,
   CustExecContentInnerArea: styled.div`
@@ -33,6 +33,12 @@ const css = {
     font-size: 32px;
     margin-top: 28px;
     margin-bottom: 18px;
+  `,
+  BackwardButton: styled.span<{ color: string }>`
+    display: block;
+    position: relative;
+    color: ${props => props.color};
+    cursor: pointer;
   `
 }
 

@@ -18,6 +18,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     css,
     widthType,
     widthValue,
+    heightValue,
     valueType,
     required,
     isError,
@@ -54,7 +55,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     '& .MuiFormLabel-root': {
       fontSize: '15px',
       marginLeft: '2px',
-      marginTop: '-2px',
+      marginTop: heightValue === '50px'
+        ? '-2.6px' 
+        : heightValue === '56px'
+        ? '-0.4px' : '-2.6px',
     },
     '& label.Mui-focused': {
       color: '#2E2E2E',
@@ -64,11 +68,11 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       borderBottomColor: '#2E2E2E',
     },
     '& .MuiOutlinedInput-root': {
-      height: '50px',
+      height: heightValue,
         '& fieldset': {},
         '&:hover fieldset': {},
         '&.Mui-focused fieldset': {
-          borderColor: '#3A4B56'
+          borderColor: '#167CBF'
         },
     },
   })

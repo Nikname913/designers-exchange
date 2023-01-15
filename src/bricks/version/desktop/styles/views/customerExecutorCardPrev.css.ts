@@ -45,8 +45,7 @@ const css = {
     position: relative;
     width: 84px;
     border-radius: 50%;
-    box-sizing: border-box;
-    margin-right: 14px;
+    margin-right: 40px;
   `,
   UserAvatarIsOnlineIndicator: styled.span<{ backgroundColor: string }>`
     display: block;
@@ -66,7 +65,6 @@ const css = {
     align-items: flex-start;
     justify-content: flex-start;
     position: relative;
-    width: 100%;
   `,
   UserName: styled.h3`
     display: block;
@@ -132,6 +130,7 @@ const css = {
     margin-right: 10px;
     margin-bottom: 10px;
     cursor: pointer;
+    font-size: 12px;
   `
 }
 

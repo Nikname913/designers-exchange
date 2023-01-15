@@ -62,6 +62,12 @@ const ExecutorPage: React.FC = () => {
     marginBottom: '18px',
     cursor: 'pointer',
   }
+  const specializationFilterContainerCSS: React.CSSProperties = {
+    display: 'block',
+    position:'relative',
+    width: '100%',
+    height: 'auto',
+  }
 
   function customerPage() {
     navigate('/zakazchiki')
@@ -87,6 +93,7 @@ const ExecutorPage: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={300}
+          heightValue={'50px'}
           label={"Поиск по исполнителям"}
           isError={false}
           isDisabled={false}
@@ -96,41 +103,42 @@ const ExecutorPage: React.FC = () => {
             fontSize: '12px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginBottom: '0px',
+            marginBottom: '8px',
             backgroundColor: 'white'
           }}
         />
         <TextFieldTitle>Выберете специализацию</TextFieldTitle>
-        <SelectField 
-          placeholder={"Сортировать по специализации"}
-          params={{ width: 300, mb: '11px', height: 58 }}
-          data={[
-            { value: '1', label: 'Вентиляция' },
-            { value: '2', label: 'Пожарная безопасность' },
-            { value: '3', label: 'Тепломеханические решения' },
-          ]}
-          multy={false}
-          action={() => {}}
-          actionType={""}
-          actionParams={[]}
-          showIcon={true}
-          icon={null}
-          iconStyles={{
-            marginTop: '-12px',
-            marginLeft: '6px',
-            width: '34px',
-          }}
-        />
-        <TextFieldTitle style={{ marginBottom: '6px' }}>Навыки</TextFieldTitle>
-        <FormGroup>
+        <div style={specializationFilterContainerCSS}>
+          <SelectField 
+            placeholder={"Сортировать по специализации"}
+            params={{ width: 300, mb: '11px', height: 58 }}
+            data={[
+              { value: '1', label: 'Вентиляция' },
+              { value: '2', label: 'Пожарная безопасность' },
+              { value: '3', label: 'Тепломеханические решения' },
+            ]}
+            multy={true}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
+        </div>
+        <TextFieldTitle style={{ marginBottom: '8px', marginTop: '20px' }}>Навыки</TextFieldTitle>
+        <FormGroup style={{ marginBottom: '26px' }}>
           <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
           <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
           <FormControlLabel control={<Checkbox/>} label="BIM"/>
         </FormGroup>
-        <TextFieldTitle style={{ marginTop: '8px' }}>Местонахождение</TextFieldTitle>
         <SelectField 
           placeholder={"Местонахождение"}
-          params={{ width: 300, mb: '11px', height: 58 }}
+          params={{ width: 300, mb: '2px', height: 58 }}
           data={[
             { value: '1', label: 'Загрузка региона..' },
             { value: '2', label: 'Загрузка региона..' },
@@ -151,7 +159,7 @@ const ExecutorPage: React.FC = () => {
         <TextFieldTitle>Сортировать по</TextFieldTitle>
         <SelectField 
           placeholder={"Сортировать по рейтингу"}
-          params={{ width: 300, mb: '11px', height: 58 }}
+          params={{ width: 300, mb: '14px', height: 58 }}
           data={[
             { value: '1', label: 'Сортировать по рейтингу' },
             { value: '2', label: 'Сортировать по отзывам' },

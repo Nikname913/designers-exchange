@@ -84,6 +84,7 @@ const CustomerPage: React.FC = () => {
           required={false}
           widthType={'px'}
           widthValue={300}
+          heightValue={'50px'}
           label={"Поиск по заказчикам"}
           isError={false}
           isDisabled={false}
@@ -93,7 +94,7 @@ const CustomerPage: React.FC = () => {
             fontSize: '12px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginBottom: '0px',
+            marginBottom: '8px',
             backgroundColor: 'white'
           }}
         />
@@ -118,7 +119,7 @@ const CustomerPage: React.FC = () => {
             width: '34px',
           }}
         />
-        <TextFieldTitle>Сортировать по</TextFieldTitle>
+        <TextFieldTitle>Выберите специализацию</TextFieldTitle>
         <SelectField 
           placeholder={"Сортировать по специализации"}
           params={{ width: 300, mb: '11px', height: 58 }}
@@ -142,7 +143,7 @@ const CustomerPage: React.FC = () => {
         <TextFieldTitle>Местонахождение</TextFieldTitle>
         <SelectField 
           placeholder={"Местонахождение"}
-          params={{ width: 300, mb: '11px', height: 58 }}
+          params={{ width: 300, mb: '14px', height: 58 }}
           data={[
             { value: '1', label: 'Загрузка региона..' },
             { value: '2', label: 'Загрузка региона..' },

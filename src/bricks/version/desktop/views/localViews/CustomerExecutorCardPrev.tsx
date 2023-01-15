@@ -1,7 +1,8 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react'
 import EmailIcon from '@mui/icons-material/Email'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setShow } from '../../../../store/slices/right-content-slice'
 import { ICustExecCardPrevProps } from '../../../../models-ts/views/cust-exec-card-prev-models'
 import ButtonComponent from '../../comps/button/Button'
 import css from '../../styles/views/customerExecutorCardPrev.css'
@@ -25,6 +26,8 @@ const { CardWrapper,
 const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
   props: ICustExecCardPrevProps
 ) => {
+
+  const dispatch = useAppDispatch()
 
   const { userName, 
     userAvatar, 
@@ -99,13 +102,28 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
   const greySpanCSS: React.CSSProperties = {
     display: 'block',
     position: 'relative',
-    fontSize: '14px',
+    fontSize: '12px',
     color: greyColor2,
     lineHeight: '18px'
   }
+  const messageButtonContainerCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'absolute',
+    width: '48px',
+    height: '48px',
+    borderRadius: '50%',
+    left: '100%',
+    marginLeft: '-38px',
+    top: '0%',
+    marginTop: '-10px'
+  }
 
-  function fullTagslimit() {
+  function fullTagslimit(): void {
     setTagsLimit(100)
+  }
+
+  function showRightContent(): void {
+    dispatch(setShow(true))
   }
 
   return (
@@ -138,45 +156,45 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
               <span style={spanCSS2}>{ userLocation }</span>
             </div>
           </UserTextInfo>
-          { isDisabledMessage ? <ButtonComponent
-            inner={""} 
-            type='ICON_BUTTON_DISABLED' 
-            action={() => console.log('this is button')}
-            actionData={null}
-            widthType={'px'}
-            widthValue={50}
-            children={null}
-            childrenCss={undefined}
-            iconSrc={null}
-            iconCss={undefined}
-            muiIconSize={30}
-            MuiIconChildren={EmailIcon}
-            css={{
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '12px',
-              backgroundColor: greyColor3,
-            }}
-          /> : <ButtonComponent
-            inner={""} 
-            type='ICON_BUTTON' 
-            action={() => console.log('this is button')}
-            actionData={null}
-            widthType={'px'}
-            widthValue={50}
-            children={null}
-            childrenCss={undefined}
-            iconSrc={null}
-            iconCss={undefined}
-            muiIconSize={30}
-            MuiIconChildren={EmailIcon}
-            css={{
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '12px',
-              backgroundColor: whiteBlueBackground,
-            }}
-          />}
+          <div style={messageButtonContainerCSS}>
+            { isDisabledMessage ? <ButtonComponent
+              inner={""} 
+              type='ICON_BUTTON_DISABLED' 
+              action={() => console.log('this is button')}
+              actionData={null}
+              widthType={'px'}
+              widthValue={48}
+              children={null}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={30}
+              MuiIconChildren={EmailIcon}
+              css={{
+                position: 'relative',
+                boxSizing: 'border-box',
+                backgroundColor: greyColor3,
+              }}
+            /> : <ButtonComponent
+              inner={""} 
+              type='ICON_BUTTON' 
+              action={showRightContent}
+              actionData={null}
+              widthType={'px'}
+              widthValue={48}
+              children={null}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={30}
+              MuiIconChildren={EmailIcon}
+              css={{
+                position: 'relative',
+                boxSizing: 'border-box',
+                backgroundColor: whiteBlueBackground,
+              }}
+            />}
+        </div>
         </CardWrapperContentLine>
         <CardWrapperContentLine>
           <div>

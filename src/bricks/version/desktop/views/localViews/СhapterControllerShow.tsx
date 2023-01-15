@@ -2,12 +2,10 @@ import React from 'react'
 import { useAppSelector } from '../../../../store/hooks'
 import ButtonComponent from '../../comps/button/Button'
 import css from '../../styles/views/chapterController.css'
-import plusIcon from '../../../../img/icons/plus.svg'
 import AddIcon from '@mui/icons-material/Add'
 
 const { ChapterContainerLine, 
   ChapterContainerStepRound,
-  ChapterContainerStepRoundPlus,
   ChapterContainerStepRoundInner,
   ChapterContainerStepRoundLabelText,
   ChapterContainerAddButton } = css
@@ -23,8 +21,6 @@ const ChapterController:
   const chaptersLineBackground = useAppSelector(state => state.theme.grey3)
   const roundBackground = useAppSelector(state => state.theme.grey2)
   const blueColorButton = useAppSelector(state => state.theme.blue3)
-  const blueColor = useAppSelector(state => state.theme.blue2)
-  const whiteColor = useAppSelector(state => state.theme.white)
 
   return (
     <React.Fragment>
@@ -46,18 +42,27 @@ const ChapterController:
             Предварительное решение
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound>
-        <ChapterContainerStepRoundPlus 
-          backgroundColor={whiteColor}
-          borderColor={blueColor}
-        > 
-          <img
-            alt={""}
-            src={plusIcon}
-          />
+        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
           <ChapterContainerStepRoundLabelText textAlign={"center"}>
-            Добавить раздел
+            Пожарная безопасность
           </ChapterContainerStepRoundLabelText>
-        </ChapterContainerStepRoundPlus>
+        </ChapterContainerStepRound>
+        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
+          <ChapterContainerStepRoundLabelText textAlign={"center"}>
+            Вентиляция
+          </ChapterContainerStepRoundLabelText>
+        </ChapterContainerStepRound>
+        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
+          <ChapterContainerStepRoundLabelText textAlign={"center"}>
+            Сигнализация
+          </ChapterContainerStepRoundLabelText>
+        </ChapterContainerStepRound>
+        <ChapterContainerStepRound backgroundColor={roundBackground}>
+          <ChapterContainerStepRoundInner/>
+          <ChapterContainerStepRoundLabelText textAlign={"center"}>
+            Предварительное решение
+          </ChapterContainerStepRoundLabelText>
+        </ChapterContainerStepRound>
         <ChapterContainerStepRound 
           backgroundColor={chaptersLineBackground}
           style={{ marginRight: '-15px' }}

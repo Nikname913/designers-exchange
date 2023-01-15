@@ -6,7 +6,7 @@ import AboutExchangePage from '../pages/AboutExchangePage'
 import ChatPage from '../pages/ChatPage'
 import CustomerPage from '../pages/CustomerPage'
 import CustomerProfilePage from '../pages/CustomerProfilePage'
-import ExchangePage from '../pages/ExchangePage'
+import ExchangePage from '../pages/ExchangePageOrders'
 import ExecutorPage from '../pages/ExecutorPage'
 import ExecutorProfilePage from '../pages/ExecutorProfilePage'
 import MainPage from '../pages/MainPage'
@@ -19,6 +19,7 @@ import TeamPage from '../pages/TeamPage'
 import TermsOfUsePage from '../pages/TermsOfUsePage'
 import WorkerPage from '../pages/WorkerPage'
 import CreateTaskPage from '../pages/CreateTaskPage'
+import ShowTaskPage from '../pages/ShowTaskPage'
 
 const DeskRoutes: React.FC = () => {
 
@@ -93,6 +94,10 @@ const DeskRoutes: React.FC = () => {
         <Route 
           path="novoe-zadanie" 
           element={<CreateTaskPage/>} 
+        />
+        <Route 
+          path="zadanie" 
+          element={<ShowTaskPage/>} 
         />
         <Route
           path='ui-kit'

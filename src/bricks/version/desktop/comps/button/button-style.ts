@@ -9,7 +9,7 @@ const css = {
     justify-content: flex-start;
     position: relative;
     box-sizing: border-box;
-    width: ${props => props.isPercent === '%' ? props.width + '%' : props.width + 'px' }
+    width: ${props => props.isPercent === '%' ? props.width + '%' : props.width + 'px' };
   `
 }
 

@@ -10,17 +10,31 @@ import Checkbox from '@mui/material/Checkbox'
 import SelectField from '../comps/select/SelectFieldPercentWidth'
 import cssContentArea from '../styles/views/contentArea.css'
 import cssAsideMenu from '../styles/pages/createTaskPageAside.css'
+import backIcon from '../../../img/icons/back.svg'
 
-const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
+const { ContentArea, 
+  CustExecContentInnerArea, 
+  PageTitle,
+  BackwardButton } = cssContentArea
 const { MenuContainer, 
   TextFieldTitle,
   TextFieldSubTitle, 
-  TextFieldContainerLine } = cssAsideMenu
+  TextFieldContainerLine,
+  StepsContainer,
+  StepsContainerVertical,
+  StepsContainerVerticalForRound,
+  StepsContainerVerticalStep,
+  StepsContainerVerticalStepRound,
+  StepsContainerVerticalStepRoundLabel } = cssAsideMenu
 
 const CreateTaskPage: React.FC = () => {
 
   const inputBackground = useAppSelector(state => state.theme.white)
   const uploadButtonBackground = useAppSelector(state => state.theme.blue3)
+  const backwardButtonColor = useAppSelector(state => state.theme.grey)
+  const stepsContainerColor = useAppSelector(state => state.theme.grey3)
+  const stepContainerRoundColor = useAppSelector(state => state.theme.blue2)
+  const stepContainerRoundLabelColor = useAppSelector(state => state.theme.grey2)
   const blackColor = useAppSelector(state => state.theme.black)
 
   const headBlockCSS: React.CSSProperties = {
@@ -51,11 +65,62 @@ const CreateTaskPage: React.FC = () => {
       flexDirection={null}
       alignItems={null}
       justify={null}
-    >
-      <div style={headBlockCSS}>
-        <PageTitle>Создание задания</PageTitle>
+    > 
+      <div style={{ ...headBlockCSS, justifyContent: 'flex-start', marginTop: '35px' }}>
+        <img
+          alt={""}
+          src={backIcon}
+          style={{
+            display: 'block',
+            position: 'relative',
+            width: '10px',
+            marginRight: '12px',
+            marginLeft: '2px',
+            cursor: 'pointer'
+          }}
+        />
+        <BackwardButton color={backwardButtonColor}>Ко всем заданиям</BackwardButton>
       </div>
-      <MenuContainer></MenuContainer>
+      <div style={headBlockCSS}>
+        <PageTitle style={{ marginTop: '20px' }}>Создание задания</PageTitle>
+      </div>
+      <MenuContainer>
+        <StepsContainer>
+          <StepsContainerVertical backgroundColor={stepsContainerColor}>
+            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
+            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
+            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
+            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
+            <StepsContainerVerticalForRound backgroundColor={"transparent"}>
+              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+                <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
+                  {"Данные о заказе"}
+                </StepsContainerVerticalStepRoundLabel>
+              </StepsContainerVerticalStepRound>
+              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+                <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
+                  {"Условия"}
+                </StepsContainerVerticalStepRoundLabel>
+              </StepsContainerVerticalStepRound>
+              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+                <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
+                  {"Об объекте"}
+                </StepsContainerVerticalStepRoundLabel>
+              </StepsContainerVerticalStepRound>
+              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+                <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
+                  {"Вложения"}
+                </StepsContainerVerticalStepRoundLabel>
+              </StepsContainerVerticalStepRound>
+              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+                <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
+                  {"Разделы"}
+                </StepsContainerVerticalStepRoundLabel>
+              </StepsContainerVerticalStepRound>
+            </StepsContainerVerticalForRound>
+          </StepsContainerVertical>
+        </StepsContainer>
+      </MenuContainer>
       <CustExecContentInnerArea>
         <TextFieldTitle>Данные о заказе</TextFieldTitle>
         <TextFieldContainerLine>
@@ -65,6 +130,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={100}
+            heightValue={'50px'}
             label={"Название задания"}
             isError={false}
             isDisabled={false}
@@ -87,6 +153,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Дата начала"}
             isError={false}
             isDisabled={false}
@@ -107,6 +174,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Дата окончания"}
             isError={false}
             isDisabled={false}
@@ -152,6 +220,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Стоимость заказа"}
             isError={false}
             isDisabled={false}
@@ -181,6 +250,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Сумма аванса"}
             isError={false}
             isDisabled={false}
@@ -201,6 +271,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Срок принятия решения"}
             isError={false}
             isDisabled={false}
@@ -245,6 +316,7 @@ const CreateTaskPage: React.FC = () => {
               required={false}
               widthType={'%'}
               widthValue={50}
+              heightValue={'50px'}
               label={"День экспертизы"}
               isError={false}
               isDisabled={false}
@@ -265,6 +337,7 @@ const CreateTaskPage: React.FC = () => {
               required={false}
               widthType={'%'}
               widthValue={50}
+              heightValue={'50px'}
               label={"Сумма экспертизы"}
               isError={false}
               isDisabled={false}
@@ -309,6 +382,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Обшая площадь"}
             isError={false}
             isDisabled={false}
@@ -351,6 +425,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Этажность наземная"}
             isError={false}
             isDisabled={false}
@@ -393,6 +468,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={50}
+            heightValue={'50px'}
             label={"Высота объекта"}
             isError={false}
             isDisabled={false}
@@ -439,6 +515,7 @@ const CreateTaskPage: React.FC = () => {
             required={false}
             widthType={'%'}
             widthValue={100}
+            heightValue={'50px'}
             label={"Подробнее опишите вашу задачу"}
             isError={false}
             isDisabled={true}
@@ -519,9 +596,102 @@ const CreateTaskPage: React.FC = () => {
           </div>
         </TextFieldContainerLine>
         <TextFieldTitle style={{ marginTop: '28px', marginBottom: '42px' }}>Разделы [ дальнейшая разработка ]</TextFieldTitle>
-        { false && <TextFieldContainerLine>
+        <TextFieldContainerLine style={{ flexWrap: 'wrap' }}>
           <ChapterController></ChapterController>
-        </TextFieldContainerLine> }
+        </TextFieldContainerLine>
+        <TextFieldTitle style={{ marginTop: '18px' }}>Новый раздел</TextFieldTitle>
+        <TextFieldContainerLine style={{ marginTop: '8px' }}>
+          <InputComponent
+            type={'TEXT_INPUT_OUTLINE'}
+            valueType='text'
+            required={false}
+            widthType={'%'}
+            widthValue={50}
+            heightValue={'50px'}
+            label={"Развание раздела"}
+            isError={false}
+            isDisabled={false}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '16px',
+              backgroundColor: inputBackground
+            }}
+          />
+          <span style={spanDelimiterCSS} />
+          <SelectField 
+            placeholder={"Выберите необходимые навыки"}
+            params={{ width: 50, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Название навыка 1' },
+              { value: '2', label: 'Название навыка 2' },
+              { value: '3', label: 'Название навыка 3' },
+            ]}
+            multy={true}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
+        </TextFieldContainerLine>
+        <TextFieldContainerLine>
+          <InputComponent
+            type={'TEXT_INPUT_OUTLINE'}
+            valueType='text'
+            required={false}
+            widthType={'%'}
+            widthValue={100}
+            heightValue={'50px'}
+            label={"Подробнее опишите вашу задачу"}
+            isError={false}
+            isDisabled={true}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '16px',
+              marginTop: '0px',
+              backgroundColor: inputBackground
+            }}
+          />
+        </TextFieldContainerLine>
+        <TextFieldContainerLine>
+          <ButtonComponent
+            inner={'Добавить файлы'} 
+            type='UPLOAD' 
+            action={() => console.log('this is button')}
+            actionData={null}
+            widthType={'px'}
+            widthValue={280}
+            children={''}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={null}
+            MuiIconChildren={EmailIcon}
+            css={{
+              backgroundColor: uploadButtonBackground,
+              color: blackColor,
+              fontSize: '12px',
+              height: '46px',
+              borderRadius: '6px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '46px'
+            }}
+          />
+        </TextFieldContainerLine>
       </CustExecContentInnerArea>
     </ContentArea>
   )

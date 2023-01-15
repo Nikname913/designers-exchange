@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useAppSelector } from '../../../../store/hooks'
+import { useNavigate } from 'react-router-dom'
 import EmailIcon from '@mui/icons-material/Email'
 import ButtonComponent from '../../comps/button/Button'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
@@ -33,6 +34,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const [ containerHeight, setContainerHeight ] = useState('400px')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
+  const navigate = useNavigate()
 
   const delimiterColor = useAppSelector(state => state.theme.blue3)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
@@ -220,10 +222,10 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              <ButtonComponent
+              { true && <ButtonComponent
                 inner={"Открыть задание"} 
                 type="CONTAINED_DEFAULT" 
-                action={() => {}}
+                action={() => navigate('/zadanie')}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}
@@ -242,7 +244,30 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   boxSizing: 'border-box',
                   marginBottom: '12px'
                 }}
-              />
+              /> }
+              { false && <ButtonComponent
+                inner={"Открыть заказ"} 
+                type="CONTAINED_DEFAULT" 
+                action={() => navigate('/zadanie')}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue2,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '12px'
+                }}
+              /> }
               { dealStatus !== 'complete' && <ButtonComponent
                 inner={"Откликнуться"} 
                 type="CONTAINED_DEFAULT"

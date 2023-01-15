@@ -24,6 +24,7 @@ export interface IInput {
   type: string,
   widthType: string,
   widthValue: number,
+  heightValue: string,
   css: Object,
   required: boolean,
   valueType: string,
