@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppSelector } from '../../../store/hooks'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -36,6 +37,8 @@ const CreateTaskPage: React.FC = () => {
   const stepContainerRoundColor = useAppSelector(state => state.theme.blue2)
   const stepContainerRoundLabelColor = useAppSelector(state => state.theme.grey2)
   const blackColor = useAppSelector(state => state.theme.black)
+
+  const navigate = useNavigate()
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -79,7 +82,7 @@ const CreateTaskPage: React.FC = () => {
             cursor: 'pointer'
           }}
         />
-        <BackwardButton color={backwardButtonColor}>Ко всем заданиям</BackwardButton>
+        <BackwardButton color={backwardButtonColor} onClick={() => navigate('/zakazchik-moi-zadaniya')}>Ко всем заданиям</BackwardButton>
       </div>
       <div style={headBlockCSS}>
         <PageTitle style={{ marginTop: '20px' }}>Создание задания</PageTitle>

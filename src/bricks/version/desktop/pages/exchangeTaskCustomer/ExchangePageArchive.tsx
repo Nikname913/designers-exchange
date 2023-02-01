@@ -1,15 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
-import InputComponent from '../comps/input/Input'
-import { useAppSelector } from '../../../store/hooks'
-import SelectField from '../comps/select/SelectField'
-import ButtonComponent from '../comps/button/Button'
-import TaskTable from '../views/localViews/TaskTable'
-import Pagintation from '../services/pagination.service'
-import cssContentArea from '../styles/views/contentArea.css'
-import cssAsideMenu from '../styles/pages/exchangePageAside.css'
+import InputComponent from '../../comps/input/Input'
+import { useAppSelector } from '../../../../store/hooks'
+import SelectField from '../../comps/select/SelectField'
+import ButtonComponent from '../../comps/button/Button'
+import TaskTable from '../../views/localViews/TaskTable'
+import Pagintation from '../../services/pagination.service'
+import cssContentArea from '../../styles/views/contentArea.css'
+import cssAsideMenu from '../../styles/pages/exchangePageAside.css'
 import EmailIcon from '@mui/icons-material/Email'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
@@ -20,6 +21,8 @@ const { MenuContainer,
 } = cssAsideMenu
 
 const ExchangePage: React.FC = () => {
+
+  const navigate = useNavigate()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
@@ -34,12 +37,6 @@ const ExchangePage: React.FC = () => {
     alignItems: 'center',
     position: 'relative',
     marginBottom: '-22px'
-  }
-  const spanNoActiveCSS: React.CSSProperties = {
-    display: 'block',
-    position: 'relative', 
-    opacity: 0.6, 
-    cursor: 'pointer',
   }
   const spanActiveCSS: React.CSSProperties = {
     display: 'block',
@@ -66,6 +63,9 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
+  const tasks = (): void => navigate('/spisok-zadaniy')
+  const zakazy = (): void => navigate('/aktivnye-zakazy')
+
   return (
     <ContentArea
       flexDirection={null}
@@ -73,11 +73,11 @@ const ExchangePage: React.FC = () => {
       justify={null}
     > 
       <div style={headBlockCSS}>
-        <PageTitle>Активные заказы</PageTitle>
+        <PageTitle>Завершенные заказы</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }}>Задания (166)</span>
-          <span style={spanActiveCSS}>В работе (26)</span>
-          <span style={spanNoActiveCSS}>Архивные (233)</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания (166)</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={zakazy}>В работе (26)</span>
+          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>Архивные (233)</span>
         </div>
       </div>
       <MenuContainer>
@@ -252,6 +252,7 @@ const ExchangePage: React.FC = () => {
         { Array(6).fill(0).map((item, index) => {
           return (
             <TaskTable key={index}
+              viewType={"orderType"}
               taskInitDate={"Позавчера в 18:33"}
               taskTitle={"Конструктивные решения"}
               taskDeadline={"18.11.2022-28.11.2022"}
@@ -261,7 +262,7 @@ const ExchangePage: React.FC = () => {
               taskLocation={"Екатеринбург"}
               taskSpecializationTags={["Сигнализация","Вентиляция","Пожарная безопасность"]}
               taskDescription={"lorem ipsum dolor sit amet, consectetur adipiscing"}
-              dealStatus={"work"}
+              dealStatus={"complete"}
               cardWidth={'100%'}
               marbo={"16px"}
               deal={{

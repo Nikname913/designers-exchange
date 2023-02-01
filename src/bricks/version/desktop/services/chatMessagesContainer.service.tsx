@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAppSelector } from '../../../store/hooks'
-import { IChatMessageContainer } from '../../../models-ts/services/chat-message-container.models'
+import { IChatMessageContainer } from '../../../models-ts/services/chat-message-container-models'
 import css from '../styles/services/chatMessagesContainer.css'
 
 const { GetMessageContainer, 

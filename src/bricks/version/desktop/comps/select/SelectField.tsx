@@ -27,6 +27,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
     showIcon,
     icon,
     iconStyles,
+    isDisabled,
     multy } = props
 
   const animatedComponents = makeAnimated()
@@ -128,6 +129,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       
       <Select 
         isMulti={multy}
+        isDisabled={ isDisabled ? isDisabled : false }
         components={animatedComponents}
         options={ data && data }
         placeholder={placeholder}

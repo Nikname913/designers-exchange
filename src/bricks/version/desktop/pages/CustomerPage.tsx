@@ -1,4 +1,5 @@
 import React from 'react'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import InputComponent from '../comps/input/Input'
 import { useAppSelector } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
@@ -19,6 +20,7 @@ const CustomerPage: React.FC = () => {
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const greyColor = useAppSelector(state => state.theme.grey)
+  const customers = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
   const navigate = useNavigate()
 
   const divCSS: React.CSSProperties = {
@@ -87,7 +89,7 @@ const CustomerPage: React.FC = () => {
           heightValue={'50px'}
           label={"Поиск по заказчикам"}
           isError={false}
-          isDisabled={false}
+          isDisabled={true}
           labelShrinkLeft={"0px"}
           innerLabel={null}
           css={{
@@ -112,6 +114,7 @@ const CustomerPage: React.FC = () => {
           actionType={""}
           actionParams={[]}
           showIcon={true}
+          isDisabled={true}
           icon={null}
           iconStyles={{
             marginTop: '-12px',
@@ -133,6 +136,7 @@ const CustomerPage: React.FC = () => {
           actionType={""}
           actionParams={[]}
           showIcon={true}
+          isDisabled={true}
           icon={null}
           iconStyles={{
             marginTop: '-12px',
@@ -154,6 +158,7 @@ const CustomerPage: React.FC = () => {
           actionType={""}
           actionParams={[]}
           showIcon={true}
+          isDisabled={true}
           icon={null}
           iconStyles={{
             marginTop: '-12px',
@@ -188,37 +193,37 @@ const CustomerPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { Array(6).fill(0).map((item, index) => {
+        { customers.map((item: { 
+          id: string,
+          name: string,
+          rate: number,
+          stat: Array<number>,
+          tags: Array<string>,
+          jobType: string,
+          role: string }, index: number): ReactJSXElement => {
           return (
             <CustomerExecutorCardPreview
-              key={index}
+              key={item.id}
               isDisabledMessage={true}
-              userName={"Николай Шипов"}
+              userName={item.name}
               userAvatar={defaultAvatar}
-              userEmployment={"ИП"}
+              userEmployment={item.jobType}
               userLocation={"Екатеринбург"}
-              userReviews={24}
-              userRate={4.96}
-              userProjects={[98,24,12]}
+              userReviews={24}  
+              userRate={item.rate}
+              userProjects={item.stat}
               cardWidth={"calc(50% - 8px)"}
               marginBottom={'16px'}
               marginRight={'0px'}
-              userTags={[
-                "Пожарная безопасность",
-                "Сигнализация",
-                "Сигнализация",
-                "Пожарная безопасность",
-                "Сигнализация",
-                "Пожарная безопасность"
-              ]}
+              userTags={item.tags}
             />
           )
         })}
 
-        <PagintationContainer>
+        { customers.length > 1 && <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
           <Pagintation></Pagintation>
-        </PagintationContainer>
+        </PagintationContainer> }
 
       </CustExecContentInnerArea>
     </ContentArea>

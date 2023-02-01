@@ -1,4 +1,5 @@
 import React from 'react'
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { useNavigate } from 'react-router-dom'
@@ -22,6 +23,7 @@ const ExecutorPage: React.FC = () => {
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const greyColor = useAppSelector(state => state.theme.grey)
+  const executors = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
   const navigate = useNavigate()
 
   const divCSS: React.CSSProperties = {
@@ -204,29 +206,29 @@ const ExecutorPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { Array(6).fill(0).map((item, index) => {
+        { executors.map((item: { 
+          id: string,
+          name: string,
+          rate: number,
+          stat: Array<number>,
+          tags: Array<string>,
+          jobType: string,
+          role: string }, index: number): ReactJSXElement => {
           return (
             <CustomerExecutorCardPreview
               key={index}
               isDisabledMessage={false}
-              userName={"Николай Шипов"}
+              userName={item.name}
               userAvatar={defaultAvatar}
-              userEmployment={"Самозанятый"}
+              userEmployment={item.jobType}
               userLocation={"Екатеринбург"}
               userReviews={24}
-              userRate={4.98}
-              userProjects={[130,40,10]}
+              userRate={item.rate}
+              userProjects={item.stat}
               cardWidth={"calc(50% - 8px)"}
               marginBottom={'16px'}
               marginRight={'0px'}
-              userTags={[
-                "Пожарная безопасность",
-                "Сигнализация",
-                "Сигнализация",
-                "Пожарная безопасность",
-                "Сигнализация",
-                "Пожарная безопасность"
-              ]}
+              userTags={item.tags}
             />
           )
         })}

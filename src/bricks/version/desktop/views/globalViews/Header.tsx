@@ -116,7 +116,7 @@ const Header: React.FC = () => {
       <HeadWrapperInner backgroundColor={whiteColor}>
         <Logo style={{ fontSize: '30px' }}>BIRLOGO</Logo>
         <HeadMenu>
-          <span style={menuItemStyle} onClick={() => navigate('/birzha')}>Биржа</span>
+          <span style={menuItemStyle} onClick={() => navigate('/spisok-zadaniy')}>Биржа</span>
           <span style={{ ...menuItemStyle, marginRight: '3px' }} onClick={navigation}>{ execCustButtonInner }</span>
           { execCustButtonInner === 'Исполнители' && <span onClick={reverseButton} style={menuItemIconStyle}>
             <img
@@ -132,7 +132,7 @@ const Header: React.FC = () => {
           </span> }
         </HeadMenu>
         <HeadControllers>
-          <span style={{ ...menuItemStyle, marginRight: '30px' }}>Мои заказы</span>
+          <span style={{ ...menuItemStyle, marginRight: '30px' }} onClick={() => navigate('/zakazchik-moi-zadaniya')}>Мои заказы</span>
           <div style={iconsDivStyle}>
           <HeadControllersIcon 
             backgroundColor={blueColorForIcon}

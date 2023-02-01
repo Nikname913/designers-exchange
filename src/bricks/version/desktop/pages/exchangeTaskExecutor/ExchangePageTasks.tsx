@@ -1,15 +1,16 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
-import InputComponent from '../comps/input/Input'
-import { useAppSelector } from '../../../store/hooks'
-import SelectField from '../comps/select/SelectField'
-import ButtonComponent from '../comps/button/Button'
-import TaskTable from '../views/localViews/TaskTable'
-import Pagintation from '../services/pagination.service'
-import cssContentArea from '../styles/views/contentArea.css'
-import cssAsideMenu from '../styles/pages/exchangePageAside.css'
+import InputComponent from '../../comps/input/Input'
+import { useAppSelector } from '../../../../store/hooks'
+import SelectField from '../../comps/select/SelectField'
+import ButtonComponent from '../../comps/button/Button'
+import TaskTable from '../../views/localViews/TaskTable'
+import Pagintation from '../../services/pagination.service'
+import cssContentArea from '../../styles/views/contentArea.css'
+import cssAsideMenu from '../../styles/pages/exchangePageAside.css'
 import EmailIcon from '@mui/icons-material/Email'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
@@ -20,6 +21,8 @@ const { MenuContainer,
 } = cssAsideMenu
 
 const ExchangePage: React.FC = () => {
+
+  const navigate = useNavigate()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
@@ -66,6 +69,9 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
+  const orders = (): void => navigate('/aktivnye-zakazy')
+  const arkhiv = (): void => navigate('/zadaniya-arkhiv')
+
   return (
     <ContentArea
       flexDirection={null}
@@ -73,112 +79,16 @@ const ExchangePage: React.FC = () => {
       justify={null}
     > 
       <div style={headBlockCSS}>
-        <PageTitle>Активные заказы</PageTitle>
+        <PageTitle>Задания</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }}>Задания (166)</span>
-          <span style={spanActiveCSS}>В работе (26)</span>
-          <span style={spanNoActiveCSS}>Архивные (233)</span>
+          <span style={{ ...spanActiveCSS }}>Задания (166)</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе (26)</span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные (233)</span>
         </div>
       </div>
       <MenuContainer>
         { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" ? <React.Fragment>
-          <TextFieldTitle style={{ marginTop: '0px' }}>Сортировать по</TextFieldTitle>
-          <SelectField 
-            placeholder={"Новизне"}
-            params={{ width: 300, mb: '35px', height: 50 }}
-            data={[
-              { value: '1', label: 'За последние три дня' },
-              { value: '2', label: 'За последнюю неделю' },
-              { value: '3', label: 'За месяц' },
-            ]}
-            multy={false}
-            action={() => {}}
-            actionType={""}
-            actionParams={[]}
-            showIcon={true}
-            icon={null}
-            iconStyles={{
-              marginTop: '-12px',
-              marginLeft: '6px',
-              width: '34px',
-            }}
-          />
-          <InputComponent
-            type={'TEXT_INPUT_OUTLINE_SEARCH'}
-            valueType='text'
-            required={false}
-            widthType={'px'}
-            widthValue={300}
-            heightValue={'50px'}
-            label={"Найти задания"}
-            isError={false}
-            isDisabled={false}
-            labelShrinkLeft={"0px"}
-            innerLabel={null}
-            css={{
-              fontSize: '12px',
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '16px',
-              backgroundColor: 'white',
-            }}
-          />
-          <SelectField 
-            placeholder={"Местонахождение"}
-            params={{ width: 300, mb: '16px', height: 50 }}
-            data={[
-              { value: '1', label: 'Загрузка региона..' },
-              { value: '2', label: 'Загрузка региона..' },
-              { value: '1', label: 'Загрузка региона..' },
-            ]}
-            multy={false}
-            action={() => {}}
-            actionType={""}
-            actionParams={[]}
-            showIcon={true}
-            icon={null}
-            iconStyles={{
-              marginTop: '-12px',
-              marginLeft: '6px',
-              width: '34px',
-            }}
-          />
-          <SelectField 
-            placeholder={"Сортировать по специализации"}
-            params={{ width: 300, mb: '20px', height: 50 }}
-            data={[
-              { value: '1', label: 'Вентиляция' },
-              { value: '2', label: 'Пожарная безопасность' },
-              { value: '3', label: 'Тепломеханические решения' },
-            ]}
-            multy={false}
-            action={() => {}}
-            actionType={""}
-            actionParams={[]}
-            showIcon={true}
-            icon={null}
-            iconStyles={{
-              marginTop: '-12px',
-              marginLeft: '6px',
-              width: '34px',
-            }}
-          />
-          <FormGroup>
-            <FormControlLabel control={<Checkbox defaultChecked/>} label="Только задания ТС"/>
-            <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
-            <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
-          </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Навыки</TextFieldTitle>
-          <FormGroup style={{ fontSize: '15px !important' }}>
-            <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
-            <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
-            <FormControlLabel control={<Checkbox/>} label="BIM"/>
-          </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Экспертиза</TextFieldTitle>
-          <FormGroup>
-            <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
-          </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '14px', marginTop: '10px' }}>Цена</TextFieldTitle>
+          <TextFieldTitle style={{ marginTop: '0px' }}>Цена</TextFieldTitle>
           <CoastRangeContainer>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE'}
@@ -221,6 +131,104 @@ const ExchangePage: React.FC = () => {
               }}
             />
           </CoastRangeContainer>
+          <InputComponent
+            type={'TEXT_INPUT_OUTLINE_SEARCH'}
+            valueType='text'
+            required={false}
+            widthType={'px'}
+            widthValue={300}
+            heightValue={'50px'}
+            label={"Найти задания"}
+            isError={false}
+            isDisabled={false}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '40px',
+              marginTop: '5px',
+              backgroundColor: 'white',
+            }}
+          />
+          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
+          <SelectField 
+            placeholder={"Новизне"}
+            params={{ width: 300, mb: '40px', height: 50 }}
+            data={[
+              { value: '1', label: 'За последние три дня' },
+              { value: '2', label: 'За последнюю неделю' },
+              { value: '3', label: 'За месяц' },
+            ]}
+            multy={false}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
+          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Фильтры</TextFieldTitle>
+          <SelectField 
+            placeholder={"Местонахождение"}
+            params={{ width: 300, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Загрузка региона..' },
+              { value: '2', label: 'Загрузка региона..' },
+              { value: '1', label: 'Загрузка региона..' },
+            ]}
+            multy={false}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
+          <SelectField 
+            placeholder={"Сортировать по специализации"}
+            params={{ width: 300, mb: '40px', height: 50 }}
+            data={[
+              { value: '1', label: 'Вентиляция' },
+              { value: '2', label: 'Пожарная безопасность' },
+              { value: '3', label: 'Тепломеханические решения' },
+            ]}
+            multy={false}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
+          <FormGroup>
+            <FormControlLabel control={<Checkbox defaultChecked/>} label="Только задания ТС"/>
+            <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
+            <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
+          </FormGroup>
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '40px' }}>Навыки</TextFieldTitle>
+          <FormGroup style={{ fontSize: '15px !important' }}>
+            <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
+            <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
+            <FormControlLabel control={<Checkbox/>} label="BIM"/>
+          </FormGroup>
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '40px' }}>Экспертиза</TextFieldTitle>
+          <FormGroup>
+            <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
+          </FormGroup>
           <ButtonComponent
             inner={'Сбросить все'} 
             type='CONTAINED_DEFAULT' 
@@ -242,7 +250,7 @@ const ExchangePage: React.FC = () => {
               borderRadius: '6px',
               position: 'relative',
               boxSizing: 'border-box',
-              marginTop: '22px',
+              marginTop: '40px',
               marginBottom: '34px',
             }}
           />

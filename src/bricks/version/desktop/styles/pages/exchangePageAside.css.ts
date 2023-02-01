@@ -17,7 +17,7 @@ const css = {
     margin-top: 20px;
     margin-bottom: 14px;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
   `,
   CoastRangeContainer: styled.div`
     display: flex;

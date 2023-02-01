@@ -60,6 +60,7 @@ export interface ISelect {
   icon: any,
   iconStyles: CSSProperties,
   multy: boolean,
+  isDisabled?: boolean
 }
 
 export interface IButtonStyleProps {

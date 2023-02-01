@@ -3,7 +3,10 @@ import themeReducer from './slices/theme-slice'
 import headerReducer from './slices/header-slice'
 import paginationReducer from './slices/pagination-slice'
 import rightContentReducer from './slices/right-content-slice'
+import alertContentReducer from './slices/alert-content-slice'
 import roleTypeReducer from './slices/role-type-slice'
+import taskContentReducer from './slices/task-content-slice'
+import userContentReducer from './slices/user-content-slice'
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +15,9 @@ export const store = configureStore({
     paginationReducer: paginationReducer,
     rightContentReducer: rightContentReducer,
     roleTypeReducer: roleTypeReducer,
+    taskContentReducer: taskContentReducer,
+    userContentReducer: userContentReducer,
+    alertContentReducer: alertContentReducer
   },
 })
 

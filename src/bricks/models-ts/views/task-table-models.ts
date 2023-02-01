@@ -1,7 +1,9 @@
 export interface ITaskTableProps {
+  viewType?: string,
   dealStatus: string,
   deal: {
     type: string,
+    coast?: number,
     prepaid?: number,
     expert?: number,
   },
@@ -15,7 +17,9 @@ export interface ITaskTableProps {
   taskSpecializationTags: Array<string>,
   taskDescription: string,
   cardWidth: string | null,
-  marbo: string | null
+  marbo: string | null,
+  actions?: Array<any>,
+  actionsParams?: Array<any>,
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

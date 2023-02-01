@@ -70,8 +70,8 @@ const css = {
     display: block;
     position: relative;
     width: 1px;
-    height: 100%;
-    background-color: ${props => props.backgroundColor}
+    height: 400px;
+    background-color: ${props => props.backgroundColor};
   `,
   TACA: {
     TaskStatus: styled.span`
@@ -215,6 +215,7 @@ const css = {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-size: 12px;
     `
   }
 }

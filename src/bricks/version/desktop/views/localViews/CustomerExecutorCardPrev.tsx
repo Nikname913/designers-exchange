@@ -242,10 +242,13 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
 
           })}
 
-          { tagsLimit === 4 
-            && <SpecializationTag onClick={fullTagslimit} backgroundColor={blueColor3}>
-              {"+"}{ userTags.length - 4 }
-            </SpecializationTag> }
+          { tagsLimit === 4 && 
+            <React.Fragment>
+              { userTags.length > 4 && <SpecializationTag onClick={fullTagslimit} backgroundColor={blueColor3}>
+                {"+"}{ userTags.length - 4 }
+              </SpecializationTag> }
+            </React.Fragment> 
+          }
 
         </CardWrapperContentLineTags>
         <CardWrapperContentLineTags marginTop={"32px"}>

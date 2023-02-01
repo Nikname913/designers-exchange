@@ -18,6 +18,7 @@ const { TaskContainer,
 const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const { 
+    viewType = 'default',
     dealStatus = 'searching', 
     deal,
     taskInitDate,
@@ -30,11 +31,15 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     taskSpecializationTags,
     taskDescription,
     cardWidth,
-    marbo } = props
+    marbo,
+    actions,
+    actionsParams } = props
 
-  const [ containerHeight, setContainerHeight ] = useState('400px')
+  const [ containerHeight, setContainerHeight ] = useState('short')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
+  const [ taskDescriptionLong, ] = useState('lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing')
   const navigate = useNavigate()
+  const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
 
   const delimiterColor = useAppSelector(state => state.theme.blue3)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
@@ -45,6 +50,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const indicatorLabelColor = useAppSelector(state => state.theme.grey2)
   const specializationTagBackground = useAppSelector(state => state.theme.blue4)
   
+  const blue1 = useAppSelector(state => state.theme.blue1)
   const blue2 = useAppSelector(state => state.theme.blue2)
   const blue4 = useAppSelector(state => state.theme.blue4)
   const grey = useAppSelector(state => state.theme.grey)
@@ -54,7 +60,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const green = useAppSelector(state => state.theme.green)
   const yellow = useAppSelector(state => state.theme.yellow)
 
-  const parCSS: React.CSSProperties = { margin: '0px' }
+  const parCSS: React.CSSProperties = { margin: '0px', lineHeight: '22px' }
   const spanCSS1: React.CSSProperties = { fontWeight: 'bold' }
   const spanCSS2: React.CSSProperties = {
     display: 'block',
@@ -78,17 +84,42 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     position: 'relative',
     width: '100%',
   }
+  const titleSpanCSS: React.CSSProperties = {
+    color: blue1,
+    fontSize: '40px',
+    fontWeight: '200',
+    display: 'block',
+    position: 'absolute',
+    left: '100%',
+    top: '0%',
+    marginTop: '-12px',
+    marginLeft: '-68px'
+  }
 
   function heightSelection() {
     setContainerHeight(prev => {
-      if ( prev === '400px' ) {
+      if ( prev === 'short' ) {
         setShowTaskDescriptionText('Скрыть описание')
-        return '500px'
+        return 'long'
       } else {
         setShowTaskDescriptionText('Показать больше')
-        return '400px'
+        return 'short'
       } 
     })
+  }
+
+  function returnName() {
+
+    let userName = 'undefined'
+
+    USERS_LIST.listExecutors.forEach(item => {
+      if ( item.id === taskExecutor ) {
+        userName = item.name
+      }
+    })
+
+    return userName
+
   }
 
   return (
@@ -107,7 +138,10 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
         >
           <TaskContainerContent>
             <TACC.TaskInitDate color={grey2}>{ taskInitDate }</TACC.TaskInitDate>
-            <TACC.TaskTitle color={black}>{ taskTitle }</TACC.TaskTitle>
+            <TACC.TaskTitle color={black}>
+              { taskTitle }
+              <span style={titleSpanCSS}>BIM</span>
+            </TACC.TaskTitle>
             <TACC.TextContentLine>
 
               <div>
@@ -129,7 +163,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             <TACC.TextContentLine>
               <div>
                 <span style={spanCSS1}>Исполнитель: </span>
-                <span>{ taskExecutor }</span>
+                <span>{ returnName() }</span>
               </div>
             </TACC.TextContentLine>
             <TACC.TextContentLine>
@@ -159,7 +193,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               <div>
                 <p style={parCSS}>
                   <i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Описание: </i>
-                  { taskDescription }
+                  {  containerHeight === 'short' ? taskDescription : taskDescriptionLong }
                 </p>
               </div>
             </TACC.TextContentLine>
@@ -193,7 +227,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     Выполнен
                 </TACA.TaskStatusLabel> }
               </TACA.TaskStatus>
-              <TACA.TaskCoast color={taskStatusColor}>60 000₽</TACA.TaskCoast>
+              <TACA.TaskCoast color={taskStatusColor}>{ deal.coast ? deal.coast : '60000' }₽</TACA.TaskCoast>
 
               { deal.type === 'safe' ? <React.Fragment>
                 { dealStatus !== 'complete' ? <React.Fragment>
@@ -204,8 +238,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.SafeDealParametersExpert backgroundColor={yellow}/>
 
                   </TACA.SafeDealParameters>
-                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: 30 000₽</TACA.TaskCoastString>
-                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: 74 000₽</TACA.TaskCoastString>
+                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }₽</TACA.TaskCoastString>
+                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }₽</TACA.TaskCoastString>
                 </React.Fragment> : <React.Fragment>
                   <TACA.TaskSafeDeal color={indicatorLabelColor}>Безопасная сделка</TACA.TaskSafeDeal>
                   <TACA.SafeDealParameters backgroundColor={grey3}>
@@ -213,8 +247,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.SafeDealParametersComplete backgroundColor={blue2}/>
 
                   </TACA.SafeDealParameters>
-                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: 30 000₽</TACA.TaskCoastString>
-                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: 74 000₽</TACA.TaskCoastString>
+                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }₽</TACA.TaskCoastString>
+                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }₽</TACA.TaskCoastString>
                 </React.Fragment> }
               </React.Fragment> : <React.Fragment>
                 <TACA.TaskSafeDeal color={indicatorLabelColor}>Простая сделка</TACA.TaskSafeDeal>
@@ -222,10 +256,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              { true && <ButtonComponent
+              { (viewType === 'default' || viewType === 'myTask') && <ButtonComponent
                 inner={"Открыть задание"} 
                 type="CONTAINED_DEFAULT" 
-                action={() => navigate('/zadanie')}
+                action={() => {
+                  navigate('/zadanie')
+                  actions && actions[0](actionsParams && actionsParams[0])
+                }}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}
@@ -245,10 +282,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   marginBottom: '12px'
                 }}
               /> }
-              { false && <ButtonComponent
+              { viewType === 'orderType' && <ButtonComponent
                 inner={"Открыть заказ"} 
                 type="CONTAINED_DEFAULT" 
-                action={() => navigate('/zadanie')}
+                action={() => {
+                  navigate('/zadanie')
+                  actions && actions[0](actionsParams && actionsParams[0])
+                }}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}
@@ -268,10 +308,42 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   marginBottom: '12px'
                 }}
               /> }
-              { dealStatus !== 'complete' && <ButtonComponent
-                inner={"Откликнуться"} 
+              { viewType !== 'orderType' && viewType !== 'myTask' && <React.Fragment>
+                { dealStatus !== 'complete' && <ButtonComponent
+                  inner={"Откликнуться"} 
+                  type="CONTAINED_DEFAULT"
+                  action={() => {
+                    navigate('/zadanie')
+                    actions && actions[1](actionsParams && actionsParams[1])
+                  }}
+                  actionData={null}
+                  widthType={"%"}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={{}}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={null}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    backgroundColor: blue4,
+                    color: grey,
+                    fontSize: '12px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '16px'
+                  }}
+                /> }
+              </React.Fragment> }
+              { viewType === 'myTask' && <ButtonComponent
+                inner={"Снять задание"} 
                 type="CONTAINED_DEFAULT"
-                action={() => {}}
+                action={() => {
+                  navigate('/zadanie')
+                  actions && actions[1](actionsParams && actionsParams[1])
+                }}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}

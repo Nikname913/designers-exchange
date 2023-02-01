@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
   const buttonColor = useAppSelector(state => state.theme.grey)
   const lineColor = useAppSelector(state => state.theme.white)
 
-  const [ activeButton, setActiveButton ] = useState<Array<boolean>>([ false, false, true ])
+  const [ activeButton, setActiveButton ] = useState<Array<boolean>>([ true, false, false ])
   const dispatch = useAppDispatch()
 
   const logoDivStyle: CSSProperties = {

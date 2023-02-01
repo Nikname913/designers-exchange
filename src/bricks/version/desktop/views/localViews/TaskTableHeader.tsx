@@ -88,11 +88,11 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Аванс:</span>
-                <span>через 30 дней</span>
+                <span>через 10 дней</span>
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>до 29.01.2023</span>
+                <span>до 20.02.2023</span>
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>
@@ -114,7 +114,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     Поиск исполнителей
                 </TACA.TaskStatusLabel> }
               </TACA.TaskStatus>
-              <TACA.TaskCoast color={taskStatusColor}>60 000₽</TACA.TaskCoast>
+              <TACA.TaskCoast color={taskStatusColor}>{ deal.coast }₽</TACA.TaskCoast>
 
               { deal.type === 'safe' ? <React.Fragment>
                 { dealStatus !== 'complete' ? <React.Fragment>

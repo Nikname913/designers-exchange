@@ -65,6 +65,8 @@ const css = {
     align-items: flex-start;
     justify-content: flex-start;
     position: relative;
+    line-height: 23px;
+    padding-right: 50px;
   `,
   UserName: styled.h3`
     display: block;

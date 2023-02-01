@@ -976,7 +976,7 @@ const ElementsUI: React.FC = () => {
             fontSize: '24px',
             marginBottom: '28px'
           }}
-        >Компонент ~ Карточка участника биржи ~</h2>
+        >Компонент ~ Карточка участника ~</h2>
 
         <CustomerExecutorCardPreview
           isDisabledMessage={true}

@@ -3,7 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { IRoleTypeReducer } from "../../models-ts/reducers/role-type-reducer-models"
 
 const initialState: IRoleTypeReducer = {
-  activeRole: 'UNDEFINED'
+  activeRole: 'CUSTOMER'
 }
 
 const roleTypeReducer = createSlice({

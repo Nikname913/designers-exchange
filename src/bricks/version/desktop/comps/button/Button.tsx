@@ -39,7 +39,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >{ inner }</Button> 
           : type === 'OUTLINED'
@@ -50,7 +51,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '16px'
+                fontSize: '16px',
+                fontWeight: 'normal',
               }}
             >{ inner }</Button>
           : type === 'CONTAINED_DISABLED' 
@@ -64,7 +66,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 filter: 'grayscale(1)',
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >{ inner }</Button> 
           : type === 'OUTLINED_DISABLED' 
@@ -78,7 +81,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 filter: 'grayscale(1)',
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >{ inner }</Button>
           : type === 'UPLOAD' 
@@ -90,7 +94,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >
               <input 
@@ -138,7 +143,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 ...css,
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >
               <input 
@@ -160,7 +166,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
                 filter: 'grayscale(1)',
                 width: '100%',
                 textTransform: 'none',
-                fontSize: '15px'
+                fontSize: '15px',
+                fontWeight: 'normal',
               }}
             >{ inner }</LoadingButton>
           : <React.Fragment></React.Fragment> }
