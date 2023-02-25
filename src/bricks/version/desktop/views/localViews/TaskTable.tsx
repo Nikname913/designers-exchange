@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import EmailIcon from '@mui/icons-material/Email'
 import ButtonComponent from '../../comps/button/Button'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
+import { setShow, setShowType } from '../../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import css from '../../styles/views/taskTable.css'
 import location from '../../../../img/icons/location.svg'
 
@@ -19,7 +21,6 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const { 
     viewType = 'default',
-    dealStatus = 'searching', 
     deal,
     taskInitDate,
     taskTitle,
@@ -39,6 +40,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
   const [ taskDescriptionLong, ] = useState('lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing')
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
 
   const delimiterColor = useAppSelector(state => state.theme.blue3)
@@ -72,6 +74,9 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    flexWrap: 'wrap',
+    marginTop: '6px',
+    marginBottom: '0px'
   }
   const iconLocationCSS: React.CSSProperties = {
     display: 'block',
@@ -181,7 +186,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
                 { taskSpecializationTags.map((item, index) => {
 
-                  return <TACC.SpecializationTag key={index} backgroundColor={specializationTagBackground}>
+                  return <TACC.SpecializationTag style={{ marginTop: '0px', marginBottom: '10px' }} key={index} backgroundColor={specializationTagBackground}>
                           { item }
                         </TACC.SpecializationTag>
 
@@ -214,23 +219,27 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           <TaskContainerActions>
             <div style={actionsDivContainerCSS}>
               <TACA.TaskStatus>
-                { dealStatus === 'searching' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                {(viewType === 'searching' || viewType === 'custSelfView' || viewType === 'execSelfView') && <TACA.TaskStatusLabel color={indicatorLabelColor}>
                   <TACA.TaskStatusIndicator background={indicatorColorOrange}/> 
                     Поиск исполнителей
                 </TACA.TaskStatusLabel> }
-                { dealStatus === 'work' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                { viewType === 'work' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
                   <TACA.TaskStatusIndicator background={indicatorColorGreen}/> 
                     В работе
                 </TACA.TaskStatusLabel> }
-                { dealStatus === 'complete' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                { viewType === 'complete' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
                   <TACA.TaskStatusIndicator background={indicatorColorBlue}/> 
                     Выполнен
+                </TACA.TaskStatusLabel> }
+                { viewType === 'backside' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                  <TACA.TaskStatusIndicator background={indicatorLabelColor}/> 
+                    Отменен
                 </TACA.TaskStatusLabel> }
               </TACA.TaskStatus>
               <TACA.TaskCoast color={taskStatusColor}>{ deal.coast ? deal.coast : '60000' }₽</TACA.TaskCoast>
 
               { deal.type === 'safe' ? <React.Fragment>
-                { dealStatus !== 'complete' ? <React.Fragment>
+                { viewType !== 'complete' ? <React.Fragment>
                   <TACA.TaskSafeDeal color={indicatorLabelColor}>Безопасная сделка</TACA.TaskSafeDeal>
                   <TACA.SafeDealParameters backgroundColor={grey3}>
                     
@@ -256,11 +265,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              { (viewType === 'default' || viewType === 'myTask') && <ButtonComponent
+
+              {(viewType === 'searching' || viewType === 'custSelfView' || viewType === 'execSelfView') && <ButtonComponent
                 inner={"Открыть задание"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  navigate('/zadanie')
+                  viewType === 'custSelfView' && navigate('/zadanie/cu')
+                  viewType === 'execSelfView' && navigate('/zadanie/ex')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -282,11 +293,12 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   marginBottom: '12px'
                 }}
               /> }
-              { viewType === 'orderType' && <ButtonComponent
+
+              {(viewType === 'work' || viewType === 'complete') && <ButtonComponent
                 inner={"Открыть заказ"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  navigate('/zadanie')
+                  false && navigate('/zadanie')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -308,40 +320,102 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   marginBottom: '12px'
                 }}
               /> }
-              { viewType !== 'orderType' && viewType !== 'myTask' && <React.Fragment>
-                { dealStatus !== 'complete' && <ButtonComponent
-                  inner={"Откликнуться"} 
-                  type="CONTAINED_DEFAULT"
-                  action={() => {
-                    navigate('/zadanie')
-                    actions && actions[1](actionsParams && actionsParams[1])
-                  }}
-                  actionData={null}
-                  widthType={"%"}
-                  widthValue={100}
-                  children={""}
-                  childrenCss={{}}
-                  iconSrc={null}
-                  iconCss={undefined}
-                  muiIconSize={null}
-                  MuiIconChildren={EmailIcon}
-                  css={{
-                    backgroundColor: blue4,
-                    color: grey,
-                    fontSize: '12px',
-                    height: '40px',
-                    borderRadius: '6px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '16px'
-                  }}
-                /> }
-              </React.Fragment> }
-              { viewType === 'myTask' && <ButtonComponent
+
+              { viewType === 'backside' && <ButtonComponent
+                inner={"Редактировать"} 
+                type="CONTAINED_DEFAULT" 
+                action={() => {
+                  false && navigate('/zadanie')
+                  actions && actions[0](actionsParams && actionsParams[0])
+                }}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue2,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '12px'
+                }}
+              /> }
+
+              {/* -------------------------------------- */}
+              {/* правила отображения второй кнопки */}
+              {/* -------------------------------------- */}
+
+              { viewType === 'searching' && <ButtonComponent
+                inner={"Откликнуться"} 
+                type="CONTAINED_DEFAULT"
+                action={() => {
+                  false && navigate('/zadanie')
+                  dispatch(setShowRCC('undefined'))
+                  dispatch(setShow(true))
+                  dispatch(setShowType("respondFromList"))
+                  actions && actions[1](actionsParams && actionsParams[1])
+                }}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue4,
+                  color: grey,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '16px'
+                }}
+              /> }
+
+              { viewType === 'custSelfView' && <ButtonComponent
                 inner={"Снять задание"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
-                  navigate('/zadanie')
+                  false && navigate('/zadanie')
+                  actions && actions[1](actionsParams && actionsParams[1])
+                }}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue4,
+                  color: grey,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '16px'
+                }}
+              /> }
+
+              { viewType === 'backside' && <ButtonComponent
+                inner={"Разместить"} 
+                type="CONTAINED_DEFAULT"
+                action={() => {
+                  false && navigate('/zadanie')
                   actions && actions[1](actionsParams && actionsParams[1])
                 }}
                 actionData={null}

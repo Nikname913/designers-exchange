@@ -46,6 +46,32 @@ const css = {
     margin-top: -20px;
     left: ${props => props.left};
     margin-left: ${props => props.marginLeft};
+  `,
+  MessageFileLine: styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
+    width: 100%;
+    margin-top: 12px;
+  `,
+  MessageFileLineFileIcon: styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    margin-right: 14px;
+  `,
+  MessageFileLineFileText: styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    position: relative;
   `
 }
 

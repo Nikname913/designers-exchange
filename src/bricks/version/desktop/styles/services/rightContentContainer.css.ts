@@ -90,7 +90,7 @@ const css = {
       justify-content: flex-start;
       position: relative;
       box-sizing: border-box;
-      width: 886px;
+      width: calc(100% + 28px);
       min-height: 100px;
       height: auto;
       background-color: ${props => props.backgroundColor};

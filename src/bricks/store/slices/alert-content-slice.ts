@@ -4,7 +4,7 @@ import { IAlertContentReducer } from "../../models-ts/reducers/alert-content-red
 import { CSSProperties } from "styled-components"
 
 const initialState: IAlertContentReducer = {
-  isShow: true,
+  isShow: false,
   type: 'success',
   message: 'lorem ipsum dolor sit amet, consectetur adipiscing',
   styles: {

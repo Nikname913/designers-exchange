@@ -1,5 +1,5 @@
 export interface IRightContentReducer {
-  isShow: boolean,
+  isShow: true | false | 'undefined',
   scrollTop: number
 }
 

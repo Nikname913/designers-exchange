@@ -1,5 +1,21 @@
 export interface IChatMessageContainer {
-  data: Array<any>
+  data: Array<{
+    date: string,
+    messages: Array<{
+      type: string, 
+      content: Array<{ 
+        text: string, 
+        time: string,
+        name?: string,
+        files?: {
+          id: string,
+          ext: string,
+          name?: string
+        },
+        likes?: number  
+      }>,
+    }>
+  }>
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

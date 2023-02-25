@@ -61,6 +61,7 @@ const initialState: ITaskContent = {
           { user: 'e-0001' },
           { user: 'e-0004' },
           { user: 'e-0006' },
+          { user: 'e-0003' },
         ]  
       },
       { 
@@ -84,8 +85,11 @@ const initialState: ITaskContent = {
         },
         responds: [
           { user: 'e-0001' },
-          { user: 'e-0005' },
+          { user: 'e-0002' },
           { user: 'e-0003' },
+          { user: 'e-0004' },
+          { user: 'e-0005' },
+          { user: 'e-0006' },
         ]  
       },
       { 
@@ -110,7 +114,6 @@ const initialState: ITaskContent = {
         responds: [
           { user: 'e-0002' },
           { user: 'e-0003' },
-          { user: 'e-0006' },
         ]  
       },
       { 
@@ -133,6 +136,7 @@ const initialState: ITaskContent = {
           exper: undefined,
         },
         responds: [
+          { user: 'e-0006' },
           { user: 'e-0001' },
           { user: 'e-0002' },
           { user: 'e-0004' },
@@ -161,6 +165,7 @@ const initialState: ITaskContent = {
           { user: 'e-0002' },
           { user: 'e-0003' },
           { user: 'e-0004' },
+          { user: 'e-0005' },
         ]  
       },
       { 
@@ -211,7 +216,51 @@ const initialState: ITaskContent = {
           { user: 'e-0006' },
           { user: 'e-0004' },
           { user: 'e-0003' },
+          { user: 'e-0005' },
+          { user: 'e-0002' },
         ]  
+      },
+      { 
+        id: '0009', 
+        name: 'Пожарная сигнализация', 
+        date: '26.01.2023',
+        deadline: '28.01.2023-28.02.2023',
+        exper: 'государственная',
+        customer: 'ООО "Технические Системы"',
+        executor: 'e-0002',
+        region: 'Екатеринбург',
+        tags: [ 'Пожарная безопасность', 'Теплосети', 'Проводка', 'Датчики' ],
+        description: 'lorem ipsum dolor sit amet, consectetur adipiscing',
+        status: 'backside',
+        viewtype: 'default',
+        coast: {
+          value: 85000,
+          issafe: true,
+          prepay: 28000,
+          exper: 40000,
+        },
+        responds: []  
+      },
+      { 
+        id: '0010', 
+        name: 'Прокладка проводки', 
+        date: '26.01.2023',
+        deadline: '26.01.2023-13.02.2023',
+        exper: 'государственная',
+        customer: 'ООО "Технические Системы"',
+        executor: 'e-0005',
+        region: 'Екатеринбург',
+        tags: [ 'Пожарная безопасность', 'Проводка', 'Датчики' ],
+        description: 'lorem ipsum dolor sit amet, consectetur adipiscing',
+        status: 'backside',
+        viewtype: 'default',
+        coast: {
+          value: 50000,
+          issafe: false,
+          prepay: undefined,
+          exper: undefined,
+        },
+        responds: []  
       },
     ]
   }

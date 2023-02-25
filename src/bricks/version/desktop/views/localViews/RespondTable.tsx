@@ -188,13 +188,13 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           </div>
         </ContentLine>
         <ContentLine>
-          <span style={{ fontWeight: 'bold' }}>Специализация: </span>
+          <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Специализация: </span>
           <TagsContainer>
             { userTags.map((item: string, index: number): ReactElement => {
 
               return (
                 <React.Fragment>
-                  <SpecializationTag backgroundColor={tagBackgroundColor}>{ item }</SpecializationTag>
+                  <SpecializationTag style={{ marginBottom: '10px' }} backgroundColor={tagBackgroundColor}>{ item }</SpecializationTag>
                 </React.Fragment>
               )
 
@@ -217,7 +217,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           <span style={{ letterSpacing: '1px', color: greyColor2 }}>{ `${respondDate.split('&&')[0]} в ${respondDate.split('&&')[1]}` }</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '10px' }}>
-          <span><i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Комментарий: </i>{ `${ discription }` }</span>
+          <span style={{ lineHeight: '24px' }}><i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Комментарий: </i>{ `${ discription }` }</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '14px', justifyContent: 'flex-end' }}>
           <div style={buttonsContainerCSS}>

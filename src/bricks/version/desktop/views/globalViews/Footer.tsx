@@ -6,6 +6,7 @@ import css from '../../styles/views/footer.css'
 import EmailIcon from '@mui/icons-material/Email'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setActiveRole } from '../../../../store/slices/role-type-slice'
+import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice'
 import ButtonComponent from '../../comps/button/Button'
 
 const { FooterWrapper, 
@@ -36,14 +37,23 @@ const Footer: React.FC = () => {
   const activeOne = (): void => {
     setActiveButton([ true, false, false ])
     dispatch(setActiveRole('CUSTOMER'))
+    dispatch(setShow(true))
+    dispatch(setType("info"))
+    dispatch(setMessage("Выбрана роль пользователя Заказчик"))
   }
   const activeTwo = (): void => {
     setActiveButton([ false, true, false ])
     dispatch(setActiveRole("EXECUTOR"))
+    dispatch(setShow(true))
+    dispatch(setType("info"))
+    dispatch(setMessage("Выбрана роль пользователя Исполнитель"))
   }
   const activeThree = (): void => {
     setActiveButton([ false, false, true ])
     dispatch(setActiveRole("UNDEFINED"))
+    dispatch(setShow(true))
+    dispatch(setType("info"))
+    dispatch(setMessage("Выбрана роль пользователя Гость"))
   } 
 
   return (

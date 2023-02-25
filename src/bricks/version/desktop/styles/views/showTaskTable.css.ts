@@ -27,7 +27,6 @@ const css = {
     background-color: ${props => props.backgroundColor};
     height: ${props => props.height ? props.height : '400px'};
     border-radius: 8px;
-    overflow: hidden;
   `,
   TaskContainerShadow: styled.div`
     display: block;

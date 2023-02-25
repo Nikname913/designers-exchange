@@ -1,6 +1,6 @@
 /* eslint-disable array-callback-return */
-import React, { ReactElement } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { ReactElement, useState } from 'react'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { selectShowTask, selectActualTask } from '../../../../store/slices/task-content-slice'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
@@ -13,6 +13,10 @@ import cssContentArea from '../../styles/views/contentArea.css'
 import cssAsideMenu from '../../styles/pages/exchangePageAside.css'
 import cssAsideMenuCust from '../../styles/pages/customersPageAside.css'
 import EmailIcon from '@mui/icons-material/Email'
+
+import arraySortIcon from '../../../../img/icons/sortArray.svg'
+import arraySortFilter from '../../../../img/icons/sortFilter.svg'
+import plusIcon from '../../../../img/icons/plusWhite.svg'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
 const { MenuContainer, 
@@ -34,6 +38,9 @@ const ExchangePage: React.FC = () => {
 
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
+
+  const [ typeShowTasks, setTypeShowTasks ] = useState<'active' | 'noactive'>('active') 
+  const [ pageTitle, setPageTitle ] = useState<'Мои задания' | 'Отмененные задания'>('Мои задания')
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -85,17 +92,18 @@ const ExchangePage: React.FC = () => {
   }
 
   const orders = (): void => {
-    false && navigate('/aktivnye-zakazy')
-    dispatch(setShow(true))
-    dispatch(setType("info"))
-    dispatch(setMessage("В настоящий момент заданий в работе нет"))
+    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/zakazchik-aktivnye-zadaniya')
+    false && dispatch(setShow(true))
+    false && dispatch(setType("info"))
+    false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const arkhiv = (): void => {
-    false && navigate('/zadaniya-arkhiv')
-    dispatch(setShow(true))
-    dispatch(setType("info"))
-    dispatch(setMessage("В настоящий момент задания в архиве отсутствуют"))
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zakazchik-arkhiv')
+    false && dispatch(setShow(true))
+    false && dispatch(setType("info"))
+    false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
+
   const actualTask = (param: string) => {
     dispatch(selectActualTask(param))
   } 
@@ -156,46 +164,82 @@ const ExchangePage: React.FC = () => {
 
   }
 
+  const returnRespondCount = () => {
+
+    let count: number = 0
+
+    TASKS_LIST.list.forEach(task => {
+      if ( task.id === TASKS_LIST.showOne ) {
+        count = task.responds.length
+      }
+    })
+
+    return count
+
+  }
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { ROLE_TYPE === 'EXECUTOR' && <Navigate to={"/spisok-zadaniy-ispolnitel"} replace={true}/> }
+
       <div style={headBlockCSS}>
-        <PageTitle>Мои задания</PageTitle>
+        <PageTitle>{ pageTitle }</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Задания ({ TASKS_LIST.list.length })</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе (0)</span>
-          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные (0)</span>
+          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span>
         </div>
       </div>
       <MenuContainer>
-        { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" ? <React.Fragment>
-          <ButtonComponent
-            inner={"Создать новое задание"} 
-            type="CONTAINED_DEFAULT" 
-            action={() => navigate('/novoe-zadanie')}
-            actionData={null}
-            widthType={"%"}
-            widthValue={100}
-            children={""}
-            childrenCss={{}}
-            iconSrc={null}
-            iconCss={undefined}
-            muiIconSize={null}
-            MuiIconChildren={EmailIcon}
-            css={{
-              backgroundColor: buttonColor,
-              fontSize: '12px',
-              height: '44px',
-              borderRadius: '6px',
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '30px'
-            }}
-          /> 
-          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
+        <ButtonComponent
+          inner={"Создать новое задание"} 
+          type="CONTAINED_DEFAULT" 
+          action={() => navigate('/novoe-zadanie')}
+          actionData={null}
+          widthType={"%"}
+          widthValue={100}
+          children={""}
+          childrenCss={{}}
+          iconSrc={plusIcon}
+          iconCss={{
+            display: 'block',
+            position: 'absolute',
+            zIndex: 2,
+            top: '0px',
+            left: '0px',
+            marginTop: '12px',
+            marginLeft: '34px'
+          }}
+          muiIconSize={null}
+          MuiIconChildren={EmailIcon}
+          css={{
+            backgroundColor: buttonColor,
+            fontSize: '12px',
+            height: '44px',
+            borderRadius: '6px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginBottom: '30px'
+          }}
+        /> 
+        { typeShowTasks === 'active' && <React.Fragment>
+          <div style={{ ...divRowCSS, marginTop: '0px', marginBottom: '20px' }}>
+            <TextFieldTitle style={{ marginTop: '0px', marginBottom: '0px' }}>Сортировать по</TextFieldTitle>
+            <img
+              alt={""}
+              src={arraySortIcon}
+              style={{
+                display: 'block',
+                position: 'relative',
+                cursor: 'pointer'
+              }}
+            />
+          </div>
           <SelectField 
             placeholder={"Новизне"}
             params={{ width: 300, mb: '30px', height: 50 }}
@@ -219,36 +263,110 @@ const ExchangePage: React.FC = () => {
               width: '34px',
             }}
           />
-          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px', fontWeight: 'bold' }}>Открытые задания ({ TASKS_LIST.list.length })</TextFieldTitle>
-          <ExchangePageTaskCSS.MenuDelimeter backgroundColor={delimiterColor}/>
-          <React.Fragment>
-            { TASKS_LIST.list.map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
-
-                return <ExchangePageTaskCSS.TaskSpan 
-                  style={ TASKS_LIST.showOne === item.id ? { fontWeight: 'bold' } : {}}
-                  color={greyColor2} 
-                  key={index}
-                  onClick={() => dispatch(selectShowTask(item.id))}>
-                    { item.name }
-                  </ExchangePageTaskCSS.TaskSpan>
-
-               })}
-          </React.Fragment>
-          <ExchangePageTaskCSS.MenuDelimeter backgroundColor={delimiterColor}/>
+        </React.Fragment> }
+        <div style={{ ...divRowCSS, marginTop: '0px', marginBottom: '20px' }}>
           <TextFieldTitle 
+            onClick={() => {
+              setTypeShowTasks('active')
+              setPageTitle('Мои задания')
+            }}
             style={{ 
               marginTop: '0px', 
-              marginBottom: '35px', 
-              fontWeight: 'bold',
-              color: greyColor2 
+              marginBottom: '10px', 
+              fontWeight: 'bold', 
+              color: typeShowTasks === 'noactive' ? greyColor2 : 'inherit',
+              cursor: 'pointer' 
             }}
-          >Неактивные задания (0)</TextFieldTitle>
-        </React.Fragment> : <React.Fragment></React.Fragment> }
+          >Открытые задания ({ TASKS_LIST.list.filter(task => task.status === 'searching').length })</TextFieldTitle>
+          { typeShowTasks === 'active' && <img
+            alt={""}
+            src={arraySortFilter}
+            style={{
+              display: 'block',
+              position: 'relative',
+              cursor: 'pointer',
+              marginTop: '-10px'
+            }}
+          /> }
+        </div>
+
+        { typeShowTasks === 'active' && <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '23px' }} backgroundColor={delimiterColor}/> }
+        
+        <React.Fragment>
+
+          { TASKS_LIST.list.filter(task => task.status === 'searching').map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
+
+            return <ExchangePageTaskCSS.TaskSpan 
+              style={ TASKS_LIST.showOne === item.id ? { fontWeight: 'bold' } : {}}
+              color={greyColor2} 
+              key={index}
+              onClick={() => {
+                dispatch(selectShowTask(item.id))
+                setTypeShowTasks('active')
+                setPageTitle('Мои задания')
+              }}
+            >{ item.name }</ExchangePageTaskCSS.TaskSpan>
+
+          })}
+        </React.Fragment>
+        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '33px' }} backgroundColor={delimiterColor}/>
+        <TextFieldTitle 
+          onClick={() => {
+            setTypeShowTasks('noactive')
+            setPageTitle('Отмененные задания')
+          }}
+          style={{ 
+            marginTop: '0px', 
+            marginBottom: '26px', 
+            fontWeight: 'bold',
+            color: typeShowTasks === 'active' ? greyColor2 : 'inherit',
+            cursor: 'pointer'
+          }}
+        >Неактивные задания ({ TASKS_LIST.list.filter(task => task.status === 'backside').length })</TextFieldTitle>
+        <React.Fragment>
+          { typeShowTasks === 'noactive' && <React.Fragment>
+            <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ fontWeight: 'bold' }}>Отмененные</ExchangePageTaskCSS.TaskSpan>
+            <ExchangePageTaskCSS.TaskSpan color={greyColor2}>Черновики</ExchangePageTaskCSS.TaskSpan>
+          </React.Fragment> }
+        </React.Fragment>
       </MenuContainer>
       <CustExecContentInnerArea>
-        { TASKS_LIST.list.map((item, index) => {
+        { typeShowTasks === 'active' ? <React.Fragment>
+          { TASKS_LIST.list.map((item, index) => {
 
-          if ( TASKS_LIST.showOne === item.id ) {
+            if ( TASKS_LIST.showOne === item.id ) {
+
+              return (
+                <TaskTable key={index}
+                  taskInitDate={item.date}
+                  taskTitle={item.name}
+                  taskDeadline={item.deadline}
+                  taskExpertType={item.exper}
+                  taskCustomer={item.customer}
+                  taskExecutor={item.executor}
+                  taskLocation={item.region}
+                  taskSpecializationTags={item.tags}
+                  taskDescription={item.description}
+                  dealStatus={item.status}
+                  cardWidth={'100%'}
+                  viewType={"custSelfView"}
+                  marbo={"0px"}
+                  actions={[actualTask]}
+                  actionsParams={[item.id]}
+                  deal={{
+                    type: item.coast.issafe === true ? 'safe' : 'simple',
+                    coast: item.coast.value,
+                    prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                    expert: item.coast.issafe === true ? item.coast.exper : 0,
+                  }}
+                />
+              )
+
+            }
+
+          })}
+        </React.Fragment> : <React.Fragment>
+          { TASKS_LIST.list.filter(task => task.status === 'backside').map((item, index) => {
 
             return (
               <TaskTable key={index}
@@ -263,8 +381,8 @@ const ExchangePage: React.FC = () => {
                 taskDescription={item.description}
                 dealStatus={item.status}
                 cardWidth={'100%'}
-                viewType={"myTask"}
-                marbo={"0px"}
+                viewType={item.status}
+                marbo={"20px"}
                 actions={[actualTask]}
                 actionsParams={[item.id]}
                 deal={{
@@ -276,13 +394,14 @@ const ExchangePage: React.FC = () => {
               />
             )
 
-          }
-
-        })}
-        <div style={divRowCSS}>
-          <TextFieldTitle style={{ fontWeight: 'bold', margin: '0' }}>Отклики <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>(3)</i></TextFieldTitle>
+          })}
+        </React.Fragment> }
+        { typeShowTasks === 'active' && <div style={divRowCSS}>
+          <TextFieldTitle style={{ fontWeight: 'bold', margin: '0', marginTop: '-2px' }}>
+            Отклики на задание <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>({ returnRespondCount() })</i>
+          </TextFieldTitle>
           <SelectField 
-            placeholder={"Новизне"}
+            placeholder={"Сортировать"}
             params={{ width: 300, height: 50 }}
             data={[
               { value: '1', label: 'Сначала новые' },
@@ -290,7 +409,6 @@ const ExchangePage: React.FC = () => {
               { value: '3', label: 'Высокий рейтинг' },
               { value: '4', label: 'Сначала дешевые' },
               { value: '5', label: 'Сначала дорогие' },
-              { value: '6', label: 'Короткий срок' },
             ]}
             multy={false}
             action={() => {}}
@@ -304,43 +422,46 @@ const ExchangePage: React.FC = () => {
               width: '34px',
             }}
           />
-        </div>
+        </div> }
 
-        { TASKS_LIST.list.map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
+        { typeShowTasks === 'active' && <React.Fragment>
 
-          return (
-            <React.Fragment>
-              { TASKS_LIST.showOne === item.id && item.responds.map((itemm: { user: string }, indexx: number): ReactElement => {
+          { TASKS_LIST.list.map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
 
-                return (<RespondTable 
-                  containerCSS={{
-                    w: '100%',
-                    h: 'auto',
-                    mb: '20px',
-                    bg: 'white'
-                  }}
-                  userName={returnName(itemm.user)}
-                  userJob={"Самозанятый"}
-                  userRate={returnUserRate(itemm.user)}
-                  userStat={{
-                    completed: returnUserStat(itemm.user)[0], 
-                    failed: returnUserStat(itemm.user)[2], 
-                    worked: returnUserStat(itemm.user)[1]
-                  }}
-                  userPrice={120000}
-                  userDeadline={"22.02.2023"}
-                  userLocation={"Екатеринбург"}
-                  userTags={returnUserTags(itemm.user)}
-                  userMorePrice={["20000", "25", "50000", "10.02.2023"]}
-                  respondDate={"22.12.22&&16:30"}
-                  discription={"lorem ipsum dolor sit amet, consectetur adipiscing"}
-                ></RespondTable>)
+            return (
+              <React.Fragment>
+                { TASKS_LIST.showOne === item.id && item.responds.map((itemm: { user: string }, indexx: number): ReactElement => {
 
-              })}
-            </React.Fragment>
-          )
+                  return (<RespondTable 
+                    containerCSS={{
+                      w: '100%',
+                      h: 'auto',
+                      mb: '20px',
+                      bg: 'white'
+                    }}
+                    userName={returnName(itemm.user)}
+                    userJob={"Самозанятый"}
+                    userRate={returnUserRate(itemm.user)}
+                    userStat={{
+                      completed: returnUserStat(itemm.user)[0], 
+                      failed: returnUserStat(itemm.user)[2], 
+                      worked: returnUserStat(itemm.user)[1]
+                    }}
+                    userPrice={120000}
+                    userDeadline={"22.02.2023"}
+                    userLocation={"Екатеринбург"}
+                    userTags={returnUserTags(itemm.user)}
+                    userMorePrice={["20000", "25", "50000", "10.02.2023"]}
+                    respondDate={"22.12.22&&16:30"}
+                    discription={"lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing"}
+                  ></RespondTable>)
 
-        })}
+                })}
+              </React.Fragment>
+            )
+
+          })}
+        </React.Fragment> }
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>

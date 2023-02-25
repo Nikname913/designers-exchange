@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { db } from '../../../../firebase/check' 
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector } from '../../../../store/hooks'
@@ -23,6 +24,7 @@ const Header: React.FC = () => {
 
   const navigate = useNavigate()
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const wallet = useAppSelector(state => state.headerReducer.walletCount)
   const whiteColor = useAppSelector(state => state.theme.white)
@@ -108,6 +110,8 @@ const Header: React.FC = () => {
     execCustButtonInner === 'Заказчики' && navigate('/zakazchiki')
   }
 
+  useEffect(() => console.log(db), [])
+
   return (
     <React.Fragment>
 
@@ -132,7 +136,20 @@ const Header: React.FC = () => {
           </span> }
         </HeadMenu>
         <HeadControllers>
-          <span style={{ ...menuItemStyle, marginRight: '30px' }} onClick={() => navigate('/zakazchik-moi-zadaniya')}>Мои заказы</span>
+          { USER_ROLE === "CUSTOMER" && <span
+            onClick={() => navigate('/zakazchik-moi-zadaniya')} 
+            style={{ 
+              ...menuItemStyle, 
+              marginRight: '30px' 
+            }}
+          >Мои заказы</span> }
+          { USER_ROLE === "EXECUTOR" && <span
+            onClick={() => navigate('/spisok-zadaniy-ispolnitel')} 
+            style={{ 
+              ...menuItemStyle, 
+              marginRight: '30px' 
+            }}
+          >Мои заказы</span> }
           <div style={iconsDivStyle}>
           <HeadControllersIcon 
             backgroundColor={blueColorForIcon}

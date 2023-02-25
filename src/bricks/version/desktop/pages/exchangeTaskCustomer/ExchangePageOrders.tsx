@@ -4,7 +4,8 @@ import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../../comps/input/Input'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import SelectField from '../../comps/select/SelectField'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -21,10 +22,13 @@ const { MenuContainer,
 } = cssAsideMenu
 
 const ExchangePage: React.FC = () => {
-  
+
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const whiteColor = useAppSelector(state => state.theme.white)
@@ -69,8 +73,20 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
-  const tasks = (): void => navigate('/spisok-zadaniy')
-  const arkhiv = (): void => navigate('/zadaniya-arkhiv')
+  const tasks = (): void => {
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/zakazchik-moi-zadaniya')
+    false && dispatch(setShow(true))
+    false && dispatch(setType("info"))
+    false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
+  }
+  const arkhiv = (): void => {
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zakazchik-arkhiv')
+    if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
+      false && dispatch(setShow(true))
+      false && dispatch(setType("info"))
+      false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
+    }
+  }
 
   return (
     <ContentArea
@@ -78,220 +94,215 @@ const ExchangePage: React.FC = () => {
       alignItems={null}
       justify={null}
     > 
-      { ROLE_TYPE !== 'UNDEFINED' ? <React.Fragment>
-        <div style={headBlockCSS}>
-          <PageTitle>Активные заказы</PageTitle>
-          <div style={divCSS}>
-            <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания (166)</span>
-            <span style={spanActiveCSS}>В работе (26)</span>
-            <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные (233)</span>
-          </div>
+      <div style={headBlockCSS}>
+        <PageTitle>Активные заказы</PageTitle>
+        <div style={divCSS}>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
+          <span style={{ ...spanActiveCSS }}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span>
         </div>
-        <MenuContainer>
-          { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" ? <React.Fragment>
-            <TextFieldTitle style={{ marginTop: '0px' }}>Сортировать по</TextFieldTitle>
-            <SelectField 
-              placeholder={"Новизне"}
-              params={{ width: 300, mb: '35px', height: 50 }}
-              data={[
-                { value: '1', label: 'За последние три дня' },
-                { value: '2', label: 'За последнюю неделю' },
-                { value: '3', label: 'За месяц' },
-              ]}
-              multy={false}
-              action={() => {}}
-              actionType={""}
-              actionParams={[]}
-              showIcon={true}
-              icon={null}
-              iconStyles={{
-                marginTop: '-12px',
-                marginLeft: '6px',
-                width: '34px',
+      </div>
+      <MenuContainer>
+        <TextFieldTitle style={{ marginTop: '0px' }}>Цена</TextFieldTitle>
+        <CoastRangeContainer>
+          <InputComponent
+            type={'TEXT_INPUT_OUTLINE'}
+            valueType='text'
+            required={false}
+            widthType={'px'}
+            widthValue={142}
+            heightValue={'50px'}
+            label={"Цена от"}
+            isError={false}
+            isDisabled={false}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '11px',
+              backgroundColor: whiteColor
+            }}
+          />
+          <InputComponent
+            type={'TEXT_INPUT_OUTLINE'}
+            valueType='text'
+            required={false}
+            widthType={'px'}
+            widthValue={142}
+            heightValue={'50px'}
+            label={"Цена до"}
+            isError={false}
+            isDisabled={false}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '11px',
+              backgroundColor: whiteColor
+            }}
+          />
+        </CoastRangeContainer>
+        <InputComponent
+          type={'TEXT_INPUT_OUTLINE_SEARCH'}
+          valueType='text'
+          required={false}
+          widthType={'px'}
+          widthValue={300}
+          heightValue={'50px'}
+          label={"Найти задания"}
+          isError={false}
+          isDisabled={false}
+          labelShrinkLeft={"0px"}
+          innerLabel={null}
+          css={{
+            fontSize: '12px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginBottom: '40px',
+            marginTop: '5px',
+            backgroundColor: 'white',
+          }}
+        />
+        <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
+        <SelectField 
+          placeholder={"Новизне"}
+          params={{ width: 300, mb: '40px', height: 50 }}
+          data={[
+            { value: '1', label: 'За последние три дня' },
+            { value: '2', label: 'За последнюю неделю' },
+            { value: '3', label: 'За месяц' },
+          ]}
+          multy={false}
+          action={() => {}}
+          actionType={""}
+          actionParams={[]}
+          showIcon={true}
+          icon={null}
+          iconStyles={{
+            marginTop: '-12px',
+            marginLeft: '6px',
+            width: '34px',
+          }}
+        />
+        <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Фильтры</TextFieldTitle>
+        <SelectField 
+          placeholder={"Местонахождение"}
+          params={{ width: 300, mb: '16px', height: 50 }}
+          data={[
+            { value: '1', label: 'Загрузка региона..' },
+            { value: '2', label: 'Загрузка региона..' },
+            { value: '1', label: 'Загрузка региона..' },
+          ]}
+          multy={false}
+          action={() => {}}
+          actionType={""}
+          actionParams={[]}
+          showIcon={true}
+          icon={null}
+          iconStyles={{
+            marginTop: '-12px',
+            marginLeft: '6px',
+            width: '34px',
+          }}
+        />
+        <SelectField 
+          placeholder={"Сортировать по специализации"}
+          params={{ width: 300, mb: '40px', height: 50 }}
+          data={[
+            { value: '1', label: 'Вентиляция' },
+            { value: '2', label: 'Пожарная безопасность' },
+            { value: '3', label: 'Тепломеханические решения' },
+          ]}
+          multy={false}
+          action={() => {}}
+          actionType={""}
+          actionParams={[]}
+          showIcon={true}
+          icon={null}
+          iconStyles={{
+            marginTop: '-12px',
+            marginLeft: '6px',
+            width: '34px',
+          }}
+        />
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked/>} label="Только задания ТС"/>
+          <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
+          <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
+        </FormGroup>
+        <TextFieldTitle style={{ marginBottom: '10px', marginTop: '40px' }}>Навыки</TextFieldTitle>
+        <FormGroup style={{ fontSize: '15px !important' }}>
+          <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
+          <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
+          <FormControlLabel control={<Checkbox/>} label="BIM"/>
+        </FormGroup>
+        <TextFieldTitle style={{ marginBottom: '10px', marginTop: '40px' }}>Экспертиза</TextFieldTitle>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
+        </FormGroup>
+        <ButtonComponent
+          inner={'Сбросить все'} 
+          type='CONTAINED_DEFAULT' 
+          action={() => console.log('this is button')}
+          actionData={null}
+          widthType={'px'}
+          widthValue={300}
+          children={null}
+          childrenCss={undefined}
+          iconSrc={null}
+          iconCss={undefined}
+          muiIconSize={null}
+          MuiIconChildren={EmailIcon}
+          css={{
+            backgroundColor: resetButtonBackground,
+            color: blackColor,
+            fontSize: '12px',
+            height: '40px',
+            borderRadius: '6px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginTop: '40px',
+            marginBottom: '34px',
+          }}
+        />
+      </MenuContainer>
+      <CustExecContentInnerArea>
+        { TASKS_LIST.list.filter(item => item.status === 'work').map((item, index) => {
+          return (
+            <TaskTable key={index}
+              viewType={item.status}
+              taskInitDate={item.date}
+              taskTitle={item.name}
+              taskDeadline={item.deadline}
+              taskExpertType={item.exper}
+              taskCustomer={item.customer}
+              taskExecutor={item.executor}
+              taskLocation={item.region}
+              taskSpecializationTags={item.tags}
+              taskDescription={item.description}
+              dealStatus={item.status}
+              cardWidth={'100%'}
+              marbo={"16px"}
+              deal={{
+                type: item.coast.issafe === true ? 'safe' : 'simple',
+                coast: item.coast.value,
+                prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                expert: item.coast.issafe === true ? item.coast.exper : 0,
               }}
             />
-            <InputComponent
-              type={'TEXT_INPUT_OUTLINE_SEARCH'}
-              valueType='text'
-              required={false}
-              widthType={'px'}
-              widthValue={300}
-              heightValue={'50px'}
-              label={"Найти задания"}
-              isError={false}
-              isDisabled={false}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '16px',
-                backgroundColor: 'white',
-              }}
-            />
-            <SelectField 
-              placeholder={"Местонахождение"}
-              params={{ width: 300, mb: '16px', height: 50 }}
-              data={[
-                { value: '1', label: 'Загрузка региона..' },
-                { value: '2', label: 'Загрузка региона..' },
-                { value: '1', label: 'Загрузка региона..' },
-              ]}
-              multy={false}
-              action={() => {}}
-              actionType={""}
-              actionParams={[]}
-              showIcon={true}
-              icon={null}
-              iconStyles={{
-                marginTop: '-12px',
-                marginLeft: '6px',
-                width: '34px',
-              }}
-            />
-            <SelectField 
-              placeholder={"Сортировать по специализации"}
-              params={{ width: 300, mb: '20px', height: 50 }}
-              data={[
-                { value: '1', label: 'Вентиляция' },
-                { value: '2', label: 'Пожарная безопасность' },
-                { value: '3', label: 'Тепломеханические решения' },
-              ]}
-              multy={false}
-              action={() => {}}
-              actionType={""}
-              actionParams={[]}
-              showIcon={true}
-              icon={null}
-              iconStyles={{
-                marginTop: '-12px',
-                marginLeft: '6px',
-                width: '34px',
-              }}
-            />
-            <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Только задания ТС"/>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
-              <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
-            </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Навыки</TextFieldTitle>
-            <FormGroup style={{ fontSize: '15px !important' }}>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
-              <FormControlLabel control={<Checkbox/>} label="BIM"/>
-            </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Экспертиза</TextFieldTitle>
-            <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
-            </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '14px', marginTop: '10px' }}>Цена</TextFieldTitle>
-            <CoastRangeContainer>
-              <InputComponent
-                type={'TEXT_INPUT_OUTLINE'}
-                valueType='text'
-                required={false}
-                widthType={'px'}
-                widthValue={142}
-                heightValue={'50px'}
-                label={"Цена от"}
-                isError={false}
-                isDisabled={false}
-                labelShrinkLeft={"0px"}
-                innerLabel={null}
-                css={{
-                  fontSize: '12px',
-                  position: 'relative',
-                  boxSizing: 'border-box',
-                  marginBottom: '11px',
-                  backgroundColor: whiteColor
-                }}
-              />
-              <InputComponent
-                type={'TEXT_INPUT_OUTLINE'}
-                valueType='text'
-                required={false}
-                widthType={'px'}
-                widthValue={142}
-                heightValue={'50px'}
-                label={"Цена до"}
-                isError={false}
-                isDisabled={false}
-                labelShrinkLeft={"0px"}
-                innerLabel={null}
-                css={{
-                  fontSize: '12px',
-                  position: 'relative',
-                  boxSizing: 'border-box',
-                  marginBottom: '11px',
-                  backgroundColor: whiteColor
-                }}
-              />
-            </CoastRangeContainer>
-            <ButtonComponent
-              inner={'Сбросить все'} 
-              type='CONTAINED_DEFAULT' 
-              action={() => console.log('this is button')}
-              actionData={null}
-              widthType={'px'}
-              widthValue={300}
-              children={null}
-              childrenCss={undefined}
-              iconSrc={null}
-              iconCss={undefined}
-              muiIconSize={null}
-              MuiIconChildren={EmailIcon}
-              css={{
-                backgroundColor: resetButtonBackground,
-                color: blackColor,
-                fontSize: '12px',
-                height: '40px',
-                borderRadius: '6px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginTop: '22px',
-                marginBottom: '34px',
-              }}
-            />
-          </React.Fragment> : <React.Fragment></React.Fragment> }
-        </MenuContainer>
-        <CustExecContentInnerArea>
-          { Array(6).fill(0).map((item, index) => {
-            return (
-              <TaskTable key={index}
-                viewType={"orderType"}
-                taskInitDate={"Позавчера в 18:33"}
-                taskTitle={"Конструктивные решения"}
-                taskDeadline={"18.11.2022-28.11.2022"}
-                taskExpertType={"государственная"}
-                taskCustomer={"ООО \"Технические Системы\""}
-                taskExecutor={"ИП Макаров А.Ю."}
-                taskLocation={"Екатеринбург"}
-                taskSpecializationTags={["Сигнализация","Вентиляция","Пожарная безопасность"]}
-                taskDescription={"lorem ipsum dolor sit amet, consectetur adipiscing"}
-                dealStatus={"work"}
-                cardWidth={'100%'}
-                marbo={"16px"}
-                deal={{
-                  type: 'safe',
-                  prepaid: 30000,
-                  expert: 74000
-                }}
-              />
-            )
-          })}
+          )
+        })}
 
-          <PagintationContainer>
-            <span style={showMoreButtonCSS}>Загрузить еще</span>
-            <Pagintation></Pagintation>
-          </PagintationContainer>
+        <PagintationContainer>
+          <span style={showMoreButtonCSS}>Загрузить еще</span>
+          <Pagintation></Pagintation>
+        </PagintationContainer>
 
-        </CustExecContentInnerArea>
-      </React.Fragment> : <React.Fragment>
-        <div style={headBlockCSS}>
-          <PageTitle style={{ marginBottom: '34px' }}>Пользователь не авторизован</PageTitle>
-        </div>
-      </React.Fragment> }
+      </CustExecContentInnerArea>
     </ContentArea>
   )
 

@@ -254,7 +254,7 @@ const ExchangePage: React.FC = () => {
         { TASKS_LIST.list.filter(item => item.status === 'backside').map((item, index) => {
           return (
             <TaskTable key={index}
-              viewType={"orderType"}
+              viewType={"complete"}
               taskInitDate={item.date}
               taskTitle={item.name}
               taskDeadline={item.deadline}

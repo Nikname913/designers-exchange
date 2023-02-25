@@ -106,7 +106,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
         <ShadowContainerInner>
 
           { contentType === 'ECC' 
-            ? <ChatFork.ChatContainer backgroundColor={backgroundColor} id={userID}>
+            ? <ChatFork.ChatContainer style={{ paddingTop: '40px' }} backgroundColor={backgroundColor} id={userID}>
                 <ChatFork.CloseIconContainer>
                   <ChatFork.CloseIcon onClick={showrightContent}>
                     <img
@@ -270,6 +270,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </div>
                 </ChatFork.ChatBody>
               </ChatFork.ChatContainer>
+            : contentType === 'MDCC'
+            ? <React.Fragment></React.Fragment>
             : <React.Fragment></React.Fragment> }
 
         </ShadowContainerInner>

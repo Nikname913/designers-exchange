@@ -4,7 +4,9 @@ import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../../comps/input/Input'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
+import { selectActualTask } from '../../../../store/slices/task-content-slice'
 import SelectField from '../../comps/select/SelectField'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -23,8 +25,11 @@ const { MenuContainer,
 const ExchangePage: React.FC = () => {
   
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const whiteColor = useAppSelector(state => state.theme.white)
@@ -69,8 +74,22 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
-  const tasks = (): void => navigate('/spisok-zadaniy')
-  const arkhiv = (): void => navigate('/zadaniya-arkhiv')
+  const tasks = (): void => {
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/spisok-zadaniy-ispolnitel')
+  }
+  const arkhiv = (): void => {
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zadaniya-arkhiv')
+    if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
+      dispatch(setShow(true))
+      dispatch(setType("info"))
+      dispatch(setMessage("В настоящий момент задания в архиве отсутствуют"))
+    }
+  }
+
+  const openOrder = (param: string): void => {
+    dispatch(selectActualTask(param))
+    navigate('/zakaz/ex')
+  }
 
   return (
     <ContentArea
@@ -82,9 +101,9 @@ const ExchangePage: React.FC = () => {
         <div style={headBlockCSS}>
           <PageTitle>Активные заказы</PageTitle>
           <div style={divCSS}>
-            <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания (166)</span>
-            <span style={spanActiveCSS}>В работе (26)</span>
-            <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные (233)</span>
+            <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
+            <span style={spanActiveCSS}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
+            <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length * 0})</span>
           </div>
         </div>
         <MenuContainer>
@@ -256,26 +275,29 @@ const ExchangePage: React.FC = () => {
           </React.Fragment> : <React.Fragment></React.Fragment> }
         </MenuContainer>
         <CustExecContentInnerArea>
-          { Array(6).fill(0).map((item, index) => {
+          { TASKS_LIST.list.filter(item => item.status === 'work').map((item, index: number) => {
             return (
               <TaskTable key={index}
-                viewType={"orderType"}
-                taskInitDate={"Позавчера в 18:33"}
-                taskTitle={"Конструктивные решения"}
-                taskDeadline={"18.11.2022-28.11.2022"}
-                taskExpertType={"государственная"}
-                taskCustomer={"ООО \"Технические Системы\""}
-                taskExecutor={"ИП Макаров А.Ю."}
-                taskLocation={"Екатеринбург"}
-                taskSpecializationTags={["Сигнализация","Вентиляция","Пожарная безопасность"]}
-                taskDescription={"lorem ipsum dolor sit amet, consectetur adipiscing"}
-                dealStatus={"work"}
+                viewType={item.status}
+                taskInitDate={item.date}
+                taskTitle={item.name}
+                taskDeadline={item.deadline}
+                taskExpertType={item.exper}
+                taskCustomer={item.customer}
+                taskExecutor={item.executor}
+                taskLocation={item.region}
+                taskSpecializationTags={item.tags}
+                taskDescription={item.description}
+                dealStatus={item.status}
                 cardWidth={'100%'}
                 marbo={"16px"}
+                actions={[ openOrder ]}
+                actionsParams={[item.id]}
                 deal={{
-                  type: 'safe',
-                  prepaid: 30000,
-                  expert: 74000
+                  type: item.coast.issafe === true ? 'safe' : 'simple',
+                  coast: item.coast.value,
+                  prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                  expert: item.coast.issafe === true ? item.coast.exper : 0,
                 }}
               />
             )

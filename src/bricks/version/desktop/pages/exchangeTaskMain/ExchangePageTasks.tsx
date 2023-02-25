@@ -100,7 +100,9 @@ const ExchangePage: React.FC = () => {
         </div>
       </div>
       <MenuContainer>
-        { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" ? <React.Fragment>
+
+        { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" || ROLE_TYPE === "UNDEFINED" ? <React.Fragment>
+
           <TextFieldTitle style={{ marginTop: '0px' }}>Цена</TextFieldTitle>
           <CoastRangeContainer>
             <InputComponent
@@ -273,7 +275,7 @@ const ExchangePage: React.FC = () => {
         { TASKS_LIST.list.filter(item => item.status === 'searching').map((item, index) => {
           return (
             <TaskTable key={index}
-              viewType={"default"}
+              viewType={item.status}
               taskInitDate={item.date}
               taskTitle={item.name}
               taskDeadline={item.deadline}

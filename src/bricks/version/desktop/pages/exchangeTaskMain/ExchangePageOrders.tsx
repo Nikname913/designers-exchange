@@ -272,7 +272,7 @@ const ExchangePage: React.FC = () => {
           { TASKS_LIST.list.filter(item => item.status === 'work').map((item, index: number) => {
             return (
               <TaskTable key={index}
-                viewType={"orderType"}
+                viewType={item.status}
                 taskInitDate={item.date}
                 taskTitle={item.name}
                 taskDeadline={item.deadline}

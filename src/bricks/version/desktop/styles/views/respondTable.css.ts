@@ -81,7 +81,54 @@ const css = {
     margin-right: 10px;
     cursor: pointer;
     font-size: 12px;
-  `
+  `,
+  MyRespond: {
+    RespondContainer: styled.div`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      box-sizing: border-box;
+      width: 100%;
+      height: auto;
+      padding-left: 30px;
+      padding-right: 30px;
+      margin-top: 23px;
+      margin-bottom: 60px;
+    `,
+    Title: styled.h3`
+      display: block;
+      position: relative;
+      width: 100%;
+      font-size: 20px;
+      margin: 0px;
+      margin-bottom: 18px;
+    `,
+    ContentLine: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width 100%;
+    `,
+    ButtonContainer: styled.div`
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: absolute;
+      width: 35%;
+      height: 100%;
+      min-height: 100px;
+      box-sizing: border-box;
+      top: 0%;
+      left: 65%;
+      padding-left: 54px;
+      padding-right: 54px;
+    `
+  }
 }
 
 export default css

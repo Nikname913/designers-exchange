@@ -115,6 +115,7 @@ const css = {
     justify-content: flex-start;
     position: relative;
     width: 18%;
+    cursor: pointer;
   `,
   FileIconTitle: styled.span<{ color: string }>`
     display: block;
@@ -133,6 +134,25 @@ const css = {
     padding-left: 10px;
     margin-top: 5px;
     color: ${props => props.color};
+  `,
+  CommandButton: styled.span<{ background: string }>`
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    width: 120px;
+    height: 36px;
+    border-radius: 4px;
+    background-color: ${props => props.background};
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 34px;
+    text-align: right;
+    top: 0%;
+    left: 100%;
+    margin-top: -7px;
+    margin-left: 20px;
+    padding-right: 14px;
+    cursor: pointer;
   `
 }
 

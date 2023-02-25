@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAppSelector } from '../../../../store/hooks'
 import ButtonComponent from '../../comps/button/Button'
+import SelectField from '../../comps/select/SelectFieldPercentWidth'
 import css from '../../styles/views/showTaskTable.css'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
 import { CSSProperties } from 'styled-components'
@@ -23,7 +24,9 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     taskExpertType,
     taskSpecializationTags,
     cardWidth,
-    marbo } = props
+    marbo,
+    actions,
+    actionsParams } = props
 
   const [ containerHeight, ] = useState('auto')
   const containerBackground = useAppSelector(state => state.theme.white)
@@ -32,7 +35,9 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
   const indicatorColorOrange = useAppSelector(state => state.theme.yellow)
   const indicatorLabelColor = useAppSelector(state => state.theme.grey2)
+  const ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
+  const blue1 = useAppSelector(state => state.theme.blue1)
   const blue2 = useAppSelector(state => state.theme.blue2)
   const whiteColor = useAppSelector(state => state.theme.white)
 
@@ -57,6 +62,15 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     position: 'relative',
     width: '100%',
   }
+  const bimTagCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    fontSize: '40px',
+    color: blue1,
+    margin: 0,
+    marginBottom: '12px',
+    marginLeft: '20px'
+  }
 
   return (
     <React.Fragment>
@@ -80,6 +94,9 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 return <TACC.SpecializationTag backgroundColor={tagColor}>{ item }</TACC.SpecializationTag>
 
               })}
+
+              <span style={bimTagCSS}>BIM</span>
+
             </TACC.TextContentLine>
             <TACC.TextContentLine style={{ marginBottom: '0px' }}>
               <div style={divCSS}>
@@ -128,10 +145,14 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              { dealStatus !== 'complete' && <ButtonComponent
+              { ROLE === 'EXECUTOR' ? <ButtonComponent
                 inner={"Откликнуться"} 
                 type="CONTAINED_DEFAULT"
-                action={() => {}}
+                action={() => {
+                  actions && actions[0](
+                    actionsParams && actionsParams[0]
+                  )
+                }}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}
@@ -150,6 +171,24 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   position: 'relative',
                   boxSizing: 'border-box',
                   marginBottom: '16px'
+                }}
+              /> : <SelectField 
+                placeholder={"Действие"}
+                params={{ width: 100, height: 50 }}
+                data={[
+                  { value: '1', label: 'Снять задание' },
+                  { value: '2', label: 'Редактировать' },
+                ]}
+                multy={false}
+                action={() => {}}
+                actionType={""}
+                actionParams={[]}
+                showIcon={true}
+                icon={null}
+                iconStyles={{
+                  marginTop: '-12px',
+                  marginLeft: '6px',
+                  width: '34px',
                 }}
               /> }
             </div>

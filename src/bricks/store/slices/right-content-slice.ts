@@ -11,7 +11,7 @@ const rightContentReducer = createSlice({
   name: 'rightContentReducer',
   initialState,
   reducers: {
-    setShow: (state, action: PayloadAction<boolean>) => {
+    setShow: (state, action: PayloadAction<true | false | 'undefined'>) => {
       state.isShow = action.payload
     },
     setScrollTop: (state, action: PayloadAction<number>) => {
