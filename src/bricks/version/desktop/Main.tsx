@@ -13,6 +13,7 @@ import RightContentContainer from './services/rightContentContainer.service'
 const Main: React.FC = () => {
 
   const showRightContent = useAppSelector(state => state.rightContentReducer.isShow)
+  const typeRightContent = useAppSelector(state => state.rightContentReducer.showType)
   const scrollRightContent = useAppSelector(state => state.rightContentReducer.scrollTop)
   const scrollFosContent = useAppSelector(state => state.FOSReducer.scrollTop)
   const showAlertContent = useAppSelector(state => state.alertContentReducer.isShow)
@@ -49,7 +50,7 @@ const Main: React.FC = () => {
           styles={alertCSS}
         /> }
         { showRightContent === true && <RightContentContainer 
-          contentType={"ECC"}
+          contentType={typeRightContent}
           scroll={scrollRightContent}
           chatData={{
             userID: '0000008',

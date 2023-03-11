@@ -100,10 +100,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       <ShadowContainer 
         marginTop={scroll} 
         background={"rgba(0, 0, 0, 0.4)"}
+        style={{ zIndex: 40 }}
       >
         { showType === 'respondFromList' 
           ? <React.Fragment>
-              <RespondFromList.FOS>
+              <RespondFromList.FOS style={{ zIndex: 40 }}>
                 <img
                   alt={""}
                   src={closeIcon}
@@ -310,7 +311,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
             </React.Fragment> 
           : showType === 'respondFromTask' 
           ? <React.Fragment>
-              <RespondFromList.FOS>
+              <RespondFromList.FOS style={{ zIndex: 40 }}>
                 <img
                   alt={""}
                   src={closeIcon}
@@ -425,7 +426,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           </React.Fragment>
           : showType === 'inviteOnTeam' 
           ? <React.Fragment>
-            <RespondFromList.FOS>
+            <RespondFromList.FOS style={{ zIndex: 40 }}>
               <img
                 alt={""}
                 src={closeIcon}
@@ -529,7 +530,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           </React.Fragment> 
           : showType === 'commandRoot' 
           ? <React.Fragment>
-            <Command.FOS>
+            <Command.FOS style={{ zIndex: 40 }}>
               <img
                 alt={""}
                 src={closeIcon}
@@ -755,7 +756,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           </React.Fragment>
           : showType === 'command' 
           ? <React.Fragment>
-            <Command.FOS style={{ width: '666px' }}>
+            <Command.FOS style={{ width: '666px', zIndex: 40 }}>
               <img
                 alt={""}
                 src={closeIcon}
@@ -878,7 +879,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           </React.Fragment>
           : showType === 'commandShort' 
           ? <React.Fragment>
-            <Command.FOS style={{ width: '666px' }}>
+            <Command.FOS style={{ width: '666px', zIndex: 40 }}>
               <img
                 alt={""}
                 src={closeIcon}

@@ -1,5 +1,13 @@
 export interface IRightContentReducer {
   isShow: true | false | 'undefined',
+  showType?: 'ECC'    |
+     'MDCC'           | 
+     'ChapterCC'      | 
+     'ExpertCC'       | 
+     'AgreementCC'    | 
+     'AgreementNewCC' | 
+     'LawyerCC'       |
+     'ArguementCC',
   scrollTop: number
 }
 

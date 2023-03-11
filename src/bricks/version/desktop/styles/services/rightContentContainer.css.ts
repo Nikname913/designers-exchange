@@ -38,7 +38,7 @@ const css = {
       box-sizing: border-box;
       background-color: ${props => props.backgroundColor};
       height: auto;
-      width: 1100px;
+      width: calc(100% - 500px);
       padding-top: 70px;
       padding-left: 40px;
       padding-right: 200px;
@@ -124,6 +124,66 @@ const css = {
       position: relative;
       margin-right: 30px;
     `,
+  },
+  MasterDocFork: {
+    ChatContainer: styled.div<{ backgroundColor: string }>`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      box-sizing: border-box;
+      background-color: ${props => props.backgroundColor};
+      height: auto;
+      width: calc(100% - 500px);
+      padding-top: 70px;
+      padding-left: 40px;
+      padding-right: 200px;
+    `,
+    CloseIconContainer: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width: 100%;
+    `,
+    CloseIcon: styled.span`
+      display: block;
+      position: relative;
+      height: 30px;
+      width: 30px;
+      cursor: pointer;
+      margin-bottom: 30px;
+    `,
+    ContentLine: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width: 100%;
+    `,
+    Delimiter: styled.span<{ background: string }>`
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 2px;
+      background-color: ${props => props.background};
+      margin-top: 60px;
+    `,
+    WhiteContainer: styled.div<{ width: string }>`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      width: ${props => props.width};
+      background-color: white;
+      border-radius: 8px;
+      padding: 26px 34px;
+      box-sizing: border-box;
+    `
   }
 }
 

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/fos-slice'
-import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
+import { 
+  setShow as setShowRCC, 
+  setShowType as setShowTypeRCC } from '../../../store/slices/right-content-slice'
 import CommunicationTable from '../views/localViews/CommunicationTable'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
@@ -26,6 +28,7 @@ import timeIcon from '../../../img/icons/timeGrey.svg'
 import starIcon from '../../../img/icons/star.svg'
 import avatarIcon from '../../../img/stock/avatar.svg'
 import clipIcon from '../../../img/icons/clip.svg'
+import alarmIcon from '../../../img/icons/alarm.svg'
 
 import pdf from '../../../img/icons/files/withActionTwo/pdf.svg'
 import doc from '../../../img/icons/files/withActionTwo/doc.svg'
@@ -56,6 +59,7 @@ const ShowTaskPage: React.FC = () => {
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+  const showRCC = useAppSelector(state => state.rightContentReducer.isShow)
 
   const backwardButtonColor = useAppSelector(state => state.theme.grey)
   const activeLeftMenuIconColor = useAppSelector(state => state.theme.blue3)
@@ -74,7 +78,15 @@ const ShowTaskPage: React.FC = () => {
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
 
-  const [ orderViewStep, setOrderViewStep ] = useState<'details' | 'communication' | 'documents'>('details')
+  const [ orderViewStep, setOrderViewStep ] = useState<
+    'details'       | 
+    'communication' | 
+    'documents'     |
+    'expert'        |
+    'chapter'       |
+    'agreement'     |
+    'lawyer'        |
+    'arguement'>('details')
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -91,6 +103,10 @@ const ShowTaskPage: React.FC = () => {
     position: 'relative',
     width: '280px',
     height: 'auto',
+    zIndex: 20,
+    backgroundColor: '#F7FAFC',
+    borderRadius: '8px',
+    marginBottom: '46px'
   }
   const contentContainerCSS: React.CSSProperties = {
     display: 'flex',
@@ -114,7 +130,8 @@ const ShowTaskPage: React.FC = () => {
   }
   const buttonLabelCSS: React.CSSProperties = {
     marginLeft: '14px',
-    fontWeight: 600
+    fontWeight: 600,
+    color: deactiveButtonColor
   }
   const buttonLabelDeactiveCSS: React.CSSProperties = {
     marginLeft: '14px',
@@ -232,6 +249,20 @@ const ShowTaskPage: React.FC = () => {
     justifyContent: 'flex-start',
     position: 'relative',
   }
+  const countSpanCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'absolute',
+    width: '36px',
+    height: '24px',
+    borderRadius: '10px',
+    backgroundColor: chatSubmitColor,
+    color: chatBackground,
+    left: '100%',
+    marginLeft: '-48px',
+    textAlign: 'center',
+    fontSize: '12px',
+    lineHeight: '23px'
+  }
 
   const inviteAction = (): void => {
     dispatch(setShowRCC('undefined'))
@@ -247,10 +278,47 @@ const ShowTaskPage: React.FC = () => {
   const step1 = (): void => setOrderViewStep('details')
   const step2 = (): void => setOrderViewStep('communication')
   const step3 = (): void => {
-    dispatch(setShowRCC('undefined'))
+    setOrderViewStep('documents')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('MDCC'))
+  }
+
+  const showChapters = (): void => {
+    setOrderViewStep('chapter')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ChapterCC'))
+  }
+
+  const showExpert = (): void => {
+    setOrderViewStep('expert')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ExpertCC'))
+  }
+
+  const showAgreement = (): void => {
+    setOrderViewStep('agreement')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('AgreementCC'))
+  }
+
+  const showLawyer = (): void => {
+    setOrderViewStep('lawyer')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('LawyerCC'))
+  }
+  
+  const showArguement = (): void => {
+    setOrderViewStep('arguement')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ArguementCC'))
   }
 
   useEffect(() => console.log(selectTask), [ selectTask ])
+  useEffect(() => {
+
+    showRCC === false && setOrderViewStep('details')
+
+  }, [ showRCC ])
 
   return (
     <React.Fragment>
@@ -350,9 +418,14 @@ const ShowTaskPage: React.FC = () => {
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
+                  <span style={countSpanCSS}>{"+2"}</span>
                 </LeftMenuIconButton>
                 <LeftMenuIconButton 
-                  backgroundColor={"transparent"} 
+                  backgroundColor={ 
+                    orderViewStep === 'documents' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    } 
                   style={{ marginBottom: '40px' }}
                   onClick={step3}
                 >
@@ -363,29 +436,69 @@ const ShowTaskPage: React.FC = () => {
                   <span style={buttonLabelDeactiveCSS}>Мастер документы</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                <LeftMenuIconButton 
+                  backgroundColor={ 
+                    orderViewStep === 'agreement' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
+                  style={{ paddingLeft: '0px', marginBottom: '0px', borderRadius: '0px' }}
+                  onClick={showAgreement}
+                >
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                <LeftMenuIconButton 
+                  backgroundColor={ 
+                    orderViewStep === 'lawyer' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
+                  style={{ paddingLeft: '0px', marginBottom: '0px', borderRadius: '0px' }}
+                  onClick={showLawyer}
+                >
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
+                </LeftMenuIconButton>
+                <LeftMenuIconButton 
+                  backgroundColor={ 
+                    orderViewStep === 'arguement' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
+                  style={{ paddingLeft: '0px', marginBottom: '0px', borderRadius: '0px', height: '50px' }}
+                  onClick={showArguement}
+                > 
+                  <img
+                    alt={""}
+                    src={alarmIcon}
+                    style={{ width: '24px', marginLeft: '18px' }}
+                  />
+                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '1px', marginLeft: '6px' }}>Карточка спора</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
-                  backgroundColor={"transparent"} 
+                  backgroundColor={ 
+                    orderViewStep === 'expert' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
                   style={{ 
                     paddingLeft: '0px', 
-                    marginBottom: '0px', 
                     flexDirection: 'column', 
                     alignItems: 'flex-start', 
                     justifyContent: 'space-around',
                     paddingTop: '40px',
                     paddingBottom: '40px',
-                    height: 'auto'
+                    height: '80px',
+                    borderRadius: 0,
+                    marginTop: '24px',
+                    marginBottom: '24px'
                   }}
+                  onClick={showExpert}
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>негосударственная</span>
+                  <span style={countSpanCSS}>{"+4"}</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -403,8 +516,27 @@ const ShowTaskPage: React.FC = () => {
                 >
                   <span style={{ ...buttonLabelDeactiveCSS }}>Разделы</span>
                 </LeftMenuIconButton>
-                <SectionsContainer>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                <SectionsContainer
+                  style={{
+                    paddingLeft: orderViewStep === 'chapter' ? '0px' : '',
+                    paddingRight: orderViewStep === 'chapter' ? '0px' : '',
+                  }}
+                >
+                  <LeftMenuIconButton 
+                    backgroundColor={ 
+                      orderViewStep === 'chapter' 
+                        ? activeLeftMenuIconColor 
+                        : 'transparent' 
+                      }   
+                    style={{
+                      height: '64px', 
+                      marginBottom: '0px', 
+                      padding: '0px',
+                      borderRadius: '0px',
+                      paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px'
+                    }}
+                    onClick={showChapters}
+                  >
                     <img
                       alt={""}
                       src={checkMark}
@@ -412,20 +544,38 @@ const ShowTaskPage: React.FC = () => {
                     <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Пожарная безопасность</span>
                   </LeftMenuIconButton>
                   <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                  <LeftMenuIconButton 
+                    backgroundColor={"transparent"} 
+                    style={{ 
+                      height: '64px', 
+                      marginBottom: '0px', 
+                      padding: '0px', 
+                      opacity: 0.8, 
+                      paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px' 
+                    }}
+                  >
                     <img
                       alt={""}
                       src={timeIcon}
                     />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Вентиляция</span>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>[ технический пункт меню ]</span>
                   </LeftMenuIconButton>
                   <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                  <LeftMenuIconButton 
+                    backgroundColor={"transparent"} 
+                    style={{ 
+                      height: '64px', 
+                      marginBottom: '0px', 
+                      padding: '0px', 
+                      opacity: 0.8,
+                      paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px', 
+                    }}
+                  >
                     <img
                       alt={""}
                       src={timeIcon}
                     />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Сигнализация</span>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>[ технический пункт меню ]</span>
                   </LeftMenuIconButton>
                 </SectionsContainer>
               </div>
@@ -1062,59 +1212,6 @@ const ShowTaskPage: React.FC = () => {
                         />
                       </ChatFork.ChatBodyInner>
                       <div style={bottomDivCSS}>
-                        <div style={bottomDivInnerCSS}>
-                          <div style={clipDivCSS}>
-                            <img
-                              alt={""}
-                              src={clipIcon}
-                            />
-                          </div>
-                          <InputComponent
-                            type={'TEXT_INPUT_OUTLINE'}
-                            valueType='text'
-                            required={false}
-                            widthType={'%'}
-                            widthValue={100}
-                            heightValue={'50px'}
-                            label={"Lorem ipsum dolor sit amet consectetur adipisicing elit"}
-                            isError={false}
-                            isDisabled={true}
-                            labelShrinkLeft={"0px"}
-                            innerLabel={null}
-                            css={{
-                              fontSize: '12px',
-                              position: 'relative',
-                              boxSizing: 'border-box',
-                              marginTop: '0px',
-                              backgroundColor: inputBackground,
-                              marginRight: '12px'
-                            }}
-                          />
-                          <ButtonComponent
-                            inner={""} 
-                            type='ICON_BUTTON_CHAT_SUBMIT' 
-                            action={() => console.log('this is button')}
-                            actionData={null}
-                            widthType={'px'}
-                            widthValue={56}
-                            children={""}
-                            childrenCss={undefined}
-                            iconSrc={null}
-                            iconCss={undefined}
-                            muiIconSize={30}
-                            MuiIconChildren={ArrowUpwardIcon}
-                            css={{
-                              position: 'relative',
-                              boxSizing: 'border-box',
-                              padding: '4px',
-                              backgroundColor: chatSubmitColor,
-                              width: '56px',
-                              height: '56px',
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div style={{ ...bottomDivCSS, position: 'absolute' }}>
                         <div style={bottomDivInnerCSS}>
                           <div style={clipDivCSS}>
                             <img

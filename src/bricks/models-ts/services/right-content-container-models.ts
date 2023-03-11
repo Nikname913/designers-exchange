@@ -1,6 +1,6 @@
 export interface IRightContentContainer {
-  contentType: 
-    'ECC' | 'ExecutorChatCpntainer' | string,
+  contentType?: 
+    'ECC' | 'ExecutorChatCpntainer' | 'ChapterCC' | 'ExpertCC' | 'AgreementCC' | string,
   chatData: {
     userID: string,
     userName: string,

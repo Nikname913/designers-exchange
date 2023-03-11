@@ -26,9 +26,7 @@ const ExchangePage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
-
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const whiteColor = useAppSelector(state => state.theme.white)

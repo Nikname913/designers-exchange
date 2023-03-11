@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
               fontSize: '13px',
               color: '#D9E7F0'
               }}
-            >CUST</Button>
+            >CUSTOMER</Button>
           <Button 
             onClick={activeTwo}
             style={{ 
@@ -84,16 +84,16 @@ const Footer: React.FC = () => {
               fontSize: '13px',
               color: '#D9E7F0'
               }}
-            >EXEC</Button>
-          <Button 
+            >EXECUTOR</Button>
+          { false && <Button 
             onClick={activeThree}
-            style={{ 
+            style={{
               backgroundColor: 
                 activeButton[2] ? '#00BFA8' : 'rgba(0, 0, 0, 0.08)', 
               fontSize: '13px',
               color: '#D9E7F0'
               }}
-            >GUES</Button>
+            >GUES</Button> }
         </ButtonGroup>
         <ButtonComponent
           inner={'Обратиться в поддержку'} 
