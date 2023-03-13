@@ -303,7 +303,7 @@ const ExchangePage: React.FC = () => {
         </CustExecContentInnerArea>
       </React.Fragment> : <React.Fragment>
         <div style={headBlockCSS}>
-          <PageTitle style={{ marginBottom: '34px' }}>Пользователь не авторизован</PageTitle>
+          <PageTitle style={{ marginBottom: '34px' }}>[ список активных по всей бирже, заглушка ]</PageTitle>
         </div>
       </React.Fragment> }
     </ContentArea>

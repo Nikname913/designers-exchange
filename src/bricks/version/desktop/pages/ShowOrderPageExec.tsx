@@ -558,7 +558,7 @@ const ShowTaskPage: React.FC = () => {
                       alt={""}
                       src={timeIcon}
                     />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>[ технический пункт меню ]</span>
+                    <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '2px', fontWeight: 500 }}>[ технический пункт меню ]</span>
                   </LeftMenuIconButton>
                   <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                   <LeftMenuIconButton 
@@ -575,7 +575,7 @@ const ShowTaskPage: React.FC = () => {
                       alt={""}
                       src={timeIcon}
                     />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>[ технический пункт меню ]</span>
+                    <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '2px', fontWeight: 500 }}>[ технический пункт меню ]</span>
                   </LeftMenuIconButton>
                 </SectionsContainer>
               </div>

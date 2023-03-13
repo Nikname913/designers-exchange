@@ -15,7 +15,15 @@ const FOSReducer = createSlice({
     setShow: (state, action: PayloadAction<boolean>) => {
       state.isShow = action.payload
     },
-    setShowType: (state, action: PayloadAction<'respondFromList' | 'respondFromTask' | 'inviteOnTeam' | 'commandRoot' | 'command' | 'commandShort' >) => {
+    setShowType: (state, action: PayloadAction<'respondFromList' |
+     'respondFromTask' | 
+     'inviteOnTeam'    | 
+     'commandRoot'     | 
+     'command'         | 
+     'commandShort'    |
+     'authLogin'       |
+     'authRestore'     |
+     'authSupport'>) => {
       state.showType = action.payload
     },
     setScrollTop: (state, action: PayloadAction<number>) => {

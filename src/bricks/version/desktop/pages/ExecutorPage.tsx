@@ -235,7 +235,10 @@ const ExecutorPage: React.FC = () => {
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
-          <Pagintation></Pagintation>
+          <Pagintation count={
+            ( executors.length / 20 ) < 1 ? 1 :
+            ( executors.length / 20 ) + ( executors.length % 20 )
+          }></Pagintation>
         </PagintationContainer>
 
       </CustExecContentInnerArea>

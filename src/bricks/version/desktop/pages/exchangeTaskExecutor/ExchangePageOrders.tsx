@@ -78,12 +78,10 @@ const ExchangePage: React.FC = () => {
     TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/spisok-zadaniy-ispolnitel')
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zadaniya-arkhiv')
-    if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
-      dispatch(setShow(true))
-      dispatch(setType("info"))
-      dispatch(setMessage("В настоящий момент задания в архиве отсутствуют"))
-    }
+    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
+    !false && dispatch(setShow(true))
+    !false && dispatch(setType("info"))
+    !false && dispatch(setMessage("В настоящий момент заданий в архиве нет"))
   }
 
   const openOrder = (param: string): void => {

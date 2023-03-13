@@ -1,24 +1,31 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState } from 'react'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { IFos } from '../../../models-ts/services/fos-models'
-import { setShow } from '../../../store/slices/fos-slice'
+import { setShow, setShowType } from '../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
+import { setActiveRole } from '../../../store/slices/role-type-slice'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import css from '../styles/services/fosContainer.css'
+
 import EmailIcon from '@mui/icons-material/Email'
 import closeIcon from '../../../img/icons/close.svg'
 import avatar from '../../../img/stock/avatar.svg'
 import cross from '../../../img/icons/greyCross.svg'
 import addUser from '../../../img/icons/addUser.svg'
 
-const { ShadowContainer, RespondFromList, Command } = css
+const { ShadowContainer, RespondFromList, Command, AuthNHelp } = css
 
 const FOS: React.FC<IFos> = (props: IFos) => {
 
   const { showType, scroll } = props
+
+  const [ authDataLogin, setAuthDataLogin ] = useState('nik.shipov@gmail.com')
+  const [ authDataPass, setAuthDataPass ] = useState('Qwerty12345')
+  const [ authDataLoginError, setAuthDataLoginError ] = useState(false)
+  const [ authDataPassError, setAuthDataPassError ] = useState(false)
 
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterBackground = useAppSelector(state => state.theme.blue3)
@@ -95,6 +102,42 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     dispatch(setShow(false))
   }
 
+  const changeLogin = (param: string): void => {
+    setAuthDataLogin(param)
+    setAuthDataLoginError(false)
+  } 
+
+  const changePass = (param: string): void => {
+    setAuthDataPass(param)
+    setAuthDataPassError(false)
+  } 
+
+  const restorePass = (): void => {
+    dispatch(setShowType('authRestore'))
+  }
+
+  const support = (): void => {
+    dispatch(setShowType('authSupport'))
+  }
+
+  const validate = (): void => {
+
+    let valid = 0
+    
+    if ( authDataLogin === 'nik.shipov@gmail.com' ) { valid++ }
+    else { setAuthDataLoginError(true) }
+    
+    if ( authDataPass === 'Qwerty12345' ) { valid++ }
+    else { setAuthDataPassError(true) }
+
+    if ( valid === 2 ) { 
+      dispatch(setShow(false))
+      dispatch(setActiveRole('EXECUTOR'))
+      dispatch(setShowRCC(false))
+    }
+    
+  }
+
   return (
     <React.Fragment>
       <ShadowContainer 
@@ -115,12 +158,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <RespondFromList.Title>Откликнуться на задание</RespondFromList.Title>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
-                  <RespondFromList.SubTitle>Название задания</RespondFromList.SubTitle>
+                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{"[ название задания динамически ]"}</RespondFromList.SubTitle>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine style={{ marginBottom: '15px' }}>
-                  <span style={spanTitleCSS}>Срок</span>
+                  <span style={spanTitleCSS}>Срок выполнения</span>
                   <span style={spanDelimiterCSS} />
-                  <span style={spanTitleCSS}>Стоимость</span>
+                  <span style={spanTitleCSS}>Стоимость выполнения</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
@@ -255,8 +298,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '20px' }}>
-                  <span style={spanTitleCSS}>Комментарий</span>
+                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '34px' }}>
+                  <span style={spanTitleCSS}>Комментарий к отклику</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
@@ -322,12 +365,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <RespondFromList.Title>Откликнуться на задание</RespondFromList.Title>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
-                  <RespondFromList.SubTitle>Название задания</RespondFromList.SubTitle>
+                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{"[ название задания динамически ]"}</RespondFromList.SubTitle>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine style={{ marginBottom: '15px' }}>
                   <span style={spanTitleCSS}>Срок выполнения</span>
                   <span style={spanDelimiterCSS} />
-                  <span style={spanTitleCSS}>Стоимость</span>
+                  <span style={spanTitleCSS}>Стоимость выполнения</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
@@ -370,8 +413,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '20px' }}>
-                  <span style={spanTitleCSS}>Комментарий</span>
+                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '34px' }}>
+                  <span style={spanTitleCSS}>Комментарий к отклику</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
@@ -434,7 +477,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 onClick={closeFos}
               />
               <RespondFromList.ContentLine>
-                <RespondFromList.Title style={{ marginBottom: '40px' }}>Пригласить в команду</RespondFromList.Title>
+                <RespondFromList.Title style={{ marginBottom: '38px' }}>Пригласить в команду</RespondFromList.Title>
               </RespondFromList.ContentLine>
               <RespondFromList.ContentLine>
                 <SelectField 
@@ -454,7 +497,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </RespondFromList.ContentLine>
-              <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '30px' }}>
+              <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '24px' }}>
                 <span style={spanTitleCSS}>Предлагаемый гонорар</span>
               </RespondFromList.ContentLine> 
               <RespondFromList.ContentLine>
@@ -999,6 +1042,384 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </Command.ContentLine>
               </Command.FOSInner>
             </Command.FOS>
+          </React.Fragment> 
+          : showType === 'authLogin' 
+          ? <React.Fragment>
+            <AuthNHelp.FOS width={"600px"}>
+              <AuthNHelp.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </AuthNHelp.CloseContainer>
+              <AuthNHelp.Title>Войти</AuthNHelp.Title>
+              <AuthNHelp.ContentLine>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  defaultValue='nik.shipov@gmail.com'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваш email"}
+                  isError={authDataLoginError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ authDataLogin, changeLogin ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                    marginTop: '10px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '24px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE_PASSWORD_VISIBILITY'}
+                  valueType='text'
+                  defaultValue='Qwerty12345!!'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваш пароль"}
+                  isError={authDataPassError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ authDataPass, changePass ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '30px' }}>
+                <ButtonComponent
+                  inner={"Войти"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={validate}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: blueColor2,
+                    color: 'white',
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '10px' }}>
+                <ButtonComponent
+                  inner={"Забыли пароль?"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={restorePass}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: "transparent",
+                    boxShadow: 'none',
+                    color: blueColor2,
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+            </AuthNHelp.FOS>
+          </React.Fragment> 
+          : showType === 'authRestore' 
+          ? <React.Fragment>
+            <AuthNHelp.FOS width={"600px"}>
+              <AuthNHelp.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </AuthNHelp.CloseContainer>
+              <AuthNHelp.Title>Восстановление пароля</AuthNHelp.Title>
+              <AuthNHelp.ContentLine>
+                <span style={{ textAlign: 'center', lineHeight: '20px', display: 'block', width: '100%' }}>Введите email адрес, указанный вами при регистрации<br/>Мы вышлем на него новый пароль</span>
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  defaultValue='nik.shipov@gmail.com'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваш email"}
+                  isError={authDataLoginError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ authDataLogin, changeLogin ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                    marginTop: '10px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '30px' }}>
+                <ButtonComponent
+                  inner={"Отправить новый пароль"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={validate}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: blueColor2,
+                    color: 'white',
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '10px' }}>
+                <ButtonComponent
+                  inner={"Написать в поддержку"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={support}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: "transparent",
+                    boxShadow: 'none',
+                    color: blueColor2,
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '0px' }}>
+                <ButtonComponent
+                  inner={"Вернуться назад"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={() => dispatch(setShowType('authLogin'))}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: "transparent",
+                    boxShadow: 'none',
+                    color: greyColor2,
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+            </AuthNHelp.FOS>
+          </React.Fragment> 
+          : showType === 'authSupport'
+          ? <React.Fragment>
+            <AuthNHelp.FOS width={"600px"}>
+              <AuthNHelp.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </AuthNHelp.CloseContainer>
+              <AuthNHelp.Title>Обратиться в поддержку</AuthNHelp.Title>
+              <AuthNHelp.ContentLine>
+                <span style={{ lineHeight: '20px', display: 'block', width: '100%' }}>Заполните формы ниже<br/>Ответ на ваш вопрос вы получите на почту</span>
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  defaultValue='николай'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваше имя"}
+                  isError={authDataLoginError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  defaultValue='nik.shipov@gmail.com'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваш email"}
+                  isError={authDataLoginError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ authDataLogin, changeLogin ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
+                <span style={{ display: 'block', fontWeight: 'bold' }}>Категория вопроса</span>
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '20px' }}>
+                <SelectField 
+                  placeholder={"Выберите из списка"}
+                  params={{ width: 600, height: 50 }}
+                  data={[]}
+                  multy={false}
+                  action={() => {}}
+                  actionType={""}
+                  actionParams={[]}
+                  showIcon={true}
+                  icon={null}
+                  iconStyles={{
+                    marginTop: '-12px',
+                    marginLeft: '6px',
+                    width: '34px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Введите ваш вопрос"}
+                  isError={false}
+                  isDisabled={true}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginTop: '0px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '30px', justifyContent: 'flex-end' }}>
+                <ButtonComponent
+                  inner={"Отправить"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={validate}
+                  actionData={null}
+                  widthType={'px'}
+                  widthValue={200}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: blueColor2,
+                    color: 'white',
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
+                <ButtonComponent
+                  inner={"Вернуться назад"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={() => dispatch(setShowType('authRestore'))}
+                  actionData={null}
+                  widthType={'%'}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: "transparent",
+                    boxShadow: 'none',
+                    color: greyColor2,
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </AuthNHelp.ContentLine>
+            </AuthNHelp.FOS>
           </React.Fragment> : <React.Fragment></React.Fragment>
         
         }

@@ -2420,6 +2420,41 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.CloseIconContainer>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Карточка спора</h3>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '30px' }}>Юрист</span>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'flex-start',
+                          position: 'relative'
+                        }}
+                      >
+                        <img
+                          alt={""}
+                          src={defaulrAvatar}
+                          style={{
+                            display: 'block',
+                            position: 'relative',
+                            width: '56px',
+                            marginRight: '20px'
+                          }}
+                        />
+                        <div 
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            justifyContent: 'flex-start',
+                            position: 'relative',
+                            marginTop: '0px'
+                          }}
+                        >
+                          <span style={{ fontSize: '16px', width: '200px', marginBottom: '0px', lineHeight: '22px', fontWeight: '500' }}>Петров Иван Владимирович</span>
+                        </div>
+                      </div>
+                    </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '44px', marginBottom: '24px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Претензия</span>
@@ -2589,7 +2624,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine style={{ marginBottom: '30px' }}>
                     <span style={{ lineHeight: '22px' }}>{ localText }</span>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginBottom: '50px' }}>
+                  <MasterDocFork.ContentLine style={{ marginBottom: '48px' }}>
                     <ButtonComponent
                       inner={"Согласен"} 
                       type='CONTAINED_DEFAULT' 
@@ -2637,6 +2672,238 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </MasterDocFork.ContentLine>
+                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '46px' }}/>
+                  <MasterDocFork.ContentLine style={{ marginTop: '0px', marginBottom: '20px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Общение</span>
+                  </MasterDocFork.ContentLine>
+                  <ChatFork.ChatHeader>
+                    <div style={divCSS}>
+                      <ChatFork.ChatHeaderAvatar style={avatarContainerCSS}>
+                        <img
+                          alt={""}
+                          src={defaulrAvatar}
+                          style={avatarCSS}
+                        />
+                        <img
+                          alt={""}
+                          src={defaulrAvatar}
+                          style={{ ...avatarCSS, marginLeft: '-14px' }}
+                        />
+                        <img
+                          alt={""}
+                          src={defaulrAvatar}
+                          style={{ ...avatarCSS, marginLeft: '-14px' }}
+                        />
+                      </ChatFork.ChatHeaderAvatar>
+                    </div>
+                    <div style={divCSS}>
+                      <ChatFork.ChatHeaderEnableDocs>
+                        <span style={{ ...lastActiveSpanCSS, fontSize: '15px' }}>Документы</span>
+                        <Switch color={"primary"} defaultChecked />
+                      </ChatFork.ChatHeaderEnableDocs>
+                      <InputComponent
+                        type={'TEXT_INPUT_OUTLINE_SEARCH'}
+                        valueType='text'
+                        required={false}
+                        widthType={'px'}
+                        widthValue={300}
+                        heightValue={'56px'}
+                        label={"Поиск по сообщениям"}
+                        isError={false}
+                        isDisabled={false}
+                        labelShrinkLeft={"0px"}
+                        innerLabel={null}
+                        css={{
+                          fontSize: '12px',
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          marginBottom: '8px',
+                          backgroundColor: 'white'
+                        }}
+                      />
+                    </div>
+                  </ChatFork.ChatHeader>
+                  <ChatFork.ChatBody
+                    border={`1px solid ${chatBorderColor}`}
+                    backgroundColor={chatBackground}
+                    style={{ marginTop: '12px', height: 'auto' }}
+                  >
+                    <ChatFork.ChatBodyInner
+                      border={`1px solid transparent`}
+                      backgroundColor={chatBackground}
+                    >
+                      <ChatMessagesContainer
+                        data={[
+                          { 
+                            date: '05.01.2022', 
+                            messages: [
+                              { 
+                                type: 'me', 
+                                content: [
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:05',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:05',
+                                    likes: 0  }
+                                ]
+                              },
+                              { 
+                                type: 'you', 
+                                content: [
+                                  { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                    time: '20:06',
+                                    name: 'Виолетта',
+                                    likes: 0,
+                                    files: {
+                                      id: 'undefined',
+                                      ext: 'doc',
+                                      name: 'План_Склада.doc'
+                                    }},
+                                ]
+                              },
+                              { 
+                                type: 'me', 
+                                content: [
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:08',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'you', 
+                                content: [
+                                  { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'me', 
+                                content: [
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:08',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'you', 
+                                content: [
+                                  { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'action', 
+                                content: [
+                                  { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:10',
+                                    name: 'Виолетта',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'me', 
+                                content: [
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:08',
+                                    likes: 0 },
+                                ]
+                              },
+                              { 
+                                type: 'me', 
+                                content: [
+                                  { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                    time: '20:08',
+                                    likes: 0 },
+                                ]
+                              },
+                            ]
+                          }
+                        ]}
+                      />
+                    </ChatFork.ChatBodyInner>
+                    <div style={bottomDivCSS}>
+                      <div style={bottomDivInnerCSS}>
+                        <div style={clipDivCSS}>
+                          <img
+                            alt={""}
+                            src={clipIcon}
+                          />
+                        </div>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Lorem ipsum dolor sit amet consectetur adipisicing elit"}
+                          isError={false}
+                          isDisabled={true}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginTop: '0px',
+                            backgroundColor: inputBackground,
+                            marginRight: '12px'
+                          }}
+                        />
+                        <ButtonComponent
+                          inner={""} 
+                          type='ICON_BUTTON_CHAT_SUBMIT' 
+                          action={() => console.log('this is button')}
+                          actionData={null}
+                          widthType={'px'}
+                          widthValue={56}
+                          children={""}
+                          childrenCss={undefined}
+                          iconSrc={null}
+                          iconCss={undefined}
+                          muiIconSize={30}
+                          MuiIconChildren={ArrowUpwardIcon}
+                          css={{
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            padding: '4px',
+                            backgroundColor: chatSubmitColor,
+                            width: '56px',
+                            height: '56px',
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </ChatFork.ChatBody>
                 </MasterDocFork.ChatContainer>
             </React.Fragment> : <React.Fragment></React.Fragment> }
 

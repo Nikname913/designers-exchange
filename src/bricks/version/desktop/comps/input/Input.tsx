@@ -25,7 +25,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     isDisabled,
     label,
     innerLabel,
-    labelShrinkLeft } = props
+    labelShrinkLeft,
+    defaultValue,
+    store } = props
 
   interface IState {
     showPassword: boolean,
@@ -79,8 +81,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
       setValues({ ...values, [prop]: event.target.value })
+      store && store[1](event.target.value)
     }
 
+  const handleChangeSimple = (event: React.ChangeEvent<HTMLInputElement>) => store && store[1](event.target.value) 
   const clickShowPassword = () => {
     setValues({
       ...values,
@@ -111,6 +115,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           : type === 'TEXT_INPUT_OUTLINE'
           ? <CustomTextField 
               type={valueType}
+              value={store && store[0]}
+              onChange={handleChangeSimple}
               id="standard-basic" 
               label={label}
               error={isError}
@@ -138,7 +144,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           : type === 'TEXT_INPUT_OUTLINE_PASSWORD_VISIBILITY'
           ? <CustomTextField 
               type={values.showPassword ? 'text' : 'password'}
-              defaultValue={"qwerty12345"}
+              defaultValue={defaultValue && defaultValue}
+              value={ store ? store[0] : values.password}
               required={required}
               id="standard-basic" 
               label={label}

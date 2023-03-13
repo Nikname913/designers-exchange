@@ -45,6 +45,7 @@ const css = {
   Logo: styled.div`
     display: block;
     position: relative;
+    margin-left: 16px;
   `,
   HeadMenu: styled.div`
     display: flex;

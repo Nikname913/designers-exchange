@@ -45,7 +45,7 @@ const css = {
     position: relative;
     width: 84px;
     border-radius: 50%;
-    margin-right: 40px;
+    margin-right: 24px;
   `,
   UserAvatarIsOnlineIndicator: styled.span<{ backgroundColor: string }>`
     display: block;
@@ -65,6 +65,7 @@ const css = {
     align-items: flex-start;
     justify-content: flex-start;
     position: relative;
+    width: 200px;
     line-height: 23px;
     padding-right: 50px;
   `,

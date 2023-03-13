@@ -219,11 +219,40 @@ const CustomerPage: React.FC = () => {
             />
           )
         })}
+        { customers.map((item: { 
+          id: string,
+          name: string,
+          rate: number,
+          stat: Array<number>,
+          tags: Array<string>,
+          jobType: string,
+          role: string }, index: number): ReactJSXElement => {
+          return (
+            <CustomerExecutorCardPreview
+              key={item.id}
+              isDisabledMessage={true}
+              userName={item.name}
+              userAvatar={defaultAvatar}
+              userEmployment={item.jobType}
+              userLocation={"Екатеринбург"}
+              userReviews={24}  
+              userRate={item.rate}
+              userProjects={item.stat}
+              cardWidth={"calc(50% - 8px)"}
+              marginBottom={'16px'}
+              marginRight={'0px'}
+              userTags={item.tags}
+            />
+          )
+        })}
 
-        { customers.length > 1 && <PagintationContainer>
+        <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
-          <Pagintation></Pagintation>
-        </PagintationContainer> }
+          <Pagintation count={
+            ( customers.length / 20 ) < 1 ? 1 :
+            ( customers.length / 20 ) + ( customers.length % 20 )
+          }></Pagintation>
+        </PagintationContainer>
 
       </CustExecContentInnerArea>
     </ContentArea>

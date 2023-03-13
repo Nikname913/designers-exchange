@@ -32,7 +32,9 @@ export interface IInput {
   labelShrinkLeft: string,
   isError: boolean,
   isDisabled: boolean, 
-  innerLabel: string | null
+  innerLabel: string | null,
+  defaultValue?: string,
+  store?: [ string | number | boolean | undefined, Function ]
 }
 
 export interface IAlert {

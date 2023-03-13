@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import ButtonComponent from '../../comps/button/Button'
 import { db } from '../../../../firebase/check' 
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setShow, setShowType } from '../../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import css from '../../styles/views/header.css'
+
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import logo from '../../../../img/stock/logo.svg'
 import defaultAvatar from '../../../../img/stock/avatar.svg'
 import questionIcon from '../../../../img/icons/question.svg'
 import postIcon from '../../../../img/icons/post.svg'
@@ -23,6 +29,8 @@ const { HeadWrapper,
 const Header: React.FC = () => {
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
@@ -30,6 +38,7 @@ const Header: React.FC = () => {
   const whiteColor = useAppSelector(state => state.theme.white)
   const greyColor = useAppSelector(state => state.theme.grey)
   const blueColorForIcon = useAppSelector(state => state.theme.blue3)
+  const defaultColor = useAppSelector(state => state.theme.blue2)
   
   const menuItemStyle: CSSProperties = {
     fontSize: '15px',
@@ -94,6 +103,14 @@ const Header: React.FC = () => {
     alignItems: 'center',
     position: 'relative',
   }
+  const logoContainerStyle: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    cursor: 'pointer',
+  }
 
   function reverseButton(): void {
     setExecCustButtoninner((prev: 'Исполнители' | 'Заказчики'): React.ComponentState => {
@@ -110,6 +127,12 @@ const Header: React.FC = () => {
     execCustButtonInner === 'Заказчики' && navigate('/zakazchiki')
   }
 
+  function authLogin(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authLogin'))
+    dispatch(setShowRCC('undefined'))
+  }
+
   useEffect(() => console.log(db), [])
 
   return (
@@ -118,7 +141,13 @@ const Header: React.FC = () => {
       <HeadWrapper backgroundColor={"transparent"}>
       <HeadWrapperShadow></HeadWrapperShadow>
       <HeadWrapperInner backgroundColor={whiteColor}>
-        <Logo style={{ fontSize: '30px' }}>BIRLOGO</Logo>
+        <div style={logoContainerStyle} onClick={() => navigate('/spisok-zadaniy')}>
+          <img
+            alt={""}
+            src={logo}
+          />
+          <Logo style={{ fontSize: '30px' }}>BIRLOGO</Logo>
+        </div>
         <HeadMenu>
           <span style={menuItemStyle} onClick={() => navigate('/spisok-zadaniy')}>Биржа</span>
           <span style={{ ...menuItemStyle, marginRight: '3px' }} onClick={navigation}>{ execCustButtonInner }</span>
@@ -135,7 +164,7 @@ const Header: React.FC = () => {
             />
           </span> }
         </HeadMenu>
-        <HeadControllers>
+        { USER_ROLE !== 'UNDEFINED' && <HeadControllers>
           { USER_ROLE === "CUSTOMER" && <span
             onClick={() => navigate('/zakazchik-moi-zadaniya')} 
             style={{ 
@@ -205,7 +234,58 @@ const Header: React.FC = () => {
             />
 
           </HeadControllersAvatar>
-        </HeadControllers>
+        </HeadControllers> }
+        { USER_ROLE === 'UNDEFINED' && <HeadControllers>
+          <ButtonComponent
+            inner={"Войти"} 
+            type='CONTAINED_DEFAULT' 
+            action={authLogin}
+            actionData={null}
+            widthType={'px'}
+            widthValue={100}
+            children={""}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={30}
+            MuiIconChildren={ArrowUpwardIcon}
+            css={{
+              position: 'relative',
+              boxSizing: 'border-box',
+              padding: '4px',
+              backgroundColor: "transparent",
+              boxShadow: 'none',
+              color: 'black',
+              width: '56px',
+              height: '43px',
+              marginLeft: '20px'
+            }}
+          />
+          <ButtonComponent
+            inner={"Регистрация"} 
+            type='CONTAINED_DEFAULT' 
+            action={() => {}}
+            actionData={null}
+            widthType={'px'}
+            widthValue={220}
+            children={""}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={30}
+            MuiIconChildren={ArrowUpwardIcon}
+            css={{
+              position: 'relative',
+              boxSizing: 'border-box',
+              padding: '4px',
+              backgroundColor: defaultColor,
+              color: 'white',
+              width: '56px',
+              height: '43px',
+              marginLeft: '20px'
+            }}
+          />
+        </HeadControllers> }
       </HeadWrapperInner>
       </HeadWrapper>
     </React.Fragment>

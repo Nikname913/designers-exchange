@@ -41,7 +41,9 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const [ taskDescriptionLong, ] = useState('lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing')
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
+  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const delimiterColor = useAppSelector(state => state.theme.blue3)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
@@ -356,11 +358,21 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Откликнуться"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
-                  false && navigate('/zadanie')
-                  dispatch(setShowRCC('undefined'))
-                  dispatch(setShow(true))
-                  dispatch(setShowType("respondFromList"))
-                  actions && actions[1](actionsParams && actionsParams[1])
+
+                  if ( ROLE_TYPE === 'EXECUTOR' ) {
+
+                    dispatch(setShowRCC('undefined'))
+                    dispatch(setShow(true))
+                    dispatch(setShowType("respondFromList"))
+                    actions && actions[1](actionsParams && actionsParams[1])
+
+                  } else if ( ROLE_TYPE === 'UNDEFINED' ) {
+
+                    dispatch(setShow(true))
+                    dispatch(setShowType('authLogin'))
+
+                  }
+
                 }}
                 actionData={null}
                 widthType={"%"}

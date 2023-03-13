@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
             <MenuItem color={LogoColor}>Основы работы системы</MenuItem>
           </MemuItemsContainer>
         </div>
-        <ButtonGroup variant="contained" aria-label="outlined button group" color="inherit">
+        { false && <ButtonGroup variant="contained" aria-label="outlined button group" color="inherit">
           <Button 
             onClick={activeOne}
             style={{ 
@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
               color: '#D9E7F0'
               }}
             >GUES</Button> }
-        </ButtonGroup>
+        </ButtonGroup> }
         <ButtonComponent
           inner={'Обратиться в поддержку'} 
           type='CONTAINED_DEFAULT' 

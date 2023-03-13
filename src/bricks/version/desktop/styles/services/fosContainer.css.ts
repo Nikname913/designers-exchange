@@ -147,6 +147,51 @@ const css = {
       height: 1px;
       background-color: ${props => props.background};
     `
+  },
+  AuthNHelp: {
+    FOS: styled.div<{ width: string }>`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      background-color: white;
+      border-radius: 8px;
+      padding: 33px 30px;
+      width: ${props => props.width};
+      min-height: 60px;
+      box-sizing: border-box;
+      overflow: hidden;
+    `,
+    ContentLine: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: 100%;
+    `,
+    Title: styled.h3`
+      display: block;
+      position: relative;
+      width: 100%;
+      margin: 0px;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    `,
+    CloseContainer: styled.span`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+      position: absolute;
+      left: 100%;
+      top: 0%;
+      margin-left: -42px;
+      margin-top: 18px;
+      cursor: pointer;
+    `
   }
 }
 

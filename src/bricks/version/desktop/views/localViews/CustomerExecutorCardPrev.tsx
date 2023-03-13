@@ -104,7 +104,8 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     position: 'relative',
     fontSize: '12px',
     color: greyColor2,
-    lineHeight: '18px'
+    lineHeight: '18px',
+    textAlign: 'center',
   }
   const messageButtonContainerCSS: React.CSSProperties = {
     display: 'block',
@@ -146,7 +147,7 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
           </UserAvatar>
           <UserTextInfo>
             <UserName>{ userName }</UserName>
-            <UserEmployment color={userEmploymentColor}>Employment :: { userEmployment }</UserEmployment>
+            <UserEmployment color={userEmploymentColor}>{ userEmployment }</UserEmployment>
             <div style={iconLocationContainerCSS}>
               <img
                 alt={""}
@@ -245,7 +246,9 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
           { tagsLimit === 4 && 
             <React.Fragment>
               { userTags.length > 4 && <SpecializationTag onClick={fullTagslimit} backgroundColor={blueColor3}>
+                
                 {"+"}{ userTags.length - 4 }
+              
               </SpecializationTag> }
             </React.Fragment> 
           }

@@ -1,5 +1,13 @@
 export interface IFos {
-  showType: 'respondFromList' | 'respondFromTask' | 'inviteOnTeam' | 'commandRoot' | 'command' | 'commandShort',
+  showType: 'respondFromList' | 
+  'respondFromTask'           | 
+  'inviteOnTeam'              | 
+  'commandRoot'               | 
+  'command'                   | 
+  'commandShort'              | 
+  'authLogin'                 |
+  'authRestore'               |
+  'authSupport',
   showShadow: boolean,
   scroll: number
 }
