@@ -5,6 +5,10 @@ import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
 import Visibility from '@mui/icons-material/Visibility'
 import Search from '@mui/icons-material/Search'
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { IInput } from '../../../../models-ts/comps/comps-models'
 import css from './input-style'
@@ -227,6 +231,12 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer sx={{ width: '100%' }} components={['DatePicker']}>
+                <DatePicker sx={{ backgroundColor: 'white', width: '100%' }} label={label} />
+              </DemoContainer>
+            </LocalizationProvider>
           : type === 'TEXT_INPUT_OUTLINE_SEARCH'
           ? <CustomTextField 
               type={'search'}

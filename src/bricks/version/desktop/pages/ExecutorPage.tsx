@@ -220,6 +220,7 @@ const ExecutorPage: React.FC = () => {
               isDisabledMessage={false}
               userName={item.name}
               userAvatar={defaultAvatar}
+              userType={"EXECUTOR"}
               userEmployment={item.jobType}
               userLocation={"Екатеринбург"}
               userReviews={24}

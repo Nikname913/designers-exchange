@@ -22,7 +22,8 @@ const rightContentReducer = createSlice({
        'AgreementCC'    | 
        'AgreementNewCC' | 
        'LawyerCC'       |
-       'ArguementCC'>) => {
+       'ArguementCC'    |
+       'EditProfileCC'>) => {
       state.showType = action.payload
     },
     setScrollTop: (state, action: PayloadAction<number>) => {

@@ -27,10 +27,10 @@ const initialState: ITaskContent = {
         status: 'searching',
         viewtype: 'default',
         coast: {
-          value: 100000,
+          value: '100 000',
           issafe: true,
-          prepay: 20000,
-          exper: 55000,
+          prepay: '20 000',
+          exper: '55 000',
         },
         responds: [
           { user: 'e-0005' },
@@ -52,10 +52,10 @@ const initialState: ITaskContent = {
         status: 'searching',
         viewtype: 'default',
         coast: {
-          value: 60000,
+          value: '60 000',
           issafe: true,
-          prepay: 10000,
-          exper: 34000,
+          prepay: '10 000',
+          exper: '34 000',
         },
         responds: [
           { user: 'e-0001' },
@@ -78,9 +78,9 @@ const initialState: ITaskContent = {
         status: 'searching',
         viewtype: 'default',
         coast: {
-          value: 120000,
+          value: '120 000',
           issafe: true,
-          prepay: 40000,
+          prepay: '40 000',
           exper: 45000,
         },
         responds: [
@@ -106,10 +106,10 @@ const initialState: ITaskContent = {
         status: 'searching',
         viewtype: 'default',
         coast: {
-          value: 115000,
+          value: '115 000',
           issafe: true,
-          prepay: 28000,
-          exper: 50000,
+          prepay: '28 000',
+          exper: '50 000',
         },
         responds: [
           { user: 'e-0002' },
@@ -130,7 +130,7 @@ const initialState: ITaskContent = {
         status: 'searching',
         viewtype: 'default',
         coast: {
-          value: 50000,
+          value: '50 000',
           issafe: false,
           prepay: undefined,
           exper: undefined,
@@ -156,7 +156,7 @@ const initialState: ITaskContent = {
         status: 'work',
         viewtype: 'default',
         coast: {
-          value: 50000,
+          value: '50 000',
           issafe: false,
           prepay: undefined,
           exper: undefined,
@@ -182,10 +182,10 @@ const initialState: ITaskContent = {
         status: 'work',
         viewtype: 'default',
         coast: {
-          value: 135000,
+          value: '135 000',
           issafe: true,
-          prepay: 32000,
-          exper: 65000,
+          prepay: '32 000',
+          exper: '65 000',
         },
         responds: [
           { user: 'e-0005' },
@@ -207,10 +207,10 @@ const initialState: ITaskContent = {
         status: 'work',
         viewtype: 'default',
         coast: {
-          value: 85000,
+          value: '85 000',
           issafe: true,
-          prepay: 28000,
-          exper: 40000,
+          prepay: '28 000',
+          exper: '40 000',
         },
         responds: [
           { user: 'e-0006' },
@@ -234,10 +234,10 @@ const initialState: ITaskContent = {
         status: 'backside',
         viewtype: 'default',
         coast: {
-          value: 85000,
+          value: '85 000',
           issafe: true,
-          prepay: 28000,
-          exper: 40000,
+          prepay: '28 000',
+          exper: '40 000',
         },
         responds: []  
       },
@@ -255,7 +255,7 @@ const initialState: ITaskContent = {
         status: 'backside',
         viewtype: 'default',
         coast: {
-          value: 50000,
+          value: '50 000',
           issafe: false,
           prepay: undefined,
           exper: undefined,

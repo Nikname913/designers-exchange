@@ -75,6 +75,7 @@ const Header: React.FC = () => {
     position: 'relative',
     width: '50px',
     height: '50px',
+    cursor: 'pointer',
   }
   const questionIconStyle: CSSProperties = {
     display: 'block',
@@ -225,7 +226,10 @@ const Header: React.FC = () => {
               marginRight: '30px'
             }}
           >{wallet} ₽</span>
-          <HeadControllersAvatar backgroundColor={blueColorForIcon}>
+          <HeadControllersAvatar 
+            backgroundColor={blueColorForIcon}
+            onClick={() => USER_ROLE === 'EXECUTOR' && navigate('/cabinet-ispolnitelya')}
+          >
 
             <img
               alt={""}

@@ -8,6 +8,7 @@ import CustomerPage from '../pages/CustomerPage'
 import CustomerProfilePage from '../pages/CustomerProfilePage'
 import ExecutorPage from '../pages/ExecutorPage'
 import ExecutorProfilePage from '../pages/ExecutorProfilePage'
+import ExecutorCabinetPage from '../pages/userPages/UserCabinetPage'
 
 import ExchangePageOrders from '../pages/exchangeTaskMain/ExchangePageOrders'
 import ExchangePageTasks from '../pages/exchangeTaskMain/ExchangePageTasks'
@@ -130,8 +131,12 @@ const DeskRoutes: React.FC = () => {
           element={<ExecutorPage/>} 
         />
         <Route 
-          path='cabinet-ispolnitelya' 
+          path='profil-ispolnitelya' 
           element={<ExecutorProfilePage/>} 
+        />
+        <Route 
+          path='cabinet-ispolnitelya' 
+          element={<ExecutorCabinetPage/>} 
         />
         <Route 
           path='glavnaya' 

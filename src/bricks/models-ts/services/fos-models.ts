@@ -7,7 +7,8 @@ export interface IFos {
   'commandShort'              | 
   'authLogin'                 |
   'authRestore'               |
-  'authSupport',
+  'authSupport'               |
+  'changeAvatar',
   showShadow: boolean,
   scroll: number
 }

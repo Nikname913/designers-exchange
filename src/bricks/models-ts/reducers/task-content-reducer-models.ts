@@ -16,10 +16,10 @@ export interface ITaskContent {
       status: 'work' | 'complete' | 'searching' | 'backside',
       viewtype: string,
       coast: {
-        value: number,
+        value: any,
         issafe: boolean,
-        prepay: number | undefined,
-        exper: number | undefined,
+        prepay: any,
+        exper: any,
       },
       responds: Array<{
         user: string,

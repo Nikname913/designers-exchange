@@ -15,8 +15,15 @@ import closeIcon from '../../../img/icons/close.svg'
 import avatar from '../../../img/stock/avatar.svg'
 import cross from '../../../img/icons/greyCross.svg'
 import addUser from '../../../img/icons/addUser.svg'
+import download from '../../../img/icons/download.svg'
+import avatar1 from '../../../img/avatars/bear.svg'
+import avatar2 from '../../../img/avatars/enot.svg'
+import avatar3 from '../../../img/avatars/fox.svg'
+import avatar4 from '../../../img/avatars/group.svg'
+import avatar5 from '../../../img/avatars/man.svg'
+import avatar6 from '../../../img/avatars/woman.svg'
 
-const { ShadowContainer, RespondFromList, Command, AuthNHelp } = css
+const { ShadowContainer, RespondFromList, Command, AuthNHelp, ChangeAvatar } = css
 
 const FOS: React.FC<IFos> = (props: IFos) => {
 
@@ -32,8 +39,13 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const greenColor = useAppSelector(state => state.theme.green)
   const yellowColor = useAppSelector(state => state.theme.yellow)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
+  const greyColor3 = useAppSelector(state => state.theme.grey3)
   const blueColor2 = useAppSelector(state => state.theme.blue2)
   const dispatch = useAppDispatch()
+
+  const [ avatarBorders, setAvatarBorders ] = useState<Array<any>>([
+    greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3
+  ])
 
   const spanDelimiterCSS: CSSProperties = {
     display: 'block',
@@ -95,6 +107,39 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     alignItems: 'center',
     justifyContent: 'flex-start',
     position: 'relative',
+  }
+  const avatarContainerCSS: CSSProperties = {
+    display: 'flex', 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-around',
+    border: `3px solid ${greyColor3}`,
+    borderRadius: '50%',
+    position: 'relative',
+    boxSizing: 'border-box',
+    width: '60px',
+    height: '60px',
+    overflow: 'hidden',
+    cursor: 'pointer',
+    marginRight: '10px'
+  }
+  const miniAvatarCSS: CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    width: '73%'
+  }
+  const downloadAreaCSS: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    width: '600px',
+    height: '200px',
+    borderRadius: '4px',
+    border: `2px dashed ${blueColor2}`,
+    cursor: 'pointer',
+    marginTop: '30px'
   }
 
   const closeFos = (): void => {
@@ -1420,6 +1465,129 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 />
               </AuthNHelp.ContentLine>
             </AuthNHelp.FOS>
+          </React.Fragment> 
+          : showType === 'changeAvatar'
+          ? <React.Fragment>
+              <ChangeAvatar.FOS width={"680px"}>
+                <ChangeAvatar.CloseContainer onClick={closeFos}>
+                  <img
+                    alt={""}
+                    src={closeIcon}
+                  />
+                </ChangeAvatar.CloseContainer>
+                <ChangeAvatar.ContentLine style={{ justifyContent: 'flex-start' }}>
+                  <div>
+                    <img
+                      alt={""}
+                      src={avatar}
+                      style={{ width: '150px' }}
+                    />
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '30px' }}>
+                    <span style={{ fontSize: '32px', marginBottom: '10px' }}>Аватар</span>
+                    <span style={{ marginBottom: '18px' }}>Загрузите аватар или выберите из предложенных</span>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[0]}` }}
+                        onClick={() => setAvatarBorders([ blueColor2, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar1}
+                          style={{ ...miniAvatarCSS, marginBottom: '-5px' }}
+                        />
+                      </div>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[1]}` }}
+                        onClick={() => setAvatarBorders([ greyColor3, blueColor2, greyColor3, greyColor3, greyColor3, greyColor3 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar2}
+                          style={{ ...miniAvatarCSS, marginBottom: '-3px' }}
+                        />
+                      </div>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[2]}` }}
+                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, blueColor2, greyColor3, greyColor3, greyColor3 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar3}
+                          style={{ ...miniAvatarCSS, marginBottom: '-3px' }}
+                        />
+                      </div>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[3]}` }}
+                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, blueColor2, greyColor3, greyColor3 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar4}
+                          style={{ ...miniAvatarCSS, marginBottom: '-16px', width: '100%' }}
+                        />
+                      </div>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[4]}` }}
+                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, blueColor2, greyColor3 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar5}
+                          style={{ ...miniAvatarCSS, marginBottom: '-10px' }}
+                        />
+                      </div>
+                      <div 
+                        style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[5]}` }}
+                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, blueColor2 ])}
+                      >
+                        <img
+                          alt={""}
+                          src={avatar6}
+                          style={{ ...miniAvatarCSS, marginBottom: '-10px' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </ChangeAvatar.ContentLine>
+                <ChangeAvatar.ContentLine>
+                  <div style={downloadAreaCSS}>
+                    <img
+                      alt={""}
+                      src={download}
+                      style={{ marginTop: '28px' }}
+                    />
+                    <span style={{ color: blueColor2, marginTop: '18px' }}>
+                      <i style={{ fontStyle: 'normal', fontWeight: 600 }}>Выберите файл</i> или перетащите сюда
+                    </span>
+                  </div>
+                </ChangeAvatar.ContentLine>
+                <ChangeAvatar.ContentLine style={{ justifyContent: 'space-around', marginTop: '32px' }}>
+                  <ButtonComponent
+                    inner={"Отправить на проверку"} 
+                    type='CONTAINED_DEFAULT' 
+                    action={validate}
+                    actionData={null}
+                    widthType={'px'}
+                    widthValue={240}
+                    children={""}
+                    childrenCss={undefined}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={30}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      padding: '4px',
+                      backgroundColor: blueColor2,
+                      color: 'white',
+                      width: '56px',
+                      height: '43px',
+                    }}
+                  />
+                </ChangeAvatar.ContentLine>
+              </ChangeAvatar.FOS>
           </React.Fragment> : <React.Fragment></React.Fragment>
         
         }

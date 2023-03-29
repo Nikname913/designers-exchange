@@ -2,8 +2,13 @@ import React, { ReactElement, useState } from 'react'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/right-content-slice'
+import { setShow as setShowFOS, 
+  setShowType as setShowTypeFOS } from '../../../store/slices/fos-slice'
 import DocumentLine from '../views/localViews/DocumentLine'
 import Switch from '@mui/material/Switch'
+import Radio from '@mui/material/Radio'
+import RadioGroup from '@mui/material/RadioGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
@@ -31,7 +36,7 @@ import wait from '../../../img/icons/wait.svg'
 import plus from '../../../img/icons/plus.svg'
 import infoGrey from '../../../img/icons/infoGrey.svg'
 
-const { ShadowContainer, ShadowContainerInner, ChatFork, MasterDocFork } = css
+const { ShadowContainer, ShadowContainerInner, ChatFork, MasterDocFork, EditProfileFork } = css
 
 const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightContentContainer) => {
 
@@ -183,6 +188,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   }
   function showNewAgreement(): void {
     dispatch(setShowType('AgreementNewCC'))
+  }
+  function changeAvatar(): void {
+    dispatch(setShowFOS(true))
+    dispatch(setShowTypeFOS('changeAvatar'))
   }
 
   return (
@@ -2905,7 +2914,222 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                   </ChatFork.ChatBody>
                 </MasterDocFork.ChatContainer>
-            </React.Fragment> : <React.Fragment></React.Fragment> }
+            </React.Fragment> 
+            : contentType === 'EditProfileCC'
+
+            /* ---------------------------------------- */
+            /* базовое окно для редактирования профиля
+            /* ---------------------------------------- */
+
+            ? <React.Fragment>
+                <EditProfileFork.Container backgroundColor={backgroundColor} style={{ paddingBottom: '28px' }}>
+                  <EditProfileFork.CloseIconContainer>
+                    <EditProfileFork.CloseIcon onClick={showrightContent}>
+                      <img
+                        alt={""} 
+                        src={closeIcon}  
+                      />
+                    </EditProfileFork.CloseIcon>
+                  </EditProfileFork.CloseIconContainer>
+                  <EditProfileFork.ContentLine>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '60px' }}>
+                      <img
+                        alt={""}
+                        src={defaulrAvatar}
+                        style={{ width: '150px' }}
+                      />
+                      <span 
+                        style={{ color: chatSubmitColor, marginTop: '16px', cursor: 'pointer' }}
+                        onClick={changeAvatar}
+                      >Сменить</span>
+                    </div>
+                    <div>
+                      <EditProfileFork.ContentLine>
+                        <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Самозанятой гражданин</span>
+                      </EditProfileFork.ContentLine>
+                      <EditProfileFork.ContentLine style={{ marginTop: '20px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={33}
+                          heightValue={'50px'}
+                          label={"Фамилия"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "Захарова", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white',
+                            marginRight: '20px'
+                          }}
+                        />
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={33}
+                          heightValue={'50px'}
+                          label={"Имя"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "Виолетта", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white',
+                            marginRight: '20px'
+                          }}
+                        />
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={33}
+                          heightValue={'50px'}
+                          label={"Отчество"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "Владимировна", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProfileFork.ContentLine>
+                    </div>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '44px' }} />
+                  <EditProfileFork.ContentLine>
+                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Специализация</span>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
+                    <SelectField 
+                      placeholder={"Сортировать по дате"}
+                      params={{ width: 1400, mb: '0px', height: 50 }}
+                      data={[
+                        { value: '1', label: 'Вентиляция' },
+                        { value: '2', label: 'Сигнализация' },
+                        { value: '3', label: 'Пожарная безопасность' },
+                      ]}
+                      multy={true}
+                      action={() => {}}
+                      actionType={""}
+                      actionParams={[]}
+                      showIcon={true}
+                      icon={null}
+                      iconStyles={{
+                        marginTop: '-12px',
+                        marginLeft: '6px',
+                        width: '34px',
+                      }}
+                    />
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '30px' }}>
+                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Мои навыки</span>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '14px' }}>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      name="row-radio-buttons-group"
+                    >
+                      <FormControlLabel value="female" control={<Radio />} label="2D" />
+                      <FormControlLabel value="male" control={<Radio />} label="3D" />
+                      <FormControlLabel value="other" control={<Radio />} label="BIM" />
+                    </RadioGroup>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
+                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Информация о себе</span>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Введите описание"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '44px' }} />
+                  <EditProfileFork.ContentLine style={{ marginTop: '0px' }}>
+                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Пройти проверку квалификации</span>
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px', marginBottom: '34px' }}>
+                    <SelectField 
+                      placeholder={"Выберите из списка"}
+                      params={{ width: 420, mb: '0px', height: 50 }}
+                      data={[]}
+                      multy={true}
+                      action={() => {}}
+                      actionType={""}
+                      actionParams={[]}
+                      showIcon={true}
+                      icon={null}
+                      iconStyles={{
+                        marginTop: '-12px',
+                        marginLeft: '6px',
+                        width: '34px',
+                      }}
+                    />
+                  </EditProfileFork.ContentLine>
+                  { Array(2)
+                    .fill({ 
+                      status: 'WHITE', 
+                      data: { 
+                        name: 'Акт_выполненных работ.pdf', 
+                        date: '29.02.2023', 
+                        statusName: 'Подписан' 
+                      }
+                    }).map((item, index) => {
+
+                    return (
+                      <MasterDocFork.ContentLine key={index}>
+                        <DocumentLine
+                          status={item.status}
+                          data={item.data}
+                        />
+                      </MasterDocFork.ContentLine>
+                    )
+
+                  })}
+                </EditProfileFork.Container>
+            </React.Fragment>: <React.Fragment></React.Fragment> }
 
         </ShadowContainerInner>
       </ShadowContainer>

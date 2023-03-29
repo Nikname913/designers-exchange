@@ -9,7 +9,8 @@ export interface IFOSReducer {
     'commandShort'            | 
     'authLogin'               |
     'authRestore'             |
-    'authSupport'
+    'authSupport'             |
+    'changeAvatar'
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

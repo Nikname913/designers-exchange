@@ -15,6 +15,15 @@ const css = {
     padding-right: 210px;
     box-sizing: border-box;
   `,
+  ContentContainer: styled.section`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    position: relative;
+    width: calc(100% - 120px);
+    box-sizing: border-box;
+  `,
   CustExecContentInnerArea: styled.div`
     display: flex;
     flex-wrap: wrap;

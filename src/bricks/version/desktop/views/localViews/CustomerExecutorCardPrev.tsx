@@ -1,5 +1,6 @@
 /* eslint-disable array-callback-return */
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import EmailIcon from '@mui/icons-material/Email'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow } from '../../../../store/slices/right-content-slice'
@@ -8,6 +9,7 @@ import ButtonComponent from '../../comps/button/Button'
 import css from '../../styles/views/customerExecutorCardPrev.css'
 import location from '../../../../img/icons/location.svg'
 import star from '../../../../img/icons/star.svg'
+import semiMenu from '../../../../img/icons/semiMenu.svg'
 
 const { CardWrapper, 
   CardWrapperContentLine,
@@ -28,9 +30,11 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
 ) => {
 
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const { userName, 
     userAvatar, 
+    userType,
     userEmployment, 
     userLocation,
     userReviews,
@@ -40,7 +44,8 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     isDisabledMessage,
     cardWidth,
     marginBottom,
-    marginRight } = props
+    marginRight,
+    forCabinet } = props
 
   const whiteColor = useAppSelector(state => state.theme.white)
   const greyColor = useAppSelector(state => state.theme.grey)
@@ -108,7 +113,10 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     textAlign: 'center',
   }
   const messageButtonContainerCSS: React.CSSProperties = {
-    display: 'block',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
     position: 'absolute',
     width: '48px',
     height: '48px',
@@ -125,6 +133,10 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
 
   function showRightContent(): void {
     dispatch(setShow(true))
+  }
+
+  function openProfile(): void {
+    userType === 'EXECUTOR' && navigate('/profil-ispolnitelya')
   }
 
   return (
@@ -158,43 +170,47 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
             </div>
           </UserTextInfo>
           <div style={messageButtonContainerCSS}>
-            { isDisabledMessage ? <ButtonComponent
-              inner={""} 
-              type='ICON_BUTTON_DISABLED' 
-              action={() => console.log('this is button')}
-              actionData={null}
-              widthType={'px'}
-              widthValue={48}
-              children={null}
-              childrenCss={undefined}
-              iconSrc={null}
-              iconCss={undefined}
-              muiIconSize={30}
-              MuiIconChildren={EmailIcon}
-              css={{
-                position: 'relative',
-                boxSizing: 'border-box',
-                backgroundColor: greyColor3,
-              }}
-            /> : <ButtonComponent
-              inner={""} 
-              type='ICON_BUTTON' 
-              action={showRightContent}
-              actionData={null}
-              widthType={'px'}
-              widthValue={48}
-              children={null}
-              childrenCss={undefined}
-              iconSrc={null}
-              iconCss={undefined}
-              muiIconSize={30}
-              MuiIconChildren={EmailIcon}
-              css={{
-                position: 'relative',
-                boxSizing: 'border-box',
-                backgroundColor: whiteBlueBackground,
-              }}
-            />}
+            
+            { !forCabinet ? <React.Fragment>
+              { isDisabledMessage ? <ButtonComponent
+                inner={""} 
+                type='ICON_BUTTON_DISABLED' 
+                action={() => console.log('this is button')}
+                actionData={null}
+                widthType={'px'}
+                widthValue={48}
+                children={null}
+                childrenCss={undefined}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={30}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  backgroundColor: greyColor3,
+                }}
+              /> : <ButtonComponent
+                inner={""} 
+                type='ICON_BUTTON' 
+                action={showRightContent}
+                actionData={null}
+                widthType={'px'}
+                widthValue={48}
+                children={null}
+                childrenCss={undefined}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={30}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  backgroundColor: whiteBlueBackground,
+                }}
+              />}
+            </React.Fragment> : <img alt={""} src={semiMenu} /> }
+
         </div>
         </CardWrapperContentLine>
         <CardWrapperContentLine>
@@ -258,7 +274,7 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
           <ButtonComponent
             inner={"В профиль"} 
             type="CONTAINED_DEFAULT" 
-            action={() => {}}
+            action={openProfile}
             actionData={null}
             widthType={"%"}
             widthValue={100}

@@ -1,6 +1,7 @@
 export interface ICustExecCardPrevProps {
   userName: string,
   userAvatar: string,
+  userType?: 'CUSTOMER' | 'EXECUTOR',
   userEmployment: string,
   userLocation: string,
   userReviews: number,
@@ -11,6 +12,7 @@ export interface ICustExecCardPrevProps {
   cardWidth: string | null,
   marginBottom: string | null,
   marginRight: string | null,
+  forCabinet?: boolean
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
