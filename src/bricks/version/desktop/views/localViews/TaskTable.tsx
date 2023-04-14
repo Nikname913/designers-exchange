@@ -6,6 +6,7 @@ import ButtonComponent from '../../comps/button/Button'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
+import { setTask, setExecutor } from '../../../../store/slices/respond-slice'
 import css from '../../styles/views/taskTable.css'
 import location from '../../../../img/icons/location.svg'
 
@@ -38,12 +39,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const [ containerHeight, setContainerHeight ] = useState('short')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
-  const [ taskDescriptionLong, ] = useState('lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing. lorem ipsum dolor sit amet, consectetur adipiscing')
+  const [ taskDescriptionLong, ] = useState(taskDescription)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
 
   const delimiterColor = useAppSelector(state => state.theme.blue3)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
@@ -170,7 +172,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             <TACC.TextContentLine>
               <div>
                 <span style={spanCSS1}>Исполнитель: </span>
-                <span>{ returnName() }</span>
+                <span>{ false ? returnName() : taskExecutor }</span>
               </div>
             </TACC.TextContentLine>
             <TACC.TextContentLine>
@@ -188,9 +190,12 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
                 { taskSpecializationTags.map((item, index) => {
 
-                  return <TACC.SpecializationTag style={{ marginTop: '0px', marginBottom: '10px' }} key={index} backgroundColor={specializationTagBackground}>
-                          { item }
-                        </TACC.SpecializationTag>
+                  return <TACC.SpecializationTag 
+                    style={{ marginTop: '0px', marginBottom: '10px' }} 
+                    key={index} 
+                    backgroundColor={specializationTagBackground}>
+                      { item }
+                    </TACC.SpecializationTag>
 
                 })}
 
@@ -361,10 +366,14 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
                   if ( ROLE_TYPE === 'EXECUTOR' ) {
 
+                    dispatch(setTask(actionsParams && actionsParams[0]))
+                    dispatch(setExecutor(USER_ID))
                     dispatch(setShowRCC('undefined'))
                     dispatch(setShow(true))
                     dispatch(setShowType("respondFromList"))
+
                     actions && actions[1](actionsParams && actionsParams[1])
+                    console.log(actionsParams && actionsParams[0])
 
                   } else if ( ROLE_TYPE === 'UNDEFINED' ) {
 
@@ -383,7 +392,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 iconCss={undefined}
                 muiIconSize={null}
                 MuiIconChildren={EmailIcon}
-                css={{
+                css={ ROLE_TYPE === 'EXECUTOR' ? {
                   backgroundColor: blue4,
                   color: grey,
                   fontSize: '12px',
@@ -392,7 +401,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   position: 'relative',
                   boxSizing: 'border-box',
                   marginBottom: '16px'
-                }}
+                } : { display: 'none' }}
               /> }
 
               { viewType === 'custSelfView' && <ButtonComponent

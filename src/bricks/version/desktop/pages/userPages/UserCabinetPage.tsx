@@ -93,6 +93,9 @@ const ExecutorProfilePage: React.FC = () => {
   const tagBackground = useAppSelector(state => state.theme.bg)
   const reviewBackground = useAppSelector(state => state.theme.blue4)
 
+  const [ authDataPass, setAuthDataPass ] = useState('Qwerty12345')
+  const [ authDataPassError, setAuthDataPassError ] = useState(false)
+
   const flexDivCSS: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
@@ -118,6 +121,10 @@ const ExecutorProfilePage: React.FC = () => {
     dispatch(setShow(true))
     dispatch(setShowType('EditProfileCC'))
   }
+  const changePass = (param: string): void => {
+    setAuthDataPass(param)
+    setAuthDataPassError(false)
+  } 
 
   return (
     <ContentArea
@@ -458,27 +465,36 @@ const ExecutorProfilePage: React.FC = () => {
                           <span style={{ color: greyColor2, fontSize: '12px' }}>18.03.2023</span>
                         </div>
                       </div>
-                      <div style={{ marginTop: '-14px' }}>
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '-14px' }}>
+                        <div style={{ marginRight: '8px' }}>
+                          <img
+                            alt={""}
+                            src={star}
+                          />
+                          <img
+                            alt={""}
+                            src={star}
+                          />
+                          <img
+                            alt={""}
+                            src={star}
+                          />
+                          <img
+                            alt={""}
+                            src={star}
+                          />
+                          <img
+                            alt={""}
+                            src={star}
+                          />
+                        </div>
+                        <div>
+                          <img
+                            alt={""}
+                            src={semiMenu}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
                       </div>
                     </ReviewsContentLine>
                     <ReviewsContentLine style={{ marginBottom: '10px', marginTop: '14px' }}>
@@ -1899,6 +1915,176 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={showMoreButtonCSS}>Загрузить еще</span>
               <Pagintation count={1}></Pagintation>
             </PagintationContainer>
+          </React.Fragment> }
+
+          {/* ---------------------------------------- */}
+          {/* модуль команды пользователя */}
+          {/* ---------------------------------------- */}
+
+          { profileViewStep === 'settings' && <React.Fragment>
+
+            <ReviewsContent 
+              style={{ 
+                marginTop: '0px',  
+                flexDirection: 'column', 
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '24px'
+              }}
+            >
+              <ReviewsContentLine>
+                <span style={{ fontWeight: 'bold' }}>Сменить пароль</span>
+              </ReviewsContentLine>
+              <ReviewsContentLine style={{ marginTop: '20px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE_PASSWORD_VISIBILITY'}
+                  valueType='text'
+                  defaultValue='Qwerty12345!!'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={50}
+                  heightValue={'50px'}
+                  label={"Введите ваш пароль"}
+                  isError={authDataPassError}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ authDataPass, changePass ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                <span style={{ width: '20px' }}/>
+                <span style={{ width: '50%' }}/>
+              </ReviewsContentLine>
+              <ReviewsContentLine style={{ marginTop: '20px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={50}
+                  heightValue={'50px'}
+                  label={"Выбор года"}
+                  isError={false}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ "2023", () => null ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                    backgroundColor: 'white',
+                  }}
+                />  
+                <span style={{ width: '20px' }}/>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE'}
+                  valueType='text'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={50}
+                  heightValue={'50px'}
+                  label={"Выбор года"}
+                  isError={false}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ "2023", () => null ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '0px',
+                    backgroundColor: 'white',
+                  }}
+                />  
+              </ReviewsContentLine>
+              <ReviewsContentLine style={{ justifyContent: 'space-around', marginTop: '36px', marginBottom: '16px' }}>
+                <ButtonComponent
+                  inner={"Сохранить изменения"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={() => {}}
+                  actionData={null}
+                  widthType={'px'}
+                  widthValue={240}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={ArrowUpwardIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: blueColor2,
+                    color: 'white',
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </ReviewsContentLine>
+            </ReviewsContent>
+            <ReviewsContent 
+              style={{ 
+                marginTop: '0px',  
+                flexDirection: 'column', 
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '24px'
+              }}
+            >
+              <ReviewsContentLine>
+                <span style={{ fontWeight: 'bold' }}>Удаление профиля</span>
+              </ReviewsContentLine>
+              <ReviewsContentLine style={{ marginTop: '18px' }}>
+                <span style={{ lineHeight: '20px' }}>{"Это действие отменить нельзя. Удалить профиль можно, если у вас нет активных заказов, вы не являетесь участником спора и на вашм счету нет замороженных и доступных денежных средств"}</span>
+              </ReviewsContentLine>
+              <ReviewsContentLine style={{ justifyContent: 'space-around', marginTop: '34px', marginBottom: '16px' }}>
+                <ButtonComponent
+                  inner={"Удалить профиль"} 
+                  type='CONTAINED_DEFAULT' 
+                  action={() => {}}
+                  actionData={null}
+                  widthType={'px'}
+                  widthValue={200}
+                  children={""}
+                  childrenCss={undefined}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={30}
+                  MuiIconChildren={ArrowUpwardIcon}
+                  css={{
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    padding: '4px',
+                    backgroundColor: blueColor2,
+                    color: 'white',
+                    width: '56px',
+                    height: '43px',
+                  }}
+                />
+              </ReviewsContentLine>
+            </ReviewsContent>
+            <ReviewsContent 
+              style={{ 
+                marginTop: '0px',  
+                flexDirection: 'column', 
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '24px'
+              }}
+            >
+              <ReviewsContentLine>
+                <span style={{ fontWeight: 'bold' }}>Настройка уведомлений</span>
+              </ReviewsContentLine>
+            </ReviewsContent>
+
           </React.Fragment> }
 
         </ContentContainerLocal>

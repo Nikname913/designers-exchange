@@ -129,6 +129,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       /> }
       
       <Select 
+        defaultValue={data && data[0]}
         isMulti={multy}
         components={animatedComponents}
         options={ data && data }

@@ -1,9 +1,13 @@
+// ----------------------------------------------------------------
 /* eslint-disable array-callback-return */
+// ----------------------------------------------------------------
 import React, { ReactElement, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { selectShowTask, selectActualTask } from '../../../../store/slices/task-content-slice'
-import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
+import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice'
+import { setList } from '../../../../store/slices/task-content-slice' 
+import RequestActionsComponent from '../../services/request.service'
 import ButtonComponent from '../../comps/button/Button'
 import SelectField from '../../comps/select/SelectField'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -31,6 +35,8 @@ const ExchangePage: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const ROLE_USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID) 
+
   const greyColor = useAppSelector(state => state.theme.grey)
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterColor = useAppSelector(state => state.theme.blue3)
@@ -38,6 +44,7 @@ const ExchangePage: React.FC = () => {
 
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
+  const [ AUTH_REQUEST, ] = useState(true)
 
   const [ typeShowTasks, setTypeShowTasks ] = useState<'active' | 'noactive'>('active') 
   const [ pageTitle, setPageTitle ] = useState<'Мои задания' | 'Отмененные задания'>('Мои задания')
@@ -178,12 +185,68 @@ const ExchangePage: React.FC = () => {
 
   }
 
+  const callbackSetTasksList = (param: any) => {
+
+    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
+
+      return { 
+        id: item.taskID, 
+        name: item.title, 
+        date: item.date,
+        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        exper: item.expertise,
+        customer: item.customer.slice(0, 30) + '...',
+        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
+        region: item.region ? item.region : 'Екатеринбург',
+        tags: item.tags,
+        description: item.description,
+        status: 'searching',
+        viewtype: 'default',
+        coast: {
+          value: item.coast,
+          issafe: true,
+          prepay: item.prepay,
+          exper: item.expertiseCoast,
+        },
+        responds: item.reviews,
+        objectData: {
+          constructionType: item.objectData.constructionType,
+          region: item.objectData.region,
+          type: item.objectData.type,
+          spec: item.objectData.spec,
+        },
+        objectParams: {
+          square: item.objectParams.square,
+          storeys: item.objectParams.storeys,
+          height: item.objectParams.height,
+        },
+      }
+
+    })
+
+    dispatch(setList(data))
+
+  }
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetTasksList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/get-task',
+          body: {
+            customer: ROLE_USER_ID
+          }
+        }}
+      
+      /> }
 
       { ROLE_TYPE === 'EXECUTOR' && <Navigate to={"/spisok-zadaniy-ispolnitel"} replace={true}/> }
 
@@ -404,11 +467,7 @@ const ExchangePage: React.FC = () => {
             placeholder={"Сортировать"}
             params={{ width: 300, height: 50 }}
             data={[
-              { value: '1', label: 'Сначала новые' },
-              { value: '2', label: 'Сначала старые' },
-              { value: '3', label: 'Высокий рейтинг' },
-              { value: '4', label: 'Сначала дешевые' },
-              { value: '5', label: 'Сначала дорогие' },
+              { value: '1', label: '[ options download ]' },
             ]}
             multy={false}
             action={() => {}}

@@ -1,4 +1,8 @@
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setScrollTop } from '../../store/slices/right-content-slice'
 import { setScrollTop as setScrollFos } from '../../store/slices/fos-slice'
@@ -23,8 +27,11 @@ const Main: React.FC = () => {
   const showFos = useAppSelector(state => state.FOSReducer.isShow)
   const fosType = useAppSelector(state => state.FOSReducer.showType)
   const mainContainer = useRef<HTMLElement | null>(null)
-  const dispatch = useAppDispatch()
 
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const MAIN_STYLES: CSSProperties = {
     display: 'block',
     position: 'relative',
@@ -39,7 +46,11 @@ const Main: React.FC = () => {
     mainContainer.current !== null && dispatch(setScrollTop(mainContainer.current.scrollTop))
     mainContainer.current !== null && dispatch(setScrollFos(mainContainer.current.scrollTop))
 
-  },[ dispatch, showRightContent, showFos ])
+    USER_ROLE === 'UNDEFINED' && console.log('нет авторизации')
+
+  },[ dispatch, showRightContent, showFos, USER_ROLE ])
+
+  useEffect(() => navigate('/zakazchiki'),[])
 
   return (
     <React.Fragment>

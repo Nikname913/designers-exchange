@@ -6,6 +6,7 @@ export interface IFos {
   'command'                   | 
   'commandShort'              | 
   'authLogin'                 |
+  'authCreate'                |
   'authRestore'               |
   'authSupport'               |
   'changeAvatar',

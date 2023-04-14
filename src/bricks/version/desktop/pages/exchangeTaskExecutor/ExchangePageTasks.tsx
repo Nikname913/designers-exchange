@@ -68,9 +68,9 @@ const ExchangePage: React.FC = () => {
 
   const orders = (): void => {
     !false && TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
-    false && dispatch(setShow(true))
-    false && dispatch(setType("info"))
-    false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
+    !false && dispatch(setShow(true))
+    !false && dispatch(setType("info"))
+    !false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const archive = (): void => {
     false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
@@ -95,7 +95,7 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Мои задания</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
+          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
           <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
           <span style={{ ...spanActiveCSS, opacity: 0.6, marginRight: '0px' }} onClick={archive}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length * 0})</span>
         </div>
@@ -105,9 +105,7 @@ const ExchangePage: React.FC = () => {
           placeholder={"Сортировать по новизне"}
           params={{ width: 300, mb: '35px', height: 50 }}
           data={[
-            { value: '1', label: 'За последние три дня' },
-            { value: '2', label: 'За последнюю неделю' },
-            { value: '3', label: 'За месяц' },
+            { value: '1', label: '[ options download ]' },
           ]}
           multy={false}
           action={() => {}}

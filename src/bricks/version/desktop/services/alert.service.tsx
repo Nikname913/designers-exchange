@@ -21,7 +21,8 @@ const Alert: React.FC<IAlert> = (props: IAlert) => {
     marginTop: '-100px',
     left: '50%',
     marginLeft: '-275px',
-    zIndex: 30
+    zIndex: 30,
+    textAlign: 'center'
   }
 
   const closeAlert = (): void => {

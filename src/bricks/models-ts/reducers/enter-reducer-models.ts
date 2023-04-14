@@ -1,10 +1,6 @@
-export interface IRequestComponent {
-  callbackAction: string,
-  requestData: {
-    type: string,
-    urlstring: string,
-    reqbody: BodyInit | null | undefined
-  }
+export interface IEnterReducer {
+  email: string,
+  password: string,
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

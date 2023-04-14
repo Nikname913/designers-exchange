@@ -1,10 +1,14 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { IFos } from '../../../models-ts/services/fos-models'
 import { setShow, setShowType } from '../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
-import { setActiveRole } from '../../../store/slices/role-type-slice'
+import { setActiveRole, setRoleData } from '../../../store/slices/role-type-slice'
+import { setFocused } from '../../../store/slices/reg-slice'
+import { setFaceType } from '../../../store/slices/reg-slice'
+import RequestActionsComponent from './request.service'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
@@ -30,9 +34,24 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const { showType, scroll } = props
 
   const [ authDataLogin, setAuthDataLogin ] = useState('nik.shipov@gmail.com')
-  const [ authDataPass, setAuthDataPass ] = useState('Qwerty12345')
   const [ authDataLoginError, setAuthDataLoginError ] = useState(false)
   const [ authDataPassError, setAuthDataPassError ] = useState(false)
+
+  const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
+  const [ RESPOND_REQUEST, SET_RESPOND_REQUEST ] = useState(false)
+
+  const AUTH_EMAIL = useAppSelector(state => state.enterReducer.email)
+  const AUTH_PASSWORD = useAppSelector(state => state.enterReducer.password)
+
+  const RESPOND_DEADLINE = useAppSelector(state => state.respondReducer.deadline)
+  const RESPOND_COAST = useAppSelector(state => state.respondReducer.coast)
+  const RESPOND_SOLUTION = useAppSelector(state => state.respondReducer.solution)
+  const RESPOND_PREPAY = useAppSelector(state => state.respondReducer.prepay)
+  const RESPOND_EXPERT = useAppSelector(state => state.respondReducer.expert)
+  const RESPOND_EXPERT_COAST = useAppSelector(state => state.respondReducer.expertCost)
+  const RESPOND_COMMENT = useAppSelector(state => state.respondReducer.comment)
+  const RESPOND_TASK = useAppSelector(state => state.respondReducer.task)
+  const RESPOND_EXECUTOR = useAppSelector(state => state.respondReducer.executor)
 
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterBackground = useAppSelector(state => state.theme.blue3)
@@ -41,7 +60,10 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const greyColor2 = useAppSelector(state => state.theme.grey2)
   const greyColor3 = useAppSelector(state => state.theme.grey3)
   const blueColor2 = useAppSelector(state => state.theme.blue2)
+  const blueColor6 = '#E8F0F6'
+
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const [ avatarBorders, setAvatarBorders ] = useState<Array<any>>([
     greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3
@@ -141,6 +163,20 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     cursor: 'pointer',
     marginTop: '30px'
   }
+  const userTypeCSS: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'relative',
+    boxSizing: 'border-box',
+    backgroundColor: blueColor6,
+    width: '200px',
+    height: '160px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    paddingTop: '30px'
+  }
 
   const closeFos = (): void => {
     dispatch(setShowRCC(false))
@@ -150,10 +186,6 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const changeLogin = (param: string): void => {
     setAuthDataLogin(param)
     setAuthDataLoginError(false)
-  } 
-
-  const changePass = (param: string): void => {
-    setAuthDataPass(param)
     setAuthDataPassError(false)
   } 
 
@@ -167,24 +199,112 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   const validate = (): void => {
 
+    setAuthDataLoginError(false)
+    setAuthDataPassError(false)
+    dispatch(setFocused('NULL'))
+
     let valid = 0
     
-    if ( authDataLogin === 'nik.shipov@gmail.com' ) { valid++ }
+    if ( AUTH_EMAIL.length !== 0 ) { valid++ }
     else { setAuthDataLoginError(true) }
     
-    if ( authDataPass === 'Qwerty12345' ) { valid++ }
+    if ( AUTH_PASSWORD.length !== 0 ) { valid++ }
     else { setAuthDataPassError(true) }
 
     if ( valid === 2 ) { 
-      dispatch(setShow(false))
-      dispatch(setActiveRole('EXECUTOR'))
-      dispatch(setShowRCC(false))
+
+      console.log(AUTH_EMAIL)
+      console.log(AUTH_PASSWORD)
+
+      SET_AUTH_REQUEST(true)
+
+      false && dispatch(setShow(false))
+      false && dispatch(setActiveRole('EXECUTOR'))
+      false && dispatch(setShowRCC(false))
+
+      setTimeout(() => SET_AUTH_REQUEST(false), 1300)
+
     }
     
   }
 
+  const success = (param: any): void => {
+
+    console.log(param)
+
+    if ( param.clientId !== undefined ) {
+
+      dispatch(setActiveRole(param.type))
+      dispatch(setRoleData({ uid: param.clientId, una: param.email }))
+      dispatch(setShow(false))
+      dispatch(setShowRCC(false))
+      navigate('/zakazchiki')
+    } else {
+
+      if ( param.email === 'incorrect' ) setAuthDataLoginError(true)
+      if ( param.password === 'incorrect' ) setAuthDataPassError(true)
+
+    }
+
+  }
+
+  const respondSuccess = (param: any): void => {
+
+    SET_RESPOND_REQUEST(true)
+
+    console.log(RESPOND_DEADLINE)
+    console.log(RESPOND_COAST)
+    console.log(RESPOND_SOLUTION)
+    console.log(RESPOND_PREPAY)
+    console.log(RESPOND_EXPERT)
+    console.log(RESPOND_EXPERT_COAST)
+    console.log(RESPOND_COMMENT)
+    console.log(RESPOND_TASK)
+    console.log(RESPOND_EXECUTOR)
+
+  }
+  
+  useEffect(() => { false && SET_AUTH_REQUEST(AUTH_REQUEST) }, [ AUTH_REQUEST ])
+
   return (
     <React.Fragment>
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={success}
+        requestData={{
+          type: 'POST',
+          urlstring: '/auth',
+          body: {
+            email: AUTH_EMAIL,
+            password: AUTH_PASSWORD
+          }
+        }}
+      
+      /> }
+
+      { RESPOND_REQUEST && <RequestActionsComponent
+
+        callbackAction={success}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-respond',
+          body: {
+            taskID: RESPOND_TASK,
+            executorID: RESPOND_EXECUTOR,
+            executroName: RESPOND_EXECUTOR,
+            deadline: RESPOND_DEADLINE,
+            coast: RESPOND_COAST,
+            preSolution: RESPOND_SOLUTION,
+            prePay: RESPOND_PREPAY,
+            expert: RESPOND_EXPERT,
+            expertCoast: RESPOND_EXPERT_COAST,
+            comment: RESPOND_COMMENT
+        }
+        }}
+      
+      /> }
+
       <ShadowContainer 
         marginTop={scroll} 
         background={"rgba(0, 0, 0, 0.4)"}
@@ -212,63 +332,68 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATE'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"20.02.2023"}
+                    label={"Дата окончания"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ "Сидоров", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
                       marginBottom: '0px',
+                      marginTop: '0px',
+                      backgroundColor: 'white'
                     }}
                   />
                   <span style={spanDelimiterCSS}/>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"200 000"}
+                    label={"Введите вашу цену"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_COAST', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '0px',
+                      marginBottom: '-4px',
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '20px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '22px', marginTop: '20px' }}>
                   <span style={spanTitleCSS}>Предварительное решение</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Сумма аванса</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"через 20 дней"}
+                    label={"Количество дней"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_SOLUTION', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -278,17 +403,18 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   />
                   <span style={spanDelimiterCSS}/>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"50 000"}
+                    label={"Введите сумму аванса"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_PREPAY', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -304,61 +430,66 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATE'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"16.02.2023"}
+                    label={"Дата экспертизы"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ "Сидоров", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
                       marginBottom: '0px',
+                      marginTop: '0px',
+                      backgroundColor: 'white'
                     }}
                   />
                   <span style={spanDelimiterCSS}/>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"200 000"}
+                    label={"Введите вашу цену"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_EXPERT_COAST', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '0px',
+                      marginBottom: '-4px',
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '34px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '16px', marginTop: '34px' }}>
                   <span style={spanTitleCSS}>Комментарий к отклику</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={100}
                     heightValue={'50px'}
-                    label={"Ваш комментарий"}
+                    label={"Дополнительный комментарий к отклику"}
                     isError={false}
-                    isDisabled={true}
+                    isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_COMMENT', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -374,7 +505,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <ButtonComponent
                     inner={"Откликнуться"} 
                     type="CONTAINED_DEFAULT" 
-                    action={() => {}}
+                    action={respondSuccess}
                     actionData={null}
                     widthType={"px"}
                     widthValue={172}
@@ -1100,7 +1231,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               <AuthNHelp.Title>Войти</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_AUTH'}
                   valueType='text'
                   defaultValue='nik.shipov@gmail.com'
                   required={false}
@@ -1112,7 +1243,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ authDataLogin, changeLogin ]}
+                  store={[ 'EMAIL_ENTER', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1136,7 +1267,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ authDataPass, changePass ]}
+                  store={[ 'PASSWORD_ENTER', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1197,6 +1328,78 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
             </AuthNHelp.FOS>
           </React.Fragment> 
+          : showType === 'authCreate' 
+          ? <React.Fragment>
+            <AuthNHelp.FOS width={"600px"} style={{ padding: '44px 64px' }}>
+            <AuthNHelp.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </AuthNHelp.CloseContainer>
+              <AuthNHelp.Title>Регистрация аккаунта</AuthNHelp.Title>
+              <AuthNHelp.ContentLine style={{ justifyContent: 'space-around' }}>
+                <span>Выберите подходящий тип аккаунта</span>
+              </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine style={{ marginTop: '40px' }}>
+                <div 
+                  style={userTypeCSS}
+                  onClick={() => {
+                    closeFos()
+                    navigate('/registraciya-cust')
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'block', 
+                      position: 'relative', 
+                      backgroundColor: 'white', 
+                      borderRadius: '50%',
+                      width: '64px',
+                      height: '64px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <img
+                      alt={""}
+                      src={avatar4}
+                      style={{ width: '64px', marginTop: '15px' }}
+                    />
+                  </span>
+                  <span style={{ fontWeight: 'bold', marginTop: '10px' }}>Заказчик</span>
+                </div>
+                <div 
+                  style={userTypeCSS} 
+                  onClick={() => {
+                    closeFos()
+                    dispatch(setFaceType('PHIS_FACE'))
+                    navigate('/registraciya-exec')
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-around', 
+                      position: 'relative', 
+                      backgroundColor: 'white', 
+                      borderRadius: '50%',
+                      width: '64px',
+                      height: '64px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <img
+                      alt={""}
+                      src={avatar5}
+                      style={{ width: '44px', marginTop: '15px' }}
+                    />
+                  </span>
+                  <span style={{ fontWeight: 'bold', marginTop: '10px' }}>Исполнитель</span>
+                </div>
+              </AuthNHelp.ContentLine>
+            </AuthNHelp.FOS>
+          </React.Fragment>
           : showType === 'authRestore' 
           ? <React.Fragment>
             <AuthNHelp.FOS width={"600px"}>

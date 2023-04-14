@@ -1,10 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
+import { setTitle, 
+  setCoast, 
+  setPrepay, 
+  setPrepayDays,
+  setExpertiseCoast, 
+  setDescription, 
+  setFocused as setFocusedTask,
+  setObjectParamsSquare,
+  setObjectParamsStoreys,
+  setObjectParamsHeight
+ } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
 import FormGroup from '@mui/material/FormGroup'
 import ButtonComponent from '../comps/button/Button'
+import RequestActionsComponent from '../services/request.service'
 import ChapterController from '../views/localViews/СhapterController'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
@@ -27,6 +40,7 @@ const { MenuContainer,
   StepsContainerVerticalStep,
   StepsContainerVerticalStepRound,
   StepsContainerVerticalStepRoundLabel } = cssAsideMenu
+const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 
 const CreateTaskPage: React.FC = () => {
 
@@ -38,7 +52,28 @@ const CreateTaskPage: React.FC = () => {
   const stepContainerRoundLabelColor = useAppSelector(state => state.theme.grey2)
   const blackColor = useAppSelector(state => state.theme.black)
 
+  const taskTitle = useAppSelector(state => state.createTaskReducer.title)
+  const taskCoast = useAppSelector(state => state.createTaskReducer.coast)
+  const taskPrepay = useAppSelector(state => state.createTaskReducer.prepay)
+  const taskPrepayDays = useAppSelector(state => state.createTaskReducer.prepayDays)
+  const taskExpertCoast = useAppSelector(state => state.createTaskReducer.expertiseCoast)
+  const taskSquare = useAppSelector(state => state.createTaskReducer.objectParamsSquare)
+  const taskStoreys = useAppSelector(state => state.createTaskReducer.objectParamsStoreys)
+  const taskHeight = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
+  const taskDescription = useAppSelector(state => state.createTaskReducer.description)
+
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
+
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const dateString = year + '-' + month + '-' + day
+
+  console.log(USER_ID)
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -63,12 +98,78 @@ const CreateTaskPage: React.FC = () => {
     width: '50%',
   }
 
+  const addTaskData = () => {
+
+    const sendBody = {
+      title: taskTitle, 
+      coast: taskCoast, 
+      prepay: taskPrepay, 
+      prepayDays: taskPrepayDays,
+      expertCoast: taskExpertCoast, 
+      square: taskSquare, 
+      storeys: taskStoreys, 
+      height: taskHeight,
+      description: taskDescription,
+      customer: USER_ID,
+      status: 'TASK-ACTIVE'
+    }
+
+    console.log(sendBody)
+
+    false && console.log(taskSquare) 
+    false && console.log(taskStoreys) 
+    false && console.log(taskHeight)
+
+    SET_AUTH_REQUEST(true)
+    dispatch(setShow(true))
+    dispatch(setType('success'))
+    dispatch(setMessage('Вы успешно разместили новое задание'))
+
+    false && dispatch(setTitle(''))
+    false && dispatch(setCoast(''))
+    false && dispatch(setPrepay(''))
+    false && dispatch(setPrepayDays(''))
+    false && dispatch(setExpertiseCoast(''))
+    false && dispatch(setDescription(''))
+    false && dispatch(setObjectParamsSquare(''))
+    false && dispatch(setObjectParamsStoreys(''))
+    false && dispatch(setObjectParamsHeight(''))
+    false && dispatch(setFocusedTask(''))
+
+  }
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-task',
+          body: {
+            title: taskTitle, 
+            coast: taskCoast, 
+            prepay: taskPrepay, 
+            prepayDays: taskPrepayDays,
+            expertCoast: taskExpertCoast, 
+            square: taskSquare, 
+            storeys: taskStoreys, 
+            height: taskHeight,
+            description: taskDescription,
+            customer: USER_ID,
+            status: 'TASK-ACTIVE',
+            date: dateString,
+            taskId: USER_ID.slice(0, 10) + '-' + (Math.random() * 100000).toFixed(0)
+          }
+        }}
+      
+      /> }
+
       <div style={{ ...headBlockCSS, justifyContent: 'flex-start', marginTop: '35px' }}>
         <img
           alt={""}
@@ -123,12 +224,64 @@ const CreateTaskPage: React.FC = () => {
             </StepsContainerVerticalForRound>
           </StepsContainerVertical>
         </StepsContainer>
+        <ButtonComponent
+          inner={'Сохранить'} 
+          type='OUTLINED_DISABLED' 
+          action={() => console.log('this is button')}
+          actionData={null}
+          widthType={'%'}
+          widthValue={100}
+          children={''}
+          childrenCss={undefined}
+          iconSrc={null}
+          iconCss={undefined}
+          muiIconSize={null}
+          MuiIconChildren={EmailIcon}
+          css={{
+            backgroundColor: uploadButtonBackground,
+            color: blackColor,
+            fontSize: '12px',
+            height: '46px',
+            borderRadius: '6px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginTop: '46px'
+          }}
+        />
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '40px' }}>
+          <Checkbox {...label} />
+          <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
+        </div>
+        <ButtonComponent
+          inner={'Опубликовать'} 
+          type='OUTLINED' 
+          action={addTaskData}
+          actionData={null}
+          widthType={'%'}
+          widthValue={100}
+          children={''}
+          childrenCss={undefined}
+          iconSrc={null}
+          iconCss={undefined}
+          muiIconSize={null}
+          MuiIconChildren={EmailIcon}
+          css={{
+            backgroundColor: stepContainerRoundColor,
+            color: 'white',
+            fontSize: '12px',
+            height: '46px',
+            borderRadius: '6px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginTop: '20px'
+          }}
+        />
       </MenuContainer>
       <CustExecContentInnerArea>
         <TextFieldTitle>Данные о заказе</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -139,11 +292,12 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "TASK_TITLE", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
               boxSizing: 'border-box',
-              marginBottom: '16px',
+              marginBottom: '10px',
               marginTop: '8px',
               backgroundColor: inputBackground
             }}
@@ -151,7 +305,7 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_DATE'}
+            type={'TEXT_INPUT_OUTLINE_DATEPICK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -162,17 +316,19 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "Сидоров", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
               boxSizing: 'border-box',
-              marginBottom: '16px',
-              backgroundColor: inputBackground
+              marginBottom: '0px',
+              marginTop: '0px',
+              backgroundColor: 'white'
             }}
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_DATE'}
+            type={'TEXT_INPUT_OUTLINE_DATEPICK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -183,23 +339,23 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "Сидоров", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
               boxSizing: 'border-box',
-              marginBottom: '16px',
-              backgroundColor: inputBackground
+              marginBottom: '0px',
+              marginTop: '0px',
+              backgroundColor: 'white'
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldContainerLine>
+        <TextFieldContainerLine style={{ marginTop: '18px' }}>
           <SelectField 
             placeholder={"Необходимые навыки"}
-            params={{ width: 50, mb: '16px', height: 50 }}
+            params={{ width: 50, mb: '18px', height: 50 }}
             data={[
-              { value: '1', label: 'Пожарная безопасность' },
-              { value: '2', label: 'Пожарная безопасность' },
-              { value: '3', label: 'Пожарная безопасность' },
+              { value: '1', label: '[ options download ]' },
             ]}
             multy={false}
             action={() => {}}
@@ -218,7 +374,7 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -229,6 +385,7 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "TASK_COAST", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -248,7 +405,7 @@ const CreateTaskPage: React.FC = () => {
         <TextFieldSubTitle mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -259,6 +416,7 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "TASK_PREPAY", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -269,7 +427,7 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_INLABEL'}
+            type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -280,6 +438,7 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={'дней'}
+            store={[ "TASK_PREPAY_DAYS", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -295,9 +454,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Государственная"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Государственная экспертиза' },
-              { value: '2', label: 'Государственная экспертиза' },
-              { value: '3', label: 'Государственная экспертиза' },
+              { value: '1', label: '[ options download ]' },
             ]}
             multy={false}
             action={() => {}}
@@ -320,9 +477,9 @@ const CreateTaskPage: React.FC = () => {
               widthType={'%'}
               widthValue={50}
               heightValue={'50px'}
-              label={"День экспертизы"}
+              label={"Дата экспертизы"}
               isError={false}
-              isDisabled={false}
+              isDisabled={true}
               labelShrinkLeft={"0px"}
               innerLabel={null}
               css={{
@@ -335,7 +492,7 @@ const CreateTaskPage: React.FC = () => {
             />
             <span style={spanDelimiterCSS} />
             <InputComponent
-              type={'TEXT_INPUT_OUTLINE'}
+              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
               valueType='text'
               required={false}
               widthType={'%'}
@@ -346,6 +503,7 @@ const CreateTaskPage: React.FC = () => {
               isDisabled={false}
               labelShrinkLeft={"0px"}
               innerLabel={null}
+              store={[ "TASK_EXPERT_COAST", () => null ]}
               css={{
                 fontSize: '12px',
                 position: 'relative',
@@ -362,9 +520,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Вид строительства"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Вид строительства' },
-              { value: '2', label: 'Вид строительства' },
-              { value: '3', label: 'Вид строительства' },
+              { value: '1', label: 'Новое здание' },
             ]}
             multy={false}
             action={() => {}}
@@ -380,7 +536,7 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_INLABEL'}
+            type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -391,6 +547,7 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={'кв.м'}
+            store={[ "TASK_OP_SQUARE", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -405,9 +562,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Регион"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Владимирская область' },
-              { value: '2', label: 'Иркутская область' },
-              { value: '3', label: 'Краснодарский край' },
+              { value: '1', label: 'Свердловская область' },
             ]}
             multy={false}
             action={() => {}}
@@ -423,7 +578,7 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_INLABEL'}
+            type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -433,7 +588,8 @@ const CreateTaskPage: React.FC = () => {
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
-            innerLabel={''}
+            innerLabel={'этажей'}
+            store={[ "TASK_OP_STOREYS", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -448,9 +604,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Тип постройки"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Тип постройки' },
-              { value: '2', label: 'Тип постройки' },
-              { value: '3', label: 'Тип постройки' },
+              { value: '1', label: 'Промышленные здания' },
             ]}
             multy={false}
             action={() => {}}
@@ -466,7 +620,7 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_INLABEL'}
+            type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -477,6 +631,7 @@ const CreateTaskPage: React.FC = () => {
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={'метры'}
+            store={[ "TASK_OP_HEIGHT", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -491,9 +646,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Назначение"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Жилая недвижимость' },
-              { value: '2', label: 'Складские помещения' },
-              { value: '3', label: 'Коммерческая недвижимость' },
+              { value: '1', label: 'Складские помещения' },
             ]}
             multy={false}
             action={() => {}}
@@ -513,7 +666,7 @@ const CreateTaskPage: React.FC = () => {
         <TextFieldTitle style={{ marginTop: '30px' }}>Описание задачи</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
             widthType={'%'}
@@ -521,9 +674,10 @@ const CreateTaskPage: React.FC = () => {
             heightValue={'50px'}
             label={"Подробнее опишите вашу задачу"}
             isError={false}
-            isDisabled={true}
+            isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
+            store={[ "TASK_DESCRIPTION", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -613,7 +767,7 @@ const CreateTaskPage: React.FC = () => {
             heightValue={'50px'}
             label={"Развание раздела"}
             isError={false}
-            isDisabled={false}
+            isDisabled={true}
             labelShrinkLeft={"0px"}
             innerLabel={null}
             css={{
@@ -629,9 +783,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Выберите необходимые навыки"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Название навыка 1' },
-              { value: '2', label: 'Название навыка 2' },
-              { value: '3', label: 'Название навыка 3' },
+              { value: '1', label: '[ options download ]' },
             ]}
             multy={true}
             action={() => {}}

@@ -4,6 +4,10 @@ import { IRoleTypeReducer } from "../../models-ts/reducers/role-type-reducer-mod
 
 const initialState: IRoleTypeReducer = {
   activeRole: 'UNDEFINED',
+  roleData: {
+    userID: '',
+    userName: ''
+  }
 }
 
 const roleTypeReducer = createSlice({
@@ -12,9 +16,13 @@ const roleTypeReducer = createSlice({
   reducers: {
     setActiveRole(state, action: PayloadAction<"UNDEFINED" | "CUSTOMER" | "EXECUTOR">) {
       state.activeRole = action.payload
+    },
+    setRoleData(state, action: PayloadAction<{ uid: string, una: string }>) {
+      state.roleData.userID = action.payload.uid
+      state.roleData.userName = action.payload.una
     }
   }
 })
 
-export const { setActiveRole } = roleTypeReducer.actions
+export const { setActiveRole, setRoleData } = roleTypeReducer.actions
 export default roleTypeReducer.reducer

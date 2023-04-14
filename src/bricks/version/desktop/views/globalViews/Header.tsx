@@ -134,6 +134,12 @@ const Header: React.FC = () => {
     dispatch(setShowRCC('undefined'))
   }
 
+  function authCreate(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authCreate'))
+    dispatch(setShowRCC('undefined'))
+  }
+
   useEffect(() => console.log(db), [])
 
   return (
@@ -268,7 +274,7 @@ const Header: React.FC = () => {
           <ButtonComponent
             inner={"Регистрация"} 
             type='CONTAINED_DEFAULT' 
-            action={() => {}}
+            action={authCreate}
             actionData={null}
             widthType={'px'}
             widthValue={220}

@@ -98,6 +98,10 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
     const acty = actionType
     switch(acty) {
 
+      case 'AUTH_FACE_TYPE': 
+        action(param)
+        break
+
       case 'DISCOUNT_REDUCER': 
         action(!param)
         break
@@ -142,7 +146,15 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
             primary25: '#F7F7F7',
           }
         })}
-        onChange={() => action && actionsReducer(actionParams)}
+        onChange={inputValue => {
+          action && actionsReducer(
+            inputValue.label === 'Индивидуальный предприниматель' ? 'IP_FACE'
+            : inputValue.label === 'Юридическое лицо' ? 'IP_FACE' 
+            : inputValue.label === 'Физическое лицо' ? 'PHIS_FACE' 
+            : inputValue.label === 'Самозанятый' ? 'SELF_FACE' : ''
+          )
+          console.log(actionParams)
+        }}
       />
     
     </Decorate.SelectWrapper>

@@ -114,7 +114,7 @@ const css = {
     align-items: center;
     justify-content: flex-start;
     position: relative;
-    width: 18%;
+    width: 15%;
     cursor: pointer;
   `,
   FileIconTitle: styled.span<{ color: string }>`

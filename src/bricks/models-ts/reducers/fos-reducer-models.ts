@@ -8,6 +8,7 @@ export interface IFOSReducer {
     'command'                 | 
     'commandShort'            | 
     'authLogin'               |
+    'authCreate'              |
     'authRestore'             |
     'authSupport'             |
     'changeAvatar'

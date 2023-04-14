@@ -22,6 +22,7 @@ const FOSReducer = createSlice({
      'command'         | 
      'commandShort'    |
      'authLogin'       |
+     'authCreate'      |
      'authRestore'     |
      'authSupport'     |
      'changeAvatar'>) => {

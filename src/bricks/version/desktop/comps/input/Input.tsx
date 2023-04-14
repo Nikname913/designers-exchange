@@ -1,5 +1,35 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { styled } from '@mui/material/styles'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
+import { setName, 
+  setSurname, 
+  setSecondName, 
+  setEmail, 
+  setNumber, 
+  setSpec, 
+  setPassword,
+  setFocused,
+  setCode } from '../../../../store/slices/reg-slice'
+import { setTitle, 
+  setCoast, 
+  setPrepay, 
+  setPrepayDays,
+  setExpertiseCoast, 
+  setDescription, 
+  setFocused as setFocusedTask,
+  setObjectParamsSquare,
+  setObjectParamsStoreys,
+  setObjectParamsHeight
+ } from '../../../../store/slices/create-task-slice'
+import { setDeadline, 
+  setCoast as setCoastRespond, 
+  setSolution, 
+  setPrepay as setPrepayRespond, 
+  setExpert, 
+  setExpertCoast, 
+  setComment,
+  setFocused as setFocusedRespond } from '../../../../store/slices/respond-slice'
+import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
@@ -32,6 +62,49 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     labelShrinkLeft,
     defaultValue,
     store } = props
+
+  const inputRef = useRef<HTMLInputElement>(null)
+  const dispatch = useAppDispatch()
+
+  const FOCUS = useAppSelector(state => state.regReducer.focused)
+  const SURNAME = useAppSelector(state => state.regReducer.surname)
+  const NAME = useAppSelector(state => state.regReducer.name)
+  const SECOND_NAME = useAppSelector(state => state.regReducer.secondName)
+  const EMAIL = useAppSelector(state => state.regReducer.email)
+  const NUMBER = useAppSelector(state => state.regReducer.number)
+  const PASSWORD = useAppSelector(state => state.regReducer.password)
+  const CODE = useAppSelector(state => state.regReducer.code)
+
+  const EMAIL_ENTER = useAppSelector(state => state.enterReducer.email)
+  const PASSWORD_ENTER = useAppSelector(state => state.enterReducer.password)
+
+  // ----------------------------------------------------------------
+  // данные для страницы создания задания
+  // ----------------------------------------------------------------
+
+  const TASK_TITLE = useAppSelector(state => state.createTaskReducer.title)
+  const TASK_COAST = useAppSelector(state => state.createTaskReducer.coast)
+  const TASK_PREPAY = useAppSelector(state => state.createTaskReducer.prepay)
+  const TASK_PREPAY_DAYS = useAppSelector(state => state.createTaskReducer.prepayDays)
+  const TASK_EXPERT_COAST = useAppSelector(state => state.createTaskReducer.expertiseCoast)
+  const TASK_DESCRIPTION = useAppSelector(state => state.createTaskReducer.description)
+  const TASK_OP_SQUARE = useAppSelector(state => state.createTaskReducer.objectParamsSquare)
+  const TASK_OP_STOREYS = useAppSelector(state => state.createTaskReducer.objectParamsStoreys)
+  const TASK_OP_HEIGHT = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
+  const TASK_FOCUS = useAppSelector(state => state.createTaskReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для отклика на задание
+  // ----------------------------------------------------------------
+
+  const RESPOND_DEADLINE = useAppSelector(state => state.respondReducer.deadline)
+  const RESPOND_COAST = useAppSelector(state => state.respondReducer.coast)
+  const RESPOND_SOLUTION = useAppSelector(state => state.respondReducer.solution)
+  const RESPOND_PREPAY = useAppSelector(state => state.respondReducer.prepay)
+  const RESPOND_EXPERT = useAppSelector(state => state.respondReducer.expert)
+  const RESPOND_EXPERT_COAST = useAppSelector(state => state.respondReducer.expertCost)
+  const RESPOND_COMMENT = useAppSelector(state => state.respondReducer.comment)
+  const RESPOND_FOCUS = useAppSelector(state => state.respondReducer.focused)
 
   interface IState {
     showPassword: boolean,
@@ -83,12 +156,112 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      setValues({ ...values, [prop]: event.target.value })
-      store && store[1](event.target.value)
+    setValues({ ...values, [prop]: event.target.value })
+    store && store[1](event.target.value)
+  }
+
+  const handleChangeSimple = (event: React.ChangeEvent<HTMLInputElement>) => { 
+    event.preventDefault()
+    store && store[1](event.target.value)
+  } 
+
+  const reduceAuthState = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'NAME' && dispatch(setName(event.target.value))
+      store[0] === 'SURNAME' && dispatch(setSurname(event.target.value))
+      store[0] === 'SECOND_NAME' && dispatch(setSecondName(event.target.value))
+      store[0] === 'EMAIL' && dispatch(setEmail(event.target.value))
+      store[0] === 'NUMBER' && dispatch(setNumber(event.target.value.replace(/\D/g,'')))
+      store[0] === 'SPEC' && dispatch(setSpec(event.target.value))
+      store[0] === 'PASSWORD' && dispatch(setPassword(event.target.value))
+      store[0] === 'CODE' && dispatch(setCode(event.target.value))
+
+      store[0] === 'PASSWORD_ENTER' && dispatch(setPasswordEnter(event.target.value))
+      store[0] === 'EMAIL_ENTER' && dispatch(setEmailEnter(event.target.value))
+
+      if ( store[0] === 'ORG_NAME' ) {
+        dispatch(setName(event.target.value))
+        dispatch(setSurname(event.target.value))
+      }
+
+      store[0] === 'NAME' && dispatch(setFocused('NAME'))
+      store[0] === 'SURNAME' && dispatch(setFocused('SURNAME'))
+      store[0] === 'SECOND_NAME' && dispatch(setFocused('SECOND_NAME'))
+      store[0] === 'EMAIL' && dispatch(setFocused('EMAIL'))
+      store[0] === 'NUMBER' && dispatch(setFocused('NUMBER'))
+      store[0] === 'SPEC' && dispatch(setFocused('SPEC'))
+      store[0] === 'PASSWORD' && dispatch(setFocused('PASSWORD'))
+      store[0] === 'CODE' && dispatch(setFocused('CODE'))
+
+      store[0] === 'PASSWORD_ENTER' && dispatch(setFocused('PASSWORD_ENTER'))
+      store[0] === 'EMAIL_ENTER' && dispatch(setFocused('EMAIL_ENTER'))
+
+      if ( store[0] === 'ORG_NAME' ) {
+        dispatch(setFocused('ORG_NAME'))
+      }
+
     }
 
-  const handleChangeSimple = (event: React.ChangeEvent<HTMLInputElement>) => store && store[1](event.target.value) 
+  }
+
+  const reduceNewTaskState = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'TASK_TITLE' && dispatch(setTitle(event.target.value))
+      store[0] === 'TASK_COAST' && dispatch(setCoast(event.target.value))
+      store[0] === 'TASK_PREPAY' && dispatch(setPrepay(event.target.value))
+      store[0] === 'TASK_PREPAY_DAYS' && dispatch(setPrepayDays(event.target.value))
+      store[0] === 'TASK_EXPERT_COAST' && dispatch(setExpertiseCoast(event.target.value))
+      store[0] === 'TASK_DESCRIPTION' && dispatch(setDescription(event.target.value))
+      store[0] === 'TASK_OP_SQUARE' && dispatch(setObjectParamsSquare(event.target.value))
+      store[0] === 'TASK_OP_STOREYS' && dispatch(setObjectParamsStoreys(event.target.value))
+      store[0] === 'TASK_OP_HEIGHT' && dispatch(setObjectParamsHeight(event.target.value))
+
+      store[0] === 'TASK_TITLE' && dispatch(setFocusedTask('TASK_TITLE'))
+      store[0] === 'TASK_COAST' && dispatch(setFocusedTask('TASK_COAST'))
+      store[0] === 'TASK_PREPAY' && dispatch(setFocusedTask('TASK_PREPAY'))
+      store[0] === 'TASK_PREPAY_DAYS' && dispatch(setFocusedTask('TASK_PREPAY_DAYS'))
+      store[0] === 'TASK_EXPERT_COAST' && dispatch(setFocusedTask('TASK_EXPERT_COAST'))
+      store[0] === 'TASK_DESCRIPTION' && dispatch(setFocusedTask('TASK_DESCRIPTION'))
+      store[0] === 'TASK_OP_SQUARE' && dispatch(setFocusedTask('TASK_OP_SQUARE'))
+      store[0] === 'TASK_OP_STOREYS' && dispatch(setFocusedTask('TASK_OP_STOREYS'))
+      store[0] === 'TASK_OP_HEIGHT' && dispatch(setFocusedTask('TASK_OP_HEIGHT'))
+
+    }
+
+  }
+
+  const reduceRespondState = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'RESPOND_DEADLINE' && dispatch(setDeadline(event.target.value))
+      store[0] === 'RESPOND_COAST' && dispatch(setCoastRespond(event.target.value))
+      store[0] === 'RESPOND_SOLUTION' && dispatch(setSolution(event.target.value))
+      store[0] === 'RESPOND_PREPAY' && dispatch(setPrepayRespond(event.target.value))
+      store[0] === 'RESPOND_EXPERT' && dispatch(setExpert(event.target.value))
+      store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setExpertCoast(event.target.value))
+      store[0] === 'RESPOND_COMMENT' && dispatch(setComment(event.target.value))
+      store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond(event.target.value))
+
+      store[0] === 'RESPOND_DEADLINE' && dispatch(setFocusedRespond('RESPOND_DEADLINE'))
+      store[0] === 'RESPOND_COAST' && dispatch(setFocusedRespond('RESPOND_COAST'))
+      store[0] === 'RESPOND_SOLUTION' && dispatch(setFocusedRespond('RESPOND_SOLUTION'))
+      store[0] === 'RESPOND_PREPAY' && dispatch(setFocusedRespond('RESPOND_PREPAY'))
+      store[0] === 'RESPOND_EXPERT' && dispatch(setFocusedRespond('RESPOND_EXPERT'))
+      store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setFocusedRespond('RESPOND_EXPERT_COAST'))
+      store[0] === 'RESPOND_COMMENT' && dispatch(setFocusedRespond('RESPOND_COMMENT'))
+      store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond('RESPOND_FOCUS'))
+
+    }
+
+  }
+
   const clickShowPassword = () => {
     setValues({
       ...values,
@@ -118,6 +291,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
             />
           : type === 'TEXT_INPUT_OUTLINE'
           ? <CustomTextField 
+              ref={inputRef}
               type={valueType}
               value={store && store[0]}
               onChange={handleChangeSimple}
@@ -131,6 +305,150 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_NEW_TASK'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'TASK_TITLE' ? TASK_TITLE :
+                  store[0] === 'TASK_COAST' ? TASK_COAST :
+                  store[0] === 'TASK_PREPAY' ? TASK_PREPAY :
+                  store[0] === 'TASK_EXPERT_COAST' ? TASK_EXPERT_COAST :
+                  store[0] === 'TASK_DESCRIPTION' ? TASK_DESCRIPTION : ''
+              }
+              onChange={reduceNewTaskState}
+              autoFocus={store && TASK_FOCUS === store[0] && true}
+              id="standard-basic" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          : type === 'TEXT_INPUT_OUTLINE_INLABEL_TASK'
+          ? <CustomTextField 
+              required={required}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'TASK_PREPAY_DAYS' ? TASK_PREPAY_DAYS :
+                  store[0] === 'TASK_OP_SQUARE' ? TASK_OP_SQUARE :
+                  store[0] === 'TASK_OP_STOREYS' ? TASK_OP_STOREYS :
+                  store[0] === 'TASK_OP_HEIGHT' ? TASK_OP_HEIGHT : ''
+              }
+              onChange={reduceNewTaskState}
+              autoFocus={store && TASK_FOCUS === store[0] && true}
+              id="standard-basic" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              InputProps={{
+                endAdornment: 
+                  <InputAdornment 
+                    position="end"
+                    style={{ marginRight: '6px' }}
+                  >{ innerLabel }</InputAdornment>
+              }}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_AUTH'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'SURNAME' ? SURNAME :
+                  store[0] === 'NAME' ? NAME :
+                  store[0] === 'ORG_NAME' ? NAME :
+                  store[0] === 'SECOND_NAME' ? SECOND_NAME :
+                  store[0] === 'EMAIL' ? EMAIL :
+                  store[0] === 'EMAIL_ENTER' ? EMAIL_ENTER :
+                  store[0] === 'NUMBER' ? NUMBER :
+                  store[0] === 'PASSWORD' ? PASSWORD : 
+                  store[0] === 'CODE' ? CODE : ''
+              }
+              onChange={reduceAuthState}
+              autoFocus={store && FOCUS === store[0] && true}
+              id="standard-basic" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_RESPOND'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'RESPOND_DEADLINE' ? RESPOND_DEADLINE :
+                  store[0] === 'RESPOND_COAST' ? RESPOND_COAST :
+                  store[0] === 'RESPOND_SOLUTION' ? RESPOND_SOLUTION :
+                  store[0] === 'RESPOND_PREPAY' ? RESPOND_PREPAY :
+                  store[0] === 'RESPOND_EXPERT' ? RESPOND_EXPERT :
+                  store[0] === 'RESPOND_EXPERT_COAST' ? RESPOND_EXPERT_COAST :
+                  store[0] === 'RESPOND_COMMENT' ? RESPOND_COMMENT :
+                  store[0] === 'RESPOND_FOCUS' ? RESPOND_FOCUS : ''
+              }
+              onChange={reduceRespondState}
+              autoFocus={store && RESPOND_FOCUS === store[0] && true}
+              id="standard-basic" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_PASSWORD'
           ? <CustomTextField 
               type={'password'}
@@ -149,14 +467,18 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           ? <CustomTextField 
               type={values.showPassword ? 'text' : 'password'}
               defaultValue={defaultValue && defaultValue}
-              value={ store ? store[0] : values.password}
+              value={ !store ? '' :
+                store[0] === 'PASSWORD' ? PASSWORD : 
+                store[0] === 'PASSWORD_ENTER' ? PASSWORD_ENTER : ''
+              }
               required={required}
               id="standard-basic" 
               label={label}
               error={isError}
               disabled={isDisabled}
               autoComplete={"off"}
-              onChange={handleChange('password')}
+              onChange={reduceAuthState}
+              autoFocus={store && FOCUS === store[0] && true}
               InputProps={{
                 endAdornment: 
                   <InputAdornment position="end">

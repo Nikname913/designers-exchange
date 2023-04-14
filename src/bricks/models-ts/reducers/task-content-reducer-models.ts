@@ -23,7 +23,18 @@ export interface ITaskContent {
       },
       responds: Array<{
         user: string,
-      }>
+      }>,
+      objectData?: {
+        constructionType: string,
+        region: string,
+        type: string,
+        spec: string,
+      },
+      objectParams?: {
+        square: string,
+        storeys : string,
+        height: string,
+      },
     }>
   }
 }

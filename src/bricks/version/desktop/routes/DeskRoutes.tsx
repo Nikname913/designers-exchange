@@ -4,6 +4,9 @@ import ElementsUI from '../pages/ElementsUI'
 
 import AboutExchangePage from '../pages/AboutExchangePage'
 import ChatPage from '../pages/ChatPage'
+import AuthPageExecutor from '../pages/AuthPageExecutor'
+import AuthPageCustomer from '../pages/AuthPageCustomer'
+import AuthPageSuccess from '../pages/AuthPageExecutorSuccess'
 import CustomerPage from '../pages/CustomerPage'
 import CustomerProfilePage from '../pages/CustomerProfilePage'
 import ExecutorPage from '../pages/ExecutorPage'
@@ -47,6 +50,18 @@ const DeskRoutes: React.FC = () => {
         <Route 
           path='chat' 
           element={<ChatPage/>} 
+        />
+        <Route 
+          path='registraciya-exec'  
+          element={<AuthPageExecutor/>} 
+        />
+        <Route 
+          path='registraciya-exec-success'   
+          element={<AuthPageSuccess/>} 
+        />
+        <Route 
+          path='registraciya-cust'   
+          element={<AuthPageCustomer/>} 
         />
         <Route 
           path='zakazchiki' 

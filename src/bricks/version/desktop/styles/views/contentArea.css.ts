@@ -48,6 +48,14 @@ const css = {
     position: relative;
     color: ${props => props.color};
     cursor: pointer;
+  `,
+  ContentLine: styled.div`
+    display: flex;
+    flexDirection: row;
+    alignItems: center;
+    justifyContent: flex-start;
+    position: relative;
+    width: 100%;
   `
 }
 

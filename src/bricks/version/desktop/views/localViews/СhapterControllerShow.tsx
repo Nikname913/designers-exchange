@@ -42,27 +42,11 @@ const ChapterController:
             Предварительное решение
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound>
-        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
+        { false && <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
           <ChapterContainerStepRoundLabelText textAlign={"center"}>
             Пожарная безопасность
           </ChapterContainerStepRoundLabelText>
-        </ChapterContainerStepRound>
-        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
-          <ChapterContainerStepRoundLabelText textAlign={"center"}>
-            Вентиляция
-          </ChapterContainerStepRoundLabelText>
-        </ChapterContainerStepRound>
-        <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
-          <ChapterContainerStepRoundLabelText textAlign={"center"}>
-            Сигнализация
-          </ChapterContainerStepRoundLabelText>
-        </ChapterContainerStepRound>
-        <ChapterContainerStepRound backgroundColor={roundBackground}>
-          <ChapterContainerStepRoundInner/>
-          <ChapterContainerStepRoundLabelText textAlign={"center"}>
-            Предварительное решение
-          </ChapterContainerStepRoundLabelText>
-        </ChapterContainerStepRound>
+        </ChapterContainerStepRound> }
         <ChapterContainerStepRound 
           backgroundColor={chaptersLineBackground}
           style={{ marginRight: '-15px' }}

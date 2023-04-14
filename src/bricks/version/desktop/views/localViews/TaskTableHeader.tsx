@@ -109,7 +109,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>до 20.02.2023</span>
+                <span>[ данные корректируются ]</span>
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>
@@ -176,8 +176,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 placeholder={"Действие"}
                 params={{ width: 100, height: 50 }}
                 data={[
-                  { value: '1', label: 'Снять задание' },
-                  { value: '2', label: 'Редактировать' },
+                  { value: '1', label: '[ options download ]' },
                 ]}
                 multy={false}
                 action={() => {}}

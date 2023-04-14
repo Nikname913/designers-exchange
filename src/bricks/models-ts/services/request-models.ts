@@ -1,8 +1,9 @@
-export interface IRoleTypeReducer {
-  activeRole: 'CUSTOMER' | 'EXECUTOR' | 'UNDEFINED',
-  roleData: {
-    userID: string,
-    userName: string
+export interface IRequest {
+  callbackAction: Function,
+  requestData: {
+    type: 'GET' | 'POST',
+    urlstring: string,
+    body: any
   }
 }
 
