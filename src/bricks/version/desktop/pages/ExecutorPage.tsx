@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../comps/input/Input'
+import RequestActionsComponent from '../services/request.service'
 import Pagintation from '../services/pagination.service'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setExecutors } from '../../../store/slices/user-content-slice'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
@@ -24,7 +26,11 @@ const ExecutorPage: React.FC = () => {
   const blackColor = useAppSelector(state => state.theme.black)
   const greyColor = useAppSelector(state => state.theme.grey)
   const executors = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
+
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
+
+  const [ AUTH_REQUEST, ] = useState(true)
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -75,12 +81,33 @@ const ExecutorPage: React.FC = () => {
     navigate('/zakazchiki')
   }
 
+  const callbackSetTasksList = (param: any) => {
+
+    const filterUsers = param.users.filter((user: any) => user.type === 'EXECUTOR')
+    dispatch(setExecutors(filterUsers))
+
+  }
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetTasksList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/users',
+          body: {
+            status: ''
+          }
+        }}
+      
+      /> }
+
       <div style={headBlockCSS}>
         <PageTitle>Исполнители</PageTitle>
         <div style={divCSS}>
@@ -98,7 +125,7 @@ const ExecutorPage: React.FC = () => {
           heightValue={'50px'}
           label={"Поиск по исполнителям"}
           isError={false}
-          isDisabled={false}
+          isDisabled={true}
           labelShrinkLeft={"0px"}
           innerLabel={null}
           css={{
@@ -115,9 +142,7 @@ const ExecutorPage: React.FC = () => {
             placeholder={"Сортировать по специализации"}
             params={{ width: 300, mb: '11px', height: 58 }}
             data={[
-              { value: '1', label: 'Вентиляция' },
-              { value: '2', label: 'Пожарная безопасность' },
-              { value: '3', label: 'Тепломеханические решения' },
+              { value: '1', label: '[ options download ]' },
             ]}
             multy={true}
             action={() => {}}
@@ -134,17 +159,15 @@ const ExecutorPage: React.FC = () => {
         </div>
         <TextFieldTitle style={{ marginBottom: '8px', marginTop: '20px' }}>Навыки</TextFieldTitle>
         <FormGroup style={{ marginBottom: '26px' }}>
-          <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
-          <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
-          <FormControlLabel control={<Checkbox/>} label="BIM"/>
+          <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="2D"/>
+          <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="3D"/>
+          <FormControlLabel control={<Checkbox disabled/>} label="BIM"/>
         </FormGroup>
         <SelectField 
           placeholder={"Местонахождение"}
           params={{ width: 300, mb: '2px', height: 58 }}
           data={[
-            { value: '1', label: 'Загрузка региона..' },
-            { value: '2', label: 'Загрузка региона..' },
-            { value: '1', label: 'Загрузка региона..' },
+            { value: '1', label: '[ options download ]' },
           ]}
           multy={false}
           action={() => {}}
@@ -206,33 +229,61 @@ const ExecutorPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { executors.map((item: { 
-          id: string,
-          name: string,
-          rate: number,
-          stat: Array<number>,
-          tags: Array<string>,
-          jobType: string,
-          role: string }, index: number): ReactJSXElement => {
+        { executors.map((item: any, index: number): ReactJSXElement => {
+
+          console.log(item)
+
           return (
             <CustomerExecutorCardPreview
               key={index}
               isDisabledMessage={false}
-              userName={item.name}
+              userName={ item.bio && item.bio.name + ' ' + item.bio.surname }
+              userId={item.clientId}
               userAvatar={defaultAvatar}
               userType={"EXECUTOR"}
-              userEmployment={item.jobType}
-              userLocation={"Екатеринбург"}
-              userReviews={24}
-              userRate={item.rate}
-              userProjects={item.stat}
+              userEmployment={""}
+              userLocation={ item.location && item.location.city }
+              userReviews={0}
+              userRate={4.88}
+              userProjects={[ 0, 0, 0 ]}
               cardWidth={"calc(50% - 8px)"}
               marginBottom={'16px'}
               marginRight={'0px'}
-              userTags={item.tags}
+              userTags={[]}
             />
           )
         })}
+
+        <CustomerExecutorCardPreview
+          isDisabledMessage={true}
+          userName={"[ пустая карточка ]"}
+          userAvatar={defaultAvatar}
+          userType={"EXECUTOR"}
+          userEmployment={""}
+          userLocation={"Екатеринбург"}
+          userReviews={0}
+          userRate={4.88}
+          userProjects={[ 0, 0, 0 ]}
+          cardWidth={"calc(50% - 8px)"}
+          marginBottom={'16px'}
+          marginRight={'0px'}
+          userTags={[]}
+        />
+        <CustomerExecutorCardPreview
+          isDisabledMessage={true}
+          userName={"[ пустая карточка ]"}
+          userAvatar={defaultAvatar}
+          userType={"EXECUTOR"}
+          userEmployment={""}
+          userLocation={"Екатеринбург"}
+          userReviews={0}
+          userRate={4.88}
+          userProjects={[ 0, 0, 0 ]}
+          cardWidth={"calc(50% - 8px)"}
+          marginBottom={'16px'}
+          marginRight={'0px'}
+          userTags={[]}
+        />
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>

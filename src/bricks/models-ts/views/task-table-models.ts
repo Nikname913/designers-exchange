@@ -11,6 +11,7 @@ export interface ITaskTableProps {
   taskTitle: string,
   taskDeadline: string,
   taskExpertType: string,
+  taskExpertDate?: string,
   taskCustomer: string,
   taskExecutor: string,
   taskLocation: string,

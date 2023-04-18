@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
@@ -52,18 +52,32 @@ const CreateTaskPage: React.FC = () => {
   const stepContainerRoundLabelColor = useAppSelector(state => state.theme.grey2)
   const blackColor = useAppSelector(state => state.theme.black)
 
-  const taskTitle = useAppSelector(state => state.createTaskReducer.title)
-  const taskCoast = useAppSelector(state => state.createTaskReducer.coast)
-  const taskPrepay = useAppSelector(state => state.createTaskReducer.prepay)
-  const taskPrepayDays = useAppSelector(state => state.createTaskReducer.prepayDays)
-  const taskExpertCoast = useAppSelector(state => state.createTaskReducer.expertiseCoast)
-  const taskSquare = useAppSelector(state => state.createTaskReducer.objectParamsSquare)
-  const taskStoreys = useAppSelector(state => state.createTaskReducer.objectParamsStoreys)
-  const taskHeight = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
-  const taskDescription = useAppSelector(state => state.createTaskReducer.description)
+  const TASK_TITLE = useAppSelector(state => state.createTaskReducer.title)
+  const TASK_COAST = useAppSelector(state => state.createTaskReducer.coast)
+  const TASK_PREPAY = useAppSelector(state => state.createTaskReducer.prepay)
+  const TASK_PREPAY_DAYS = useAppSelector(state => state.createTaskReducer.prepayDays)
+  const TASK_EXPERT_DAYS = useAppSelector(state => state.createTaskReducer.expertiseDays)
+  const TASK_EXPERT_COAST = useAppSelector(state => state.createTaskReducer.expertiseCoast)
+  const TASK_DESCRIPTION = useAppSelector(state => state.createTaskReducer.description)
+  const TASK_OP_SQUARE = useAppSelector(state => state.createTaskReducer.objectParamsSquare)
+  const TASK_OP_STOREYS = useAppSelector(state => state.createTaskReducer.objectParamsStoreys)
+  const TASK_OP_HEIGHT = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
+  const TASK_DATE_START = useAppSelector(state => state.createTaskReducer.dateStart)
+  const TASK_DATE_FINISH = useAppSelector(state => state.createTaskReducer.dateFinish)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
-  const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
+  const [ CREATE_TASK_REQUEST, SET_CREATE_TASK_REQUEST ] = useState(false)
+
+  const [ step1Color, setStep1Color ] = useState('rgb(58, 75, 86)')  
+  const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
+  const [ step3Color, setStep3Color ] = useState('rgb(58, 75, 86)')  
+  const [ step4Color, ] = useState('rgb(58, 75, 86)')  
+  const [ step5Color, ] = useState('rgb(58, 75, 86)')  
+
+  const [ line1Color, setLine1Color ] = useState(stepsContainerColor) 
+  const [ line2Color, setLine2Color ] = useState(stepsContainerColor)
+  const [ line3Color, ] = useState(stepsContainerColor)
+  const [ line4Color, ] = useState(stepsContainerColor)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -100,27 +114,10 @@ const CreateTaskPage: React.FC = () => {
 
   const addTaskData = () => {
 
-    const sendBody = {
-      title: taskTitle, 
-      coast: taskCoast, 
-      prepay: taskPrepay, 
-      prepayDays: taskPrepayDays,
-      expertCoast: taskExpertCoast, 
-      square: taskSquare, 
-      storeys: taskStoreys, 
-      height: taskHeight,
-      description: taskDescription,
-      customer: USER_ID,
-      status: 'TASK-ACTIVE'
-    }
+    false && console.log(TASK_DATE_START)
+    false && console.log(TASK_DATE_FINISH)
 
-    console.log(sendBody)
-
-    false && console.log(taskSquare) 
-    false && console.log(taskStoreys) 
-    false && console.log(taskHeight)
-
-    SET_AUTH_REQUEST(true)
+    SET_CREATE_TASK_REQUEST(true)
     dispatch(setShow(true))
     dispatch(setType('success'))
     dispatch(setMessage('Вы успешно разместили новое задание'))
@@ -138,6 +135,114 @@ const CreateTaskPage: React.FC = () => {
 
   }
 
+  useEffect(() => {
+
+    if ( TASK_TITLE !== '' && 
+         TASK_DATE_START !== '' &&
+         TASK_DATE_FINISH !== '' && 
+         TASK_COAST !== '' ) {
+
+          setStep1Color(stepContainerRoundColor)
+
+         } else setStep1Color('rgb(58, 75, 86)')
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ TASK_COAST, TASK_DATE_FINISH, TASK_DATE_START, TASK_TITLE ])
+
+  useEffect(() => {
+
+    if ( TASK_PREPAY !== '' && 
+         TASK_PREPAY_DAYS !== '' &&
+         TASK_EXPERT_DAYS !== '' && 
+         TASK_EXPERT_COAST !== '' ) {
+
+          setStep2Color(stepContainerRoundColor)
+
+         } else setStep2Color('rgb(58, 75, 86)')
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ TASK_EXPERT_COAST, TASK_EXPERT_DAYS, TASK_PREPAY, TASK_PREPAY_DAYS ])
+
+  useEffect(() => {
+
+    if ( TASK_DESCRIPTION !== '' && 
+         TASK_OP_SQUARE !== '' &&
+         TASK_OP_STOREYS !== '' && 
+         TASK_OP_HEIGHT !== '' ) {
+
+          setStep3Color(stepContainerRoundColor)
+
+         } else setStep3Color('rgb(58, 75, 86)')
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ TASK_DESCRIPTION, TASK_OP_HEIGHT, TASK_OP_SQUARE, TASK_OP_STOREYS ])
+
+  useEffect(() => {
+
+    if ( TASK_TITLE !== '' && 
+         TASK_DATE_START !== '' &&
+         TASK_DATE_FINISH !== '' && 
+         TASK_COAST !== '' &&
+         TASK_PREPAY !== '' && 
+         TASK_PREPAY_DAYS !== '' &&
+         TASK_EXPERT_DAYS !== '' && 
+         TASK_EXPERT_COAST !== '' ) {
+
+          setLine1Color(stepContainerRoundColor)
+
+         } else setLine1Color(stepContainerRoundLabelColor)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ 
+    
+    TASK_COAST, 
+    TASK_DATE_FINISH, 
+    TASK_DATE_START, 
+    TASK_EXPERT_COAST, 
+    TASK_EXPERT_DAYS, 
+    TASK_PREPAY, 
+    TASK_PREPAY_DAYS, 
+    TASK_TITLE 
+    
+  ])
+
+  useEffect(() => {
+
+    if ( TASK_TITLE !== '' && 
+         TASK_DATE_START !== '' &&
+         TASK_DATE_FINISH !== '' && 
+         TASK_COAST !== '' &&
+         TASK_PREPAY !== '' && 
+         TASK_PREPAY_DAYS !== '' &&
+         TASK_EXPERT_DAYS !== '' && 
+         TASK_EXPERT_COAST !== '' &&
+         TASK_DESCRIPTION !== '' && 
+         TASK_OP_SQUARE !== '' &&
+         TASK_OP_STOREYS !== '' && 
+         TASK_OP_HEIGHT !== '' ) {
+
+          setLine2Color(stepContainerRoundColor)
+
+         } else setLine2Color(stepContainerRoundLabelColor)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ 
+    
+    TASK_COAST, 
+    TASK_DATE_FINISH, 
+    TASK_DATE_START, 
+    TASK_DESCRIPTION, 
+    TASK_EXPERT_COAST, 
+    TASK_EXPERT_DAYS, 
+    TASK_OP_HEIGHT, 
+    TASK_OP_SQUARE, 
+    TASK_OP_STOREYS, 
+    TASK_PREPAY, 
+    TASK_PREPAY_DAYS, 
+    TASK_TITLE 
+  
+  ])
+
   return (
     <ContentArea
       flexDirection={null}
@@ -145,22 +250,25 @@ const CreateTaskPage: React.FC = () => {
       justify={null}
     > 
 
-      { AUTH_REQUEST && <RequestActionsComponent
+      { CREATE_TASK_REQUEST && <RequestActionsComponent
 
         callbackAction={() => {}}
         requestData={{
           type: 'POST',
           urlstring: '/add-task',
           body: {
-            title: taskTitle, 
-            coast: taskCoast, 
-            prepay: taskPrepay, 
-            prepayDays: taskPrepayDays,
-            expertCoast: taskExpertCoast, 
-            square: taskSquare, 
-            storeys: taskStoreys, 
-            height: taskHeight,
-            description: taskDescription,
+            title: TASK_TITLE, 
+            coast: TASK_COAST, 
+            prepay: TASK_PREPAY, 
+            prepayDays: TASK_PREPAY_DAYS,
+            expertDays: TASK_EXPERT_DAYS.$D + '-' + ( TASK_EXPERT_DAYS.$M + 1 ) + '-' + TASK_EXPERT_DAYS.$y,
+            expertCoast: TASK_EXPERT_COAST, 
+            dateStart: TASK_DATE_START.$D + '-' + ( TASK_DATE_START.$M + 1 ) + '-' + TASK_DATE_START.$y,
+            dateFinish: TASK_DATE_FINISH.$D + '-' + ( TASK_DATE_FINISH.$M + 1 ) + '-' + TASK_DATE_FINISH.$y,
+            square: TASK_OP_SQUARE, 
+            storeys: TASK_OP_STOREYS, 
+            height: TASK_OP_HEIGHT,
+            description: TASK_DESCRIPTION,
             customer: USER_ID,
             status: 'TASK-ACTIVE',
             date: dateString,
@@ -191,32 +299,32 @@ const CreateTaskPage: React.FC = () => {
       <MenuContainer>
         <StepsContainer>
           <StepsContainerVertical backgroundColor={stepsContainerColor}>
-            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
-            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
-            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
-            <StepsContainerVerticalStep backgroundColor={stepsContainerColor}/>
+            <StepsContainerVerticalStep style={{ marginTop: '8px' }} backgroundColor={line1Color}/>
+            <StepsContainerVerticalStep backgroundColor={line2Color}/>
+            <StepsContainerVerticalStep backgroundColor={line3Color}/>
+            <StepsContainerVerticalStep style={{ marginBottom: '8px' }} backgroundColor={line4Color}/>
             <StepsContainerVerticalForRound backgroundColor={"transparent"}>
-              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+              <StepsContainerVerticalStepRound backgroundColor={step1Color}>
                 <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
                   {"Данные о заказе"}
                 </StepsContainerVerticalStepRoundLabel>
               </StepsContainerVerticalStepRound>
-              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+              <StepsContainerVerticalStepRound backgroundColor={step2Color}>
                 <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
                   {"Условия"}
                 </StepsContainerVerticalStepRoundLabel>
               </StepsContainerVerticalStepRound>
-              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+              <StepsContainerVerticalStepRound backgroundColor={step3Color}>
                 <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
                   {"Об объекте"}
                 </StepsContainerVerticalStepRoundLabel>
               </StepsContainerVerticalStepRound>
-              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+              <StepsContainerVerticalStepRound backgroundColor={step4Color}>
                 <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
                   {"Вложения"}
                 </StepsContainerVerticalStepRoundLabel>
               </StepsContainerVerticalStepRound>
-              <StepsContainerVerticalStepRound backgroundColor={stepContainerRoundColor}>
+              <StepsContainerVerticalStepRound backgroundColor={step5Color}>
                 <StepsContainerVerticalStepRoundLabel color={stepContainerRoundLabelColor}>
                   {"Разделы"}
                 </StepsContainerVerticalStepRoundLabel>
@@ -305,18 +413,18 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine>
         <TextFieldContainerLine>
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_DATEPICK'}
+            type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_START'}
             valueType='text'
             required={false}
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Дата начала"}
+            label={"Дата начала работ"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
-            store={[ "Сидоров", () => null ]}
+            store={[ "", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -328,18 +436,18 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS} />
           <InputComponent
-            type={'TEXT_INPUT_OUTLINE_DATEPICK'}
+            type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_FINISH'}
             valueType='text'
             required={false}
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Дата окончания"}
+            label={"Дата сдачи задания"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
             innerLabel={null}
-            store={[ "Сидоров", () => null ]}
+            store={[ "TASK_DATE_TO", () => null ]}
             css={{
               fontSize: '12px',
               position: 'relative',
@@ -470,26 +578,30 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
-            <InputComponent
-              type={'TEXT_INPUT_OUTLINE_DATE'}
-              valueType='text'
-              required={false}
-              widthType={'%'}
-              widthValue={50}
-              heightValue={'50px'}
-              label={"Дата экспертизы"}
-              isError={false}
-              isDisabled={true}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '16px',
-                backgroundColor: inputBackground
-              }}
-            />
+            <div style={{ display: 'block', width: '50%', marginTop: '-23px' }}>
+              <InputComponent
+                type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
+                valueType='text'
+                required={false}
+                widthType={'%'}
+                widthValue={100}
+                heightValue={'50px'}
+                label={"Дата экспертизы"}
+                isError={false}
+                isDisabled={false}
+                labelShrinkLeft={"0px"}
+                innerLabel={null}
+                store={[ "TASK_DATE_TO", () => null ]}
+                css={{
+                  fontSize: '12px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '30px',
+                  marginTop: '0px',
+                  backgroundColor: 'white'
+                }}
+              />
+            </div>
             <span style={spanDelimiterCSS} />
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_NEW_TASK'}

@@ -22,6 +22,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     taskTitle,
     taskDeadline,
     taskExpertType,
+    taskExpertDate,
     taskSpecializationTags,
     cardWidth,
     marbo,
@@ -109,7 +110,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>[ данные корректируются ]</span>
+                <span>{ taskExpertDate ? taskExpertDate : '[ данные корректируются ]' }</span>
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>

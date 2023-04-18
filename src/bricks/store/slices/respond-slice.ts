@@ -13,6 +13,8 @@ const initialState: IRespondReducer = {
   focused: '',
   task: '',
   executor: '',
+  dateFinish: '',
+  dateExpert: '',
 }
 
 const respondReducer = createSlice({
@@ -49,6 +51,12 @@ const respondReducer = createSlice({
     setExecutor(state, action: PayloadAction<string>) {
       state.executor = action.payload
     },
+    setDateFinish(state, action: PayloadAction<any>) {
+      state.dateFinish = action.payload
+    },
+    setDateExpert(state, action: PayloadAction<any>) {
+      state.dateExpert = action.payload
+    },
   }
 })
 
@@ -61,5 +69,7 @@ export const { setDeadline,
   setComment, 
   setFocused,
   setTask,
-  setExecutor } = respondReducer.actions
+  setExecutor,
+  setDateFinish,
+  setDateExpert} = respondReducer.actions
 export default respondReducer.reducer

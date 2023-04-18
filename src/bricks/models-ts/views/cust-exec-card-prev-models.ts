@@ -1,4 +1,5 @@
 export interface ICustExecCardPrevProps {
+  userId?: string,
   userName: string,
   userAvatar: string,
   userType?: 'CUSTOMER' | 'EXECUTOR',

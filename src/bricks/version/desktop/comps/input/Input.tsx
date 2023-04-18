@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setName, 
@@ -11,15 +11,18 @@ import { setName,
   setFocused,
   setCode } from '../../../../store/slices/reg-slice'
 import { setTitle, 
+  setDateStart,
+  setDateFinish,
   setCoast, 
   setPrepay, 
   setPrepayDays,
+  setExpertiseDays,
   setExpertiseCoast, 
   setDescription, 
   setFocused as setFocusedTask,
   setObjectParamsSquare,
   setObjectParamsStoreys,
-  setObjectParamsHeight
+  setObjectParamsHeight,
  } from '../../../../store/slices/create-task-slice'
 import { setDeadline, 
   setCoast as setCoastRespond, 
@@ -28,7 +31,9 @@ import { setDeadline,
   setExpert, 
   setExpertCoast, 
   setComment,
-  setFocused as setFocusedRespond } from '../../../../store/slices/respond-slice'
+  setFocused as setFocusedRespond,
+  setDateFinish as setDateFinishRespond,
+  setDateExpert } from '../../../../store/slices/respond-slice'
 import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -37,6 +42,7 @@ import Visibility from '@mui/icons-material/Visibility'
 import Search from '@mui/icons-material/Search'
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { Dayjs } from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -86,11 +92,14 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const TASK_COAST = useAppSelector(state => state.createTaskReducer.coast)
   const TASK_PREPAY = useAppSelector(state => state.createTaskReducer.prepay)
   const TASK_PREPAY_DAYS = useAppSelector(state => state.createTaskReducer.prepayDays)
+  const TASK_EXPERT_DAYS = useAppSelector(state => state.createTaskReducer.expertiseDays)
   const TASK_EXPERT_COAST = useAppSelector(state => state.createTaskReducer.expertiseCoast)
   const TASK_DESCRIPTION = useAppSelector(state => state.createTaskReducer.description)
   const TASK_OP_SQUARE = useAppSelector(state => state.createTaskReducer.objectParamsSquare)
   const TASK_OP_STOREYS = useAppSelector(state => state.createTaskReducer.objectParamsStoreys)
   const TASK_OP_HEIGHT = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
+  const TASK_DATE_START = useAppSelector(state => state.createTaskReducer.dateStart)
+  const TASK_DATE_FINISH = useAppSelector(state => state.createTaskReducer.dateFinish)
   const TASK_FOCUS = useAppSelector(state => state.createTaskReducer.focused)
 
   // ----------------------------------------------------------------
@@ -104,12 +113,20 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const RESPOND_EXPERT = useAppSelector(state => state.respondReducer.expert)
   const RESPOND_EXPERT_COAST = useAppSelector(state => state.respondReducer.expertCost)
   const RESPOND_COMMENT = useAppSelector(state => state.respondReducer.comment)
+  const RESPOND_DATE_FINISH = useAppSelector(state => state.respondReducer.dateFinish)
+  const RESPOND_DATE_EXPERT = useAppSelector(state => state.respondReducer.dateExpert)
   const RESPOND_FOCUS = useAppSelector(state => state.respondReducer.focused)
 
   interface IState {
     showPassword: boolean,
     password: string
   }
+
+  const [ taskDateStart, setTaskDateStart ] = React.useState<Dayjs | null>(null)
+  const [ taskDateFinish, setTaskDateFinish ] = React.useState<Dayjs | null>(null)
+  const [ taskExpertDate, setTaskExpertDate ] = React.useState<Dayjs | null>(null)
+  const [ respondDateFinish, setRespondDateFinish ] = React.useState<Dayjs | null>(null)
+  const [ respondDateExpert, setRespondDateExpert ] = React.useState<Dayjs | null>(null)
 
   const [ values, setValues ] = useState<IState>({
     showPassword: false,
@@ -248,6 +265,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setExpertCoast(event.target.value))
       store[0] === 'RESPOND_COMMENT' && dispatch(setComment(event.target.value))
       store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond(event.target.value))
+      store[0] === 'RESPOND_DATE_FINISH' && dispatch(setDateFinishRespond(event.target.value))
+      store[0] === 'RESPOND_DATE_EXPERT' && dispatch(setDateExpert(event.target.value))
 
       store[0] === 'RESPOND_DEADLINE' && dispatch(setFocusedRespond('RESPOND_DEADLINE'))
       store[0] === 'RESPOND_COAST' && dispatch(setFocusedRespond('RESPOND_COAST'))
@@ -257,6 +276,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setFocusedRespond('RESPOND_EXPERT_COAST'))
       store[0] === 'RESPOND_COMMENT' && dispatch(setFocusedRespond('RESPOND_COMMENT'))
       store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond('RESPOND_FOCUS'))
+      store[0] === 'RESPOND_DATE_FINISH' && dispatch(setFocusedRespond('RESPOND_DATE_FINISH'))
+      store[0] === 'RESPOND_DATE_EXPERT' && dispatch(setFocusedRespond('RESPOND_DATE_EXPERT'))
 
     }
 
@@ -270,6 +291,37 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   }
 
   const mouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault()
+
+  useEffect(() => {
+
+    dispatch(setDateStart(taskDateStart))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ taskDateStart ])
+  useEffect(() => {
+
+    dispatch(setDateFinish(taskDateFinish))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ taskDateFinish ])
+  useEffect(() => {
+
+    dispatch(setExpertiseDays(taskExpertDate))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ taskExpertDate ])
+  useEffect(() => {
+
+    dispatch(setDateFinishRespond(respondDateFinish))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ respondDateFinish ])
+  useEffect(() => {
+
+    dispatch(setDateExpert(respondDateExpert))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ respondDateExpert ])
 
   return (
     <React.Fragment>
@@ -553,12 +605,110 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
-          : type === 'TEXT_INPUT_OUTLINE_DATEPICK'
+
+          // ---------------------------------------------------------------- !!! 
+          // варианты datepicker, нужно свести к одному
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_START'
           ? <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer sx={{ width: '100%' }} components={['DatePicker']}>
-                <DatePicker sx={{ backgroundColor: 'white', width: '100%' }} label={label} />
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => setTaskDateStart(newValue)}
+                  value={TASK_DATE_START}
+                />
               </DemoContainer>
             </LocalizationProvider>
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_FINISH'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => setTaskDateFinish(newValue)}
+                  value={TASK_DATE_FINISH}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => setTaskExpertDate(newValue)}
+                  value={TASK_EXPERT_DAYS}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_FINISH'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => setRespondDateFinish(newValue)}
+                  value={RESPOND_DATE_FINISH}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_EXPERT'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => setRespondDateExpert(newValue)}
+                  value={RESPOND_DATE_EXPERT}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+
+          // ---------------------------------------------------------------- !!! 
+          // базовый datepicker, нужно сделать вариативность
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_DATEPICK'
+          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer 
+                sx={{ width: '100%' }} 
+                components={['DatePicker']}
+              >
+                <DatePicker 
+                  sx={{ backgroundColor: 'white', width: '100%' }} 
+                  label={label} 
+                  onChange={ newValue => {
+                    if ( store ) {
+                      store[0] === 'TASK_DATE_START' && setTaskDateStart(newValue)
+                      store[0] === 'TASK_DATE_FINISH' && setTaskDateFinish(newValue)
+                    }
+                  }}
+                  value={taskDateStart}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
+
+          // ---------------------------------------------------------------- !!! 
+          // базовый datepicker, нужно сделать вариативность
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_SEARCH'
           ? <CustomTextField 
               type={'search'}

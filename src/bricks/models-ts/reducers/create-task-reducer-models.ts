@@ -1,15 +1,13 @@
 export interface ICreateTaskReducer {
   title: string,
-  dates: {
-    start: string,
-    finish: string
-  },
+  dateStart: any,
+  dateFinish: any,
   tags: Array<string>,
   coast: string | 'contracted',
   prepay: string,
   prepayDays: string,
   expertise: string,
-  expertiseDays: string,
+  expertiseDays: any,
   expertiseCoast: string,
   objectData: {
     constructionType: string,

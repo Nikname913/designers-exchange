@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, CSSProperties } from 'react'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
@@ -10,7 +10,9 @@ import ButtonComponent from '../comps/button/Button'
 import Checkbox from '@mui/material/Checkbox'
 import RequestActionsComponent from '../services/request.service'
 import cssContentArea from '../styles/views/contentArea.css'
+
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import correctIcon from '../../../img/icons/correctBlue.svg'
 
 const { ContentArea, PageTitle, ContentContainer, ContentLine } = cssContentArea
 const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
@@ -25,6 +27,10 @@ const AuthPage: React.FC = () => {
   const [ nameError, setNameError ] = useState(false)
   const [ mailError, setMailError ] = useState(false)
   const [ passwordError, setPasswordError ] = useState(false)
+
+  const [ passValid1, setPassValid1 ] = useState(false)
+  const [ passValid2, setPassValid2 ] = useState(false)
+  const [ passValid3, setPassValid3 ] = useState(false)
 
   const SURNAME = useAppSelector(state => state.regReducer.surname)
   const NAME = useAppSelector(state => state.regReducer.name)
@@ -65,10 +71,14 @@ const AuthPage: React.FC = () => {
 
     if ( SURNAME !== '' && NAME !== '' && EMAIL !== '' && PASSWORD !== '' ) {
 
-      !false && console.log(EMAIL)
-      !false && console.log(PASSWORD)
-
       SET_AUTH_REQUEST(true)
+
+      !false && console.log(SURNAME)
+      !false && console.log(NAME)
+      !false && console.log(SECOND_NAME)
+      !false && console.log(EMAIL)
+      !false && console.log(NUMBER)
+      !false && console.log(PASSWORD)
 
       // ---------------------------------------
       setTimeout(() => SET_AUTH_REQUEST(false), 1300)
@@ -119,6 +129,77 @@ const AuthPage: React.FC = () => {
 
   const changeFaceType = (param: string) => dispatch(setFaceType(param))
 
+  useEffect(() => {
+
+    PASSWORD.length > 7 ? setPassValid1(true) : setPassValid1(false)
+
+    let toUpper = 0
+
+    for ( let i = 0; i < PASSWORD.length; i++ ) {
+
+      if ( 
+
+        PASSWORD[i] !== '0' &&
+        PASSWORD[i] !== '1' &&
+        PASSWORD[i] !== '2' &&
+        PASSWORD[i] !== '3' &&
+        PASSWORD[i] !== '4' &&
+        PASSWORD[i] !== '5' &&
+        PASSWORD[i] !== '6' &&
+        PASSWORD[i] !== '7' &&
+        PASSWORD[i] !== '8' &&
+        PASSWORD[i] !== '9'
+
+       ) { PASSWORD[i].charAt(0) === PASSWORD[i].charAt(0).toUpperCase() && toUpper++ }
+
+    }
+
+    setPassValid3(false)
+
+    for ( let i = 0; i < PASSWORD.length; i++ ) {
+
+      if ( 
+
+        PASSWORD[i] === '0' ||
+        PASSWORD[i] === '1' ||
+        PASSWORD[i] === '2' ||
+        PASSWORD[i] === '3' ||
+        PASSWORD[i] === '4' ||
+        PASSWORD[i] === '5' ||
+        PASSWORD[i] === '6' ||
+        PASSWORD[i] === '7' ||
+        PASSWORD[i] === '8' ||
+        PASSWORD[i] === '9'
+
+       ) { setPassValid3(true) }
+
+    }
+
+    toUpper > 0 ? setPassValid2(true) : setPassValid2(false)
+
+  },[ PASSWORD ])
+
+  const passValidateCSS: CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    width: '50%',
+    height: 'auto',
+    minHeight: '60px',
+    backgroundColor: 'white',
+    borderRadius: '8px',
+    boxShadow: '0px 3px 16px 2px rgba(0, 0, 0, 0.12)',
+    padding: '33px',
+    boxSizing: 'border-box'
+  }
+  const passValidateLineCSS: CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative',
+    width: '100%',
+    marginTop: '24px'
+  }
+
   return (
     <ContentArea
       flexDirection={null}
@@ -135,7 +216,11 @@ const AuthPage: React.FC = () => {
           body: {
             email: EMAIL,
             password: PASSWORD,
-            type: 'EXECUTOR'
+            type: 'EXECUTOR',
+            name: NAME,
+            surname: SURNAME,
+            secondName: SECOND_NAME,
+            number: NUMBER
           }
         }}
       
@@ -156,7 +241,8 @@ const AuthPage: React.FC = () => {
               data={[
                 { value: 1, label: 'Физическое лицо' },
                 { value: 2, label: 'Самозанятый' },
-                { value: 3, label: 'Индивидуальный предприниматель' }
+                { value: 3, label: 'Индивидуальный предприниматель' },
+                { value: 4, label: 'Юридическое лицо' }
               ]}
               multy={false}
               action={changeFaceType}
@@ -398,6 +484,49 @@ const AuthPage: React.FC = () => {
               backgroundColor: 'white'
             }}
           />
+        </ContentLine>
+        <ContentLine style={{ marginTop: '26px' }}>
+          <div style={passValidateCSS}>
+            <span style={{ fontWeight: 'bold' }}>Требования к паролю</span>
+            <div style={passValidateLineCSS}>
+              <img
+                alt={""}
+                src={correctIcon}
+                style={{ 
+                  marginRight: '14px',
+                  filter: passValid1 ? 'grayscale(0)' : 'grayscale(1)' 
+                }}
+              />
+              <span>Минимум 8 символов</span>
+            </div>
+            <div style={passValidateLineCSS}>
+              <img
+                alt={""}
+                src={correctIcon}
+                style={{ 
+                  marginRight: '14px',
+                  filter: passValid2 ? 'grayscale(0)' : 'grayscale(1)' 
+                }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span>Хотя бы одна строчная буква латинского алфавита</span>
+                <span style={{ fontSize: '12px', color: '#516674', marginTop: '4px' }}>Проверьте, что Capslock отключен</span>
+              </div>
+            </div>
+            <div style={passValidateLineCSS}>
+              <img
+                alt={""}
+                src={correctIcon}
+                style={{ 
+                  marginRight: '14px',
+                  filter: passValid3 ? 'grayscale(0)' : 'grayscale(1)' 
+                }}
+              />
+              <span>Хотя бы одна цифра</span>
+            </div>
+          </div>
+          <span style={{ display: 'block', width: '20px' }}/>
+          <div style={{ display: 'block', width: '50%' }}/>
         </ContentLine>
         <ContentLine style={{ alignItems: 'center', marginTop: '14px', marginBottom: '14px' }}>
           <Checkbox {...label} />

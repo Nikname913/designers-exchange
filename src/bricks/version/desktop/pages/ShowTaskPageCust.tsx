@@ -185,6 +185,7 @@ const ShowTaskPage: React.FC = () => {
                 taskTitle={item.name}
                 taskDeadline={item.deadline}
                 taskExpertType={item.exper}
+                taskExpertDate={item.experDate}
                 taskCustomer={item.customer}
                 taskExecutor={item.executor}
                 taskLocation={item.region}

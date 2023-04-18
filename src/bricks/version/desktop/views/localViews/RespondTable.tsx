@@ -158,12 +158,12 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
             <div style={userRateContainerLineCSS}>
               <div style={statContainerCSS}>
                 <span style={{ ...statContainerNumberCSS, fontSize: '16px', fontWeight: 'bold', lineHeight: '20px', marginBottom: '5px' }}>{ userStat.completed }</span>
-                <span style={{ ...statContainerNumberCSS }}>выполнено</span>
+                <span style={{ ...statContainerNumberCSS }}>выполнил</span>
               </div>
               <StatDelimeter/>
               <div style={statContainerCSS}>
                 <span style={{ ...statContainerNumberCSS, fontSize: '16px', fontWeight: 'bold', lineHeight: '20px', marginBottom: '5px' }}>{ userStat.worked }</span>
-                <span style={{ ...statContainerNumberCSS }}>работаю</span>
+                <span style={{ ...statContainerNumberCSS }}>в работе</span>
               </div>
               <StatDelimeter/>
               <div style={statContainerCSS}>
@@ -174,7 +174,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           </div>
           <div style={coastContainerCSS}>
             <span style={priceSpanCSS}>{userPrice}</span>
-            <span>До: {userDeadline}</span>
+            <span>До : {userDeadline}</span>
           </div>
         </ContentLine>
         <ContentLine style={{ marginTop: '20px', marginBottom: '20px' }}>

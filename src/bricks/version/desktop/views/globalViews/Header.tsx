@@ -234,7 +234,10 @@ const Header: React.FC = () => {
           >{wallet} ₽</span>
           <HeadControllersAvatar 
             backgroundColor={blueColorForIcon}
-            onClick={() => USER_ROLE === 'EXECUTOR' && navigate('/cabinet-ispolnitelya')}
+            onClick={() => {
+              USER_ROLE === 'EXECUTOR' && navigate('/cabinet-ispolnitelya')
+              USER_ROLE === 'CUSTOMER' && navigate('/cabinet-zakazchika')
+            }}
           >
 
             <img

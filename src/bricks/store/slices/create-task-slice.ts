@@ -4,10 +4,8 @@ import { ICreateTaskReducer } from "../../models-ts/reducers/create-task-reducer
 
 const initialState: ICreateTaskReducer = {
   title: '',
-  dates: {
-    start: '',
-    finish: ''
-  },
+  dateStart: '',
+  dateFinish: '',
   tags: [],
   coast: '',
   prepay: '',
@@ -41,8 +39,11 @@ const createTaskReducer = createSlice({
     setTitle(state, action: PayloadAction<string>) {
       state.title = action.payload
     },
-    setDates(state, action: PayloadAction<{ start: string, finish: string }>) {
-      state.dates = action.payload
+    setDateStart(state, action: PayloadAction<any>) {
+      state.dateStart = action.payload
+    },
+    setDateFinish(state, action: PayloadAction<any>) {
+      state.dateFinish = action.payload
     },
     setTags(state, action: PayloadAction<Array<string>>) {
       state.tags = action.payload
@@ -59,7 +60,7 @@ const createTaskReducer = createSlice({
     setExpertise(state, action: PayloadAction<string>) {
       state.expertise = action.payload
     },
-    setExpertiseDays(state, action: PayloadAction<string>) {
+    setExpertiseDays(state, action: PayloadAction<any>) {
       state.expertiseDays = action.payload
     },
     setExpertiseCoast(state, action: PayloadAction<string>) {
@@ -103,7 +104,8 @@ const createTaskReducer = createSlice({
 
 export const { 
   setTitle,
-  setDates,
+  setDateStart,
+  setDateFinish,
   setTags,
   setCoast,
   setPrepay,

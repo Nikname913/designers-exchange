@@ -1,10 +1,12 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
+import { setList } from '../../../../store/slices/task-content-slice'
 import SelectField from '../../comps/select/SelectField'
 import TaskTable from '../../views/localViews/TaskTable'
+import RequestActionsComponent from '../../services/request.service'
 import ButtonComponent from '../../comps/button/Button'
 import Pagintation from '../../services/pagination.service'
 import cssContentArea from '../../styles/views/contentArea.css'
@@ -22,6 +24,8 @@ const ExchangePage: React.FC = () => {
   const dispatch = useAppDispatch()
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const [ AUTH_REQUEST, ] = useState(true)
 
   const greyColor = useAppSelector(state => state.theme.grey)
   const buttonColor = useAppSelector(state => state.theme.blue3)
@@ -83,12 +87,97 @@ const ExchangePage: React.FC = () => {
     dispatch(selectActualTask(param))
   } 
 
+  const callbackSetTasksList = (param: any) => {
+
+    const data = param
+      .filter((item: any) => item.status === 'TASK-ACTIVE')
+        // eslint-disable-next-line array-callback-return
+        // eslint-disable-next-line array-callback-return
+      .filter((item: any) => {
+
+        let itemArr = item
+        console.log(itemArr)
+
+        const validate = (item: any) => {
+
+          let checkUser = 'null'
+          const array = item.reviews.filter((itemm: any) => itemm.executorID === USER_ID)
+
+          if ( array.length > 0 ) checkUser = USER_ID
+
+          return checkUser
+
+        }
+
+        if ( validate(itemArr) !== 'null' ) return item
+
+      })
+      .map((item: any, index: number) => {
+
+        return { 
+          id: item.taskID, 
+          name: item.title, 
+          date: item.date,
+          deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+          exper: item.expertise,
+          customer: item.customer.slice(0, 30) + '...',
+          executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
+          region: item.region ? item.region : 'Екатеринбург',
+          tags: item.tags,
+          description: item.description,
+          status: 'searching',
+          viewtype: 'default',
+          coast: {
+            value: item.coast,
+            issafe: true,
+            prepay: item.prepay,
+            exper: item.expertiseCoast,
+          },
+          responds: item.reviews,
+          objectData: {
+            constructionType: item.objectData.constructionType,
+            region: item.objectData.region,
+            type: item.objectData.type,
+            spec: item.objectData.spec,
+          },
+          objectParams: {
+            square: item.objectParams.square,
+            storeys: item.objectParams.storeys,
+            height: item.objectParams.height,
+          },
+        }
+
+      })
+
+    dispatch(setList(data))
+
+  }
+
+  useEffect(() => {
+    
+    false &&console.log(TASKS_LIST.list)
+  
+  }, [ TASKS_LIST ])
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetTasksList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/get-task-list',
+          body: {
+            status: ''
+          }
+        }}
+      
+      /> }
 
       { ROLE_TYPE === 'CUSTOMER' && <Navigate to={"/zakazchik-moi-zadaniya"} replace={true}/> }
 
@@ -121,10 +210,10 @@ const ExchangePage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { TASKS_LIST.list.filter(item => item.status === 'backside').map((item, index: number): ReactElement => {
+        { TASKS_LIST.list.map((item, index: number): ReactElement => {
           return (
-            <React.Fragment>
-              <TaskTable key={index}
+            <React.Fragment key={index}>
+              <TaskTable
                 viewType={"execSelfView"}
                 taskInitDate={item.date}
                 taskTitle={item.name}
@@ -147,60 +236,70 @@ const ExchangePage: React.FC = () => {
                   expert: item.coast.issafe === true ? item.coast.exper : 0,
                 }}
               />
-              <MyRespond.RespondContainer>
-                <MyRespond.Title>Ваш отклик</MyRespond.Title>
-                <MyRespond.ContentLine style={{ marginBottom: '15px' }}>
-                  <div style={subContentLine}>
-                    <div style={{ marginRight: '80px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Сроки:</span>
-                      <span>{"180 дней"}</span>
-                    </div>
-                    <div>
-                      <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Стоимость:</span>
-                      <span>{"120 000₽"}</span>
-                    </div>
-                  </div>
-                </MyRespond.ContentLine>
-                <MyRespond.ContentLine style={{ marginBottom: '5px' }}>
-                  <div style={subContentLine}>
-                    <div>
-                      <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Комментарий:</span>
-                    </div>
-                  </div>
-                </MyRespond.ContentLine>
-                <MyRespond.ContentLine>
-                  <div style={subContentLine}>
-                    <div style={{ width: '530px', lineHeight: '20px' }}>
-                      <span>Nibh duis amet mattis elementum et. Nunc quis nullam sit risus sollicitudin habitant eget urna. Sed justo eget porttitor ut odio.Nibh duis amet mattis elementum et. Nunc quis nullam sit risus sollicitudin habitant eget urna. Sed justo eget porttitor ut odio</span>
-                    </div>
-                  </div>
-                </MyRespond.ContentLine>
-                <MyRespond.ButtonContainer>
-                  <ButtonComponent
-                    inner={"Отменить отклик"} 
-                    type="CONTAINED_DEFAULT"
-                    action={() => {}}
-                    actionData={null}
-                    widthType={"%"}
-                    widthValue={100}
-                    children={""}
-                    childrenCss={{}}
-                    iconSrc={null}
-                    iconCss={undefined}
-                    muiIconSize={null}
-                    MuiIconChildren={EmailIcon}
-                    css={{
-                      backgroundColor: buttonColor,
-                      color: 'inherit',
-                      fontSize: '12px',
-                      height: '40px',
-                      borderRadius: '6px',
-                      position: 'relative',
-                      boxSizing: 'border-box',
-                    }}
-                  />
-                </MyRespond.ButtonContainer>
-              </MyRespond.RespondContainer>
+              <React.Fragment>
+                { item.responds
+                  .filter((item: any) => item.executorID === USER_ID)
+                  .map((item: any, index: number): ReactElement => {
+
+                    return (
+                      <MyRespond.RespondContainer>
+                        <MyRespond.Title style={{ marginTop: '2px', marginBottom: '14px' }}>Ваш отклик на задание</MyRespond.Title>
+                        <MyRespond.ContentLine style={{ marginBottom: '15px' }}>
+                          <div style={subContentLine}>
+                            <div style={{ marginRight: '80px' }}>
+                              <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Сроки:</span>
+                              <span>{item.deadline.slice(0, 10)}</span>
+                            </div>
+                            <div>
+                              <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Стоимость:</span>
+                              <span>{`${item.coast}₽`}</span>
+                            </div>
+                          </div>
+                        </MyRespond.ContentLine>
+                        <MyRespond.ContentLine style={{ marginBottom: '5px' }}>
+                          <div style={subContentLine}>
+                            <div>
+                              <span style={{ fontWeight: 'bold', marginRight: '5px' }}>Комментарий:</span>
+                            </div>
+                          </div>
+                        </MyRespond.ContentLine>
+                        <MyRespond.ContentLine>
+                          <div style={subContentLine}>
+                            <div style={{ width: '530px', lineHeight: '20px' }}>
+                              <span>{item.comment}</span>
+                            </div>
+                          </div>
+                        </MyRespond.ContentLine>
+                        <MyRespond.ButtonContainer>
+                          <ButtonComponent
+                            inner={"Отменить отклик"} 
+                            type="CONTAINED_DEFAULT"
+                            action={() => {}}
+                            actionData={null}
+                            widthType={"%"}
+                            widthValue={100}
+                            children={""}
+                            childrenCss={{}}
+                            iconSrc={null}
+                            iconCss={undefined}
+                            muiIconSize={null}
+                            MuiIconChildren={EmailIcon}
+                            css={{
+                              backgroundColor: buttonColor,
+                              color: 'inherit',
+                              fontSize: '12px',
+                              height: '40px',
+                              borderRadius: '6px',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                            }}
+                          />
+                        </MyRespond.ButtonContainer>
+                      </MyRespond.RespondContainer>
+                    )
+                  
+                })}
+              </React.Fragment>
             </React.Fragment>
           )
         })}

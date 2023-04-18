@@ -2,6 +2,10 @@ export interface IUserContent {
   USERS_DATA: {
     showOne: string,
     listExecutors: Array<{
+      docs: any,
+      mail?: string | number | boolean | undefined
+      number?: string | number | boolean | undefined
+      bio?: any
       id: string,
       name: string,
       rate: number,
@@ -11,6 +15,10 @@ export interface IUserContent {
       role: string
     }>,
     listCustomers: Array<{
+      docs: any,
+      mail?: string | number | boolean | undefined
+      number?: string | number | boolean | undefined
+      bio?: any
       id: string,
       name: string,
       rate: number,

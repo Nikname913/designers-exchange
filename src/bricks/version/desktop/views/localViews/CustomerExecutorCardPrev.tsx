@@ -32,7 +32,9 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const { userName, 
+  const {
+    userId,
+    userName, 
     userAvatar, 
     userType,
     userEmployment, 
@@ -136,7 +138,8 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
   }
 
   function openProfile(): void {
-    userType === 'EXECUTOR' && navigate('/profil-ispolnitelya')
+    userType === 'EXECUTOR' && navigate(`/profil-ispolnitelya/${userId}`)
+    userType === 'CUSTOMER' && navigate(`/profil-zakazchika/${userId}`)
   }
 
   return (

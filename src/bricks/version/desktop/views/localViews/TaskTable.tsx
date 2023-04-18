@@ -101,7 +101,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     position: 'absolute',
     left: '100%',
     top: '0%',
-    marginTop: '-12px',
+    marginTop: '-42px',
     marginLeft: '-68px'
   }
 

@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import InputComponent from '../comps/input/Input'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setCustomers } from '../../../store/slices/user-content-slice'
 import { useNavigate } from 'react-router-dom'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
+import RequestActionsComponent from '../services/request.service'
 import Pagintation from '../services/pagination.service'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
 import cssContentArea from '../styles/views/contentArea.css'
@@ -21,7 +23,11 @@ const CustomerPage: React.FC = () => {
   const blackColor = useAppSelector(state => state.theme.black)
   const greyColor = useAppSelector(state => state.theme.grey)
   const customers = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
+
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
+  
+  const [ AUTH_REQUEST, ] = useState(true)
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -66,12 +72,33 @@ const CustomerPage: React.FC = () => {
     navigate("/ispolniteli")
   }
 
+  const callbackSetUsersList = (param: any) => {
+
+    const filterUsers = param.users.filter((user: any) => user.type === 'CUSTOMER')
+    dispatch(setCustomers(filterUsers))
+
+  }
+
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
+
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetUsersList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/users',
+          body: {
+            status: ''
+          }
+        }}
+      
+      /> }
+
       <div style={headBlockCSS}>
         <PageTitle>Заказчики</PageTitle>
         <div style={divCSS}>
@@ -193,58 +220,55 @@ const CustomerPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { customers.map((item: { 
-          id: string,
-          name: string,
-          rate: number,
-          stat: Array<number>,
-          tags: Array<string>,
-          jobType: string,
-          role: string }, index: number): ReactJSXElement => {
+        { customers.map((item: any, index: number): ReactJSXElement => {
           return (
             <CustomerExecutorCardPreview
-              key={item.id}
+              key={index}
               isDisabledMessage={true}
-              userName={item.name}
+              userName={ item.bio && item.bio.name }
+              userId={item.clientId}
               userAvatar={defaultAvatar}
-              userEmployment={item.jobType}
-              userLocation={"Екатеринбург"}
-              userReviews={24}  
-              userRate={item.rate}
-              userProjects={item.stat}
+              userType={"CUSTOMER"}
+              userEmployment={""}
+              userLocation={ item.location && item.location.city }
+              userReviews={0}  
+              userRate={4.88}
+              userProjects={[ 0, 0, 0 ]}
               cardWidth={"calc(50% - 8px)"}
               marginBottom={'16px'}
               marginRight={'0px'}
-              userTags={item.tags}
+              userTags={["[ options download ]"]}
             />
           )
         })}
-        { customers.map((item: { 
-          id: string,
-          name: string,
-          rate: number,
-          stat: Array<number>,
-          tags: Array<string>,
-          jobType: string,
-          role: string }, index: number): ReactJSXElement => {
-          return (
-            <CustomerExecutorCardPreview
-              key={item.id}
-              isDisabledMessage={true}
-              userName={item.name}
-              userAvatar={defaultAvatar}
-              userEmployment={item.jobType}
-              userLocation={"Екатеринбург"}
-              userReviews={24}  
-              userRate={item.rate}
-              userProjects={item.stat}
-              cardWidth={"calc(50% - 8px)"}
-              marginBottom={'16px'}
-              marginRight={'0px'}
-              userTags={item.tags}
-            />
-          )
-        })}
+        <CustomerExecutorCardPreview
+          isDisabledMessage={true}
+          userName={"[ пустая карточка ]"}
+          userAvatar={defaultAvatar}
+          userEmployment={""}
+          userLocation={"Екатеринбург"}
+          userReviews={0}  
+          userRate={4.88}
+          userProjects={[ 0, 0, 0 ]}
+          cardWidth={"calc(50% - 8px)"}
+          marginBottom={'16px'}
+          marginRight={'0px'}
+          userTags={["[ options download ]"]}
+        />
+        <CustomerExecutorCardPreview
+          isDisabledMessage={true}
+          userName={"[ пустая карточка ]"}
+          userAvatar={defaultAvatar}
+          userEmployment={""}
+          userLocation={"Екатеринбург"}
+          userReviews={0}  
+          userRate={4.88}
+          userProjects={[ 0, 0, 0 ]}
+          cardWidth={"calc(50% - 8px)"}
+          marginBottom={'16px'}
+          marginRight={'0px'}
+          userTags={["[ options download ]"]}
+        />
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>

@@ -6,6 +6,7 @@ import { IFos } from '../../../models-ts/services/fos-models'
 import { setShow, setShowType } from '../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
 import { setActiveRole, setRoleData } from '../../../store/slices/role-type-slice'
+import { setShow as setShowAlert , setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setFocused } from '../../../store/slices/reg-slice'
 import { setFaceType } from '../../../store/slices/reg-slice'
 import RequestActionsComponent from './request.service'
@@ -52,6 +53,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const RESPOND_COMMENT = useAppSelector(state => state.respondReducer.comment)
   const RESPOND_TASK = useAppSelector(state => state.respondReducer.task)
   const RESPOND_EXECUTOR = useAppSelector(state => state.respondReducer.executor)
+  const RESPOND_DATE_FINISH = useAppSelector(state => state.respondReducer.dateFinish)
+  const RESPOND_DATE_EXPERT = useAppSelector(state => state.respondReducer.dateExpert)
 
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterBackground = useAppSelector(state => state.theme.blue3)
@@ -262,6 +265,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     console.log(RESPOND_TASK)
     console.log(RESPOND_EXECUTOR)
 
+    dispatch(setShowAlert(true))
+    dispatch(setType('success'))
+    dispatch(setMessage('Ваш отклик на задание был успешно оставлен'))
+
+    setTimeout(() => closeFos(), 1300)
+
   }
   
   useEffect(() => { false && SET_AUTH_REQUEST(AUTH_REQUEST) }, [ AUTH_REQUEST ])
@@ -285,7 +294,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
       { RESPOND_REQUEST && <RequestActionsComponent
 
-        callbackAction={success}
+        callbackAction={() => {}}
         requestData={{
           type: 'POST',
           urlstring: '/add-respond',
@@ -293,11 +302,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
             taskID: RESPOND_TASK,
             executorID: RESPOND_EXECUTOR,
             executroName: RESPOND_EXECUTOR,
-            deadline: RESPOND_DEADLINE,
+            deadline: RESPOND_DATE_FINISH,
             coast: RESPOND_COAST,
             preSolution: RESPOND_SOLUTION,
             prePay: RESPOND_PREPAY,
-            expert: RESPOND_EXPERT,
+            expert: RESPOND_DATE_EXPERT,
             expertCoast: RESPOND_EXPERT_COAST,
             comment: RESPOND_COMMENT
         }
@@ -323,7 +332,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <RespondFromList.Title>Откликнуться на задание</RespondFromList.Title>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
-                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{"[ название задания динамически ]"}</RespondFromList.SubTitle>
+                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{RESPOND_TASK}</RespondFromList.SubTitle>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine style={{ marginBottom: '15px' }}>
                   <span style={spanTitleCSS}>Срок выполнения</span>
@@ -332,7 +341,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATEPICK'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_FINISH'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
@@ -430,7 +439,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATEPICK'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
                     valueType='text'
                     required={false}
                     widthType={'%'}

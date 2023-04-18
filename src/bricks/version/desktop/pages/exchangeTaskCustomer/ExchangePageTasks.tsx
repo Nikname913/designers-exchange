@@ -129,6 +129,8 @@ const ExchangePage: React.FC = () => {
 
   }
 
+  false && returnName('')
+
   const returnUserRate = (param: string) => {
 
     let userRate = 0
@@ -150,7 +152,7 @@ const ExchangePage: React.FC = () => {
     USERS_LIST.listExecutors.forEach(user => {
       if ( user.id === param ) {
         userTags = user.tags
-      }
+      } else userTags = [ 'download', 'download', 'download' ]
     })
 
     return userTags
@@ -164,7 +166,7 @@ const ExchangePage: React.FC = () => {
     USERS_LIST.listExecutors.forEach(user => {
       if ( user.id === param ) {
         userStat = user.stat
-      }
+      } else userStat = [ 0, 0, 0 ]
     })
 
     return userStat
@@ -193,8 +195,9 @@ const ExchangePage: React.FC = () => {
         id: item.taskID, 
         name: item.title, 
         date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' } - ${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
         exper: item.expertise,
+        experDate: item.expertiseDays,
         customer: item.customer.slice(0, 30) + '...',
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
         region: item.region ? item.region : 'Екатеринбург',
@@ -225,6 +228,7 @@ const ExchangePage: React.FC = () => {
     })
 
     dispatch(setList(data))
+    console.log(data)
 
   }
 
@@ -364,9 +368,13 @@ const ExchangePage: React.FC = () => {
               color={greyColor2} 
               key={index}
               onClick={() => {
-                dispatch(selectShowTask(item.id))
-                setTypeShowTasks('active')
-                setPageTitle('Мои задания')
+
+                console.log(item.id)
+
+                !false && dispatch(selectShowTask(item.id))
+                !false && setTypeShowTasks('active')
+                !false && setPageTitle('Мои задания')
+
               }}
             >{ item.name }</ExchangePageTaskCSS.TaskSpan>
 
@@ -489,7 +497,9 @@ const ExchangePage: React.FC = () => {
 
             return (
               <React.Fragment>
-                { TASKS_LIST.showOne === item.id && item.responds.map((itemm: { user: string }, indexx: number): ReactElement => {
+                { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
+
+                  console.log(itemm)
 
                   return (<RespondTable 
                     containerCSS={{
@@ -498,21 +508,21 @@ const ExchangePage: React.FC = () => {
                       mb: '20px',
                       bg: 'white'
                     }}
-                    userName={returnName(itemm.user)}
-                    userJob={"Самозанятый"}
+                    userName={itemm.executorID.slice(0, 20) + '...'}
+                    userJob={"[ options download ]"}
                     userRate={returnUserRate(itemm.user)}
                     userStat={{
-                      completed: returnUserStat(itemm.user)[0], 
-                      failed: returnUserStat(itemm.user)[2], 
-                      worked: returnUserStat(itemm.user)[1]
+                      completed: itemm && returnUserStat(itemm.user)[0], 
+                      failed: itemm && returnUserStat(itemm.user)[2], 
+                      worked: itemm && returnUserStat(itemm.user)[1]
                     }}
-                    userPrice={120000}
-                    userDeadline={"22.02.2023"}
+                    userPrice={itemm.coast}
+                    userDeadline={itemm.deadline.slice(0, 10)}
                     userLocation={"Екатеринбург"}
                     userTags={returnUserTags(itemm.user)}
-                    userMorePrice={["20000", "25", "50000", "10.02.2023"]}
-                    respondDate={"22.12.22&&16:30"}
-                    discription={"lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing lorem ipsum dolor sit amet, consectetur adipiscing"}
+                    userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
+                    respondDate={"[ options download ]&&[ options download ]"}
+                    discription={itemm.comment}
                   ></RespondTable>)
 
                 })}

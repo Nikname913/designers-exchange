@@ -68,8 +68,12 @@ const DeskRoutes: React.FC = () => {
           element={<CustomerPage/>} 
         />
         <Route 
-          path='cabinet-zakazchika' 
+          path='profil-zakazchika/:userId' 
           element={<CustomerProfilePage/>} 
+        />
+        <Route 
+          path='cabinet-zakazchika' 
+          element={<ExecutorCabinetPage/>} 
         />
 
         {/* ---------------------------------------- */}
@@ -146,7 +150,7 @@ const DeskRoutes: React.FC = () => {
           element={<ExecutorPage/>} 
         />
         <Route 
-          path='profil-ispolnitelya' 
+          path='profil-ispolnitelya/:userId' 
           element={<ExecutorProfilePage/>} 
         />
         <Route 

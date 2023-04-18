@@ -8,6 +8,7 @@ export interface ITaskContent {
       date: string,
       deadline: string,
       exper: string,
+      experDate: string,
       customer: string,
       executor: string,
       region: string,

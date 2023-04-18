@@ -180,7 +180,7 @@ const css = {
       width: 100%;
       font-size: 14px;
       color: ${props => props.color};
-      margin-bottom: 14px;
+      margin-bottom: 24px;
     `,
     TaskTitle: styled.h3<{ color: string }>`
       display: block;
@@ -190,6 +190,7 @@ const css = {
       margin: 0;
       color: ${props => props.color};
       margin-bottom: 20px;
+      line-height: 30px;
     `,
     TextContentLine: styled.div`
       display: flex;

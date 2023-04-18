@@ -8,7 +8,9 @@ export interface IRespondReducer {
   comment: string,
   focused: string,
   task: string,
-  executor: string
+  executor: string,
+  dateFinish: any
+  dateExpert: any,
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Fade } from '@mui/material'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 import EmailIcon from '@mui/icons-material/Email'
@@ -68,9 +69,11 @@ const ExecutorProfilePage: React.FC = () => {
     'team'>('about')
 
   const dispatch = useAppDispatch()
+  const { userId } = useParams()
   
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const EXECUTORS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
+  const EXECUTOR = EXECUTORS_LIST.filter((executor: any) => executor.clientId === userId)
 
   const yelloColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
@@ -104,8 +107,15 @@ const ExecutorProfilePage: React.FC = () => {
   }
 
   function showRightContent(): void {
-    dispatch(setShow(true))
+    false && dispatch(setShow(true))
   }
+
+  useEffect(() => {
+
+    console.log(userId)
+    console.log(EXECUTOR)
+
+  }, [ userId, EXECUTOR ])
 
   return (
     <ContentArea
@@ -132,7 +142,7 @@ const ExecutorProfilePage: React.FC = () => {
         <RightContainer>
           <div style={flexDivCSS}>
             <ContentLine>
-              <h2 style={{ fontSize: '30px', margin: 0 }}>{"Сидоров Аркадий Сергеевич"}</h2>
+              <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name + ' ' + EXECUTOR[0].bio.surname }</h2>
               <span style={{ marginLeft: '20px', marginRight: '12px', marginTop: '5px' }}>
                 <img
                   alt={""}
@@ -147,7 +157,7 @@ const ExecutorProfilePage: React.FC = () => {
               </span>
             </ContentLine>
             <ContentLine style={{ marginTop: '20px' }}>
-              <span style={{ color: greyColor2 }}>{"Самозанятый"}</span>
+              <span style={{ color: greyColor2 }}>{"[ options download ]"}</span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
               <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
@@ -159,21 +169,21 @@ const ExecutorProfilePage: React.FC = () => {
                   fontSize: '12px', 
                   marginRight: '20px' 
                 }}
-              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold' }}>3</i> выполнено</span>
+              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>выполнено</span>
               <span 
                 style={{ 
                   color: greyColor2, 
                   fontSize: '12px', 
                   marginRight: '20px' 
                 }}
-              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold' }}>3</i> в работе</span>
+              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>в работе</span>
               <span 
                 style={{ 
                   color: greyColor2, 
                   fontSize: '12px', 
                   marginRight: '20px' 
                 }}
-              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold' }}>3</i> провалено</span>
+              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>провалено</span>
             </ContentLine>
           </div>
           <div style={flexDivCSS}>
@@ -224,7 +234,7 @@ const ExecutorProfilePage: React.FC = () => {
                 />
                 <span style={{ fontSize: '40px', marginLeft: '5px' }}>4.8</span>
               </div>
-              <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"25 отзывов"}</span>
+              <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"0 отзывов"}</span>
             </div>
           </div>
         </RightContainer>
@@ -292,7 +302,7 @@ const ExecutorProfilePage: React.FC = () => {
             <span style={buttonLabelCSS}>Образование и опыт</span>
           </LeftMenuIconButton>
           <LeftMenuIconButton
-            onClick={() => setProfileViewStep('team')} 
+            onClick={() => setProfileViewStep('education')} 
             backgroundColor={ 
               profileViewStep === 'team'
                 ? activeLeftMenuIconColor 
@@ -310,7 +320,7 @@ const ExecutorProfilePage: React.FC = () => {
         <ContentContainerLocal style={{ justifyContent: 'space-between' }}>
           
           { profileViewStep === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('Сигнализация').map((item, index) => {
+            { Array(4).fill('[ options download ]').map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
@@ -335,13 +345,13 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
             </div>
             <div style={{ width: '100%', marginTop: '24px' }}>
-              <span style={{ lineHeight: '20px' }}>{"Vitae cum in imperdiet bibendum porttitor orci tellus eu. Morbi ut vitae tincidunt nullam sit lobortis. Bibendum vel elementum nisi est sed. Nec commodo cursus adipiscing amet et gravida lectus. Amet elit sit diam nunc a etiam. Pharetra lacus purus tellus auctor cras integer porttitor tellus tristique. Mus quis arcu commodo convallis. Vestibulum arcu in facilisi interdum accumsan eros. Imperdiet pulvinar massa dictum aenean aliquam diam aenean velit tempor. Dui morbi dui vitae tempus ut elementum placerat libero tristique"}</span>
+              <span style={{ lineHeight: '20px' }}>{"Пользователь не написал о себе подробную информацию"}</span>
             </div>
           </TagsContent> }
           
           { profileViewStep === 'about' && <ReviewsContent>
             <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Отзывы</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Отзывы о пользователе</span>
               <SelectField 
                 placeholder={"Сначала новые"}
                 params={{ width: 280, height: 50 }}
@@ -421,7 +431,7 @@ const ExecutorProfilePage: React.FC = () => {
           </ReviewsContent> }
 
           { profileViewStep === 'portfolio' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('Сигнализация').map((item, index) => {
+            { Array(4).fill('[ options download ]').map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
@@ -451,7 +461,7 @@ const ExecutorProfilePage: React.FC = () => {
           </TagsContent> }
 
           { profileViewStep === 'education' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('Сигнализация').map((item, index) => {
+            { Array(4).fill('[ options download ]').map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
@@ -506,6 +516,20 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               )
             })}
+
+            { TASKS_LIST.list.filter(item => item.status === 'work').length === 0 && 
+              
+              <span 
+                style={{ 
+                  display: 'block', 
+                  width: '100%', 
+                  textAlign: 'center',
+                  marginTop: '60px',
+                  marginBottom: '30px' 
+                }}
+              >Пользователь не имеет активных заказов</span>
+              
+            }
 
             <PagintationContainer>
               <span style={showMoreButtonCSS}>Загрузить еще</span>
