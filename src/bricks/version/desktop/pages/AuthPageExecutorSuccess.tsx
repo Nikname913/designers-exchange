@@ -67,7 +67,7 @@ const AuthPageSuccess: React.FC = () => {
         uid: param.userClientId,
         una: param.userMail
       }))
-      navigate('/zakazchiki')
+      navigate('/customers')
 
     }
 

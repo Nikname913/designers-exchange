@@ -24,7 +24,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
             body: JSON.stringify(body)
           }).then(res => res.json())
 
-          console.log(response)
+          false && console.log(response)
           callbackAction(response)
 
           break

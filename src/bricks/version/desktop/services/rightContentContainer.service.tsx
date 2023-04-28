@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/right-content-slice'
@@ -62,6 +62,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const inputBackground = useAppSelector(state => state.theme.white)
   const chatSubmitColor = useAppSelector(state => state.theme.blue2)
   const blankCorrectColor = useAppSelector(state => state.theme.blue4)
+
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
+    .filter((executor: any) => executor.clientId === USER_ID)
+  const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
+    .filter((customer: any) => customer.clientId === USER_ID)
 
   const avatarCSS: CSSProperties = {
     display: 'block',
@@ -193,6 +200,18 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     dispatch(setShowFOS(true))
     dispatch(setShowTypeFOS('changeAvatar'))
   }
+
+  !false && console.log(EXECUTOR)
+  !false && console.log(CUSTOMER)
+  
+  useEffect(() => {
+
+    false && console.log(USER_ROLE)
+    false && console.log(USER_ID)
+    !false && console.log(EXECUTOR)
+    !false && console.log(CUSTOMER)
+
+  }, [ CUSTOMER, EXECUTOR, USER_ID, USER_ROLE ])
 
   return (
     <React.Fragment>
@@ -2960,7 +2979,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "Захарова", () => null ]}
+                          store={[ 
+                            EXECUTOR.length > 0     ?
+                            EXECUTOR[0].bio.surname : 
+                            CUSTOMER.length > 0     ?
+                            CUSTOMER[0].bio.surname : '', () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -2983,7 +3006,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "Виолетта", () => null ]}
+                          store={[ 
+                            EXECUTOR.length > 0     ?
+                            EXECUTOR[0].bio.name : 
+                            CUSTOMER.length > 0     ?
+                            CUSTOMER[0].bio.name : '', () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -3006,7 +3033,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "Владимировна", () => null ]}
+                          store={[ 
+                            EXECUTOR.length > 0     ?
+                            EXECUTOR[0].bio.secondName : '', () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -3025,12 +3054,15 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
                     <SelectField 
-                      placeholder={"Сортировать по дате"}
+                      placeholder={"Выберите специализацию [ список временно сокращен ]"}
                       params={{ width: 1400, mb: '0px', height: 50 }}
                       data={[
-                        { value: '1', label: 'Вентиляция' },
-                        { value: '2', label: 'Сигнализация' },
-                        { value: '3', label: 'Пожарная безопасность' },
+                        { value: 1, label: 'Геодезические изыскания' },
+                        { value: 2, label: 'Геологические изыскания' },
+                        { value: 3, label: 'Гидрометеорология' },
+                        { value: 4, label: 'Экологические изыскания' },
+                        { value: 5, label: 'Исторические изыскания' },
+                        { value: 6, label: 'Обследование констукций' },
                       ]}
                       multy={true}
                       action={() => {}}
@@ -3094,7 +3126,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     <SelectField 
                       placeholder={"Выберите из списка"}
                       params={{ width: 420, mb: '0px', height: 50 }}
-                      data={[]}
+                      data={[
+                        { value: '1', label: '[ options download ]' },
+                      ]}
                       multy={true}
                       action={() => {}}
                       actionType={""}

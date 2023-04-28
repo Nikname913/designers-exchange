@@ -277,8 +277,35 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Открыть задание"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  viewType === 'custSelfView' && navigate('/zadanie/cu')
-                  viewType === 'execSelfView' && navigate('/zadanie/ex')
+                  viewType === 'custSelfView' && navigate('/task-view/cu')
+                  viewType === 'execSelfView' && navigate('/task-view/ex')
+                  actions && actions[0](actionsParams && actionsParams[0])
+                }}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue2,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '12px'
+                }}
+              /> }
+
+              { viewType === 'mainView' && <ButtonComponent
+                inner={"Открыть задание"} 
+                type="CONTAINED_DEFAULT" 
+                action={() => {
+                  viewType === 'mainView' && navigate('/task-review')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -305,7 +332,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Открыть заказ"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  false && navigate('/zadanie')
+                  false && navigate('/task-view')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -332,7 +359,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Редактировать"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  false && navigate('/zadanie')
+                  false && navigate('/task-view')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -359,21 +386,41 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               {/* правила отображения второй кнопки */}
               {/* -------------------------------------- */}
 
-              { viewType === 'searching' && <ButtonComponent
+              {(viewType === 'mainView' || viewType === 'execSelfView') && <ButtonComponent
                 inner={"Откликнуться"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
 
                   if ( ROLE_TYPE === 'EXECUTOR' ) {
 
-                    dispatch(setTask(actionsParams && actionsParams[0]))
-                    dispatch(setExecutor(USER_ID))
-                    dispatch(setShowRCC('undefined'))
-                    dispatch(setShow(true))
-                    dispatch(setShowType("respondFromList"))
+                    let checkCount = 0
 
-                    actions && actions[1](actionsParams && actionsParams[1])
-                    console.log(actionsParams && actionsParams[0])
+                    if ( actionsParams && actionsParams[1] ) {
+
+                      if ( actionsParams[1].length > 0 ) {
+
+                        actionsParams[1].forEach((item: any) => {
+
+                          if ( item.executorID === USER_ID ) checkCount++
+
+                        })
+
+                      }
+
+                    }
+
+                    if ( checkCount === 0 ) {
+
+                      dispatch(setTask(actionsParams && actionsParams[0]))
+                      dispatch(setExecutor(USER_ID))
+                      dispatch(setShowRCC('undefined'))
+                      dispatch(setShow(true))
+                      dispatch(setShowType("respondFromList"))
+
+                      actions && actions[1](actionsParams && actionsParams[1])
+                      console.log(actionsParams && actionsParams[0])
+
+                    }
 
                   } else if ( ROLE_TYPE === 'UNDEFINED' ) {
 
@@ -408,7 +455,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Снять задание"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
-                  false && navigate('/zadanie')
+                  false && navigate('/task-view')
                   actions && actions[1](actionsParams && actionsParams[1])
                 }}
                 actionData={null}
@@ -436,7 +483,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Разместить"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
-                  false && navigate('/zadanie')
+                  false && navigate('/task-view')
                   actions && actions[1](actionsParams && actionsParams[1])
                 }}
                 actionData={null}

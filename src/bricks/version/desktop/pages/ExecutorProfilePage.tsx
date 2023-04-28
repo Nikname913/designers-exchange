@@ -112,8 +112,8 @@ const ExecutorProfilePage: React.FC = () => {
 
   useEffect(() => {
 
-    console.log(userId)
-    console.log(EXECUTOR)
+    false && console.log(userId)
+    false && console.log(EXECUTOR)
 
   }, [ userId, EXECUTOR ])
 

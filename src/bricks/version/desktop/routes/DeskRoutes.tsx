@@ -25,6 +25,7 @@ import ShowTaskPageExec from '../pages/ShowTaskPageExec'
 import ShowTaskPageCust from '../pages/ShowTaskPageCust'
 import ShowOrderPageExec from '../pages/ShowOrderPageExec'
 import ShowOrderPageCust from '../pages/ShowOrderPageCust'
+import ShowTasksPageExchange from '../pages/ShowTaskPageExchange'
 
 import MainPage from '../pages/MainPage'
 import MyOrdersPage from '../pages/MyOrdersPage'
@@ -44,7 +45,7 @@ const DeskRoutes: React.FC = () => {
       <Routes>
 
         <Route 
-          path='rabota-birzhy' 
+          path='exchange-work' 
           element={<AboutExchangePage/>} 
         />
         <Route 
@@ -52,27 +53,27 @@ const DeskRoutes: React.FC = () => {
           element={<ChatPage/>} 
         />
         <Route 
-          path='registraciya-exec'  
+          path='exec-registration'  
           element={<AuthPageExecutor/>} 
         />
         <Route 
-          path='registraciya-exec-success'   
+          path='exec-registration-success'   
           element={<AuthPageSuccess/>} 
         />
         <Route 
-          path='registraciya-cust'   
+          path='cust-registration'   
           element={<AuthPageCustomer/>} 
         />
         <Route 
-          path='zakazchiki' 
+          path='customers' 
           element={<CustomerPage/>} 
         />
         <Route 
-          path='profil-zakazchika/:userId' 
+          path='cust-profile/:userId' 
           element={<CustomerProfilePage/>} 
         />
         <Route 
-          path='cabinet-zakazchika' 
+          path='cust-office' 
           element={<ExecutorCabinetPage/>} 
         />
 
@@ -82,15 +83,15 @@ const DeskRoutes: React.FC = () => {
 
         <React.Fragment>
           <Route 
-            path='aktivnye-zakazy-ispolnitel' 
+            path='active-orders-exec' 
             element={<ExchangePageOrdersExec/>} 
           />
           <Route 
-            path='zadaniya-arkhiv-ispolnitel' 
+            path='tasks-archive-exec' 
             element={<ExchangePageArchive/>} 
           />
           <Route
-            path='spisok-zadaniy-ispolnitel'
+            path='task-list-exec'
             element={<ExchangePageTasksExec/>}
           />
         </React.Fragment>
@@ -105,15 +106,15 @@ const DeskRoutes: React.FC = () => {
 
         <React.Fragment>
           <Route 
-            path='zakazchik-aktivnye-zadaniya' 
+            path='active-orders-cust' 
             element={<ExchangePageOrdersCust/>} 
           />
           <Route 
-            path='zakazchik-arkhiv' 
+            path='tasks-archive-cust' 
             element={<ExchangePageArchiveCust/>} 
           />
           <Route
-            path='zakazchik-moi-zadaniya'
+            path='task-list-cust'
             element={<ExchangePageTasksCust/>}
           />
         </React.Fragment>
@@ -128,15 +129,15 @@ const DeskRoutes: React.FC = () => {
 
         <React.Fragment>
           <Route 
-            path='aktivnye-zakazy' 
+            path='active-orders-all' 
             element={<ExchangePageOrders/>} 
           />
           <Route 
-            path='zadaniya-arkhiv' 
+            path='tasks-archive-all' 
             element={<ExchangePageArchive/>} 
           />
           <Route
-            path='spisok-zadaniy'
+            path='task-list-all'
             element={<ExchangePageTasks/>}
           />
         </React.Fragment>
@@ -146,58 +147,62 @@ const DeskRoutes: React.FC = () => {
         {/* ---------------------------------------- */}
 
         <Route 
-          path='ispolniteli' 
+          path='executors' 
           element={<ExecutorPage/>} 
         />
         <Route 
-          path='profil-ispolnitelya/:userId' 
+          path='exec-profile/:userId' 
           element={<ExecutorProfilePage/>} 
         />
         <Route 
-          path='cabinet-ispolnitelya' 
+          path='exec-office' 
           element={<ExecutorCabinetPage/>} 
         />
         <Route 
-          path='glavnaya' 
+          path='main' 
           element={<MainPage/>} 
         />
         <Route 
-          path='moi-zakazy' 
+          path='my-orders' 
           element={<MyOrdersPage/>} 
         />
         <Route 
-          path='koshelek' 
+          path='wallet' 
           element={<MyWalletPage/>} 
         />
         <Route 
-          path='ceny-i-usloviya' 
+          path='prices-and-conditions' 
           element={<PricePage/>} 
         />
         <Route 
-          path='politika' 
+          path='privacy-policy' 
           element={<PrivacyPolicyPage/>} 
         />
         <Route 
-          path='podderzhka' 
+          path='support-service' 
           element={<SupportPage/>} 
         />
         <Route 
-          path='komanda' 
+          path='team' 
           element={<TeamPage/>} 
         />
         <Route 
-          path='soglashenie' 
+          path='terms-of-use' 
           element={<TermsOfUsePage/>} 
         />
         <Route 
-          path='stranica-sotrudnika' 
+          path='employee-page' 
           element={<WorkerPage/>} 
         />
         <Route 
-          path='novoe-zadanie' 
+          path='create-new-task' 
           element={<CreateTaskPage/>} 
         />
-        <Route path='zadanie'>
+        <Route 
+          path='task-review' 
+          element={<ShowTasksPageExchange/>} 
+        />
+        <Route path='task-view'>
           <Route
             path='ex'
             element={<ShowTaskPageExec/>}
@@ -207,7 +212,7 @@ const DeskRoutes: React.FC = () => {
             element={<ShowTaskPageCust/>}
           />
         </Route>
-        <Route path='zakaz'>
+        <Route path='order-view'>
           <Route
             path='ex'
             element={<ShowOrderPageExec/>}

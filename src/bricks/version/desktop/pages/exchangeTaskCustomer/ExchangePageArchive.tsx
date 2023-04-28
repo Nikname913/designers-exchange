@@ -52,13 +52,13 @@ const ExchangePage: React.FC = () => {
   }
 
   const orders = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/zakazchik-aktivnye-zadaniya')
+    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const tasks = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/zakazchik-moi-zadaniya')
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))

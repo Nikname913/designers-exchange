@@ -23,6 +23,8 @@ import { setTitle,
   setObjectParamsSquare,
   setObjectParamsStoreys,
   setObjectParamsHeight,
+  setChapterLN,
+  setChapterLD,
  } from '../../../../store/slices/create-task-slice'
 import { setDeadline, 
   setCoast as setCoastRespond, 
@@ -101,6 +103,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const TASK_DATE_START = useAppSelector(state => state.createTaskReducer.dateStart)
   const TASK_DATE_FINISH = useAppSelector(state => state.createTaskReducer.dateFinish)
   const TASK_FOCUS = useAppSelector(state => state.createTaskReducer.focused)
+  const TASK_CHAPTER_NAME = useAppSelector(state => state.createTaskReducer.chapterLocalName)
+  const TASK_CHAPTER_DESCR = useAppSelector(state => state.createTaskReducer.chapterLocalDescription)
 
   // ----------------------------------------------------------------
   // данные для отклика на задание
@@ -238,6 +242,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'TASK_OP_SQUARE' && dispatch(setObjectParamsSquare(event.target.value))
       store[0] === 'TASK_OP_STOREYS' && dispatch(setObjectParamsStoreys(event.target.value))
       store[0] === 'TASK_OP_HEIGHT' && dispatch(setObjectParamsHeight(event.target.value))
+      store[0] === 'TASK_CHAPTER_NAME' && dispatch(setChapterLN(event.target.value))
+      store[0] === 'TASK_CHAPTER_DESCR' && dispatch(setChapterLD(event.target.value))
 
       store[0] === 'TASK_TITLE' && dispatch(setFocusedTask('TASK_TITLE'))
       store[0] === 'TASK_COAST' && dispatch(setFocusedTask('TASK_COAST'))
@@ -248,6 +254,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'TASK_OP_SQUARE' && dispatch(setFocusedTask('TASK_OP_SQUARE'))
       store[0] === 'TASK_OP_STOREYS' && dispatch(setFocusedTask('TASK_OP_STOREYS'))
       store[0] === 'TASK_OP_HEIGHT' && dispatch(setFocusedTask('TASK_OP_HEIGHT'))
+      store[0] === 'TASK_CHAPTER_NAME' && dispatch(setFocusedTask('TASK_CHAPTER_NAME'))
+      store[0] === 'TASK_CHAPTER_DESCR' && dispatch(setFocusedTask('TASK_CHAPTER_DESCR'))
 
     }
 
@@ -373,7 +381,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'TASK_COAST' ? TASK_COAST :
                   store[0] === 'TASK_PREPAY' ? TASK_PREPAY :
                   store[0] === 'TASK_EXPERT_COAST' ? TASK_EXPERT_COAST :
-                  store[0] === 'TASK_DESCRIPTION' ? TASK_DESCRIPTION : ''
+                  store[0] === 'TASK_DESCRIPTION' ? TASK_DESCRIPTION : 
+                  store[0] === 'TASK_CHAPTER_NAME' ? TASK_CHAPTER_NAME :
+                  store[0] === 'TASK_CHAPTER_DESCR' ? TASK_CHAPTER_DESCR : ''
               }
               onChange={reduceNewTaskState}
               autoFocus={store && TASK_FOCUS === store[0] && true}

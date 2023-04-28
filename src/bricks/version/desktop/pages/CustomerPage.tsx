@@ -69,7 +69,7 @@ const CustomerPage: React.FC = () => {
   }
 
   function executorPage() {
-    navigate("/ispolniteli")
+    navigate("/executors")
   }
 
   const callbackSetUsersList = (param: any) => {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import Button from '@mui/material/Button'
 import ButtonGroup from '@mui/material/ButtonGroup'
@@ -25,6 +26,7 @@ const Footer: React.FC = () => {
 
   const [ activeButton, setActiveButton ] = useState<Array<boolean>>([ true, false, false ])
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   const logoDivStyle: CSSProperties = {
     display: 'flex',
@@ -62,8 +64,16 @@ const Footer: React.FC = () => {
         <div style={logoDivStyle}>
           <Logo style={{ fontSize: '30px', color: LogoColor }}>BIRLOGO</Logo>
           <MemuItemsContainer>
-            <MenuItem color={LogoColor}>Тарифы и условия</MenuItem>
-            <MenuItem color={LogoColor}>Основы работы системы</MenuItem>
+            <MenuItem 
+              color={LogoColor} 
+              onClick={() => navigate('/prices-and-conditions')}
+              style={{ cursor: 'pointer' }}
+            >Тарифы и условия</MenuItem>
+            <MenuItem 
+              color={LogoColor} 
+              onClick={() => navigate('/exchange-work')}
+              style={{ cursor: 'pointer' }}
+            >Основы работы системы</MenuItem>
           </MemuItemsContainer>
         </div>
         { false && <ButtonGroup variant="contained" aria-label="outlined button group" color="inherit">
@@ -122,12 +132,20 @@ const Footer: React.FC = () => {
         <GorizontalLine backgroundColor={lineColor}></GorizontalLine>
         <div style={{ ...logoDivStyle, opacity: '0.6' }}>
           
-          <MenuItem color={lineColor}>Пользовательское соглашение</MenuItem>
+          <MenuItem 
+            color={lineColor} 
+            onClick={() => navigate('/terms-of-use')}
+            style={{ cursor: 'pointer' }}
+          >Пользовательское соглашение</MenuItem>
         
         </div>
         <div style={{ ...logoDivStyle, opacity: '0.6', marginRight: '110px' }}>
           
-          <MenuItem color={lineColor}>Политика конфиденциальности</MenuItem>
+          <MenuItem 
+            color={lineColor} 
+            onClick={() => navigate('/privacy-policy')}
+            style={{ cursor: 'pointer' }}
+          >Политика конфиденциальности</MenuItem>
         
         </div>
       </FooterWrapper>

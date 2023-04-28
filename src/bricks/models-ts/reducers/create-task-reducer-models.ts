@@ -24,7 +24,9 @@ export interface ICreateTaskReducer {
   objectParamsStoreys: string,
   objectParamsHeight: string,
   description: string,
-  chapters: Array<{ title: string, tags: Array<string>, description: string }>,
+  chapters: Array<{ title?: string, tags: Array<string>, description?: string }>,
+  chapterLocalName?: string,
+  chapterLocalDescription?: string, 
   focused: string,
 }
 

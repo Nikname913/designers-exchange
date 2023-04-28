@@ -74,10 +74,10 @@ const ExchangePage: React.FC = () => {
   }
 
   const tasks = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/spisok-zadaniy')
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-all')
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zadaniya-arkhiv')
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-all')
     if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
       dispatch(setShow(true))
       dispatch(setType("info"))

@@ -42,7 +42,7 @@ const Main: React.FC = () => {
 
   useEffect(() => {
 
-    console.log(mainContainer.current?.scrollTop)
+    false && console.log(mainContainer.current?.scrollTop)
     mainContainer.current !== null && dispatch(setScrollTop(mainContainer.current.scrollTop))
     mainContainer.current !== null && dispatch(setScrollFos(mainContainer.current.scrollTop))
 
@@ -50,7 +50,7 @@ const Main: React.FC = () => {
 
   },[ dispatch, showRightContent, showFos, USER_ROLE ])
 
-  useEffect(() => navigate('/zakazchiki'),[])
+  useEffect(() => navigate('/customers'),[])
 
   return (
     <React.Fragment>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, CSSProperties } from 'react'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setActiveRole } from '../../../store/slices/role-type-slice'
 import { setCode, setFaceType } from '../../../store/slices/reg-slice'
@@ -118,7 +118,7 @@ const AuthPage: React.FC = () => {
 
         dispatch(setCode(''))
         dispatch(setShow(false))
-        navigate('/registraciya-exec-success')
+        navigate('/exec-registration-success')
 
       }, 2000)
 
@@ -340,10 +340,15 @@ const AuthPage: React.FC = () => {
         <ContentLine style={{ marginTop: '16px' }}>
           <div style={{ display: 'block', position: 'relative', width: '50%' }}>
             <SelectField 
-              placeholder={"Выберите из списка"}
+              placeholder={"Выберите специализацию [ список временно сокращен ]"}
               params={{ height: 50 }}
               data={[
-                { value: 1, label: 'Пожарная сигнализация' }
+                { value: 1, label: 'Геодезические изыскания' },
+                { value: 2, label: 'Геологические изыскания' },
+                { value: 3, label: 'Гидрометеорология' },
+                { value: 4, label: 'Экологические изыскания' },
+                { value: 5, label: 'Исторические изыскания' },
+                { value: 6, label: 'Обследование констукций' },
               ]}
               multy={false}
               action={() => {}}
@@ -456,7 +461,7 @@ const AuthPage: React.FC = () => {
         </ContentLine>
         <ContentLine style={{ alignItems: 'center', marginTop: '14px', marginBottom: '14px' }}>
           <Checkbox {...label} />
-          <span>Согласен на обработку персональных данных и согласен с пользовательским соглашением</span>
+          <span>Согласен на обработку персональных данных и согласен с <Link to="/terms-of-use">пользовательским соглашением</Link></span>
         </ContentLine>
         <ContentLine style={{ marginBottom: '35px' }}>
           <ButtonComponent

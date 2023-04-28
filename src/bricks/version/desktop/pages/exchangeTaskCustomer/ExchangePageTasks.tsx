@@ -99,13 +99,13 @@ const ExchangePage: React.FC = () => {
   }
 
   const orders = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/zakazchik-aktivnye-zadaniya')
+    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zakazchik-arkhiv')
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
@@ -252,7 +252,7 @@ const ExchangePage: React.FC = () => {
       
       /> }
 
-      { ROLE_TYPE === 'EXECUTOR' && <Navigate to={"/spisok-zadaniy-ispolnitel"} replace={true}/> }
+      { ROLE_TYPE === 'EXECUTOR' && <Navigate to={"/task-list-exec"} replace={true}/> }
 
       <div style={headBlockCSS}>
         <PageTitle>{ pageTitle }</PageTitle>
@@ -266,7 +266,7 @@ const ExchangePage: React.FC = () => {
         <ButtonComponent
           inner={"Создать новое задание"} 
           type="CONTAINED_DEFAULT" 
-          action={() => navigate('/novoe-zadanie')}
+          action={() => navigate('/create-new-task')}
           actionData={null}
           widthType={"%"}
           widthValue={100}
@@ -510,16 +510,16 @@ const ExchangePage: React.FC = () => {
                     }}
                     userName={itemm.executorID.slice(0, 20) + '...'}
                     userJob={"[ options download ]"}
-                    userRate={returnUserRate(itemm.user)}
+                    userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
                     userStat={{
-                      completed: itemm && returnUserStat(itemm.user)[0], 
-                      failed: itemm && returnUserStat(itemm.user)[2], 
-                      worked: itemm && returnUserStat(itemm.user)[1]
+                      completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
+                      failed: false ? returnUserStat(itemm.executorID)[2] : 0, 
+                      worked: false ? returnUserStat(itemm.executorID)[1] : 0
                     }}
                     userPrice={itemm.coast}
                     userDeadline={itemm.deadline.slice(0, 10)}
                     userLocation={"Екатеринбург"}
-                    userTags={returnUserTags(itemm.user)}
+                    userTags={returnUserTags(itemm.executorID)}
                     userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
                     respondDate={"[ options download ]&&[ options download ]"}
                     discription={itemm.comment}

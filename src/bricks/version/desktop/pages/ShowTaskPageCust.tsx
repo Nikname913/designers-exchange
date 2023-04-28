@@ -168,13 +168,13 @@ const ShowTaskPage: React.FC = () => {
           />
           <BackwardButton 
             color={backwardButtonColor} 
-            onClick={() => navigate('/zakazchik-moi-zadaniya')}
+            onClick={() => navigate('/task-list-all')}
           >Ко всем заданиям</BackwardButton>
-          <BackwardButton 
+          { false && <BackwardButton 
             color={backwardButtonColor} 
-            onClick={() => navigate('/novoe-zadanie')}
+            onClick={() => navigate('/create-new-task')}
             style={{ marginLeft: '20px' }}
-          >Новое задание [ техническая ссылка ]</BackwardButton>
+          >Новое задание [ техническая ссылка ]</BackwardButton> }
         </div>
         { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => { 
 

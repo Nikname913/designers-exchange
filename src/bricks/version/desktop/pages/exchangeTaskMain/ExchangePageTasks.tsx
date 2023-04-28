@@ -1,16 +1,15 @@
 // ----------------------------------------------------------------
 /* eslint-disable react-hooks/exhaustive-deps */
 // ----------------------------------------------------------------
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../../comps/input/Input'
-import RequestActionsComponent from '../../services/request.service'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
-import { setList } from '../../../../store/slices/task-content-slice'
+import { selectActualTask } from '../../../../store/slices/task-content-slice'
 import SelectField from '../../comps/select/SelectField'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -33,7 +32,6 @@ const ExchangePage: React.FC = () => {
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
-  const [ AUTH_REQUEST, ] = useState(true)
 
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
@@ -80,7 +78,7 @@ const ExchangePage: React.FC = () => {
   }
 
   const orders = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/aktivnye-zakazy')
+    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-all')
     if ( TASKS_LIST.list.filter(item => item.status === 'work').length === 0 ) {
       dispatch(setShow(true))
       dispatch(setType("info"))
@@ -88,12 +86,16 @@ const ExchangePage: React.FC = () => {
     }
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zadaniya-arkhiv')
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-all')
     if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
       dispatch(setShow(true))
       dispatch(setType("info"))
       dispatch(setMessage("В настоящий момент задания в архиве отсутствуют"))
     }
+  }
+
+  const actualTask = (param: string) => {
+    dispatch(selectActualTask(param))
   }
 
   useEffect(() => {
@@ -102,68 +104,12 @@ const ExchangePage: React.FC = () => {
     dispatch(setMessage('Просмотр карточки задания в заказчике и исполнителе сейчас возможен со страницы Мои заказы'))
   },[])
 
-  const callbackSetTasksList = (param: any) => {
-
-    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
-
-      return { 
-        id: item.taskID, 
-        name: item.title, 
-        date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
-        exper: item.expertise,
-        customer: item.customer.slice(0, 30) + '...',
-        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
-        region: item.region ? item.region : 'Екатеринбург',
-        tags: item.tags,
-        description: item.description,
-        status: 'searching',
-        viewtype: 'default',
-        coast: {
-          value: item.coast,
-          issafe: true,
-          prepay: item.prepay,
-          exper: item.expertiseCoast,
-        },
-        responds: item.reviews,
-        objectData: {
-          constructionType: item.objectData.constructionType,
-          region: item.objectData.region,
-          type: item.objectData.type,
-          spec: item.objectData.spec,
-        },
-        objectParams: {
-          square: item.objectParams.square,
-          storeys: item.objectParams.storeys,
-          height: item.objectParams.height,
-        },
-      }
-
-    })
-
-    dispatch(setList(data))
-
-  }
-
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
-    > 
-
-      { AUTH_REQUEST && <RequestActionsComponent
-
-        callbackAction={callbackSetTasksList}
-        requestData={{
-          type: 'POST',
-          urlstring: '/get-task-list',
-          body: {
-            status: ''
-          }
-        }}
-      
-      /> }
+    >
 
       <div style={headBlockCSS}>
         <PageTitle>Задания</PageTitle>
@@ -177,7 +123,7 @@ const ExchangePage: React.FC = () => {
 
         { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" || ROLE_TYPE === "UNDEFINED" ? <React.Fragment>
 
-          <TextFieldTitle style={{ marginTop: '0px' }}>Цена</TextFieldTitle>
+          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '18px' }}>Стоимость</TextFieldTitle>
           <CoastRangeContainer>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE'}
@@ -341,10 +287,13 @@ const ExchangePage: React.FC = () => {
       </MenuContainer>
       <CustExecContentInnerArea>
         { TASKS_LIST.list.filter(item => item.status === 'searching').map((item, index) => {
+
+          console.log(item)
+
           return (
             <TaskTable 
               key={index}
-              viewType={item.status}
+              viewType={'mainView'}
               taskInitDate={item.date}
               taskTitle={item.name}
               taskDeadline={item.deadline}
@@ -357,7 +306,8 @@ const ExchangePage: React.FC = () => {
               dealStatus={item.status}
               cardWidth={'100%'}
               marbo={"16px"}
-              actionsParams={[ item.id ]}
+              actions={[actualTask]}
+              actionsParams={[item.id, item.responds]}
               deal={{
                 type: item.coast.issafe === true ? 'safe' : 'simple',
                 coast: item.coast.value,

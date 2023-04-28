@@ -58,6 +58,7 @@ const css = {
     text-align: ${props => props.textAlign};
     top: 100%;
     margin-top: 14px;
+    font-size: 12px;
   `,
   ChapterContainerAddButton: styled.div`
     display: flex;

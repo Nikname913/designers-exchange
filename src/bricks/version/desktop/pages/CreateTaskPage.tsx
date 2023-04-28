@@ -11,7 +11,10 @@ import { setTitle,
   setFocused as setFocusedTask,
   setObjectParamsSquare,
   setObjectParamsStoreys,
-  setObjectParamsHeight
+  setObjectParamsHeight,
+  setChapters,
+  setChapterLN,
+  setChapterLD
  } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -64,9 +67,16 @@ const CreateTaskPage: React.FC = () => {
   const TASK_OP_HEIGHT = useAppSelector(state => state.createTaskReducer.objectParamsHeight)
   const TASK_DATE_START = useAppSelector(state => state.createTaskReducer.dateStart)
   const TASK_DATE_FINISH = useAppSelector(state => state.createTaskReducer.dateFinish)
+  const TASK_CHAPTERS = useAppSelector(state => state.createTaskReducer.chapters)
+  const TASK_CHAPTER_NAME = useAppSelector(state => state.createTaskReducer.chapterLocalName)
+  const TASK_CHAPTER_DESCR = useAppSelector(state => state.createTaskReducer.chapterLocalDescription)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const [ CREATE_TASK_REQUEST, SET_CREATE_TASK_REQUEST ] = useState(false)
+  const [ showNewChapter, setShowNewChapter ] = useState(false)
+
+  const [ newChapterNameValidateError, setNewChapterNameValidateError ] = useState(false)
+  const [ newChapterDescrValidateError, setNewChapterDescrValidateError ] = useState(false)
 
   const [ step1Color, setStep1Color ] = useState('rgb(58, 75, 86)')  
   const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
@@ -132,6 +142,37 @@ const CreateTaskPage: React.FC = () => {
     false && dispatch(setObjectParamsStoreys(''))
     false && dispatch(setObjectParamsHeight(''))
     false && dispatch(setFocusedTask(''))
+
+  }
+
+  const newChapterSelector = (param: boolean) => {
+    setShowNewChapter(param)
+  }
+
+  const addNewChapter = () => {
+
+    TASK_CHAPTER_NAME === '' ? setNewChapterNameValidateError(true) : setNewChapterNameValidateError(false)
+    TASK_CHAPTER_DESCR === '' ? setNewChapterDescrValidateError(true) : setNewChapterDescrValidateError(false)
+
+    if ( TASK_CHAPTER_NAME !== '' && TASK_CHAPTER_DESCR !== '' ) {
+
+      let chapter = { 
+        title: TASK_CHAPTER_NAME, 
+        tags: [ 'optiions_download' ], 
+        description: TASK_CHAPTER_DESCR
+      }
+
+      let chapterArr: any[] = []
+      TASK_CHAPTERS.forEach(item => chapterArr.push(item))
+      chapterArr.push(chapter)
+
+      false && console.log(chapter)
+      false && console.log(chapterArr)
+
+      dispatch(setChapters(chapterArr))
+      console.log(TASK_CHAPTERS)
+
+    }
 
   }
 
@@ -291,7 +332,7 @@ const CreateTaskPage: React.FC = () => {
             cursor: 'pointer'
           }}
         />
-        <BackwardButton color={backwardButtonColor} onClick={() => navigate('/zakazchik-moi-zadaniya')}>Ко всем заданиям</BackwardButton>
+        <BackwardButton color={backwardButtonColor} onClick={() => navigate('/task-list-all')}>Ко всем заданиям</BackwardButton>
       </div>
       <div style={headBlockCSS}>
         <PageTitle style={{ marginTop: '20px' }}>Создание задания</PageTitle>
@@ -864,101 +905,169 @@ const CreateTaskPage: React.FC = () => {
             />
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '28px', marginBottom: '42px' }}>Разделы [ дальнейшая разработка ]</TextFieldTitle>
-        <TextFieldContainerLine style={{ flexWrap: 'wrap' }}>
-          <ChapterController></ChapterController>
+        <TextFieldTitle 
+          style={{ 
+            marginTop: '28px', 
+            marginBottom: '42px',
+            cursor: 'pointer'
+          }}
+          onDoubleClick={() => dispatch(setChapters([]))}
+        >
+          Разделы [ двойной клик для сброса всех разделов ]
+        </TextFieldTitle>
+        <TextFieldContainerLine style={{ flexWrap: 'wrap', marginBottom: showNewChapter ? '' : '28px' }}>
+          <ChapterController actions={[ newChapterSelector ]}></ChapterController>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '18px' }}>Новый раздел</TextFieldTitle>
-        <TextFieldContainerLine style={{ marginTop: '8px' }}>
-          <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
-            valueType='text'
-            required={false}
-            widthType={'%'}
-            widthValue={50}
-            heightValue={'50px'}
-            label={"Развание раздела"}
-            isError={false}
-            isDisabled={true}
-            labelShrinkLeft={"0px"}
-            innerLabel={null}
-            css={{
-              fontSize: '12px',
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '16px',
-              backgroundColor: inputBackground
-            }}
-          />
-          <span style={spanDelimiterCSS} />
-          <SelectField 
-            placeholder={"Выберите необходимые навыки"}
-            params={{ width: 50, mb: '16px', height: 50 }}
-            data={[
-              { value: '1', label: '[ options download ]' },
-            ]}
-            multy={true}
-            action={() => {}}
-            actionType={""}
-            actionParams={[]}
-            showIcon={true}
-            icon={null}
-            iconStyles={{
-              marginTop: '-12px',
-              marginLeft: '6px',
-              width: '34px',
-            }}
-          />
-        </TextFieldContainerLine>
-        <TextFieldContainerLine>
-          <InputComponent
-            type={'TEXT_INPUT_OUTLINE'}
-            valueType='text'
-            required={false}
-            widthType={'%'}
-            widthValue={100}
-            heightValue={'50px'}
-            label={"Подробнее опишите вашу задачу"}
-            isError={false}
-            isDisabled={true}
-            labelShrinkLeft={"0px"}
-            innerLabel={null}
-            css={{
-              fontSize: '12px',
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '16px',
-              marginTop: '0px',
-              backgroundColor: inputBackground
-            }}
-          />
-        </TextFieldContainerLine>
-        <TextFieldContainerLine>
-          <ButtonComponent
-            inner={'Добавить файлы'} 
-            type='UPLOAD' 
-            action={() => console.log('this is button')}
-            actionData={null}
-            widthType={'px'}
-            widthValue={280}
-            children={''}
-            childrenCss={undefined}
-            iconSrc={null}
-            iconCss={undefined}
-            muiIconSize={null}
-            MuiIconChildren={EmailIcon}
-            css={{
-              backgroundColor: uploadButtonBackground,
-              color: blackColor,
-              fontSize: '12px',
-              height: '46px',
-              borderRadius: '6px',
-              position: 'relative',
-              boxSizing: 'border-box',
-              marginBottom: '46px'
-            }}
-          />
-        </TextFieldContainerLine>
+        { showNewChapter && <React.Fragment>
+          <TextFieldTitle style={{ marginTop: '18px' }}>Новый раздел</TextFieldTitle>
+          <TextFieldContainerLine style={{ marginTop: '8px' }}>
+            <InputComponent
+              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+              valueType='text'
+              required={false}
+              widthType={'%'}
+              widthValue={50}
+              heightValue={'50px'}
+              label={"Развание раздела"}
+              isError={newChapterNameValidateError}
+              isDisabled={false}
+              labelShrinkLeft={"0px"}
+              innerLabel={null}
+              store={[ "TASK_CHAPTER_NAME", () => null ]}
+              css={{
+                fontSize: '12px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px',
+                backgroundColor: inputBackground
+              }}
+            />
+            <span style={spanDelimiterCSS} />
+            <SelectField 
+              placeholder={"Выберите необходимые навыки"}
+              params={{ width: 50, mb: '16px', height: 50 }}
+              data={[
+                { value: '1', label: '[ options download ]' },
+              ]}
+              multy={true}
+              action={() => {}}
+              actionType={""}
+              actionParams={[]}
+              showIcon={true}
+              icon={null}
+              iconStyles={{
+                marginTop: '-12px',
+                marginLeft: '6px',
+                width: '34px',
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <InputComponent
+              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+              valueType='text'
+              required={false}
+              widthType={'%'}
+              widthValue={100}
+              heightValue={'50px'}
+              label={"Подробнее опишите вашу задачу"}
+              isError={newChapterDescrValidateError}
+              isDisabled={false}
+              labelShrinkLeft={"0px"}
+              innerLabel={null}
+              store={[ "TASK_CHAPTER_DESCR", () => null ]}
+              css={{
+                fontSize: '12px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px',
+                marginTop: '0px',
+                backgroundColor: inputBackground
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <ButtonComponent
+              inner={'Добавить файлы'} 
+              type='UPLOAD' 
+              action={() => console.log('this is button')}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: uploadButtonBackground,
+                color: blackColor,
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px'
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <ButtonComponent
+              inner={'Очистить поля'} 
+              type='CONTAINED_DEFAULT' 
+              action={() => {
+                dispatch(setChapterLN(''))
+                dispatch(setChapterLD(''))
+              }}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: uploadButtonBackground,
+                color: blackColor,
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px'
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <ButtonComponent
+              inner={'Добавить раздел'} 
+              type='CONTAINED_DEFAULT' 
+              action={addNewChapter}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: stepContainerRoundColor,
+                color: 'white',
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '46px'
+              }}
+            />
+          </TextFieldContainerLine>
+        </React.Fragment> }
       </CustExecContentInnerArea>
     </ContentArea>
   )

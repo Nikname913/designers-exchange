@@ -75,10 +75,10 @@ const ExchangePage: React.FC = () => {
   }
 
   const tasks = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/spisok-zadaniy-ispolnitel')
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-exec')
   }
   const arkhiv = (): void => {
-    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
+    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/active-orders-exec')
     !false && dispatch(setShow(true))
     !false && dispatch(setType("info"))
     !false && dispatch(setMessage("В настоящий момент заданий в архиве нет"))
@@ -86,7 +86,7 @@ const ExchangePage: React.FC = () => {
 
   const openOrder = (param: string): void => {
     dispatch(selectActualTask(param))
-    navigate('/zakaz/ex')
+    navigate('/order-view/ex')
   }
 
   return (

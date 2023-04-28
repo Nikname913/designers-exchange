@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import ButtonComponent from '../../comps/button/Button'
 import SelectField from '../../comps/select/SelectFieldPercentWidth'
 import css from '../../styles/views/showTaskTable.css'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
+import { setShow, setShowType } from '../../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
+import { setTask, setExecutor } from '../../../../store/slices/respond-slice'
 import { CSSProperties } from 'styled-components'
 import EmailIcon from '@mui/icons-material/Email'
 
@@ -30,13 +33,17 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     actionsParams } = props
 
   const [ containerHeight, ] = useState('auto')
+  const dispatch = useAppDispatch()
+
   const containerBackground = useAppSelector(state => state.theme.white)
   const tagColor = useAppSelector(state => state.theme.blue4)
   const greyColor = useAppSelector(state => state.theme.grey)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
   const indicatorColorOrange = useAppSelector(state => state.theme.yellow)
   const indicatorLabelColor = useAppSelector(state => state.theme.grey2)
-  const ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
+
+  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
 
   const blue1 = useAppSelector(state => state.theme.blue1)
   const blue2 = useAppSelector(state => state.theme.blue2)
@@ -146,13 +153,31 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              { ROLE === 'EXECUTOR' ? <ButtonComponent
+              { ROLE_TYPE === 'EXECUTOR' ? <ButtonComponent
                 inner={"Откликнуться"} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
-                  actions && actions[0](
-                    actionsParams && actionsParams[0]
-                  )
+
+                  console.log(USER_ID)
+                  
+                  if ( ROLE_TYPE === 'EXECUTOR' ) {
+
+                    dispatch(setTask(actionsParams && actionsParams[0]))
+                    dispatch(setExecutor(USER_ID))
+                    dispatch(setShowRCC('undefined'))
+                    dispatch(setShow(true))
+                    dispatch(setShowType("respondFromList"))
+
+                    actions && actions[1](actionsParams && actionsParams[1])
+                    console.log(actionsParams && actionsParams[0])
+
+                  } else if ( ROLE_TYPE === 'UNDEFINED' ) {
+
+                    dispatch(setShow(true))
+                    dispatch(setShowType('authLogin'))
+
+                  }
+
                 }}
                 actionData={null}
                 widthType={"%"}

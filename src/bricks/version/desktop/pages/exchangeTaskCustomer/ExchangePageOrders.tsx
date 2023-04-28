@@ -72,13 +72,13 @@ const ExchangePage: React.FC = () => {
   }
 
   const tasks = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/zakazchik-moi-zadaniya')
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/zakazchik-arkhiv')
+    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
     if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
       false && dispatch(setShow(true))
       false && dispatch(setType("info"))

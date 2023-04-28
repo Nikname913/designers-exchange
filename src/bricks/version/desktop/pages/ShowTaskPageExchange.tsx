@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setShow, setShowType } from '../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
 import ButtonComponent from '../comps/button/Button'
 import TaskTableHeader from '../views/localViews/TaskTableHeader'
 import ChapterController from '../views/localViews/СhapterControllerShow'
@@ -40,6 +42,7 @@ const { WhiteContainer,
 const ShowTaskPage: React.FC = () => {
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
@@ -144,6 +147,12 @@ const ShowTaskPage: React.FC = () => {
     width: '100%'
   }
 
+  const respondAction = (): void => {
+    dispatch(setShowRCC('undefined'))
+    dispatch(setShow(true))
+    dispatch(setShowType("respondFromTask"))
+  }
+
   useEffect(() => console.log(selectTask), [ selectTask ])
 
   return (
@@ -191,6 +200,8 @@ const ShowTaskPage: React.FC = () => {
               dealStatus={item.status}
               cardWidth={null}
               marbo={"20px"}
+              actions={[ respondAction ]}
+              actionsParams={[item.id]}
               deal={{
                 type: item.coast.issafe === true ? 'safe' : 'simple',
                 coast: item.coast.value,
@@ -222,14 +233,14 @@ const ShowTaskPage: React.FC = () => {
                   />
                   <span style={buttonLabelCSS}>Детали заказа</span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"}>
+                <LeftMenuIconButton backgroundColor={"transparent"} style={{ filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px' }}>
+                <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px', filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={docsIcon}
@@ -358,31 +369,8 @@ const ShowTaskPage: React.FC = () => {
                       <SearchStatusIndicator background={yellowColor}/>
                       <span style={searchStatusCSS}>Поиск исполнителей</span>
                     </WhiteContainerContentLine>
-                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '18px' }}>
-                      <ButtonComponent
-                        inner={"3 отклика"} 
-                        type="CONTAINED_DEFAULT"
-                        action={() => {}}
-                        actionData={null}
-                        widthType={"px"}
-                        widthValue={130}
-                        children={""}
-                        childrenCss={{}}
-                        iconSrc={null}
-                        iconCss={undefined}
-                        muiIconSize={null}
-                        MuiIconChildren={EmailIcon}
-                        css={{
-                          backgroundColor: downloadButtonColor,
-                          color: greyColor,
-                          fontSize: '12px',
-                          height: '40px',
-                          borderRadius: '6px',
-                          position: 'relative',
-                          boxSizing: 'border-box',
-                          boxShadow: 'none'
-                        }}
-                      />
+                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '30px' }}>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Откликнулось 3 исполнителей</span>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
                 </div>

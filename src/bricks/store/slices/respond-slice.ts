@@ -3,11 +3,11 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { IRespondReducer } from "../../models-ts/reducers/respond-reducer-models"  
 
 const initialState: IRespondReducer = {
-  deadline: '2023-4-30',
+  deadline: '2000-1-30',
   coast: '',
   solution: '',
   prepay: '',
-  expert: '2023-4-30',
+  expert: '2000-1-30',
   expertCost: '',
   comment: '',
   focused: '',

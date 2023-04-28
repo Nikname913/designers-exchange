@@ -138,8 +138,8 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
   }
 
   function openProfile(): void {
-    userType === 'EXECUTOR' && navigate(`/profil-ispolnitelya/${userId}`)
-    userType === 'CUSTOMER' && navigate(`/profil-zakazchika/${userId}`)
+    userType === 'EXECUTOR' && navigate(`/exec-profile/${userId}`)
+    userType === 'CUSTOMER' && navigate(`/cust-profile/${userId}`)
   }
 
   return (

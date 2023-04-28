@@ -29,6 +29,8 @@ const initialState: ICreateTaskReducer = {
   objectParamsHeight: '',
   description: '',
   chapters: [],
+  chapterLocalName: '',
+  chapterLocalDescription: '',
   focused: ''
 }
 
@@ -96,6 +98,12 @@ const createTaskReducer = createSlice({
     setChapters(state, action: PayloadAction<Array<any>>) {
       state.chapters = action.payload
     },
+    setChapterLN(state, action: PayloadAction<string>) {
+      state.chapterLocalName = action.payload
+    },
+    setChapterLD(state, action: PayloadAction<string>) {
+      state.chapterLocalDescription = action.payload
+    },
     setFocused(state, action: PayloadAction<string>) {
       state.focused = action.payload
     },
@@ -120,5 +128,7 @@ export const {
   setObjectParamsHeight,
   setDescription,
   setChapters,
+  setChapterLN,
+  setChapterLD,
   setFocused } = createTaskReducer.actions
 export default createTaskReducer.reducer

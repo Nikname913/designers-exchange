@@ -153,7 +153,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
             : inputValue.label === 'Физическое лицо' ? 'PHIS_FACE' 
             : inputValue.label === 'Самозанятый' ? 'SELF_FACE' : ''
           )
-          console.log(actionParams)
+          false && console.log(actionParams)
         }}
       />
     

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import ButtonComponent from '../../comps/button/Button'
+import RequestActionsComponent from '../../services/request.service'
 import { db } from '../../../../firebase/check' 
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
+import { setList } from '../../../../store/slices/task-content-slice'
 import css from '../../styles/views/header.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
@@ -32,6 +34,7 @@ const Header: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
+  const [ AUTH_REQUEST, ] = useState(true)
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const wallet = useAppSelector(state => state.headerReducer.walletCount)
@@ -124,8 +127,8 @@ const Header: React.FC = () => {
   }
 
   function navigation(): void {
-    execCustButtonInner === 'Исполнители' && navigate('/ispolniteli')
-    execCustButtonInner === 'Заказчики' && navigate('/zakazchiki')
+    execCustButtonInner === 'Исполнители' && navigate('/executors')
+    execCustButtonInner === 'Заказчики' && navigate('/customers')
   }
 
   function authLogin(): void {
@@ -140,15 +143,71 @@ const Header: React.FC = () => {
     dispatch(setShowRCC('undefined'))
   }
 
+  const callbackSetTasksList = (param: any) => {
+
+    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
+
+      return { 
+        id: item.taskID, 
+        name: item.title, 
+        date: item.date,
+        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        exper: item.expertise,
+        customer: item.customer.slice(0, 30) + '...',
+        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
+        region: item.region ? item.region : 'Екатеринбург',
+        tags: item.tags,
+        description: item.description,
+        status: 'searching',
+        viewtype: 'default',
+        coast: {
+          value: item.coast,
+          issafe: true,
+          prepay: item.prepay,
+          exper: item.expertiseCoast,
+        },
+        responds: item.reviews,
+        objectData: {
+          constructionType: item.objectData.constructionType,
+          region: item.objectData.region,
+          type: item.objectData.type,
+          spec: item.objectData.spec,
+        },
+        objectParams: {
+          square: item.objectParams.square,
+          storeys: item.objectParams.storeys,
+          height: item.objectParams.height,
+        },
+      }
+
+    })
+
+    dispatch(setList(data))
+
+  }
+
   useEffect(() => console.log(db), [])
 
   return (
     <React.Fragment>
 
+      { AUTH_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetTasksList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/get-task-list',
+          body: {
+            status: ''
+          }
+        }}
+      
+      /> }
+
       <HeadWrapper backgroundColor={"transparent"}>
       <HeadWrapperShadow></HeadWrapperShadow>
       <HeadWrapperInner backgroundColor={whiteColor}>
-        <div style={logoContainerStyle} onClick={() => navigate('/spisok-zadaniy')}>
+        <div style={logoContainerStyle} onClick={() => navigate('/task-list-all')}>
           <img
             alt={""}
             src={logo}
@@ -156,7 +215,7 @@ const Header: React.FC = () => {
           <Logo style={{ fontSize: '30px' }}>BIRLOGO</Logo>
         </div>
         <HeadMenu>
-          <span style={menuItemStyle} onClick={() => navigate('/spisok-zadaniy')}>Биржа</span>
+          <span style={menuItemStyle} onClick={() => navigate('/task-list-all')}>Биржа</span>
           <span style={{ ...menuItemStyle, marginRight: '3px' }} onClick={navigation}>{ execCustButtonInner }</span>
           { execCustButtonInner === 'Исполнители' && <span onClick={reverseButton} style={menuItemIconStyle}>
             <img
@@ -173,14 +232,14 @@ const Header: React.FC = () => {
         </HeadMenu>
         { USER_ROLE !== 'UNDEFINED' && <HeadControllers>
           { USER_ROLE === "CUSTOMER" && <span
-            onClick={() => navigate('/zakazchik-moi-zadaniya')} 
+            onClick={() => navigate('/task-list-cust')} 
             style={{ 
               ...menuItemStyle, 
               marginRight: '30px' 
             }}
           >Мои заказы</span> }
           { USER_ROLE === "EXECUTOR" && <span
-            onClick={() => navigate('/spisok-zadaniy-ispolnitel')} 
+            onClick={() => navigate('/task-list-exec')} 
             style={{ 
               ...menuItemStyle, 
               marginRight: '30px' 
@@ -231,12 +290,12 @@ const Header: React.FC = () => {
               fontSize: '16px',
               marginRight: '30px'
             }}
-          >{wallet} ₽</span>
+          >{ wallet } ₽</span>
           <HeadControllersAvatar 
             backgroundColor={blueColorForIcon}
             onClick={() => {
-              USER_ROLE === 'EXECUTOR' && navigate('/cabinet-ispolnitelya')
-              USER_ROLE === 'CUSTOMER' && navigate('/cabinet-zakazchika')
+              USER_ROLE === 'EXECUTOR' && navigate('/exec-office')
+              USER_ROLE === 'CUSTOMER' && navigate('/cust-office')
             }}
           >
 

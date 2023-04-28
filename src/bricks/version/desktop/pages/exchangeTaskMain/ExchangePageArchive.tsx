@@ -65,8 +65,8 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
-  const tasks = (): void => navigate('/spisok-zadaniy')
-  const zakazy = (): void => navigate('/aktivnye-zakazy')
+  const tasks = (): void => navigate('/task-list-all')
+  const zakazy = (): void => navigate('/active-orders-all')
 
   return (
     <ContentArea

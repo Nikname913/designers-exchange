@@ -71,13 +71,13 @@ const ExchangePage: React.FC = () => {
   }
 
   const orders = (): void => {
-    !false && TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
+    !false && TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-exec')
     !false && dispatch(setShow(true))
     !false && dispatch(setType("info"))
     !false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const archive = (): void => {
-    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/aktivnye-zakazy-ispolnitel')
+    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/active-orders-exec')
     !false && dispatch(setShow(true))
     !false && dispatch(setType("info"))
     !false && dispatch(setMessage("В настоящий момент заданий в архиве нет"))
@@ -179,12 +179,12 @@ const ExchangePage: React.FC = () => {
       
       /> }
 
-      { ROLE_TYPE === 'CUSTOMER' && <Navigate to={"/zakazchik-moi-zadaniya"} replace={true}/> }
+      { ROLE_TYPE === 'CUSTOMER' && <Navigate to={"/task-list-cust"} replace={true}/> }
 
       <div style={headBlockCSS}>
         <PageTitle>Мои задания</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
+          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
           <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
           <span style={{ ...spanActiveCSS, opacity: 0.6, marginRight: '0px' }} onClick={archive}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length * 0})</span>
         </div>
@@ -214,7 +214,7 @@ const ExchangePage: React.FC = () => {
           return (
             <React.Fragment key={index}>
               <TaskTable
-                viewType={"execSelfView"}
+                viewType={"searching"}
                 taskInitDate={item.date}
                 taskTitle={item.name}
                 taskDeadline={item.deadline}

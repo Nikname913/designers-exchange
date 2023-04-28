@@ -241,7 +241,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       dispatch(setRoleData({ uid: param.clientId, una: param.email }))
       dispatch(setShow(false))
       dispatch(setShowRCC(false))
-      navigate('/zakazchiki')
+      navigate('/customers')
     } else {
 
       if ( param.email === 'incorrect' ) setAuthDataLoginError(true)
@@ -550,7 +550,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <RespondFromList.Title>Откликнуться на задание</RespondFromList.Title>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
-                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{"[ название задания динамически ]"}</RespondFromList.SubTitle>
+                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{RESPOND_TASK}</RespondFromList.SubTitle>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine style={{ marginBottom: '15px' }}>
                   <span style={spanTitleCSS}>Срок выполнения</span>
@@ -559,42 +559,46 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATE'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_FINISH'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"20.02.2023"}
+                    label={"Дата окончания"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ "Сидоров", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
                       marginBottom: '0px',
+                      marginTop: '0px',
+                      backgroundColor: 'white'
                     }}
                   />
                   <span style={spanDelimiterCSS}/>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"200 000"}
+                    label={"Введите вашу цену"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_COAST', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '0px',
+                      marginBottom: '-4px',
                     }}
                   />
                 </RespondFromList.ContentLine>
@@ -603,17 +607,18 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_RESPOND'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
                     widthValue={100}
                     heightValue={'50px'}
-                    label={"Ваш комментарий"}
+                    label={"Дополнительный комментарий к отклику"}
                     isError={false}
-                    isDisabled={true}
+                    isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ 'RESPOND_COMMENT', () => {} ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -629,7 +634,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <ButtonComponent
                     inner={"Откликнуться"} 
                     type="CONTAINED_DEFAULT" 
-                    action={() => {}}
+                    action={respondSuccess}
                     actionData={null}
                     widthType={"px"}
                     widthValue={172}
@@ -1355,7 +1360,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   style={userTypeCSS}
                   onClick={() => {
                     closeFos()
-                    navigate('/registraciya-cust')
+                    navigate('/cust-registration')
                   }}
                 >
                   <span 
@@ -1382,7 +1387,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   onClick={() => {
                     closeFos()
                     dispatch(setFaceType('PHIS_FACE'))
-                    navigate('/registraciya-exec')
+                    navigate('/exec-registration')
                   }}
                 >
                   <span 

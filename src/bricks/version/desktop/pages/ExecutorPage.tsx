@@ -78,7 +78,7 @@ const ExecutorPage: React.FC = () => {
   }
 
   function customerPage() {
-    navigate('/zakazchiki')
+    navigate('/customers')
   }
 
   const callbackSetTasksList = (param: any) => {
