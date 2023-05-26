@@ -73,9 +73,9 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Архивные заказы</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
-          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ( Null {/*TASKS_LIST.list.filter(item => item.status === 'searching').length*/} )</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ( Null {/*TASKS_LIST.list.filter(item => item.status === 'work').length*/} )</span>
+          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )</span>
         </div>
       </div>
       <MenuContainer>

@@ -629,7 +629,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 <DatePicker 
                   sx={{ backgroundColor: 'white', width: '100%' }} 
                   label={label} 
-                  onChange={ newValue => setTaskDateStart(newValue)}
+                  onChange={ newValue => {
+                    setTaskDateStart(newValue)
+                  }}
                   value={TASK_DATE_START}
                 />
               </DemoContainer>
@@ -705,6 +707,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   sx={{ backgroundColor: 'white', width: '100%' }} 
                   label={label} 
                   onChange={ newValue => {
+                    
                     if ( store ) {
                       store[0] === 'TASK_DATE_START' && setTaskDateStart(newValue)
                       store[0] === 'TASK_DATE_FINISH' && setTaskDateFinish(newValue)

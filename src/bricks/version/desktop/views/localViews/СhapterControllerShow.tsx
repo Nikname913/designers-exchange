@@ -13,10 +13,23 @@ const { ChapterContainerLine,
 const ChapterController: 
   React.FC<{ 
     isBottomButton?: boolean,
-    marginBott?: string | null
-  }> = ( props: { isBottomButton?: boolean, marginBott?: string | null } ) => {
+    marginBott?: string | null,
+    chapters?: Array<any>,
+    forPageType?: 'order' | 'task'
+  }> = ( props: { 
+    
+    isBottomButton?: boolean, 
+    marginBott?: string | null, 
+    chapters?: Array<any>, 
+    forPageType?: 'order' | 'task' 
+  
+  }) => {
 
-  const { isBottomButton = true, marginBott = null } = props
+  const { isBottomButton = true, marginBott = null, forPageType = 'task' } = props
+
+  const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+  const orderList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
 
   const chaptersLineBackground = useAppSelector(state => state.theme.grey3)
   const roundBackground = useAppSelector(state => state.theme.grey2)
@@ -42,6 +55,44 @@ const ChapterController:
             Предварительное решение
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound>
+        { forPageType === 'task' && <React.Fragment>
+          { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
+
+            return <React.Fragment>
+              { item.chapters && item.chapters.map((chapter, chapterIndex) => {
+
+                return (
+                  <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
+                    <ChapterContainerStepRoundLabelText textAlign={"center"}>
+                      { chapter.title }
+                    </ChapterContainerStepRoundLabelText>
+                  </ChapterContainerStepRound>
+                )
+
+              })}
+            </React.Fragment>
+
+          }) : <React.Fragment></React.Fragment> }
+        </React.Fragment> }
+        { forPageType === 'order' && <React.Fragment>
+          { orderList.length > 0 ? orderList.filter(item => item.id === selectTask).map((item, index: number) => {
+
+            return <React.Fragment>
+              { item.chapters && item.chapters.map((chapter, chapterIndex) => {
+
+                return (
+                  <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
+                    <ChapterContainerStepRoundLabelText textAlign={"center"}>
+                      { chapter.title }
+                    </ChapterContainerStepRoundLabelText>
+                  </ChapterContainerStepRound>
+                )
+
+              })}
+            </React.Fragment>
+
+          }) : <React.Fragment></React.Fragment> }
+        </React.Fragment> }
         { false && <ChapterContainerStepRound backgroundColor={chaptersLineBackground}>
           <ChapterContainerStepRoundLabelText textAlign={"center"}>
             Пожарная безопасность

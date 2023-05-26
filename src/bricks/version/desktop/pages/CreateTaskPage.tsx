@@ -82,7 +82,7 @@ const CreateTaskPage: React.FC = () => {
   const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
   const [ step3Color, setStep3Color ] = useState('rgb(58, 75, 86)')  
   const [ step4Color, ] = useState('rgb(58, 75, 86)')  
-  const [ step5Color, ] = useState('rgb(58, 75, 86)')  
+  const [ step5Color, setStep5Color ] = useState('rgb(58, 75, 86)')  
 
   const [ line1Color, setLine1Color ] = useState(stepsContainerColor) 
   const [ line2Color, setLine2Color ] = useState(stepsContainerColor)
@@ -96,8 +96,6 @@ const CreateTaskPage: React.FC = () => {
   const month = date.getMonth() + 1
   const day = date.getDate()
   const dateString = year + '-' + month + '-' + day
-
-  console.log(USER_ID)
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -131,6 +129,8 @@ const CreateTaskPage: React.FC = () => {
     dispatch(setShow(true))
     dispatch(setType('success'))
     dispatch(setMessage('Вы успешно разместили новое задание'))
+
+    console.log(TASK_CHAPTERS)
 
     false && dispatch(setTitle(''))
     false && dispatch(setCoast(''))
@@ -170,7 +170,7 @@ const CreateTaskPage: React.FC = () => {
       false && console.log(chapterArr)
 
       dispatch(setChapters(chapterArr))
-      console.log(TASK_CHAPTERS)
+      false && console.log(TASK_CHAPTERS)
 
     }
 
@@ -217,6 +217,18 @@ const CreateTaskPage: React.FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ TASK_DESCRIPTION, TASK_OP_HEIGHT, TASK_OP_SQUARE, TASK_OP_STOREYS ])
+
+  useEffect(() => {
+
+    if ( TASK_CHAPTER_NAME !== '' && 
+         TASK_CHAPTER_DESCR !== '' ) {
+
+          setStep5Color(stepContainerRoundColor)
+
+         } else setStep5Color('rgb(58, 75, 86)')
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ TASK_CHAPTER_NAME, TASK_CHAPTER_DESCR ])
 
   useEffect(() => {
 
@@ -302,10 +314,10 @@ const CreateTaskPage: React.FC = () => {
             coast: TASK_COAST, 
             prepay: TASK_PREPAY, 
             prepayDays: TASK_PREPAY_DAYS,
-            expertDays: TASK_EXPERT_DAYS.$D + '-' + ( TASK_EXPERT_DAYS.$M + 1 ) + '-' + TASK_EXPERT_DAYS.$y,
+            expertDays: TASK_EXPERT_DAYS ? TASK_EXPERT_DAYS.$D + '-' + ( TASK_EXPERT_DAYS.$M + 1 ) + '-' + TASK_EXPERT_DAYS.$y : '01-1-2023',
             expertCoast: TASK_EXPERT_COAST, 
-            dateStart: TASK_DATE_START.$D + '-' + ( TASK_DATE_START.$M + 1 ) + '-' + TASK_DATE_START.$y,
-            dateFinish: TASK_DATE_FINISH.$D + '-' + ( TASK_DATE_FINISH.$M + 1 ) + '-' + TASK_DATE_FINISH.$y,
+            dateStart: TASK_DATE_START ? TASK_DATE_START.$D + '-' + ( TASK_DATE_START.$M + 1 ) + '-' + TASK_DATE_START.$y : '01-1-2023',
+            dateFinish: TASK_DATE_FINISH ? TASK_DATE_FINISH.$D + '-' + ( TASK_DATE_FINISH.$M + 1 ) + '-' + TASK_DATE_FINISH.$y : '01-1-2023',
             square: TASK_OP_SQUARE, 
             storeys: TASK_OP_STOREYS, 
             height: TASK_OP_HEIGHT,
@@ -313,7 +325,8 @@ const CreateTaskPage: React.FC = () => {
             customer: USER_ID,
             status: 'TASK-ACTIVE',
             date: dateString,
-            taskId: USER_ID.slice(0, 10) + '-' + (Math.random() * 100000).toFixed(0)
+            taskId: USER_ID.slice(0, 10) + '-' + (Math.random() * 100000).toFixed(0),
+            chapters: TASK_CHAPTERS
           }
         }}
       

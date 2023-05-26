@@ -149,7 +149,7 @@ const ExecutorProfilePage: React.FC = () => {
         <HeaderContainer>
           <LeftContainer>
             <BootstrapTooltip 
-              title="Был в сети 13 марта в 16:00"
+              title="Был в сети 13 мая в 16:00"
               TransitionComponent={Fade} 
               followCursor 
               arrow
@@ -2116,7 +2116,7 @@ const ExecutorProfilePage: React.FC = () => {
         <HeaderContainer>
           <LeftContainer>
             <BootstrapTooltip 
-              title="Был в сети 13 марта в 16:00"
+              title="Был в сети 13 мая в 16:00"
               TransitionComponent={Fade} 
               followCursor 
               arrow

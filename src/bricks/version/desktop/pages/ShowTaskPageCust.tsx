@@ -168,8 +168,8 @@ const ShowTaskPage: React.FC = () => {
           />
           <BackwardButton 
             color={backwardButtonColor} 
-            onClick={() => navigate('/task-list-all')}
-          >Ко всем заданиям</BackwardButton>
+            onClick={() => navigate('/task-list-cust')}
+          >Ко всем моим заданиям</BackwardButton>
           { false && <BackwardButton 
             color={backwardButtonColor} 
             onClick={() => navigate('/create-new-task')}
@@ -240,14 +240,14 @@ const ShowTaskPage: React.FC = () => {
                     <span style={buttonLabelDeactiveCSS}>Мастер документы</span>
                   </LeftMenuIconButton>
                   <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                  { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
                     <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
-                  </LeftMenuIconButton>
-                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                  </LeftMenuIconButton> }
+                  { false && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
+                  { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
                     <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
-                  </LeftMenuIconButton>
-                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                  </LeftMenuIconButton> }
+                  { false && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
                   <LeftMenuIconButton 
                     backgroundColor={"transparent"} 
                     style={{ 
@@ -281,29 +281,36 @@ const ShowTaskPage: React.FC = () => {
                     <span style={{ ...buttonLabelDeactiveCSS }}>Разделы</span>
                   </LeftMenuIconButton>
                   <SectionsContainer>
-                    <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                      <img
-                        alt={""}
-                        src={checkMark}
-                      />
-                      <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Пожарная безопасность</span>
-                    </LeftMenuIconButton>
-                    <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                    <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                      <img
-                        alt={""}
-                        src={timeIcon}
-                      />
-                      <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Вентиляция</span>
-                    </LeftMenuIconButton>
-                    <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                    <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                      <img
-                        alt={""}
-                        src={timeIcon}
-                      />
-                      <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Сигнализация</span>
-                    </LeftMenuIconButton>
+                    { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
+
+                      return <React.Fragment>
+                        { item.chapters && item.chapters.map(chapter => {
+
+                          return (
+                            <React.Fragment>
+                              <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                                <img
+                                  alt={""}
+                                  src={checkMark}
+                                />
+                                <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
+                              </LeftMenuIconButton>
+                              <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                            </React.Fragment>
+                          )
+
+                        })}
+
+                        { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                          <img
+                            alt={""}
+                            src={timeIcon}
+                          />
+                          <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
+                        </LeftMenuIconButton> }
+                      </React.Fragment>
+
+                    }) : <React.Fragment></React.Fragment> }
                   </SectionsContainer>
                 </div>
                 <div style={contentContainerCSS}>
@@ -501,7 +508,7 @@ const ShowTaskPage: React.FC = () => {
                         }}>
                           <span style={{ ...searchStatusCSS, color: 'inherit', fontSize: '40px', paddingLeft: '20px' }}>
                             { taskList.length > 0 ? 
-                                taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
+                              taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
                           </span>
                           <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Общая площадь, кв.м</span>
                         </div>

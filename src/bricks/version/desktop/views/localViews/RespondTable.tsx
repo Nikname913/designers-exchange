@@ -1,7 +1,10 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ButtonComponent from '../../comps/button/Button'
+import RequestActionsComponent from '../../services/request.service'
 import EmailIcon from '@mui/icons-material/Email'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { selectActualTask } from '../../../../store/slices/task-content-slice'
 import { CSSProperties } from 'styled-components'
 import { IRespondeTableProps } from '../../../../models-ts/views/responde-table-models'
 import css from '../../styles/views/respondTable.css'
@@ -40,6 +43,12 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
   const locationColor = useAppSelector(state => state.theme.grey)
   const tagBackgroundColor = useAppSelector(state => state.theme.blue4)
   const whiteBlueBackground = useAppSelector(state => state.theme.bg)
+
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const [ ACCEPT_REQUEST, SET_ACCEPT_REQUEST ] = useState(false)
+  const [ IGNORE_REQUEST, SET_IGNORE_REQUEST ] = useState(false)
 
   const userContainerCSS: CSSProperties = {
     display: 'flex',
@@ -126,8 +135,52 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
     position: 'relative',
   }
 
+  const acceptRespond = () => {
+
+    dispatch(selectActualTask(TASKS_LIST.showOne))
+    SET_ACCEPT_REQUEST(true)
+
+  }
+
+  const skipRespond = () => {
+
+    dispatch(selectActualTask(TASKS_LIST.showOne))
+    SET_IGNORE_REQUEST(true)
+
+  }
+
+  useEffect(() => console.log(TASKS_LIST.showOne), [ TASKS_LIST.showOne ])
+
   return (
     <React.Fragment>
+
+      { ACCEPT_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {navigate('/order-view/cu')}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-executor-in-task',
+          body: {
+            taskID: TASKS_LIST.showOne,
+            executorID: userName
+          }
+        }}
+      
+      /> }
+      { IGNORE_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/remove-respond-one',
+          body: {
+            taskID: TASKS_LIST.showOne,
+            executorID: userName
+          }
+        }}
+      
+      /> }
+
       <RespondContainer
         width={containerCSS.w}
         height={containerCSS.h}
@@ -143,7 +196,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
               />
             </AvatarContainer>
             <div>
-              <UserName>{ userName }</UserName>
+              <UserName>{ userName.slice(0, 20) + '...' }</UserName>
               <UserJobType color={greyColor2}>{ userJob }</UserJobType>
             </div>
           </div>
@@ -243,7 +296,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
             <ButtonComponent
               inner={"Отказать"} 
               type="CONTAINED_DEFAULT"
-              action={() => {}}
+              action={skipRespond}
               actionData={null}
               widthType={"px"}
               widthValue={120}
@@ -267,7 +320,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
             <ButtonComponent
               inner={"Нанять"} 
               type="CONTAINED_DEFAULT" 
-              action={() => {}}
+              action={acceptRespond}
               actionData={null}
               widthType={"px"}
               widthValue={120}

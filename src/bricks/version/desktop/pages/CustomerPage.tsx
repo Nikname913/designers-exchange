@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import InputComponent from '../comps/input/Input'
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setCustomers } from '../../../store/slices/user-content-slice'
+import { useAppSelector } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
-import RequestActionsComponent from '../services/request.service'
 import Pagintation from '../services/pagination.service'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
 import cssContentArea from '../styles/views/contentArea.css'
@@ -24,10 +22,7 @@ const CustomerPage: React.FC = () => {
   const greyColor = useAppSelector(state => state.theme.grey)
   const customers = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
 
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-  
-  const [ AUTH_REQUEST, ] = useState(true)
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -72,33 +67,12 @@ const CustomerPage: React.FC = () => {
     navigate("/executors")
   }
 
-  const callbackSetUsersList = (param: any) => {
-
-    const filterUsers = param.users.filter((user: any) => user.type === 'CUSTOMER')
-    dispatch(setCustomers(filterUsers))
-
-  }
-
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
-
-      { AUTH_REQUEST && <RequestActionsComponent
-
-        callbackAction={callbackSetUsersList}
-        requestData={{
-          type: 'POST',
-          urlstring: '/users',
-          body: {
-            status: ''
-          }
-        }}
-      
-      /> }
-
       <div style={headBlockCSS}>
         <PageTitle>Заказчики</PageTitle>
         <div style={divCSS}>

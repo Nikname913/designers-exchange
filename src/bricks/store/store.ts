@@ -12,6 +12,7 @@ import regReducer from './slices/reg-slice'
 import enterReducer from './slices/enter-slice'
 import createTaskReducer from './slices/create-task-slice'
 import respondReducer from './slices/respond-slice'
+import requestReducer from './slices/request-reduce-slice'
 
 export const store = configureStore({
   reducer: {
@@ -27,7 +28,8 @@ export const store = configureStore({
     regReducer: regReducer,
     enterReducer: enterReducer,
     createTaskReducer: createTaskReducer,
-    respondReducer: respondReducer
+    respondReducer: respondReducer,
+    requestReducer: requestReducer
   },
 })
 

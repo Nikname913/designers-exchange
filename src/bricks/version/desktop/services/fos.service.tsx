@@ -673,7 +673,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 <SelectField 
                   placeholder={"Выбрать исполнителя"}
                   params={{ width: 300, height: 50 }}
-                  data={[]}
+                  data={[
+                    { value: '01', label: '[ options download ]'}
+                  ]}
                   multy={false}
                   action={() => {}}
                   actionType={""}
@@ -698,7 +700,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   widthType={'px'}
                   widthValue={300}
                   heightValue={'50px'}
-                  label={"50 000₽"}
+                  label={"Введите сумму гонорара"}
                   isError={false}
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
@@ -711,6 +713,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </RespondFromList.ContentLine>
+              <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '24px' }}>
+                <span style={spanTitleCSS}>Комментарий к приглашению</span>
+              </RespondFromList.ContentLine> 
               <RespondFromList.ContentLine>
                   <InputComponent
                     type={'TEXT_INPUT_OUTLINE'}
@@ -729,7 +734,6 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       position: 'relative',
                       boxSizing: 'border-box',
                       marginBottom: '0px',
-                      marginTop: '30px',
                     }}
                   />
                 </RespondFromList.ContentLine>
@@ -772,7 +776,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда</Command.Title>
+                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Отправлено приглашение</Command.SubTitle>
@@ -834,8 +838,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
-                      <span style={nameSubtitleCSS}>ИП</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
                 </Command.ContentLine>
@@ -857,7 +861,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                             <Command.AvatarContainerIndicator background={greenColor} />
                           </Command.AvatarContainer>
                           <Command.NameContainer>
-                            <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                            <span style={nameTitlesCSS}>[ username download ]</span>
                             <span style={nameSubtitleCSS}>Самозанятый</span>
                           </Command.NameContainer>
                         </div>
@@ -902,7 +906,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -932,7 +936,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -965,7 +969,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -998,7 +1002,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner style={{ width: '686px' }}>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда</Command.Title>
+                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Главный исполнитель</Command.SubTitle>
@@ -1014,8 +1018,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
-                      <span style={nameSubtitleCSS}>ИП</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
                 </Command.ContentLine>
@@ -1037,7 +1041,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                             <Command.AvatarContainerIndicator background={greenColor} />
                           </Command.AvatarContainer>
                           <Command.NameContainer>
-                            <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                            <span style={nameTitlesCSS}>[ username download ]</span>
                             <span style={nameSubtitleCSS}>Самозанятый</span>
                           </Command.NameContainer>
                         </div>
@@ -1064,7 +1068,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1081,7 +1085,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1101,7 +1105,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1121,7 +1125,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner style={{ width: '686px' }}>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда</Command.Title>
+                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Главный исполнитель</Command.SubTitle>
@@ -1137,8 +1141,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
-                      <span style={nameSubtitleCSS}>ИП</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
                 </Command.ContentLine>
@@ -1160,7 +1164,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                             <Command.AvatarContainerIndicator background={greenColor} />
                           </Command.AvatarContainer>
                           <Command.NameContainer>
-                            <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                            <span style={nameTitlesCSS}>[ username download ]</span>
                             <span style={nameSubtitleCSS}>Самозанятый</span>
                           </Command.NameContainer>
                         </div>
@@ -1187,7 +1191,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1204,7 +1208,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1224,7 +1228,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={greenColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>Петрова Наталья Викторовна</span>
+                      <span style={nameTitlesCSS}>[ username download ]</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>

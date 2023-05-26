@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import ButtonComponent from '../../comps/button/Button'
-import RequestActionsComponent from '../../services/request.service'
 import { db } from '../../../../firebase/check' 
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
-import { setList } from '../../../../store/slices/task-content-slice'
 import css from '../../styles/views/header.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
@@ -34,8 +32,10 @@ const Header: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
-  const [ AUTH_REQUEST, ] = useState(true)
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+
+  const [ showAlert, setShowAlert ] = useState(false)
 
   const wallet = useAppSelector(state => state.headerReducer.walletCount)
   const whiteColor = useAppSelector(state => state.theme.white)
@@ -143,67 +143,19 @@ const Header: React.FC = () => {
     dispatch(setShowRCC('undefined'))
   }
 
-  const callbackSetTasksList = (param: any) => {
-
-    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
-
-      return { 
-        id: item.taskID, 
-        name: item.title, 
-        date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
-        exper: item.expertise,
-        customer: item.customer.slice(0, 30) + '...',
-        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
-        region: item.region ? item.region : 'Екатеринбург',
-        tags: item.tags,
-        description: item.description,
-        status: 'searching',
-        viewtype: 'default',
-        coast: {
-          value: item.coast,
-          issafe: true,
-          prepay: item.prepay,
-          exper: item.expertiseCoast,
-        },
-        responds: item.reviews,
-        objectData: {
-          constructionType: item.objectData.constructionType,
-          region: item.objectData.region,
-          type: item.objectData.type,
-          spec: item.objectData.spec,
-        },
-        objectParams: {
-          square: item.objectParams.square,
-          storeys: item.objectParams.storeys,
-          height: item.objectParams.height,
-        },
-      }
-
+  useEffect(() => console.log(db), [])
+  useEffect(() => setShowAlert(false), [])
+  useEffect(() => {
+    
+    TASKS_LIST.forEach(item => {
+      if ( item.focused === 'new' ) setShowAlert(true)
+      if ( item.focused === 'none' ) setShowAlert(false)
     })
 
-    dispatch(setList(data))
-
-  }
-
-  useEffect(() => console.log(db), [])
+  }, [ TASKS_LIST ])
 
   return (
     <React.Fragment>
-
-      { AUTH_REQUEST && <RequestActionsComponent
-
-        callbackAction={callbackSetTasksList}
-        requestData={{
-          type: 'POST',
-          urlstring: '/get-task-list',
-          body: {
-            status: ''
-          }
-        }}
-      
-      /> }
-
       <HeadWrapper backgroundColor={"transparent"}>
       <HeadWrapperShadow></HeadWrapperShadow>
       <HeadWrapperInner backgroundColor={whiteColor}>
@@ -272,6 +224,25 @@ const Header: React.FC = () => {
               src={bellIcon}
               style={{ ...bellIconStyle }}
             />
+            { showAlert && <span
+              style={{
+                display: 'block',
+                position: 'absolute',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                backgroundColor: 'rgb(22, 124, 191)',
+                top: '0',
+                left: '100%',
+                marginLeft: '-8px',
+                color: 'white',
+                fontSize: '9px',
+                textAlign: 'center',
+                lineHeight: '18px',
+                paddingRight: '1px',
+                boxSizing: 'border-box'
+              }}
+            >1</span> }
           </HeadControllersIcon>
           <span style={{ display: 'block', width: '30px' }} />
           <HeadControllersIcon backgroundColor={'transparent'}>

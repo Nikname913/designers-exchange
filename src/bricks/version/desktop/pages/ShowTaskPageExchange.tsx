@@ -178,12 +178,7 @@ const ShowTaskPage: React.FC = () => {
           <BackwardButton 
             color={backwardButtonColor} 
             onClick={() => navigate('/task-list-all')}
-          >Ко всем заданиям</BackwardButton>
-          { false && <BackwardButton 
-            color={backwardButtonColor} 
-            onClick={() => navigate('/create-new-task')}
-            style={{ marginLeft: '20px' }}
-          >Новое задание [ техническая ссылка ]</BackwardButton> }
+          >Вернуться к списку заданий</BackwardButton>
         </div>
         { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => { return ( 
           <React.Fragment key={index}>
@@ -201,7 +196,7 @@ const ShowTaskPage: React.FC = () => {
               cardWidth={null}
               marbo={"20px"}
               actions={[ respondAction ]}
-              actionsParams={[item.id]}
+              actionsParams={[ item.id, item.responds ]}
               deal={{
                 type: item.coast.issafe === true ? 'safe' : 'simple',
                 coast: item.coast.value,
@@ -226,35 +221,37 @@ const ShowTaskPage: React.FC = () => {
             </WhiteContainer>
             <Content>
               <div style={leftMenuContainerCSS}>
-                <LeftMenuIconButton backgroundColor={activeLeftMenuIconColor}>
+                <LeftMenuIconButton style={{ marginBottom: '20px' }} backgroundColor={activeLeftMenuIconColor}>
                   <img
                     alt={""}
                     src={infoIcon}
                   />
                   <span style={buttonLabelCSS}>Детали заказа</span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ filter: 'grayscale(0.8)' }}>
+                { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
-                </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px', filter: 'grayscale(0.8)' }}>
+                </LeftMenuIconButton> }
+                { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px', filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={docsIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Мастер документы</span>
-                </LeftMenuIconButton>
-                <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
-                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
-                </LeftMenuIconButton>
-                <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
-                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
-                </LeftMenuIconButton>
+                </LeftMenuIconButton> }
+                { false && <React.Fragment>
+                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
+                  </LeftMenuIconButton>
+                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
+                  </LeftMenuIconButton>
+                </React.Fragment> }
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
                   backgroundColor={"transparent"} 
@@ -289,29 +286,36 @@ const ShowTaskPage: React.FC = () => {
                   <span style={{ ...buttonLabelDeactiveCSS }}>Разделы</span>
                 </LeftMenuIconButton>
                 <SectionsContainer>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                    <img
-                      alt={""}
-                      src={checkMark}
-                    />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Пожарная безопасность</span>
-                  </LeftMenuIconButton>
-                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                    <img
-                      alt={""}
-                      src={timeIcon}
-                    />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Вентиляция</span>
-                  </LeftMenuIconButton>
-                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                    <img
-                      alt={""}
-                      src={timeIcon}
-                    />
-                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Сигнализация</span>
-                  </LeftMenuIconButton>
+                  { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
+
+                    return <React.Fragment>
+                      { item.chapters && item.chapters.map(chapter => {
+
+                        return (
+                          <React.Fragment>
+                            <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                              <img
+                                alt={""}
+                                src={checkMark}
+                              />
+                              <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
+                            </LeftMenuIconButton>
+                            <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                          </React.Fragment>
+                        )
+
+                      })}
+
+                      { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                        <img
+                          alt={""}
+                          src={timeIcon}
+                        />
+                        <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
+                      </LeftMenuIconButton> }
+                    </React.Fragment>
+
+                  }) : <React.Fragment></React.Fragment> }
                 </SectionsContainer>
               </div>
               <div style={contentContainerCSS}>
@@ -346,8 +350,16 @@ const ShowTaskPage: React.FC = () => {
                         <AvatarStatusIndicator background={greenColor}/>
                       </AvatarContainer>
                       <div>
-                        <NameContainer>ООО "Технические Системы"</NameContainer>
-                        <NameContainer style={{ fontSize: '12px', color: nameGreyColor, marginTop: '5px' }}>ООО "Технические Системы"</NameContainer>
+                        <NameContainer>
+
+                          { taskList.length > 0 ? taskList.filter(item => item.id === selectTask)[0].customer.slice(0, 20) + '...' : '' }
+
+                        </NameContainer>
+                        <NameContainer style={{ fontSize: '12px', color: nameGreyColor, marginTop: '5px' }}>
+
+                          { taskList.length > 0 ? taskList.filter(item => item.id === selectTask)[0].customer.slice(0, 20) + '...' : '' }
+
+                        </NameContainer>
                       </div>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -370,7 +382,9 @@ const ShowTaskPage: React.FC = () => {
                       <span style={searchStatusCSS}>Поиск исполнителей</span>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '30px' }}>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Откликнулось 3 исполнителей</span>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Откликнулось { taskList.length > 0 ? 
+                        taskList.filter(item => item.id === selectTask)[0].responds.length.toString() : '0' } исполнителей
+                      </span>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
                 </div>
@@ -390,19 +404,35 @@ const ShowTaskPage: React.FC = () => {
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '15px' }}>
                       <span style={{ ...searchStatusCSS, width: '94px', marginRight: '20px' }}>Вид</span>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Новое строительство</span>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                        { taskList.length === 0 ? '' : 
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.constructionType ? 
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.constructionType : 'Не указано' }
+                      </span>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '15px' }}>
                       <span style={{ ...searchStatusCSS, width: '94px', marginRight: '20px' }}>Регион</span>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Москва, Россия</span>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                        { taskList.length === 0 ? '' : 
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.region ?
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.region : 'Не указано' }
+                      </span>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '15px' }}>
                       <span style={{ ...searchStatusCSS, width: '94px', marginRight: '20px' }}>Тип</span>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Промышленные здания</span>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                        { taskList.length === 0 ? '' :
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.type ?
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.type : 'Не указано' }
+                      </span>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '15px' }}>
                       <span style={{ ...searchStatusCSS, width: '94px', marginRight: '20px' }}>Назначение</span>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Складской комплекс</span>
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                        { taskList.length === 0 ? '' : 
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.spec ?
+                          taskList.filter(item => item.id === selectTask)[0].objectData?.spec : 'Не указано' }
+                      </span>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
                   <span style={spanDelimiterCSS}></span>
@@ -434,7 +464,10 @@ const ShowTaskPage: React.FC = () => {
                           marginBottom: '15px',
                         }}>
                           <span style={{ ...searchStatusCSS, width: '170px', marginRight: '20px' }}>Этажность наземная</span>
-                          <span style={{ ...searchStatusCSS, color: 'inherit' }}>2</span>
+                          <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                            { taskList.length > 0 ? 
+                              taskList.filter(item => item.id === selectTask)[0].objectParams?.storeys : '' }
+                          </span>
                         </div>
                         <div style={{
                           display: 'flex',
@@ -444,7 +477,10 @@ const ShowTaskPage: React.FC = () => {
                           position: 'relative',
                         }}>
                           <span style={{ ...searchStatusCSS, width: '170px', marginRight: '20px' }}>Высота объекта, м</span>
-                          <span style={{ ...searchStatusCSS, color: 'inherit' }}>65</span>
+                          <span style={{ ...searchStatusCSS, color: 'inherit' }}>
+                            { taskList.length > 0 ? 
+                              taskList.filter(item => item.id === selectTask)[0].objectParams?.height : '' }
+                          </span>
                         </div>
                       </div>
                       <div style={{
@@ -452,7 +488,10 @@ const ShowTaskPage: React.FC = () => {
                         position: 'relative',
                         width: '40%',
                       }}>
-                        <span style={{ ...searchStatusCSS, color: 'inherit', fontSize: '40px', paddingLeft: '20px' }}>25000</span>
+                        <span style={{ ...searchStatusCSS, color: 'inherit', fontSize: '40px', paddingLeft: '20px' }}>
+                          { taskList.length > 0 ? 
+                              taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
+                        </span>
                         <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Общая площадь, кв.м</span>
                       </div>
                     </WhiteContainerContentLine>
@@ -474,7 +513,8 @@ const ShowTaskPage: React.FC = () => {
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"space-between"}>
                       <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px' }}>
-                        lorem ipsum dolor sit amet, consectetur adipiscing
+                        { taskList.length > 0 ? 
+                          taskList.filter(item => item.id === selectTask)[0].description : '' }
                       </span>
                     </WhiteContainerContentLine>
                   </WhiteContainer>

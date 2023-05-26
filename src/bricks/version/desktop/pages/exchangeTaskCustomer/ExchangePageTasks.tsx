@@ -1,13 +1,11 @@
 // ----------------------------------------------------------------
 /* eslint-disable array-callback-return */
 // ----------------------------------------------------------------
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { selectShowTask, selectActualTask } from '../../../../store/slices/task-content-slice'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice'
-import { setList } from '../../../../store/slices/task-content-slice' 
-import RequestActionsComponent from '../../services/request.service'
 import ButtonComponent from '../../comps/button/Button'
 import SelectField from '../../comps/select/SelectField'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -44,8 +42,8 @@ const ExchangePage: React.FC = () => {
 
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const USERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA)
-  const [ AUTH_REQUEST, ] = useState(true)
 
+  const [ contentPlug, setContentPlug ] = useState(true)
   const [ typeShowTasks, setTypeShowTasks ] = useState<'active' | 'noactive'>('active') 
   const [ pageTitle, setPageTitle ] = useState<'Мои задания' | 'Отмененные задания'>('Мои задания')
 
@@ -100,6 +98,7 @@ const ExchangePage: React.FC = () => {
 
   const orders = (): void => {
     TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-cust')
+    TASKS_LIST.list.filter(item => item.status === 'work').length === 0 && navigate('/active-orders-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
@@ -187,50 +186,17 @@ const ExchangePage: React.FC = () => {
 
   }
 
-  const callbackSetTasksList = (param: any) => {
+  useEffect(() => {
 
-    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
+    console.log(TASKS_LIST.list)
 
-      return { 
-        id: item.taskID, 
-        name: item.title, 
-        date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' } - ${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
-        exper: item.expertise,
-        experDate: item.expertiseDays,
-        customer: item.customer.slice(0, 30) + '...',
-        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
-        region: item.region ? item.region : 'Екатеринбург',
-        tags: item.tags,
-        description: item.description,
-        status: 'searching',
-        viewtype: 'default',
-        coast: {
-          value: item.coast,
-          issafe: true,
-          prepay: item.prepay,
-          exper: item.expertiseCoast,
-        },
-        responds: item.reviews,
-        objectData: {
-          constructionType: item.objectData.constructionType,
-          region: item.objectData.region,
-          type: item.objectData.type,
-          spec: item.objectData.spec,
-        },
-        objectParams: {
-          square: item.objectParams.square,
-          storeys: item.objectParams.storeys,
-          height: item.objectParams.height,
-        },
-      }
+    TASKS_LIST.list.filter(task => task.status === 'searching').map((item, index: number) => {
+
+      if ( item.customer === ROLE_USER_ID ) setContentPlug(false)
 
     })
 
-    dispatch(setList(data))
-    console.log(data)
-
-  }
+  }, [ ROLE_USER_ID, TASKS_LIST.list ])
 
   return (
     <ContentArea
@@ -239,30 +205,25 @@ const ExchangePage: React.FC = () => {
       justify={null}
     > 
 
-      { AUTH_REQUEST && <RequestActionsComponent
-
-        callbackAction={callbackSetTasksList}
-        requestData={{
-          type: 'POST',
-          urlstring: '/get-task',
-          body: {
-            customer: ROLE_USER_ID
-          }
-        }}
-      
-      /> }
-
       { ROLE_TYPE === 'EXECUTOR' && <Navigate to={"/task-list-exec"} replace={true}/> }
 
       <div style={headBlockCSS}>
         <PageTitle>{ pageTitle }</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
-          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span>
+          <span style={{ ...spanActiveCSS }}>
+            Задания ({
+              TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length
+            })
+          </span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>
+            В работе ({
+              TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.customer === ROLE_USER_ID).length
+            })
+          </span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )</span>
         </div>
       </div>
-      <MenuContainer>
+      <MenuContainer style={{ marginBottom: '8px' }}>
         <ButtonComponent
           inner={"Создать новое задание"} 
           type="CONTAINED_DEFAULT" 
@@ -361,26 +322,28 @@ const ExchangePage: React.FC = () => {
         
         <React.Fragment>
 
-          { TASKS_LIST.list.filter(task => task.status === 'searching').map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
+          { TASKS_LIST.list.filter(task => task.status === 'searching').map((item, index: number) => {
 
-            return <ExchangePageTaskCSS.TaskSpan 
-              style={ TASKS_LIST.showOne === item.id ? { fontWeight: 'bold' } : {}}
-              color={greyColor2} 
-              key={index}
-              onClick={() => {
+            if ( item.customer === ROLE_USER_ID ) {
 
-                console.log(item.id)
+              return <ExchangePageTaskCSS.TaskSpan 
+                style={ TASKS_LIST.showOne === item.id ? { fontWeight: 'bold' } : {}}
+                color={greyColor2} 
+                key={index}
+                onClick={() => {
 
-                !false && dispatch(selectShowTask(item.id))
-                !false && setTypeShowTasks('active')
-                !false && setPageTitle('Мои задания')
+                  !false && dispatch(selectShowTask(item.id))
+                  !false && setTypeShowTasks('active')
+                  !false && setPageTitle('Мои задания')
 
-              }}
-            >{ item.name }</ExchangePageTaskCSS.TaskSpan>
+                }}
+              >{ item.name }</ExchangePageTaskCSS.TaskSpan>
+
+            }
 
           })}
         </React.Fragment>
-        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '33px' }} backgroundColor={delimiterColor}/>
+        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '24px' }} backgroundColor={delimiterColor}/>
         <TextFieldTitle 
           onClick={() => {
             setTypeShowTasks('noactive')
@@ -388,7 +351,7 @@ const ExchangePage: React.FC = () => {
           }}
           style={{ 
             marginTop: '0px', 
-            marginBottom: '26px', 
+            marginBottom: '29px', 
             fontWeight: 'bold',
             color: typeShowTasks === 'active' ? greyColor2 : 'inherit',
             cursor: 'pointer'
@@ -402,6 +365,7 @@ const ExchangePage: React.FC = () => {
         </React.Fragment>
       </MenuContainer>
       <CustExecContentInnerArea>
+        { contentPlug && <span style={{ margin: '66px auto 0px' }}>{"В настоящий момент у вас нет активных заданий"}</span> }
         { typeShowTasks === 'active' ? <React.Fragment>
           { TASKS_LIST.list.map((item, index) => {
 
@@ -467,75 +431,93 @@ const ExchangePage: React.FC = () => {
 
           })}
         </React.Fragment> }
-        { typeShowTasks === 'active' && <div style={divRowCSS}>
-          <TextFieldTitle style={{ fontWeight: 'bold', margin: '0', marginTop: '-2px' }}>
-            Отклики на задание <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>({ returnRespondCount() })</i>
-          </TextFieldTitle>
-          <SelectField 
-            placeholder={"Сортировать"}
-            params={{ width: 300, height: 50 }}
-            data={[
-              { value: '1', label: '[ options download ]' },
-            ]}
-            multy={false}
-            action={() => {}}
-            actionType={""}
-            actionParams={[]}
-            showIcon={true}
-            icon={null}
-            iconStyles={{
-              marginTop: '-12px',
-              marginLeft: '6px',
-              width: '34px',
-            }}
-          />
-        </div> }
+        { !contentPlug && <React.Fragment>
+          { typeShowTasks === 'active' && <div style={divRowCSS}>
+            <TextFieldTitle style={{ fontWeight: 'bold', margin: '0', marginTop: '-2px' }}>
+              Отклики на задание <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>({ returnRespondCount() })</i>
+            </TextFieldTitle>
+            <SelectField 
+              placeholder={"Сортировать"}
+              params={{ width: 300, height: 50 }}
+              data={[
+                { value: '1', label: '[ options download ]' },
+              ]}
+              multy={false}
+              action={() => {}}
+              actionType={""}
+              actionParams={[]}
+              showIcon={true}
+              icon={null}
+              iconStyles={{
+                marginTop: '-12px',
+                marginLeft: '6px',
+                width: '34px',
+              }}
+            />
+          </div> }
 
-        { typeShowTasks === 'active' && <React.Fragment>
+          { typeShowTasks === 'active' && <React.Fragment>
 
-          { TASKS_LIST.list.map((item: { id: string, name: string, responds: Array<{ user: string }> }, index: number): ReactElement => {
+            { TASKS_LIST.list
+              .map((item: { 
+                id: string, 
+                name: string, 
+                responds: Array<{ 
+                  executorID: string,
+                  deadline: string,
+                  coast: string,
+                  preSolution: string,
+                  prePay: string,
+                  expert: any,
+                  expertCoast: string,
+                  comment: string,
+                }> }, index: number): ReactElement => {
 
-            return (
-              <React.Fragment>
-                { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
+              return (
+                <React.Fragment>
+                  { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
 
-                  console.log(itemm)
+                    false && console.log(itemm)
 
-                  return (<RespondTable 
-                    containerCSS={{
-                      w: '100%',
-                      h: 'auto',
-                      mb: '20px',
-                      bg: 'white'
-                    }}
-                    userName={itemm.executorID.slice(0, 20) + '...'}
-                    userJob={"[ options download ]"}
-                    userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
-                    userStat={{
-                      completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
-                      failed: false ? returnUserStat(itemm.executorID)[2] : 0, 
-                      worked: false ? returnUserStat(itemm.executorID)[1] : 0
-                    }}
-                    userPrice={itemm.coast}
-                    userDeadline={itemm.deadline.slice(0, 10)}
-                    userLocation={"Екатеринбург"}
-                    userTags={returnUserTags(itemm.executorID)}
-                    userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
-                    respondDate={"[ options download ]&&[ options download ]"}
-                    discription={itemm.comment}
-                  ></RespondTable>)
+                    return (<RespondTable 
+                      containerCSS={{
+                        w: '100%',
+                        h: 'auto',
+                        mb: '20px',
+                        bg: 'white'
+                      }}
+                      userName={itemm.executorID}
+                      userJob={"[ options download ]"}
+                      userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
+                      userStat={{
+                        completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
+                        failed: false ? returnUserStat(itemm.executorID)[2] : 0, 
+                        worked: false ? returnUserStat(itemm.executorID)[1] : 0
+                      }}
+                      userPrice={itemm.coast}
+                      userDeadline={itemm.deadline.slice(0, 10)}
+                      userLocation={"Екатеринбург"}
+                      userTags={returnUserTags(itemm.executorID)}
+                      userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
+                      respondDate={"[ options download ]&&[ options download ]"}
+                      discription={itemm.comment}
+                    ></RespondTable>)
 
-                })}
-              </React.Fragment>
-            )
+                  })}
+                </React.Fragment>
+              )
 
-          })}
+            })}
+          </React.Fragment> }
+
+          <PagintationContainer>
+            <span style={showMoreButtonCSS}>Загрузить еще</span>
+            <Pagintation count={
+              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+            }></Pagintation>
+          </PagintationContainer>
         </React.Fragment> }
-
-        <PagintationContainer>
-          <span style={showMoreButtonCSS}>Загрузить еще</span>
-          <Pagintation></Pagintation>
-        </PagintationContainer>
 
       </CustExecContentInnerArea>
     </ContentArea>

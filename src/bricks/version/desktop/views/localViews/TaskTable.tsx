@@ -40,6 +40,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const [ containerHeight, setContainerHeight ] = useState('short')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
   const [ taskDescriptionLong, ] = useState(taskDescription)
+  const [ respondButtonText, setRespondButtonText ] = useState('Откликнуться')
+
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
@@ -166,13 +168,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             <TACC.TextContentLine>
               <div>
                 <span style={spanCSS1}>Заказчик: </span>
-                <span>{ taskCustomer }</span>
+                <span>{ taskCustomer.slice(0, 30) + '...' }</span>
               </div>
             </TACC.TextContentLine>
             <TACC.TextContentLine>
               <div>
                 <span style={spanCSS1}>Исполнитель: </span>
-                <span>{ false ? returnName() : taskExecutor }</span>
+                <span>{ false ? returnName() : taskExecutor.slice(0, 30) + '...' }</span>
               </div>
             </TACC.TextContentLine>
             <TACC.TextContentLine>
@@ -332,7 +334,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Открыть заказ"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  false && navigate('/task-view')
+                  ROLE_TYPE === 'CUSTOMER' && navigate('/order-view/cu')
+                  ROLE_TYPE === 'EXECUTOR' && navigate('/order-view/ex')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
@@ -387,7 +390,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               {/* -------------------------------------- */}
 
               {(viewType === 'mainView' || viewType === 'execSelfView') && <ButtonComponent
-                inner={"Откликнуться"} 
+                inner={respondButtonText} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
 
@@ -419,6 +422,10 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
                       actions && actions[1](actionsParams && actionsParams[1])
                       console.log(actionsParams && actionsParams[0])
+
+                    } else {
+
+                      setRespondButtonText('Вы уже откликнулись')
 
                     }
 

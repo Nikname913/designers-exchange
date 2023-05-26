@@ -188,17 +188,17 @@ const ExchangePage: React.FC = () => {
               <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
               <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
             </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Навыки</TextFieldTitle>
+            <TextFieldTitle style={{ marginBottom: '18px', marginTop: '18px' }}>Навыки</TextFieldTitle>
             <FormGroup style={{ fontSize: '15px !important' }}>
               <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
               <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
               <FormControlLabel control={<Checkbox/>} label="BIM"/>
             </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Экспертиза</TextFieldTitle>
+            <TextFieldTitle style={{ marginBottom: '18px', marginTop: '18px' }}>Экспертиза</TextFieldTitle>
             <FormGroup>
               <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
             </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '14px', marginTop: '10px' }}>Цена</TextFieldTitle>
+            <TextFieldTitle style={{ marginBottom: '14px', marginTop: '18px' }}>Цена</TextFieldTitle>
             <CoastRangeContainer>
               <InputComponent
                 type={'TEXT_INPUT_OUTLINE'}

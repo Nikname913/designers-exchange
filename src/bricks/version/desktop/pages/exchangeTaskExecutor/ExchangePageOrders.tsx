@@ -27,8 +27,9 @@ const ExchangePage: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
-  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
 
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
@@ -99,9 +100,28 @@ const ExchangePage: React.FC = () => {
         <div style={headBlockCSS}>
           <PageTitle>Активные заказы</PageTitle>
           <div style={divCSS}>
-            <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
-            <span style={spanActiveCSS}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
-            <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length * 0})</span>
+            <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>
+              Задания ({
+                TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => {
+
+                  let check = 0
+                  item.responds.forEach(respond => {
+                    if ( respond.executorID === USER_ID ) check = 1
+                  })
+
+                  if ( check === 1 ) return item
+
+                }).length
+              })
+            </span>
+            <span style={spanActiveCSS}>
+              В работе ({
+                TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.executor === USER_ID).length
+              })
+            </span>
+            <span style={spanNoActiveCSS} onClick={arkhiv}>
+              Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )
+            </span>
           </div>
         </div>
         <MenuContainer>
@@ -273,7 +293,7 @@ const ExchangePage: React.FC = () => {
           </React.Fragment> : <React.Fragment></React.Fragment> }
         </MenuContainer>
         <CustExecContentInnerArea>
-          { TASKS_LIST.list.filter(item => item.status === 'work').map((item, index: number) => {
+          { TASKS_LIST.listOrders.filter(item => item.status === 'work').map((item, index: number) => {
             return (
               <TaskTable key={index}
                 viewType={item.status}
@@ -303,7 +323,10 @@ const ExchangePage: React.FC = () => {
 
           <PagintationContainer>
             <span style={showMoreButtonCSS}>Загрузить еще</span>
-            <Pagintation></Pagintation>
+            <Pagintation count={
+              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+            }></Pagintation>
           </PagintationContainer>
 
         </CustExecContentInnerArea>

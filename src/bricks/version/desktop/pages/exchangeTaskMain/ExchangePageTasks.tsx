@@ -114,9 +114,9 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Задания</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span>
-          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span>
+          <span style={{ ...spanActiveCSS }}>Открытые задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
+          { false && <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span> }
+          { false && <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span> }
         </div>
       </div>
       <MenuContainer>

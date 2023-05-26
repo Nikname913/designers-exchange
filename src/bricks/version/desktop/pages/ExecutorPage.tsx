@@ -1,14 +1,12 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import { useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../comps/input/Input'
-import RequestActionsComponent from '../services/request.service'
 import Pagintation from '../services/pagination.service'
-import { useAppSelector, useAppDispatch } from '../../../store/hooks'
-import { setExecutors } from '../../../store/slices/user-content-slice'
+import { useAppSelector } from '../../../store/hooks'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
@@ -27,10 +25,7 @@ const ExecutorPage: React.FC = () => {
   const greyColor = useAppSelector(state => state.theme.grey)
   const executors = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
 
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
-
-  const [ AUTH_REQUEST, ] = useState(true)
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -81,33 +76,12 @@ const ExecutorPage: React.FC = () => {
     navigate('/customers')
   }
 
-  const callbackSetTasksList = (param: any) => {
-
-    const filterUsers = param.users.filter((user: any) => user.type === 'EXECUTOR')
-    dispatch(setExecutors(filterUsers))
-
-  }
-
   return (
     <ContentArea
       flexDirection={null}
       alignItems={null}
       justify={null}
     > 
-
-      { AUTH_REQUEST && <RequestActionsComponent
-
-        callbackAction={callbackSetTasksList}
-        requestData={{
-          type: 'POST',
-          urlstring: '/users',
-          body: {
-            status: ''
-          }
-        }}
-      
-      /> }
-
       <div style={headBlockCSS}>
         <PageTitle>Исполнители</PageTitle>
         <div style={divCSS}>
