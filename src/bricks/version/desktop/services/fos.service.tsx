@@ -41,6 +41,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ RESPOND_REQUEST, SET_RESPOND_REQUEST ] = useState(false)
 
+  const [ respondButtonInnerOne, setRespondButtonInnerOne ] = useState("Откликнуться")
+
   const AUTH_EMAIL = useAppSelector(state => state.enterReducer.email)
   const AUTH_PASSWORD = useAppSelector(state => state.enterReducer.password)
 
@@ -251,25 +253,39 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   }
 
-  const respondSuccess = (param: any): void => {
+  const respondSuccess = (): void => {
 
-    SET_RESPOND_REQUEST(true)
+    false && console.log(RESPOND_DEADLINE)
+    false && console.log(RESPOND_COAST)
+    false && console.log(RESPOND_SOLUTION)
+    false && console.log(RESPOND_PREPAY)
+    false && console.log(RESPOND_EXPERT)
+    false && console.log(RESPOND_EXPERT_COAST)
+    false && console.log(RESPOND_COMMENT)
+    false && console.log(RESPOND_TASK)
+    false && console.log(RESPOND_EXECUTOR)
 
-    console.log(RESPOND_DEADLINE)
-    console.log(RESPOND_COAST)
-    console.log(RESPOND_SOLUTION)
-    console.log(RESPOND_PREPAY)
-    console.log(RESPOND_EXPERT)
-    console.log(RESPOND_EXPERT_COAST)
-    console.log(RESPOND_COMMENT)
-    console.log(RESPOND_TASK)
-    console.log(RESPOND_EXECUTOR)
+    if ( RESPOND_DEADLINE !== '' 
+      && RESPOND_COAST !== ''
+      && RESPOND_SOLUTION !== ''
+      && RESPOND_PREPAY !== ''
+      && RESPOND_EXPERT !== '' 
+      && RESPOND_EXPERT_COAST !== '' ) {
 
-    dispatch(setShowAlert(true))
-    dispatch(setType('success'))
-    dispatch(setMessage('Ваш отклик на задание был успешно оставлен'))
+        SET_RESPOND_REQUEST(true)
 
-    setTimeout(() => closeFos(), 1300)
+        dispatch(setShowAlert(true))
+        dispatch(setType('success'))
+        dispatch(setMessage('Ваш отклик на задание был успешно оставлен'))
+
+        setTimeout(() => closeFos(), 1300)
+
+      } else {
+
+        setRespondButtonInnerOne("Заполните все поля")
+        setTimeout(() => setRespondButtonInnerOne("Откликнуться"), 1400)
+
+      }
 
   }
   
@@ -512,12 +528,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <span style={{ ...spanDelimiterCSS, width: '50%' }} />
                   <span style={spanDelimiterCSS} />
                   <ButtonComponent
-                    inner={"Откликнуться"} 
-                    type="CONTAINED_DEFAULT" 
+                    inner={respondButtonInnerOne} 
+                    type={"CONTAINED_DEFAULT"} 
                     action={respondSuccess}
                     actionData={null}
-                    widthType={"px"}
-                    widthValue={172}
+                    widthType={"%"}
+                    widthValue={50}
                     children={""}
                     childrenCss={{}}
                     iconSrc={null}
@@ -1364,6 +1380,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   style={userTypeCSS}
                   onClick={() => {
                     closeFos()
+                    false && dispatch(setFaceType('PHIS_FACE'))
                     navigate('/cust-registration')
                   }}
                 >
@@ -1390,7 +1407,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   style={userTypeCSS} 
                   onClick={() => {
                     closeFos()
-                    dispatch(setFaceType('PHIS_FACE'))
+                    false && dispatch(setFaceType('PHIS_FACE'))
                     navigate('/exec-registration')
                   }}
                 >

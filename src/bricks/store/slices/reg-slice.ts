@@ -10,7 +10,7 @@ const initialState: IRegReducer = {
   number: '',
   spec: '',
   password: '',
-  faceType: 'IP_FACE',
+  faceType: '',
   focused: '',
   code: ''
 }

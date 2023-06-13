@@ -13,6 +13,7 @@ import enterReducer from './slices/enter-slice'
 import createTaskReducer from './slices/create-task-slice'
 import respondReducer from './slices/respond-slice'
 import requestReducer from './slices/request-reduce-slice'
+import passportReducer from './slices/passport-slice'
 
 export const store = configureStore({
   reducer: {
@@ -29,7 +30,8 @@ export const store = configureStore({
     enterReducer: enterReducer,
     createTaskReducer: createTaskReducer,
     respondReducer: respondReducer,
-    requestReducer: requestReducer
+    requestReducer: requestReducer,
+    passportReducer: passportReducer
   },
 })
 

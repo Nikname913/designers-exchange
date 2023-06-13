@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable array-callback-return */
 import React, { ReactElement, useEffect, useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
@@ -25,10 +25,10 @@ const ExchangePage: React.FC = () => {
   const dispatch = useAppDispatch()
 
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
-  const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
 
-  const [ REMOVE_RESPOND_REQUEST, SET_REMOVE_RESPOND_REQUEST ] = useState(false)
+  const [ REMOVE_RESPOND_REQUEST, SET_REMOVE_RESPOND_REQUEST ] = useState<boolean>(false)
+  const [ localActualTask, setLocalActualTask ] = useState<string>('')
 
   const greyColor = useAppSelector(state => state.theme.grey)
   const buttonColor = useAppSelector(state => state.theme.blue3)
@@ -94,20 +94,24 @@ const ExchangePage: React.FC = () => {
 
   useEffect(() => {
     
-    !false && console.log(TASKS_LIST.list)
+    false && console.log(TASKS_LIST.list)
   
   }, [ TASKS_LIST ])
+  
+  useEffect(() => { 
+    
+    !!!false && console.log(localActualTask)
+    if ( localActualTask !== '' ) {
 
-  const removeRespond = () => {
-    console.log(JSON.stringify({
-      taskID: TASKS_LIST.showOne,
-      executorID: USER_ID
-    }))
-    SET_REMOVE_RESPOND_REQUEST(true)
-    setTimeout(() => {
-      SET_REMOVE_RESPOND_REQUEST(false)
-    }, 1000)
-  }
+      SET_REMOVE_RESPOND_REQUEST(true)
+      setTimeout(() => {
+        SET_REMOVE_RESPOND_REQUEST(false)
+        setLocalActualTask('')
+      }, 1000)
+
+    }
+
+  }, [ localActualTask ])
 
   return (
     <ContentArea
@@ -123,14 +127,12 @@ const ExchangePage: React.FC = () => {
           type: 'POST',
           urlstring: '/remove-respond-one',
           body: {
-            taskID: TASKS_LIST.showOne,
+            taskID: localActualTask,
             executorID: USER_ID
           }
         }}
       
       /> }
-
-      { ROLE_TYPE === 'CUSTOMER' && <Navigate to={"/task-list-cust"} replace={true}/> }
 
       <div style={headBlockCSS}>
         <PageTitle>Мои задания</PageTitle>
@@ -197,34 +199,34 @@ const ExchangePage: React.FC = () => {
             if ( respondCount === 1000 ) return item
 
           })
-          .map((item, index: number): ReactElement => {
+          .map((itemUpper, index: number): ReactElement => {
           return (
             <React.Fragment key={index}>
               <TaskTable
                 viewType={"execSelfView"}
-                taskInitDate={item.date}
-                taskTitle={item.name}
-                taskDeadline={item.deadline}
-                taskExpertType={item.exper}
-                taskCustomer={item.customer}
-                taskExecutor={item.executor}
-                taskLocation={item.region}
-                taskSpecializationTags={item.tags}
-                taskDescription={item.description}
-                dealStatus={item.status}
+                taskInitDate={itemUpper.date}
+                taskTitle={itemUpper.name}
+                taskDeadline={itemUpper.deadline}
+                taskExpertType={itemUpper.exper}
+                taskCustomer={itemUpper.customer}
+                taskExecutor={itemUpper.executor}
+                taskLocation={itemUpper.region}
+                taskSpecializationTags={itemUpper.tags}
+                taskDescription={itemUpper.description}
+                dealStatus={itemUpper.status}
                 cardWidth={'100%'}
                 marbo={"0px"}
                 actions={[actualTask]}
-                actionsParams={[item.id]}
+                actionsParams={[ itemUpper.id, itemUpper.responds, 'responded' ]}
                 deal={{
-                  type: item.coast.issafe === true ? 'safe' : 'simple',
-                  coast: item.coast.value,
-                  prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
-                  expert: item.coast.issafe === true ? item.coast.exper : 0,
+                  type: itemUpper.coast.issafe === true ? 'safe' : 'simple',
+                  coast: itemUpper.coast.value,
+                  prepaid: itemUpper.coast.issafe === true ? itemUpper.coast.prepay : 0,
+                  expert: itemUpper.coast.issafe === true ? itemUpper.coast.exper : 0,
                 }}
               />
               <React.Fragment>
-                { item.responds
+                { itemUpper.responds
                   .filter((item: any) => item.executorID === USER_ID)
                   .map((item: any, index: number): ReactElement => {
 
@@ -261,7 +263,11 @@ const ExchangePage: React.FC = () => {
                           <ButtonComponent
                             inner={"Отменить отклик"} 
                             type="CONTAINED_DEFAULT"
-                            action={removeRespond}
+                            action={() => {
+                              false && console.log(itemUpper.id)
+                              false && console.log(USER_ID)
+                              setLocalActualTask(itemUpper.id)
+                            }}
                             actionData={null}
                             widthType={"%"}
                             widthValue={100}

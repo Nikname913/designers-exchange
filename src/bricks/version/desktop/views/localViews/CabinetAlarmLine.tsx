@@ -35,7 +35,7 @@ const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarm
       <AlarmContainer background={background}>
         <div style={textContainerCSS}>
           <span style={{ fontSize: '12px', color: greyColor }}>{ date }</span>
-          <span style={{ lineHeight: '20px', marginTop: '5px' }}>{ text }</span>
+          <span style={{ lineHeight: '22px', marginTop: '5px' }}>{ text }</span>
         </div>
         <div style={{ width: '50%', display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
           { buttons.length > 0 && buttons.map(item => item)}

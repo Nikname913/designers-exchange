@@ -66,6 +66,10 @@ const ChapterController:
         <ChapterContainerStepRoundPlus 
           backgroundColor={whiteColor}
           borderColor={blueColor}
+          onClick={() => {
+            actions && actions[0](true)
+            setAddButtonType('show')
+          }}
         > 
           <img
             alt={""}

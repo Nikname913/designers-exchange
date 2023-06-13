@@ -320,7 +320,10 @@ const ExchangePage: React.FC = () => {
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
-          <Pagintation></Pagintation>
+          <Pagintation count={
+            ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+            ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+          }></Pagintation>
         </PagintationContainer>
 
       </CustExecContentInnerArea>

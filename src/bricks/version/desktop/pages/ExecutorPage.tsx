@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -6,7 +6,8 @@ import { useNavigate } from 'react-router-dom'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../comps/input/Input'
 import Pagintation from '../services/pagination.service'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { setSelectedUsersType } from '../../../store/slices/header-slice'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
@@ -26,6 +27,7 @@ const ExecutorPage: React.FC = () => {
   const executors = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -75,6 +77,9 @@ const ExecutorPage: React.FC = () => {
   function customerPage() {
     navigate('/customers')
   }
+
+   // eslint-disable-next-line react-hooks/exhaustive-deps
+   useEffect(() => { dispatch(setSelectedUsersType('EXEC')) }, [])
 
   return (
     <ContentArea

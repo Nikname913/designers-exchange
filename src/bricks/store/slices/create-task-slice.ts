@@ -31,7 +31,8 @@ const initialState: ICreateTaskReducer = {
   chapters: [],
   chapterLocalName: '',
   chapterLocalDescription: '',
-  focused: ''
+  focused: '',
+  techTaskFile: [],
 }
 
 const createTaskReducer = createSlice({
@@ -107,6 +108,14 @@ const createTaskReducer = createSlice({
     setFocused(state, action: PayloadAction<string>) {
       state.focused = action.payload
     },
+    setTechTaskFile(state, action: PayloadAction<File>) {
+      state.techTaskFile.push(action.payload)
+    },
+    removeTechTaskFile(state, action: PayloadAction<string>) {
+      let filesData = state.techTaskFile
+      let filterFilesData = filesData.filter(file => file.name !== action.payload)
+      state.techTaskFile = filterFilesData
+    }
   }
 })
 
@@ -130,5 +139,7 @@ export const {
   setChapters,
   setChapterLN,
   setChapterLD,
-  setFocused } = createTaskReducer.actions
+  setFocused,
+  setTechTaskFile,
+  removeTechTaskFile } = createTaskReducer.actions
 export default createTaskReducer.reducer

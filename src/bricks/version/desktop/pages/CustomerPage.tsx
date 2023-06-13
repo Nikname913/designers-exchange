@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import InputComponent from '../comps/input/Input'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
+import { setSelectedUsersType } from '../../../store/slices/header-slice'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import Pagintation from '../services/pagination.service'
@@ -23,6 +24,7 @@ const CustomerPage: React.FC = () => {
   const customers = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const divCSS: React.CSSProperties = {
     display: 'flex',
@@ -67,6 +69,9 @@ const CustomerPage: React.FC = () => {
     navigate("/executors")
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setSelectedUsersType('CUST')) }, [])
+
   return (
     <ContentArea
       flexDirection={null}
@@ -90,7 +95,7 @@ const CustomerPage: React.FC = () => {
           heightValue={'50px'}
           label={"Поиск по заказчикам"}
           isError={false}
-          isDisabled={true}
+          isDisabled={false}
           labelShrinkLeft={"0px"}
           innerLabel={null}
           css={{

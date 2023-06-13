@@ -36,6 +36,13 @@ import { setDeadline,
   setFocused as setFocusedRespond,
   setDateFinish as setDateFinishRespond,
   setDateExpert } from '../../../../store/slices/respond-slice'
+import { setSeri, 
+  setNumber as setNumPas, 
+  setWho, 
+  setAdress, 
+  setSnils, 
+  setInn,
+  setFocused as setFocusedPas } from '../../../../store/slices/passport-slice'
 import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -120,6 +127,18 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const RESPOND_DATE_FINISH = useAppSelector(state => state.respondReducer.dateFinish)
   const RESPOND_DATE_EXPERT = useAppSelector(state => state.respondReducer.dateExpert)
   const RESPOND_FOCUS = useAppSelector(state => state.respondReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для паспорта снилс инн
+  // ----------------------------------------------------------------
+
+  const PASSPORT_SERI = useAppSelector(state => state.passportReducer.seri)
+  const PASSPORT_NUMBER = useAppSelector(state => state.passportReducer.number)
+  const PASSPORT_WHO_GET = useAppSelector(state => state.passportReducer.who)
+  const PASSPORT_ADRESS = useAppSelector(state => state.passportReducer.adress)
+  const PASSPORT_SNILS = useAppSelector(state => state.passportReducer.snils)
+  const PASSPORT_INN = useAppSelector(state => state.passportReducer.inn)
+  const PASSPORT_FOCUS = useAppSelector(state => state.passportReducer.focused)
 
   interface IState {
     showPassword: boolean,
@@ -229,19 +248,61 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   }
 
+  const reduceAuthStateFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'NAME' && dispatch(setFocused('NAME'))
+      store[0] === 'SURNAME' && dispatch(setFocused('SURNAME'))
+      store[0] === 'SECOND_NAME' && dispatch(setFocused('SECOND_NAME'))
+      store[0] === 'EMAIL' && dispatch(setFocused('EMAIL'))
+      store[0] === 'NUMBER' && dispatch(setFocused('NUMBER'))
+      store[0] === 'SPEC' && dispatch(setFocused('SPEC'))
+      store[0] === 'PASSWORD' && dispatch(setFocused('PASSWORD'))
+      store[0] === 'CODE' && dispatch(setFocused('CODE'))
+
+      store[0] === 'PASSWORD_ENTER' && dispatch(setFocused('PASSWORD_ENTER'))
+      store[0] === 'EMAIL_ENTER' && dispatch(setFocused('EMAIL_ENTER'))
+
+      if ( store[0] === 'ORG_NAME' ) {
+        dispatch(setFocused('ORG_NAME'))
+      }
+
+    }
+
+  }
+
+  const reduceAuthStateBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocused(''))
+
+    }
+
+  }
+
   const reduceNewTaskState = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     if ( store ) {
 
-      store[0] === 'TASK_TITLE' && dispatch(setTitle(event.target.value))
-      store[0] === 'TASK_COAST' && dispatch(setCoast(event.target.value))
-      store[0] === 'TASK_PREPAY' && dispatch(setPrepay(event.target.value))
-      store[0] === 'TASK_PREPAY_DAYS' && dispatch(setPrepayDays(event.target.value))
-      store[0] === 'TASK_EXPERT_COAST' && dispatch(setExpertiseCoast(event.target.value))
+      store[0] === 'TASK_TITLE' && event.target.value.length < 100 && dispatch(setTitle(event.target.value))
+      
+      store[0] === 'TASK_COAST' && event.target.value.replace(/\D/g,'').length < 8 && dispatch(setCoast(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TASK_COAST' && dispatch(setPrepay(''))
+      store[0] === 'TASK_COAST' && dispatch(setExpertiseCoast(''))
+
+      store[0] === 'TASK_PREPAY' 
+        && Number(event.target.value.replace(/\D/g,'')) < ( Number(TASK_COAST) / 2 + 1 ) 
+        && dispatch(setPrepay(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TASK_PREPAY_DAYS' && event.target.value.replace(/\D/g,'').length < 3 && dispatch(setPrepayDays(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TASK_EXPERT_COAST' 
+        && Number(event.target.value.replace(/\D/g,'')) < (Number(TASK_COAST) - Number(TASK_PREPAY)) + 1
+        && dispatch(setExpertiseCoast(event.target.value.replace(/\D/g,'')))
       store[0] === 'TASK_DESCRIPTION' && dispatch(setDescription(event.target.value))
-      store[0] === 'TASK_OP_SQUARE' && dispatch(setObjectParamsSquare(event.target.value))
-      store[0] === 'TASK_OP_STOREYS' && dispatch(setObjectParamsStoreys(event.target.value))
-      store[0] === 'TASK_OP_HEIGHT' && dispatch(setObjectParamsHeight(event.target.value))
+      store[0] === 'TASK_OP_SQUARE' && event.target.value.replace(/\D/g,'').length < 6 && dispatch(setObjectParamsSquare(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TASK_OP_STOREYS' && Number(event.target.value.replace(/\D/g,'')) < 30 && dispatch(setObjectParamsStoreys(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TASK_OP_HEIGHT' && event.target.value.replace(/\D/g,'').length < 4 && dispatch(setObjectParamsHeight(event.target.value.replace(/\D/g,'')))
       store[0] === 'TASK_CHAPTER_NAME' && dispatch(setChapterLN(event.target.value))
       store[0] === 'TASK_CHAPTER_DESCR' && dispatch(setChapterLD(event.target.value))
 
@@ -261,16 +322,55 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   }
 
+  const reduceNewTaskStateFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'TASK_TITLE' && dispatch(setFocusedTask('TASK_TITLE'))
+      store[0] === 'TASK_COAST' && dispatch(setFocusedTask('TASK_COAST'))
+      store[0] === 'TASK_PREPAY' && dispatch(setFocusedTask('TASK_PREPAY'))
+      store[0] === 'TASK_PREPAY_DAYS' && dispatch(setFocusedTask('TASK_PREPAY_DAYS'))
+      store[0] === 'TASK_EXPERT_COAST' && dispatch(setFocusedTask('TASK_EXPERT_COAST'))
+      store[0] === 'TASK_DESCRIPTION' && dispatch(setFocusedTask('TASK_DESCRIPTION'))
+      store[0] === 'TASK_OP_SQUARE' && dispatch(setFocusedTask('TASK_OP_SQUARE'))
+      store[0] === 'TASK_OP_STOREYS' && dispatch(setFocusedTask('TASK_OP_STOREYS'))
+      store[0] === 'TASK_OP_HEIGHT' && dispatch(setFocusedTask('TASK_OP_HEIGHT'))
+      store[0] === 'TASK_CHAPTER_NAME' && dispatch(setFocusedTask('TASK_CHAPTER_NAME'))
+      store[0] === 'TASK_CHAPTER_DESCR' && dispatch(setFocusedTask('TASK_CHAPTER_DESCR'))
+
+    }
+
+  }
+
+  const reduceNewTaskStateBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedTask(''))
+
+    }
+
+  }
+
   const reduceRespondState = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     if ( store ) {
 
       store[0] === 'RESPOND_DEADLINE' && dispatch(setDeadline(event.target.value))
-      store[0] === 'RESPOND_COAST' && dispatch(setCoastRespond(event.target.value))
-      store[0] === 'RESPOND_SOLUTION' && dispatch(setSolution(event.target.value))
-      store[0] === 'RESPOND_PREPAY' && dispatch(setPrepayRespond(event.target.value))
+      store[0] === 'RESPOND_COAST' 
+        && event.target.value.replace(/\D/g,'').length < 8 
+        && dispatch(setCoastRespond(event.target.value.replace(/\D/g,'')))
+      store[0] === 'RESPOND_COAST' && dispatch(setPrepayRespond(''))
+      store[0] === 'RESPOND_COAST' && dispatch(setExpertCoast(''))
+
+      store[0] === 'RESPOND_SOLUTION' && event.target.value.replace(/\D/g,'').length < 3 && dispatch(setSolution(event.target.value))
+      store[0] === 'RESPOND_PREPAY' 
+        && Number(event.target.value.replace(/\D/g,'')) < ( Number(RESPOND_COAST) / 2 + 1 ) 
+        && dispatch(setPrepayRespond(event.target.value.replace(/\D/g,'')))
       store[0] === 'RESPOND_EXPERT' && dispatch(setExpert(event.target.value))
-      store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setExpertCoast(event.target.value))
+      store[0] === 'RESPOND_EXPERT_COAST' 
+        && Number(event.target.value.replace(/\D/g,'')) < (Number(RESPOND_COAST) - Number(RESPOND_PREPAY)) + 1
+        && dispatch(setExpertCoast(event.target.value.replace(/\D/g,'')))
       store[0] === 'RESPOND_COMMENT' && dispatch(setComment(event.target.value))
       store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond(event.target.value))
       store[0] === 'RESPOND_DATE_FINISH' && dispatch(setDateFinishRespond(event.target.value))
@@ -286,6 +386,81 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond('RESPOND_FOCUS'))
       store[0] === 'RESPOND_DATE_FINISH' && dispatch(setFocusedRespond('RESPOND_DATE_FINISH'))
       store[0] === 'RESPOND_DATE_EXPERT' && dispatch(setFocusedRespond('RESPOND_DATE_EXPERT'))
+
+    }
+
+  }
+
+  const reduceRespondStateFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'RESPOND_DEADLINE' && dispatch(setFocusedRespond('RESPOND_DEADLINE'))
+      store[0] === 'RESPOND_COAST' && dispatch(setFocusedRespond('RESPOND_COAST'))
+      store[0] === 'RESPOND_SOLUTION' && dispatch(setFocusedRespond('RESPOND_SOLUTION'))
+      store[0] === 'RESPOND_PREPAY' && dispatch(setFocusedRespond('RESPOND_PREPAY'))
+      store[0] === 'RESPOND_EXPERT' && dispatch(setFocusedRespond('RESPOND_EXPERT'))
+      store[0] === 'RESPOND_EXPERT_COAST' && dispatch(setFocusedRespond('RESPOND_EXPERT_COAST'))
+      store[0] === 'RESPOND_COMMENT' && dispatch(setFocusedRespond('RESPOND_COMMENT'))
+      store[0] === 'RESPOND_FOCUS' && dispatch(setFocusedRespond('RESPOND_FOCUS'))
+      store[0] === 'RESPOND_DATE_FINISH' && dispatch(setFocusedRespond('RESPOND_DATE_FINISH'))
+      store[0] === 'RESPOND_DATE_EXPERT' && dispatch(setFocusedRespond('RESPOND_DATE_EXPERT'))
+
+    }
+
+  }
+  const reduceRespondStateBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedRespond(''))
+
+    }
+
+  }
+
+  const reducePassportData = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'PASSPORT_SERI' && event.target.value.length < 5 && dispatch(setSeri(event.target.value))
+      store[0] === 'PASSPORT_NUMBER' && event.target.value.length < 7 && dispatch(setNumPas(event.target.value))
+      store[0] === 'PASSPORT_WHO_GET' && dispatch(setWho(event.target.value))
+      store[0] === 'PASSPORT_ADRESS' && dispatch(setAdress(event.target.value))
+      store[0] === 'PASSPORT_SNILS' && event.target.value.length < 12 && dispatch(setSnils(event.target.value))
+      store[0] === 'PASSPORT_INN' && event.target.value.length < 13 && dispatch(setInn(event.target.value))
+
+      store[0] === 'PASSPORT_SERI' && dispatch(setFocusedPas('PASSPORT_SERI'))
+      store[0] === 'PASSPORT_NUMBER' && dispatch(setFocusedPas('PASSPORT_NUMBER'))
+      store[0] === 'PASSPORT_WHO_GET' && dispatch(setFocusedPas('PASSPORT_WHO_GET'))
+      store[0] === 'PASSPORT_ADRESS' && dispatch(setFocusedPas('PASSPORT_ADRESS'))
+      store[0] === 'PASSPORT_SNILS' && dispatch(setFocusedPas('PASSPORT_SNILS'))
+      store[0] === 'PASSPORT_INN' && dispatch(setFocusedPas('PASSPORT_INN'))
+
+    }
+
+  }
+
+  const reducePassportDataFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'PASSPORT_SERI' && dispatch(setFocusedPas('PASSPORT_SERI'))
+      store[0] === 'PASSPORT_NUMBER' && dispatch(setFocusedPas('PASSPORT_NUMBER'))
+      store[0] === 'PASSPORT_WHO_GET' && dispatch(setFocusedPas('PASSPORT_WHO_GET'))
+      store[0] === 'PASSPORT_ADRESS' && dispatch(setFocusedPas('PASSPORT_ADRESS'))
+      store[0] === 'PASSPORT_SNILS' && dispatch(setFocusedPas('PASSPORT_SNILS'))
+      store[0] === 'PASSPORT_INN' && dispatch(setFocusedPas('PASSPORT_INN'))
+
+    }
+
+  }
+
+  const reducePassportDataBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedPas(''))
 
     }
 
@@ -338,7 +513,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
         { type === 'TEXT_INPUT_LINE'
           ? <CustomTextField 
               type={valueType}
-              id="standard-basic" 
+              id="standard-basic-line" 
               label={label} 
               error={isError}
               disabled={isDisabled}
@@ -355,7 +530,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               type={valueType}
               value={store && store[0]}
               onChange={handleChangeSimple}
-              id="standard-basic" 
+              id="standard-basic-outline" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -386,8 +561,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'TASK_CHAPTER_DESCR' ? TASK_CHAPTER_DESCR : ''
               }
               onChange={reduceNewTaskState}
+              onFocus={reduceNewTaskStateFocus}
+              onBlur={reduceNewTaskStateBlur}
               autoFocus={store && TASK_FOCUS === store[0] && true}
-              id="standard-basic" 
+              id="standard-basic-task" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -397,6 +574,44 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_DOCS'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'PASSPORT_SERI' ? PASSPORT_SERI :
+                  store[0] === 'PASSPORT_NUMBER' ? PASSPORT_NUMBER :
+                  store[0] === 'PASSPORT_WHO_GET' ? PASSPORT_WHO_GET :
+                  store[0] === 'PASSPORT_ADRESS' ? PASSPORT_ADRESS :
+                  store[0] === 'PASSPORT_SNILS' ? PASSPORT_SNILS : 
+                  store[0] === 'PASSPORT_INN' ? PASSPORT_INN : ''
+              }
+              onChange={reducePassportData}
+              onFocus={reducePassportDataFocus}
+              onBlur={reducePassportDataBlur}
+              autoFocus={store && PASSPORT_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
 
           : type === 'TEXT_INPUT_OUTLINE_INLABEL_TASK'
           ? <CustomTextField 
@@ -410,8 +625,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'TASK_OP_HEIGHT' ? TASK_OP_HEIGHT : ''
               }
               onChange={reduceNewTaskState}
+              onFocus={reduceNewTaskStateFocus}
+              onBlur={reduceNewTaskStateBlur}
               autoFocus={store && TASK_FOCUS === store[0] && true}
-              id="standard-basic" 
+              id="standard-basic-params" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -456,8 +673,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'CODE' ? CODE : ''
               }
               onChange={reduceAuthState}
+              onFocus={reduceAuthStateFocus}
+              onBlur={reduceAuthStateBlur}
               autoFocus={store && FOCUS === store[0] && true}
-              id="standard-basic" 
+              id="standard-basic-auth" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -494,8 +713,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'RESPOND_FOCUS' ? RESPOND_FOCUS : ''
               }
               onChange={reduceRespondState}
+              onFocus={reduceRespondStateFocus}
+              onBlur={reduceRespondStateBlur}
               autoFocus={store && RESPOND_FOCUS === store[0] && true}
-              id="standard-basic" 
+              id="standard-basic-reposnd" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -515,7 +736,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           ? <CustomTextField 
               type={'password'}
               required={required}
-              id="standard-basic" 
+              id="standard-basic-password" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -534,12 +755,14 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 store[0] === 'PASSWORD_ENTER' ? PASSWORD_ENTER : ''
               }
               required={required}
-              id="standard-basic" 
+              id="standard-basic-password-visibility" 
               label={label}
               error={isError}
               disabled={isDisabled}
               autoComplete={"off"}
               onChange={reduceAuthState}
+              onFocus={reduceAuthStateFocus}
+              onBlur={reduceAuthStateBlur}
               autoFocus={store && FOCUS === store[0] && true}
               InputProps={{
                 endAdornment: 
@@ -565,7 +788,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               defaultValue={""}
               required={required}
               autoComplete={"off"}
-              id="standard-basic" 
+              id="standard-basic-search" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -593,7 +816,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               defaultValue={""}
               required={required}
               autoComplete={"off"}
-              id="standard-basic" 
+              id="standard-basic-date" 
               label={label}
               error={isError}
               disabled={isDisabled}
@@ -727,7 +950,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               type={'search'}
               required={required}
               defaultValue={"Поиск по сайту"}
-              id="standard-basic" 
+              id="standard-basic-search-site" 
               label={label}
               error={isError}
               disabled={isDisabled}

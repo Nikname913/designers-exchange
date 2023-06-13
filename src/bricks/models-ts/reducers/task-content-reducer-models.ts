@@ -13,6 +13,11 @@ export interface ITaskContent {
       executor: string,
       region: string,
       tags: Array<string>,
+      alertData?: Array<{
+        taskID: string,
+        message: string,
+        initiator: string
+      }>,
       description: string,
       status: 'work' | 'complete' | 'searching' | 'backside',
       viewtype: string,
@@ -57,6 +62,11 @@ export interface ITaskContent {
       executor: string,
       region: string,
       tags: Array<string>,
+      alertData?: Array<{
+        taskID: string,
+        message: string,
+        initiator: string
+      }>,
       description: string,
       status: 'work' | 'complete' | 'searching' | 'backside',
       viewtype: string,

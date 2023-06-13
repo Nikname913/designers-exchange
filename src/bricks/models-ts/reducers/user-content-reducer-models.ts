@@ -2,10 +2,14 @@ export interface IUserContent {
   USERS_DATA: {
     showOne: string,
     listExecutors: Array<{
-      docs: any,
-      mail?: string | number | boolean | undefined
-      number?: string | number | boolean | undefined
-      bio?: any
+      docs: any | Array<any>,
+      spec?: Array<string>,
+      reviews?: Array<any>,
+      aboutText?: string,
+      faceType?: string,
+      mail?: string | number | boolean | undefined,
+      number?: string | number | boolean | undefined,
+      bio?: any,
       id: string,
       name: string,
       rate: number,
@@ -16,9 +20,9 @@ export interface IUserContent {
     }>,
     listCustomers: Array<{
       docs: any,
-      mail?: string | number | boolean | undefined
-      number?: string | number | boolean | undefined
-      bio?: any
+      mail?: string | number | boolean | undefined,
+      number?: string | number | boolean | undefined,
+      bio?: any,
       id: string,
       name: string,
       rate: number,

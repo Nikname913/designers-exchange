@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ChangeEvent, useState, useEffect } from 'react'
 import Button from '@mui/material/Button'
 import LoadingButton from '@mui/lab/LoadingButton'
 import IconButton from '@mui/material/IconButton'
@@ -23,6 +23,18 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
     iconCss,
     muiIconSize,
     MuiIconChildren } = props
+
+  const [ sendFile, setSendFile ] = useState<File>()
+  const changeFile = (e: ChangeEvent<HTMLInputElement>) => {
+
+    e.target.files && setSendFile(e.target.files[0])
+    if ( e.target.files && actionData ) {
+      actionData[0](e.target.files[0])
+    }
+
+  }
+
+  useEffect(() => { false && console.log(sendFile) }, [ sendFile ])
 
   return (
     <React.Fragment>
@@ -100,9 +112,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
             >
               <input 
                 hidden 
-                accept="image/*" 
-                multiple 
                 type="file"
+                onChange={changeFile}
                 style={{ zIndex: '2' }}
               /> { inner }
             </Button>

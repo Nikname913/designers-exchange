@@ -288,8 +288,6 @@ const ExchangePage: React.FC = () => {
       <CustExecContentInnerArea>
         { TASKS_LIST.list.filter(item => item.status === 'searching').map((item, index) => {
 
-          console.log(item)
-
           return (
             <TaskTable 
               key={index}

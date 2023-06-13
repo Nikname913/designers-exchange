@@ -391,7 +391,9 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
               {(viewType === 'mainView' || viewType === 'execSelfView') && <ButtonComponent
                 inner={respondButtonText} 
-                type="CONTAINED_DEFAULT"
+                type={
+                  (actionsParams && actionsParams[2] && actionsParams[2] === 'responded') 
+                    ? "CONTAINED_DISABLED" : "CONTAINED_DEFAULT"}
                 action={() => {
 
                   if ( ROLE_TYPE === 'EXECUTOR' ) {

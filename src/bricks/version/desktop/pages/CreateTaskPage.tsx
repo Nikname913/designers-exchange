@@ -14,7 +14,9 @@ import { setTitle,
   setObjectParamsHeight,
   setChapters,
   setChapterLN,
-  setChapterLD
+  setChapterLD,
+  setTechTaskFile,
+  removeTechTaskFile
  } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -28,6 +30,7 @@ import SelectField from '../comps/select/SelectFieldPercentWidth'
 import cssContentArea from '../styles/views/contentArea.css'
 import cssAsideMenu from '../styles/pages/createTaskPageAside.css'
 import backIcon from '../../../img/icons/back.svg'
+import CloseIcon from '@mui/icons-material/Clear'
 
 const { ContentArea, 
   CustExecContentInnerArea, 
@@ -70,9 +73,11 @@ const CreateTaskPage: React.FC = () => {
   const TASK_CHAPTERS = useAppSelector(state => state.createTaskReducer.chapters)
   const TASK_CHAPTER_NAME = useAppSelector(state => state.createTaskReducer.chapterLocalName)
   const TASK_CHAPTER_DESCR = useAppSelector(state => state.createTaskReducer.chapterLocalDescription)
+  const TASK_TECH_FILE = useAppSelector(state => state.createTaskReducer.techTaskFile)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const [ CREATE_TASK_REQUEST, SET_CREATE_TASK_REQUEST ] = useState(false)
+  const [ CREATE_TASK_TTDF_REQUEST, SET_CREATE_TASK_TTDF_REQUEST ] = useState(false)
   const [ showNewChapter, setShowNewChapter ] = useState(false)
 
   const [ newChapterNameValidateError, setNewChapterNameValidateError ] = useState(false)
@@ -84,10 +89,10 @@ const CreateTaskPage: React.FC = () => {
   const [ step4Color, ] = useState('rgb(58, 75, 86)')  
   const [ step5Color, setStep5Color ] = useState('rgb(58, 75, 86)')  
 
-  const [ line1Color, setLine1Color ] = useState(stepsContainerColor) 
-  const [ line2Color, setLine2Color ] = useState(stepsContainerColor)
-  const [ line3Color, ] = useState(stepsContainerColor)
-  const [ line4Color, ] = useState(stepsContainerColor)
+  const [ line1Color, setLine1Color ] = useState(stepContainerRoundLabelColor) 
+  const [ line2Color, setLine2Color ] = useState(stepContainerRoundLabelColor)
+  const [ line3Color, ] = useState(stepContainerRoundLabelColor)
+  const [ line4Color, ] = useState(stepContainerRoundLabelColor)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -120,12 +125,17 @@ const CreateTaskPage: React.FC = () => {
     width: '50%',
   }
 
+  const changeTechTaskFile = (param: File) => {
+    dispatch(setTechTaskFile(param))
+  }
+
   const addTaskData = () => {
 
     false && console.log(TASK_DATE_START)
     false && console.log(TASK_DATE_FINISH)
 
-    SET_CREATE_TASK_REQUEST(true)
+    false && SET_CREATE_TASK_REQUEST(true)
+    SET_CREATE_TASK_TTDF_REQUEST(true)
     dispatch(setShow(true))
     dispatch(setType('success'))
     dispatch(setMessage('Вы успешно разместили новое задание'))
@@ -175,6 +185,8 @@ const CreateTaskPage: React.FC = () => {
     }
 
   }
+
+  const removeFile = (param: string) => dispatch(removeTechTaskFile(param))
 
   useEffect(() => {
 
@@ -296,6 +308,8 @@ const CreateTaskPage: React.FC = () => {
   
   ])
 
+  useEffect(() => { console.log(TASK_TECH_FILE) }, [ TASK_TECH_FILE ])
+
   return (
     <ContentArea
       flexDirection={null}
@@ -325,9 +339,20 @@ const CreateTaskPage: React.FC = () => {
             customer: USER_ID,
             status: 'TASK-ACTIVE',
             date: dateString,
-            taskId: USER_ID.slice(0, 10) + '-' + (Math.random() * 100000).toFixed(0),
+            taskId: USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15),
             chapters: TASK_CHAPTERS
           }
+        }}
+      
+      /> }
+
+      { CREATE_TASK_TTDF_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POSTFILE_TTDF',
+          urlstring: '/add-file-techtask',
+          body: [ USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15), TASK_TECH_FILE ]
         }}
       
       /> }
@@ -411,7 +436,7 @@ const CreateTaskPage: React.FC = () => {
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '40px' }}>
-          <Checkbox {...label} />
+          <Checkbox {...label} disabled />
           <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
         </div>
         <ButtonComponent
@@ -868,8 +893,8 @@ const CreateTaskPage: React.FC = () => {
             <ButtonComponent
               inner={'Добавить файлы'} 
               type='UPLOAD' 
-              action={() => console.log('this is button')}
-              actionData={null}
+              action={() => {}}
+              actionData={[ changeTechTaskFile ]}
               widthType={'px'}
               widthValue={280}
               children={''}
@@ -893,9 +918,9 @@ const CreateTaskPage: React.FC = () => {
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
             <ButtonComponent
-              inner={'Добавить файлы'} 
-              type='UPLOAD' 
-              action={() => console.log('this is button')}
+              inner={'[ options download ]'} 
+              type='CONTAINED_DISABLED' 
+              action={() => {}}
               actionData={null}
               widthType={'px'}
               widthValue={280}
@@ -918,6 +943,40 @@ const CreateTaskPage: React.FC = () => {
             />
           </div>
         </TextFieldContainerLine>
+        { TASK_TECH_FILE.length > 0 && <TextFieldContainerLine style={{ marginBottom: '0px' }}>
+          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '6px' }}>
+            { TASK_TECH_FILE.map(fileData => {
+
+              return (
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between' 
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'block', 
+                      position: 'relative', 
+                      lineHeight: '28px', 
+                      fontWeight: 'bold',
+                      color: 'rgb(81, 102, 116)',
+                      cursor: 'pointer',
+                      marginRight: '8px'
+                    }}
+                  >{`${fileData.name}`}</span>
+                  <CloseIcon 
+                    style={{ width: '16px', cursor: 'pointer' }}
+                    onClick={() => removeFile(fileData.name)}
+                  />
+                </div>
+              )
+
+            })}
+          </div>
+        </TextFieldContainerLine> }
         <TextFieldTitle 
           style={{ 
             marginTop: '28px', 
@@ -1001,8 +1060,8 @@ const CreateTaskPage: React.FC = () => {
           </TextFieldContainerLine>
           <TextFieldContainerLine>
             <ButtonComponent
-              inner={'Добавить файлы'} 
-              type='UPLOAD' 
+              inner={'[ options download ]'} 
+              type='CONTAINED_DISABLED' 
               action={() => console.log('this is button')}
               actionData={null}
               widthType={'px'}

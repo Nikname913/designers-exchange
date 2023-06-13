@@ -530,7 +530,7 @@ const ShowTaskPage: React.FC = () => {
                         <WhiteContainerTitle>Описание</WhiteContainerTitle>
                       </WhiteContainerContentLine>
                       <WhiteContainerContentLine justify={"space-between"}>
-                        <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px' }}>
+                        <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px', lineHeight: '22px' }}>
                           { taskList.length > 0 ? 
                             taskList.filter(item => item.id === selectTask)[0].description : '' }
                         </span>

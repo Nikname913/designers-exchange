@@ -32,6 +32,8 @@ const Main: React.FC = () => {
 
   const [ tasksUpdate, setTasksUpdate ] = useState(false)
   const [ ordersUpdate, setOrdersUpdate ] = useState(false)
+  const [ executorsUpdate, setExecutorsUpdate ] = useState(false)
+  const [ customersUpdate, setCustomersUpdate ] = useState(false)
 
   {/* ---------------------------------------- */}
   {/* useState для переключения выполнения запросов */}
@@ -47,6 +49,7 @@ const Main: React.FC = () => {
   const alertCSS = useAppSelector(state => state.alertContentReducer.styles)
   const showFos = useAppSelector(state => state.FOSReducer.isShow)
   const fosType = useAppSelector(state => state.FOSReducer.showType)
+  const alertData = useAppSelector(state => state.headerReducer.alertData)
   
   const mainContainer = useRef<HTMLElement | null>(null)
   const requestReduceValue = useAppSelector(state => state.requestReducer.reduceValue)
@@ -77,6 +80,7 @@ const Main: React.FC = () => {
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
         region: item.region ? item.region : 'Екатеринбург',
         tags: item.tags,
+        alertData: item.alertData,
         description: item.description,
         status: 'searching',
         viewtype: 'default',
@@ -122,6 +126,7 @@ const Main: React.FC = () => {
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
         region: item.region ? item.region : 'Екатеринбург',
         tags: item.tags,
+        alertData: item.alertData,
         description: item.description,
         status: 'work',
         viewtype: 'default',
@@ -195,23 +200,40 @@ const Main: React.FC = () => {
     SET_CUSTOMERS_REQUEST(true)
     setTimeout(() => SET_CUSTOMERS_REQUEST(false), 1400)
 
+  }, [ customersUpdate ])
+  useEffect(() => {
+
     SET_EXECUTORS_REQUEST(true)
     setTimeout(() => SET_EXECUTORS_REQUEST(false), 1400)
 
-  }, [])
+  }, [ executorsUpdate ])
 
   useEffect(() => {
 
-    const taskUpdateRound = setInterval(() => setTasksUpdate(prev => !!!prev), 10400)
+    const taskUpdateRound = setInterval(() => setTasksUpdate(prev => !!!prev), 4400)
     false && clearInterval(taskUpdateRound)
 
   }, [])
   useEffect(() => {
 
-    const ordersUpdateRound = setInterval(() => setOrdersUpdate(prev => !!!prev), 10400)
+    const ordersUpdateRound = setInterval(() => setOrdersUpdate(prev => !!!prev), 4400)
     false && clearInterval(ordersUpdateRound)
 
   }, [])
+  useEffect(() => {
+
+    const customersUpdateRound = setInterval(() => setCustomersUpdate(prev => !!!prev), 4400)
+    false && clearInterval(customersUpdateRound)
+
+  }, [])
+  useEffect(() => {
+
+    const executorsUpdateRound = setInterval(() => setExecutorsUpdate(prev => !!!prev), 4400)
+    false && clearInterval(executorsUpdateRound)
+
+  }, [])
+
+  useEffect(() => { false && console.log(alertData) }, [ alertData ])
 
   return (
     <React.Fragment>

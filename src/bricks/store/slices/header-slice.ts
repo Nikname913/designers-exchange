@@ -3,7 +3,9 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { IHeaderReducer } from '../../models-ts/reducers/header-reducer-models'
 
 const initialState: IHeaderReducer = {
-  walletCount: 20000
+  walletCount: 20000,
+  alertData: [],
+  selectedUsersType: 'CUST'
 }
 
 export const headerReducer = createSlice({
@@ -12,9 +14,15 @@ export const headerReducer = createSlice({
   reducers: {
     setWalletCount: (state, action: PayloadAction<number>) => {
       state.walletCount = action.payload
+    },
+    setAlertData: (state, action: PayloadAction<any>) => {
+      state.alertData = action.payload
+    },
+    setSelectedUsersType: (state, action: PayloadAction<any>) => {
+      state.selectedUsersType = action.payload
     }
   }
 })
 
-export const { setWalletCount } = headerReducer.actions
+export const { setWalletCount, setAlertData, setSelectedUsersType } = headerReducer.actions
 export default headerReducer.reducer

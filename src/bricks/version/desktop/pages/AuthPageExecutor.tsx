@@ -20,6 +20,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 const AuthPage: React.FC = () => {
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
+  const [ AGREE, SET_AGREE ] = useState(false)
+  const [ preloader, setPreloader ] = useState(false)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -69,8 +71,17 @@ const AuthPage: React.FC = () => {
 
   const validate = () => {
 
-    if ( SURNAME !== '' && NAME !== '' && EMAIL !== '' && PASSWORD !== '' ) {
+    if ( SURNAME !== '' 
+      && NAME !== '' 
+      && EMAIL !== '' 
+      && PASSWORD !== ''
+      && FACE_TYPE !== ''
+      && AGREE
+      && passValid1 === true
+      && passValid2 === true
+      && passValid3 === true ) {
 
+      setPreloader(true)
       SET_AUTH_REQUEST(true)
 
       !false && console.log(SURNAME)
@@ -79,9 +90,13 @@ const AuthPage: React.FC = () => {
       !false && console.log(EMAIL)
       !false && console.log(NUMBER)
       !false && console.log(PASSWORD)
+      !false && console.log(FACE_TYPE)
 
       // ---------------------------------------
-      setTimeout(() => SET_AUTH_REQUEST(false), 1300)
+      setTimeout(() => {
+        setPreloader(false)
+        SET_AUTH_REQUEST(false)
+      }, 1400)
       // ---------------------------------------
 
     } else {
@@ -95,6 +110,14 @@ const AuthPage: React.FC = () => {
       if ( NAME !== '' ) setNameError(false)
       if ( EMAIL !== '' ) setMailError(false)
       if ( PASSWORD !== '' ) setPasswordError(false)
+
+      if ( passValid1 !== true || passValid2 !== true || passValid3 !== true ) setPasswordError(true)
+
+      if ( FACE_TYPE === '' ) {
+        dispatch(setShow(true))
+        dispatch(setType('error'))
+        dispatch(setMessage('Нужно заполнить поле "Статус" указав там форму занятости'))
+      }
 
     }
 
@@ -179,6 +202,9 @@ const AuthPage: React.FC = () => {
 
   },[ PASSWORD ])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setFaceType('')) }, [])
+
   const passValidateCSS: CSSProperties = {
     display: 'block',
     position: 'relative',
@@ -220,7 +246,8 @@ const AuthPage: React.FC = () => {
             name: NAME,
             surname: SURNAME,
             secondName: SECOND_NAME,
-            number: NUMBER
+            number: NUMBER,
+            faceType: FACE_TYPE,
           }
         }}
       
@@ -287,7 +314,8 @@ const AuthPage: React.FC = () => {
           </React.Fragment> }
         </ContentLine>
         <ContentLine style={{ marginTop: '26px' }}>
-          <span style={{ fontWeight: 'bold' }}>Имя пользователя</span>
+          { FACE_TYPE !== 'IP_FACE' && <span style={{ fontWeight: 'bold' }}>Имя пользователя</span> }
+          { FACE_TYPE === 'IP_FACE' && <span style={{ fontWeight: 'bold' }}>Почта и номер телефона</span> }
         </ContentLine>
         { FACE_TYPE !== 'IP_FACE' && <React.Fragment>
           <ContentLine style={{ marginTop: '16px' }}>
@@ -474,9 +502,9 @@ const AuthPage: React.FC = () => {
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Повторите пароль"}
+            label={">> !!WARNING!! << на этапе разработки вводить второй раз не надо"}
             isError={false}
-            isDisabled={false}
+            isDisabled={true}
             labelShrinkLeft={"0px"}
             innerLabel={null}
             store={[ "PASSWORD_AGAIN", () => null ]}
@@ -534,11 +562,11 @@ const AuthPage: React.FC = () => {
           <div style={{ display: 'block', width: '50%' }}/>
         </ContentLine>
         <ContentLine style={{ alignItems: 'center', marginTop: '14px', marginBottom: '14px' }}>
-          <Checkbox {...label} />
+          <Checkbox checked={AGREE} {...label} onChange={() => SET_AGREE(!AGREE)} />
           <span>Согласен на обработку персональных данных и согласен с <Link to="/terms-of-use">пользовательским соглашением</Link></span>
         </ContentLine>
         <ContentLine style={{ marginBottom: '35px' }}>
-          <ButtonComponent
+          { preloader === false && <ButtonComponent
             inner={"Зарегистрироваться"} 
             type='CONTAINED_DEFAULT' 
             action={validate}
@@ -560,7 +588,30 @@ const AuthPage: React.FC = () => {
               width: '56px',
               height: '43px',
             }}
-          />
+          /> }
+          { preloader === true && <ButtonComponent
+            inner={""} 
+            type='LOADING_BUTTON' 
+            action={() => {}}
+            actionData={null}
+            widthType={'px'}
+            widthValue={320}
+            children={""}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={30}
+            MuiIconChildren={ArrowUpwardIcon}
+            css={{
+              position: 'relative',
+              boxSizing: 'border-box',
+              padding: '4px',
+              backgroundColor: 'rgb(217, 231, 240)',
+              color: 'white',
+              width: '56px',
+              height: '43px',
+            }}
+          /> }
         </ContentLine>
       </ContentContainer>
     </ContentArea>

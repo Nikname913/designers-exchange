@@ -47,6 +47,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const [ ACCEPT_REQUEST, SET_ACCEPT_REQUEST ] = useState(false)
   const [ IGNORE_REQUEST, SET_IGNORE_REQUEST ] = useState(false)
 
@@ -154,6 +155,20 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
   return (
     <React.Fragment>
 
+      { ACCEPT_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {navigate('/order-view/cu')}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-alarm-in-task',
+          body: {
+            taskID: TASKS_LIST.showOne,
+            initiator: USER_ID,
+            "message": `dc03e94480e4e1d46da4acbe452756ddd3ef4553591b828309beeaeb81f6db08::поздравляем, вы были выбраны в качестве исполнителя в проект [ ${TASKS_LIST.showOne} ]`
+          }
+        }}
+      
+      /> }
       { ACCEPT_REQUEST && <RequestActionsComponent
 
         callbackAction={() => {navigate('/order-view/cu')}}

@@ -1,5 +1,7 @@
 export interface IHeaderReducer {
-  walletCount: number
+  walletCount: number,
+  alertData: Array<any>,
+  selectedUsersType?: 'CUST' | 'EXEC'
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

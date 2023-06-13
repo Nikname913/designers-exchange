@@ -1,3 +1,8 @@
+// ----------------------------------------------------------------
+/* eslint-disable array-callback-return */
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { useState, useEffect } from 'react'
 import ButtonComponent from '../../comps/button/Button'
 import { db } from '../../../../firebase/check' 
@@ -6,6 +11,7 @@ import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
+import { setAlertData } from '../../../../store/slices/header-slice'
 import css from '../../styles/views/header.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
@@ -33,11 +39,12 @@ const Header: React.FC = () => {
 
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
-  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
-
-  const [ showAlert, setShowAlert ] = useState(false)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const ORDER_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  const selectedUsersType = useAppSelector(state => state.headerReducer.selectedUsersType)
 
   const wallet = useAppSelector(state => state.headerReducer.walletCount)
+  const alertData = useAppSelector(state => state.headerReducer.alertData)
   const whiteColor = useAppSelector(state => state.theme.white)
   const greyColor = useAppSelector(state => state.theme.grey)
   const blueColorForIcon = useAppSelector(state => state.theme.blue3)
@@ -144,15 +151,42 @@ const Header: React.FC = () => {
   }
 
   useEffect(() => console.log(db), [])
-  useEffect(() => setShowAlert(false), [])
-  useEffect(() => {
-    
-    TASKS_LIST.forEach(item => {
-      if ( item.focused === 'new' ) setShowAlert(true)
-      if ( item.focused === 'none' ) setShowAlert(false)
-    })
+  useEffect(() => { 
 
-  }, [ TASKS_LIST ])
+    dispatch(setAlertData([]))
+
+    if ( ORDER_LIST.length > 0 ) {
+
+      const alerts = ORDER_LIST.map(order => {
+        if ( order.executor === USER_ID ) {
+
+          const unicAlertsData = new Set()
+          order.alertData?.map(alert => Object.entries(alert))
+            .map(alert => {
+              const part1 = alert[0].join('>>')
+              const part2 = alert[1].join('>>')
+
+              return `${part1}>>>>${part2}`
+            })
+            .forEach(alert => unicAlertsData.add(alert))
+
+          return Array.from(unicAlertsData)
+
+        }
+      })
+
+      dispatch(setAlertData(alerts[0]))
+
+    }
+
+  }, [ ORDER_LIST, USER_ID ])
+
+  useEffect(() => {
+
+    selectedUsersType === 'CUST' && setExecCustButtoninner('Заказчики')
+    selectedUsersType === 'EXEC' && setExecCustButtoninner('Исполнители')
+
+  }, [ selectedUsersType ])
 
   return (
     <React.Fragment>
@@ -224,7 +258,7 @@ const Header: React.FC = () => {
               src={bellIcon}
               style={{ ...bellIconStyle }}
             />
-            { showAlert && <span
+            { alertData && alertData.length > 0 && <span
               style={{
                 display: 'block',
                 position: 'absolute',
@@ -242,7 +276,7 @@ const Header: React.FC = () => {
                 paddingRight: '1px',
                 boxSizing: 'border-box'
               }}
-            >1</span> }
+            >{ alertData.length }</span> }
           </HeadControllersIcon>
           <span style={{ display: 'block', width: '30px' }} />
           <HeadControllersIcon backgroundColor={'transparent'}>

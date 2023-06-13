@@ -28,6 +28,7 @@ export interface ICreateTaskReducer {
   chapterLocalName?: string,
   chapterLocalDescription?: string, 
   focused: string,
+  techTaskFile: Array<File>,
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
