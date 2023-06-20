@@ -8,36 +8,18 @@ import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setScrollTop } from '../../store/slices/right-content-slice'
 import { setScrollTop as setScrollFos } from '../../store/slices/fos-slice'
-import { setList, setListOrders } from '../../store/slices/task-content-slice'
-import { setCustomers, setExecutors } from '../../store/slices/user-content-slice'
 import { CSSProperties } from 'styled-components'
 import Header from './views/globalViews/Header'
-import RequestActionsComponent from './services/request.service'
 import DeskRoutes from './routes/DeskRoutes'
 import Footer from './views/globalViews/Footer'
 import Alert from './services/alert.service'
 import FOS from './services/fos.service'
 import RightContentContainer from './services/rightContentContainer.service'
+import Updater from './views/globalViews/Updater'
+
+const DeskRoutesMemo = React.memo(DeskRoutes)
 
 const Main: React.FC = () => {
-
-  {/* ---------------------------------------- */}
-  {/* useState для переключения выполнения запросов */}
-  {/* ---------------------------------------- */}
-
-  const [ GET_TASKS_REQUEST, SET_TASKS_REQUEST ] = useState(false)
-  const [ GET_ORDERS_REQUEST, SET_ORDERS_REQUEST ] = useState(false)
-  const [ GET_CUSTOMERS_REQUEST, SET_CUSTOMERS_REQUEST ] = useState(false)
-  const [ GET_EXECUTORS_REQUEST, SET_EXECUTORS_REQUEST ] = useState(false)
-
-  const [ tasksUpdate, setTasksUpdate ] = useState(false)
-  const [ ordersUpdate, setOrdersUpdate ] = useState(false)
-  const [ executorsUpdate, setExecutorsUpdate ] = useState(false)
-  const [ customersUpdate, setCustomersUpdate ] = useState(false)
-
-  {/* ---------------------------------------- */}
-  {/* useState для переключения выполнения запросов */}
-  {/* ---------------------------------------- */}
 
   const showRightContent = useAppSelector(state => state.rightContentReducer.isShow)
   const typeRightContent = useAppSelector(state => state.rightContentReducer.showType)
@@ -50,9 +32,17 @@ const Main: React.FC = () => {
   const showFos = useAppSelector(state => state.FOSReducer.isShow)
   const fosType = useAppSelector(state => state.FOSReducer.showType)
   const alertData = useAppSelector(state => state.headerReducer.alertData)
+  const updating = useAppSelector(state => state.dataUpdateReducer.updating)
   
   const mainContainer = useRef<HTMLElement | null>(null)
   const requestReduceValue = useAppSelector(state => state.requestReducer.reduceValue)
+  const [ ,setAddressIP ] = useState<{
+    IPv4: string,
+    city: string,
+    country_code: string,
+    country_name: string,
+    postal: string,
+  }>()
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -66,109 +56,29 @@ const Main: React.FC = () => {
     overflowY: showRightContent ? 'hidden' : 'scroll',
   }
 
-  const callbackSetTasksList = (param: any) => {
-    
-    const data = param.filter((item: any) => item.status === 'TASK-ACTIVE').map((item: any, index: number) => {
+  const getDataIP = async () => {
 
-      return { 
-        id: item.taskID, 
-        name: item.title, 
-        date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
-        exper: item.expertise,
-        customer: item.customer,
-        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
-        region: item.region ? item.region : 'Екатеринбург',
-        tags: item.tags,
-        alertData: item.alertData,
-        description: item.description,
-        status: 'searching',
-        viewtype: 'default',
-        chapters: item.chapters,
-        coast: {
-          value: item.coast,
-          issafe: true,
-          prepay: item.prepay,
-          exper: item.expertiseCoast,
-        },
-        responds: item.reviews,
-        objectData: {
-          constructionType: item.objectData.constructionType,
-          region: item.objectData.region,
-          type: item.objectData.type,
-          spec: item.objectData.spec,
-        },
-        objectParams: {
-          square: item.objectParams.square,
-          storeys: item.objectParams.storeys,
-          height: item.objectParams.height,
-        },
-        focused: item.focused && item.focused !== 'none' ? item.focused : 'none'
-      }
-
-    })
-
-    dispatch(setList(data))
-
-  }
-
-  const callbackSetOrdersList = (param: any) => {
-    
-    const data = param.filter((item: any) => item.status === 'ORDER-ACTIVE').map((item: any, index: number) => {
-
-      return { 
-        id: item.taskID, 
-        name: item.title, 
-        date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
-        exper: item.expertise,
-        customer: item.customer,
-        executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
-        region: item.region ? item.region : 'Екатеринбург',
-        tags: item.tags,
-        alertData: item.alertData,
-        description: item.description,
-        status: 'work',
-        viewtype: 'default',
-        chapters: item.chapters,
-        coast: {
-          value: item.coast,
-          issafe: true,
-          prepay: item.prepay,
-          exper: item.expertiseCoast,
-        },
-        responds: item.reviews,
-        objectData: {
-          constructionType: item.objectData.constructionType,
-          region: item.objectData.region,
-          type: item.objectData.type,
-          spec: item.objectData.spec,
-        },
-        objectParams: {
-          square: item.objectParams.square,
-          storeys: item.objectParams.storeys,
-          height: item.objectParams.height,
-        },
-        focused: item.focused ? item.focused : 'none'
-      }
-
-    })
-
-    dispatch(setListOrders(data))
-
-  }
-
-  const callbackSetCustomersList = (param: any) => {
-
-    const filterUsers = param.users.filter((user: any) => user.type === 'CUSTOMER')
-    dispatch(setCustomers(filterUsers))
-
-  }
-
-  const callbackSetExecutorsList = (param: any) => {
-
-    const filterUsers = param.users.filter((user: any) => user.type === 'EXECUTOR')
-    dispatch(setExecutors(filterUsers))
+    fetch('https://geolocation-db.com/json/')
+      .then(res => res.json())
+      .then(
+        (data: {
+          IPv4: string,
+          city: string,
+          country_code: string,
+          country_name: string,
+          latitude: number,
+          longitude: number,
+          postal: string,
+          state: string
+        }): PromiseLike<never> | void => 
+          setAddressIP({
+            IPv4: data.IPv4,
+            city: data.city,
+            country_code: data.country_code,
+            country_name: data.country_name,
+            postal: data.postal
+          })
+      )
 
   }
 
@@ -183,124 +93,21 @@ const Main: React.FC = () => {
   },[ dispatch, showRightContent, showFos, USER_ROLE ])
   useEffect(() => navigate('/customers'),[])
   useEffect(() => {}, [ requestReduceValue ])
-  useEffect(() => {
-    
-    SET_TASKS_REQUEST(true)
-    setTimeout(() => SET_TASKS_REQUEST(false), 1400)
-
-  }, [ tasksUpdate ])
-  useEffect(() => {
-    
-    SET_ORDERS_REQUEST(true)
-    setTimeout(() => SET_ORDERS_REQUEST(false), 1400)
-
-  }, [ ordersUpdate ])
-  useEffect(() => {
-
-    SET_CUSTOMERS_REQUEST(true)
-    setTimeout(() => SET_CUSTOMERS_REQUEST(false), 1400)
-
-  }, [ customersUpdate ])
-  useEffect(() => {
-
-    SET_EXECUTORS_REQUEST(true)
-    setTimeout(() => SET_EXECUTORS_REQUEST(false), 1400)
-
-  }, [ executorsUpdate ])
-
-  useEffect(() => {
-
-    const taskUpdateRound = setInterval(() => setTasksUpdate(prev => !!!prev), 4400)
-    false && clearInterval(taskUpdateRound)
-
-  }, [])
-  useEffect(() => {
-
-    const ordersUpdateRound = setInterval(() => setOrdersUpdate(prev => !!!prev), 4400)
-    false && clearInterval(ordersUpdateRound)
-
-  }, [])
-  useEffect(() => {
-
-    const customersUpdateRound = setInterval(() => setCustomersUpdate(prev => !!!prev), 4400)
-    false && clearInterval(customersUpdateRound)
-
-  }, [])
-  useEffect(() => {
-
-    const executorsUpdateRound = setInterval(() => setExecutorsUpdate(prev => !!!prev), 4400)
-    false && clearInterval(executorsUpdateRound)
-
-  }, [])
-
   useEffect(() => { false && console.log(alertData) }, [ alertData ])
+  useEffect(() => { getDataIP() }, [])
 
   return (
     <React.Fragment>
 
-      {/* ---------------------------------------- */}
-      {/* блок для SRC - в дальнейшем вынести отдельно */}
-      {/* ---------------------------------------- */}
+      {/* ----------------------------------------- */}
+      {/* компонент который обновляет данные */}
+      {/* ----------------------------------------- */}
 
-      <React.Fragment>
+        { updating && <Updater></Updater> }
 
-        { GET_TASKS_REQUEST && <RequestActionsComponent
-
-          callbackAction={callbackSetTasksList}
-          requestData={{
-            type: 'POST',
-            urlstring: '/get-task-list',
-            body: {
-              status: ''
-            }
-          }}
-        
-        /> }
-
-        { GET_ORDERS_REQUEST && <RequestActionsComponent
-
-          callbackAction={callbackSetOrdersList}
-          requestData={{
-            type: 'POST',
-            urlstring: '/get-task-list',
-            body: {
-              status: ''
-            }
-          }}
-        
-        /> }
-
-        { GET_CUSTOMERS_REQUEST && <RequestActionsComponent
-
-          callbackAction={callbackSetCustomersList}
-          requestData={{
-            type: 'POST',
-            urlstring: '/users',
-            body: {
-              status: ''
-            }
-          }}
-        
-        /> }
-
-        { GET_EXECUTORS_REQUEST && <RequestActionsComponent
-
-          callbackAction={callbackSetExecutorsList}
-          requestData={{
-            type: 'POST',
-            urlstring: '/users',
-            body: {
-              status: ''
-            }
-          }}
-        
-        /> }
-
-      </React.Fragment>
-
-      {/* ---------------------------------------- */}
-      {/* блок для SRC - в дальнейшем вынести отдельно */}
-      {/* ---------------------------------------- */}
+      {/* ----------------------------------------- */}
+      {/* компонент который обновляет данные */}
+      {/* ----------------------------------------- */}
 
       <main ref={mainContainer} style={MAIN_STYLES}>
         { showAlertContent && <Alert
@@ -323,7 +130,7 @@ const Main: React.FC = () => {
           scroll={scrollFosContent} 
         /> }
         <Header></Header>
-        <DeskRoutes></DeskRoutes>
+        <DeskRoutesMemo></DeskRoutesMemo>
         <Footer></Footer>
       </main>
     </React.Fragment>

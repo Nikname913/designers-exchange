@@ -82,6 +82,7 @@ const CreateTaskPage: React.FC = () => {
 
   const [ newChapterNameValidateError, setNewChapterNameValidateError ] = useState(false)
   const [ newChapterDescrValidateError, setNewChapterDescrValidateError ] = useState(false)
+  const [ agreeCoast, setAgreeCoast ] = useState<boolean>(false)
 
   const [ step1Color, setStep1Color ] = useState('rgb(58, 75, 86)')  
   const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
@@ -134,7 +135,7 @@ const CreateTaskPage: React.FC = () => {
     false && console.log(TASK_DATE_START)
     false && console.log(TASK_DATE_FINISH)
 
-    false && SET_CREATE_TASK_REQUEST(true)
+    SET_CREATE_TASK_REQUEST(true)
     SET_CREATE_TASK_TTDF_REQUEST(true)
     dispatch(setShow(true))
     dispatch(setType('success'))
@@ -309,6 +310,13 @@ const CreateTaskPage: React.FC = () => {
   ])
 
   useEffect(() => { console.log(TASK_TECH_FILE) }, [ TASK_TECH_FILE ])
+  useEffect(() => {
+
+    // agreeCoast === true && dispatch(setCoast('contract'))
+    // agreeCoast === false && dispatch(setCoast(''))
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ agreeCoast ])
 
   return (
     <ContentArea
@@ -325,11 +333,11 @@ const CreateTaskPage: React.FC = () => {
           urlstring: '/add-task',
           body: {
             title: TASK_TITLE, 
-            coast: TASK_COAST, 
-            prepay: TASK_PREPAY, 
+            coast: agreeCoast === false ? TASK_COAST : 'Договорная', 
+            prepay: agreeCoast === false ? TASK_PREPAY : 'Договорной', 
             prepayDays: TASK_PREPAY_DAYS,
             expertDays: TASK_EXPERT_DAYS ? TASK_EXPERT_DAYS.$D + '-' + ( TASK_EXPERT_DAYS.$M + 1 ) + '-' + TASK_EXPERT_DAYS.$y : '01-1-2023',
-            expertCoast: TASK_EXPERT_COAST, 
+            expertCoast: agreeCoast === false ? TASK_EXPERT_COAST : 'Договорная', 
             dateStart: TASK_DATE_START ? TASK_DATE_START.$D + '-' + ( TASK_DATE_START.$M + 1 ) + '-' + TASK_DATE_START.$y : '01-1-2023',
             dateFinish: TASK_DATE_FINISH ? TASK_DATE_FINISH.$D + '-' + ( TASK_DATE_FINISH.$M + 1 ) + '-' + TASK_DATE_FINISH.$y : '01-1-2023',
             square: TASK_OP_SQUARE, 
@@ -560,7 +568,7 @@ const CreateTaskPage: React.FC = () => {
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
         <TextFieldContainerLine>
-          <InputComponent
+          { agreeCoast === false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
@@ -580,18 +588,44 @@ const CreateTaskPage: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
-          />
+          /> }
+          { agreeCoast === true && <InputComponent
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+            valueType='text'
+            required={false}
+            widthType={'%'}
+            widthValue={50}
+            heightValue={'50px'}
+            label={"Договорная стоимость заказа"}
+            isError={false}
+            isDisabled={true}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            store={[ "TASK_COAST", () => null ]}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '16px',
+              backgroundColor: inputBackground
+            }}
+          /> }
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS, paddingBottom: '14px' }}>
             <FormGroup>
-              <FormControlLabel control={<Checkbox/>} label="Договорная стоимость"/>
+              <FormControlLabel 
+                control={ 
+                  <Checkbox checked={agreeCoast} onChange={() => setAgreeCoast(!agreeCoast)}/>
+                } 
+                label="Договорная стоимость"
+              />
             </FormGroup>
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '30px' }}>Условия</TextFieldTitle>
-        <TextFieldSubTitle mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
+        <TextFieldTitle style={{ marginTop: '30px' }}>Заказ условия</TextFieldTitle>
+        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
-          <InputComponent
+          { agreeCoast === false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
             valueType='text'
             required={false}
@@ -611,7 +645,28 @@ const CreateTaskPage: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
-          />
+          /> }
+          { agreeCoast === true && <InputComponent
+            type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+            valueType='text'
+            required={false}
+            widthType={'%'}
+            widthValue={50}
+            heightValue={'50px'}
+            label={"Аванс оговаривается"}
+            isError={false}
+            isDisabled={true}
+            labelShrinkLeft={"0px"}
+            innerLabel={null}
+            store={[ "TASK_PREPAY", () => null ]}
+            css={{
+              fontSize: '12px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginBottom: '16px',
+              backgroundColor: inputBackground
+            }}
+          /> }
           <span style={spanDelimiterCSS} />
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
@@ -635,7 +690,7 @@ const CreateTaskPage: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldSubTitle mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
+        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
           <SelectField 
             placeholder={"Государственная"}
@@ -657,7 +712,7 @@ const CreateTaskPage: React.FC = () => {
           />
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
-            <div style={{ display: 'block', width: '50%', marginTop: '-23px' }}>
+            <div style={{ display: 'block', width: agreeCoast === false ? '50%' : '100%', marginTop: '-23px' }}>
               <InputComponent
                 type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
                 valueType='text'
@@ -681,8 +736,8 @@ const CreateTaskPage: React.FC = () => {
                 }}
               />
             </div>
-            <span style={spanDelimiterCSS} />
-            <InputComponent
+            { agreeCoast === false && <span style={spanDelimiterCSS} /> }
+            { agreeCoast === false && <InputComponent
               type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
               valueType='text'
               required={false}
@@ -702,7 +757,7 @@ const CreateTaskPage: React.FC = () => {
                 marginBottom: '16px',
                 backgroundColor: inputBackground
               }}
-            />
+            /> }
           </div>
         </TextFieldContainerLine>
         <TextFieldTitle style={{ marginTop: '30px' }}>Данные об объекте</TextFieldTitle>

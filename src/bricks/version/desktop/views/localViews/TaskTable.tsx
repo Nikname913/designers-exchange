@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import EmailIcon from '@mui/icons-material/Email'
 import ButtonComponent from '../../comps/button/Button'
+import RequestActionsComponent from '../../services/request.service'
 import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import { setTask, setExecutor } from '../../../../store/slices/respond-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import css from '../../styles/views/taskTable.css'
 import location from '../../../../img/icons/location.svg'
 
@@ -37,10 +39,15 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     actions,
     actionsParams } = props
 
-  const [ containerHeight, setContainerHeight ] = useState('short')
-  const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState('Показать больше')
-  const [ taskDescriptionLong, ] = useState(taskDescription)
-  const [ respondButtonText, setRespondButtonText ] = useState('Откликнуться')
+  const [ containerHeight, setContainerHeight ] = useState<string>('short')
+  const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState<string>('Показать больше')
+  const [ taskDescriptionLong, ] = useState<any>(taskDescription)
+  const [ respondButtonText, setRespondButtonText ] = useState<string>('Откликнуться')
+  const [ activatePreloader, setActivatePreloader ] = useState<boolean>(false)
+  const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
+
+  const [ CHANGE_TASK_STATUS_REQUEST_DEACTIVE, SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE ] = useState<boolean>(false)
+  const [ CHANGE_TASK_STATUS_REQUEST_ACTIVE, SET_CHANGE_TASK_STATUS_REQUEST_ACTIVE ] = useState<boolean>(false)
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -107,6 +114,38 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     marginLeft: '-68px'
   }
 
+  const coastDelimeter = (param: string | undefined): string => {
+
+    let enterString: string | undefined = param
+    let enterStringLen: number = enterString ? enterString.length : 0
+    let exitString: string = ''
+
+    if ( enterString ) {
+      switch(enterStringLen) {
+
+        case 4:
+          exitString = enterString[0] + ' ' + enterString.slice(1)
+          break
+        case 5:
+          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
+          break
+        case 6:
+          exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
+          break
+        case 7:
+          exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
+          break
+        case 8:
+          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
+          break
+
+      }
+    }
+
+    return exitString
+
+  }
+
   function heightSelection() {
     setContainerHeight(prev => {
       if ( prev === 'short' ) {
@@ -133,8 +172,86 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   }
 
+  function changeStatusDeactive() {
+
+    !false && dispatch(setUpdating(true)) 
+    SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(true)
+    setTimeout(() => { 
+      SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(false)
+    }, 1400)
+
+  }
+  function changeStatusActive() {
+
+    false && setActivatePreloader(true)
+    !false && dispatch(setUpdating(true))
+    SET_CHANGE_TASK_STATUS_REQUEST_ACTIVE(true)
+    setTimeout(() => { 
+      SET_CHANGE_TASK_STATUS_REQUEST_ACTIVE(false)
+      setActivatePreloader(false)
+    }, 1400)
+
+  }
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTextSpredLine((prev: string): any => {
+        let value: string = ''
+
+        // ------------------------------------------------------------------
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        prev === '' ? value = '.'
+          : prev === '.' ? value = '..'
+          : prev === '..' ? value = '...'
+          // ----------------------------------------------------------------
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          : prev === '...' ? value = '' : null
+
+        return value
+      })
+    }, 1300)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+
   return (
     <React.Fragment>
+
+      { CHANGE_TASK_STATUS_REQUEST_DEACTIVE && <RequestActionsComponent
+
+        callbackAction={() => {
+          // dispatch(selectShowTask(''))
+          // dispatch(selectActualTask(''))
+        }}
+        requestData={{
+          type: 'POST',
+          urlstring: '/change-task-status',
+          body: {
+            taskId: actionsParams ? actionsParams[0] : '',
+            status: 'TASK-DEACTIVE'
+          }
+        }}
+      
+      /> }
+
+      { CHANGE_TASK_STATUS_REQUEST_ACTIVE && <RequestActionsComponent
+
+        callbackAction={() => {
+          // dispatch(selectShowTask(''))
+          // dispatch(selectActualTask(''))
+        }}
+        requestData={{
+          type: 'POST',
+          urlstring: '/change-task-status',
+          body: {
+            taskId: actionsParams ? actionsParams[0] : '',
+            status: 'TASK-ACTIVE'
+          }
+        }}
+      
+      /> }
+
       <TaskContainer 
         backgroundColor={containerBackground} 
         width={cardWidth}
@@ -196,7 +313,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     style={{ marginTop: '0px', marginBottom: '10px' }} 
                     key={index} 
                     backgroundColor={specializationTagBackground}>
-                      { item }
+                      { item !== 'undefined' ? item : 'Загрузка специализации' + tagsSpredLine }
                     </TACC.SpecializationTag>
 
                 })}
@@ -245,7 +362,16 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     Отменен
                 </TACA.TaskStatusLabel> }
               </TACA.TaskStatus>
-              <TACA.TaskCoast color={taskStatusColor}>{ deal.coast ? deal.coast : '60000' }₽</TACA.TaskCoast>
+              { deal.coast && deal.coast.toString() !== 'Договорная' && 
+              
+                <TACA.TaskCoast color={taskStatusColor}>{ coastDelimeter(deal.coast.toString()) }₽</TACA.TaskCoast> 
+                
+              }
+              { deal.coast && deal.coast.toString() === 'Договорная' && 
+              
+                <TACA.TaskCoast style={{ fontSize: '24px' }} color={taskStatusColor}>{ deal.coast } стоимость</TACA.TaskCoast> 
+                
+              }
 
               { deal.type === 'safe' ? <React.Fragment>
                 { viewType !== 'complete' ? <React.Fragment>
@@ -256,8 +382,26 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.SafeDealParametersExpert backgroundColor={yellow}/>
 
                   </TACA.SafeDealParameters>
-                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }₽</TACA.TaskCoastString>
-                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }₽</TACA.TaskCoastString>
+                  {  deal.prepaid && deal.prepaid.toString() !== 'Договорной' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { coastDelimeter(deal.prepaid.toString()) }₽</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.prepaid && deal.prepaid.toString() === 'Договорной' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.expert && deal.expert.toString() !== 'Договорная' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { coastDelimeter(deal.expert.toString()) }₽</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.expert && deal.expert.toString() === 'Договорная' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }</TACA.TaskCoastString>
+                    
+                  }
                 </React.Fragment> : <React.Fragment>
                   <TACA.TaskSafeDeal color={indicatorLabelColor}>Безопасная сделка</TACA.TaskSafeDeal>
                   <TACA.SafeDealParameters backgroundColor={grey3}>
@@ -281,7 +425,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 action={() => {
                   viewType === 'custSelfView' && navigate('/task-view/cu')
                   viewType === 'execSelfView' && navigate('/task-view/ex')
-                  actions && actions[0](actionsParams && actionsParams[0])
+                  actions && actions[0] && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
                 widthType={"%"}
@@ -363,7 +507,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 type="CONTAINED_DEFAULT" 
                 action={() => {
                   false && navigate('/task-view')
-                  actions && actions[0](actionsParams && actionsParams[0])
+                  actions && actions[0] && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}
                 widthType={"%"}
@@ -459,62 +603,91 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   marginBottom: '16px'
                 } : { display: 'none' }}
               /> }
+              
+              { viewType === 'custSelfView' && 
 
-              { viewType === 'custSelfView' && <ButtonComponent
-                inner={"Снять задание"} 
-                type="CONTAINED_DEFAULT"
-                action={() => {
-                  false && navigate('/task-view')
-                  actions && actions[1](actionsParams && actionsParams[1])
-                }}
-                actionData={null}
-                widthType={"%"}
-                widthValue={100}
-                children={""}
-                childrenCss={{}}
-                iconSrc={null}
-                iconCss={undefined}
-                muiIconSize={null}
-                MuiIconChildren={EmailIcon}
-                css={{
-                  backgroundColor: blue4,
-                  color: grey,
-                  fontSize: '12px',
-                  height: '40px',
-                  borderRadius: '6px',
-                  position: 'relative',
-                  boxSizing: 'border-box',
-                  marginBottom: '16px'
-                }}
-              /> }
+                <React.Fragment>
+                  <ButtonComponent
+                    inner={"Снять задание"} 
+                    type="CONTAINED_DEFAULT"
+                    action={() => {
+                      changeStatusDeactive()
+                    }}
+                    actionData={null}
+                    widthType={"%"}
+                    widthValue={100}
+                    children={""}
+                    childrenCss={{}}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={null}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      backgroundColor: blue4,
+                      color: grey,
+                      fontSize: '12px',
+                      height: '40px',
+                      borderRadius: '6px',
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      marginBottom: '16px'
+                    }}
+                  /> 
+                </React.Fragment> }
 
-              { viewType === 'backside' && <ButtonComponent
-                inner={"Разместить"} 
-                type="CONTAINED_DEFAULT"
-                action={() => {
-                  false && navigate('/task-view')
-                  actions && actions[1](actionsParams && actionsParams[1])
-                }}
-                actionData={null}
-                widthType={"%"}
-                widthValue={100}
-                children={""}
-                childrenCss={{}}
-                iconSrc={null}
-                iconCss={undefined}
-                muiIconSize={null}
-                MuiIconChildren={EmailIcon}
-                css={{
-                  backgroundColor: blue4,
-                  color: grey,
-                  fontSize: '12px',
-                  height: '40px',
-                  borderRadius: '6px',
-                  position: 'relative',
-                  boxSizing: 'border-box',
-                  marginBottom: '16px'
-                }}
-              /> }
+              { viewType === 'backside' && 
+
+              <React.Fragment>
+                { activatePreloader === false ? <ButtonComponent
+                  inner={"Разместить"} 
+                  type="CONTAINED_DEFAULT"
+                  action={() => {
+                    changeStatusActive()
+                  }}
+                  actionData={null}
+                  widthType={"%"}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={{}}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={null}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    backgroundColor: blue4,
+                    color: grey,
+                    fontSize: '12px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '16px'
+                  }}
+                /> : <ButtonComponent
+                  inner={""} 
+                  type="LOADING_BUTTON"
+                  action={() => {}}
+                  actionData={null}
+                  widthType={"%"}
+                  widthValue={100}
+                  children={""}
+                  childrenCss={{}}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={null}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    backgroundColor: blue4,
+                    color: grey,
+                    fontSize: '12px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '16px'
+                  }}
+                /> }
+              </React.Fragment> }
             </div>
 
           </TaskContainerActions>

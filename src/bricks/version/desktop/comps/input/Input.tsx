@@ -44,6 +44,7 @@ import { setSeri,
   setInn,
   setFocused as setFocusedPas } from '../../../../store/slices/passport-slice'
 import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import IconButton from '@mui/material/IconButton'
@@ -475,6 +476,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   const mouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => event.preventDefault()
 
+  const baseInputValueChangeEvent = (event: React.ChangeEvent<HTMLInputElement>) => {
+    store && store[1](event.target.value)
+  }
+
   useEffect(() => {
 
     dispatch(setDateStart(taskDateStart))
@@ -785,9 +790,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           : type === 'TEXT_INPUT_OUTLINE_SEARCH'
           ? <CustomTextField 
               type={'text'}
-              defaultValue={""}
               required={required}
               autoComplete={"off"}
+              onFocus={() => dispatch(setUpdating(false))}
+              onChange={baseInputValueChangeEvent}
               id="standard-basic-search" 
               label={label}
               error={isError}

@@ -34,12 +34,13 @@ const ChapterController:
   const chaptersLineBackground = useAppSelector(state => state.theme.grey3)
   const roundBackground = useAppSelector(state => state.theme.grey2)
   const blueColorButton = useAppSelector(state => state.theme.blue3)
+  const yellowColor = useAppSelector(state => state.theme.yellow)
 
   return (
     <React.Fragment>
       <ChapterContainerLine style={ marginBott ? { marginBottom: marginBott } : {}} backgroundColor={chaptersLineBackground}>
         <ChapterContainerStepRound 
-          backgroundColor={chaptersLineBackground} 
+          backgroundColor={yellowColor} 
           style={{ marginLeft: '-15px' }}
         >
           <ChapterContainerStepRoundLabelText 
@@ -98,6 +99,12 @@ const ChapterController:
             Пожарная безопасность
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound> }
+        <ChapterContainerStepRound backgroundColor={roundBackground}>
+          <ChapterContainerStepRoundInner/>
+          <ChapterContainerStepRoundLabelText textAlign={"center"}>
+            Экспертиза
+          </ChapterContainerStepRoundLabelText>
+        </ChapterContainerStepRound>
         <ChapterContainerStepRound 
           backgroundColor={chaptersLineBackground}
           style={{ marginRight: '-15px' }}

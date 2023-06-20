@@ -10,6 +10,7 @@ import InputComponent from '../../comps/input/Input'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import SelectField from '../../comps/select/SelectField'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -98,11 +99,8 @@ const ExchangePage: React.FC = () => {
     dispatch(selectActualTask(param))
   }
 
-  useEffect(() => {
-    dispatch(setShow(true))
-    dispatch(setType('info'))
-    dispatch(setMessage('Просмотр карточки задания в заказчике и исполнителе сейчас возможен со страницы Мои заказы'))
-  },[])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(true)) }, [])
 
   return (
     <ContentArea
@@ -315,6 +313,26 @@ const ExchangePage: React.FC = () => {
             />
           )
         })}
+        <React.Fragment>
+
+          { TASKS_LIST.list.length === 0 && 
+            
+            <span 
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                width: '100%',
+                color: 'gray',
+                marginTop: '100px',
+                marginBottom: '80px'
+              }}
+            >
+              На бирже нет активных заданий
+            </span> 
+            
+          }
+
+        </React.Fragment>
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>

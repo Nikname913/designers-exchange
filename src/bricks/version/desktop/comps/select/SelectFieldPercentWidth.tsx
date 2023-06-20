@@ -96,11 +96,16 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
 
   function actionsReducer(param: Object | string | []) {
 
-    const acty = actionType
-    switch(acty) {
+    const actty = actionType
+    false && console.log(actionParams)
+
+    switch(actty) {
 
       case 'DISCOUNT_REDUCER': 
-        action(!param)
+        action(param)
+        break
+      case 'TASK_ACTIONS':
+        action(param)
         break
 
       default:
@@ -129,7 +134,6 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       /> }
       
       <Select 
-        defaultValue={data && data[0]}
         isMulti={multy}
         components={animatedComponents}
         options={ data && data }
@@ -143,7 +147,9 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
             primary25: '#F7F7F7',
           }
         })}
-        onChange={() => action && actionsReducer(actionParams)}
+        onChange={inputValue => {
+          action && actionsReducer(inputValue.label)
+        }}
       />
     
     </Decorate.SelectWrapper>

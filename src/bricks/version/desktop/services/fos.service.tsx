@@ -9,6 +9,7 @@ import { setActiveRole, setRoleData } from '../../../store/slices/role-type-slic
 import { setShow as setShowAlert , setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setFocused } from '../../../store/slices/reg-slice'
 import { setFaceType } from '../../../store/slices/reg-slice'
+import { setUpdating } from '../../../store/slices/data-update-slice'
 import RequestActionsComponent from './request.service'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
@@ -290,6 +291,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   }
   
   useEffect(() => { false && SET_AUTH_REQUEST(AUTH_REQUEST) }, [ AUTH_REQUEST ])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(false)) }, [])
 
   return (
     <React.Fragment>
@@ -348,9 +351,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <RespondFromList.Title>Откликнуться на задание</RespondFromList.Title>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
-                  <RespondFromList.SubTitle style={{ marginBottom: '34px' }}>{RESPOND_TASK}</RespondFromList.SubTitle>
+                  <RespondFromList.SubTitle style={{ marginBottom: '26px' }}>{RESPOND_TASK}</RespondFromList.SubTitle>
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '8px' }}>
                   <span style={spanTitleCSS}>Срок выполнения</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Стоимость выполнения</span>
@@ -363,7 +366,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"Дата окончания"}
+                    label={"01 / 01 / 2023"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -385,8 +388,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'50px'}
-                    label={"Введите вашу цену"}
+                    heightValue={'55px'}
+                    label={"Введите вашу стоимость"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -396,14 +399,14 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '-4px',
+                      marginBottom: '-7px',
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '22px', marginTop: '20px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '16px', marginTop: '13px' }}>
                   <span style={spanTitleCSS}>Предварительное решение</span>
                   <span style={spanDelimiterCSS} />
-                  <span style={spanTitleCSS}>Сумма аванса</span>
+                  <span style={spanTitleCSS}>Сумма вашего аванса</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
                   <InputComponent
@@ -412,8 +415,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'50px'}
-                    label={"Количество дней"}
+                    heightValue={'55px'}
+                    label={"Количество дней до решения"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -433,7 +436,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'50px'}
+                    heightValue={'55px'}
                     label={"Введите сумму аванса"}
                     isError={false}
                     isDisabled={false}
@@ -448,8 +451,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '20px' }}>
-                  <span style={spanTitleCSS}>Экспертиза</span>
+                <RespondFromList.ContentLine style={{ marginBottom: '9px', marginTop: '14px' }}>
+                  <span style={spanTitleCSS}>Дата экспертизы</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Стоимость экспертизы</span>
                 </RespondFromList.ContentLine>
@@ -461,7 +464,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"Дата экспертизы"}
+                    label={"01 / 01 / 2023"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -483,8 +486,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'50px'}
-                    label={"Введите вашу цену"}
+                    heightValue={'55px'}
+                    label={"Введите вашу стоимость"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -494,7 +497,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '-4px',
+                      marginBottom: '-7px',
                     }}
                   />
                 </RespondFromList.ContentLine>
@@ -509,7 +512,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     widthType={'%'}
                     widthValue={100}
                     heightValue={'50px'}
-                    label={"Дополнительный комментарий к отклику"}
+                    label={"Дополнительный комментарий"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}

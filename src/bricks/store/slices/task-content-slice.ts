@@ -5,15 +5,10 @@ import { ITaskContent } from '../../models-ts/reducers/task-content-reducer-mode
 const initialState: ITaskContent = {
   TASKS_DATA: {
     actualOne: '',
-    /* ---------------------------------------- */
-    /* отображение выбранной задачи в списке "мои заказы" в роли заказчика */
-    /* ---------------------------------------- */
-    showOne: '0001',
-    /* ---------------------------------------- */
-    /* предварительно!! общий список всех задач на платформе */
-    /* ---------------------------------------- */
+    showOne: '',
     list: [],
-    listOrders: []
+    listOrders: [],
+    listDeactive: []
   }
 }
 
@@ -32,9 +27,12 @@ export const taskContentReducer = createSlice({
     },
     setListOrders: (state, action: PayloadAction<Array<any>>): void => {
       state.TASKS_DATA.listOrders = action.payload
+    },
+    setListDeactive: (state, action: PayloadAction<Array<any>>): void => {
+      state.TASKS_DATA.listDeactive = action.payload
     }
   }
 })
 
-export const { selectShowTask, selectActualTask, setList, setListOrders } = taskContentReducer.actions
+export const { selectShowTask, selectActualTask, setList, setListOrders, setListDeactive } = taskContentReducer.actions
 export default taskContentReducer.reducer

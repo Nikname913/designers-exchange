@@ -14,6 +14,7 @@ import createTaskReducer from './slices/create-task-slice'
 import respondReducer from './slices/respond-slice'
 import requestReducer from './slices/request-reduce-slice'
 import passportReducer from './slices/passport-slice'
+import dataUpdateReducer from './slices/data-update-slice'
 
 export const store = configureStore({
   reducer: {
@@ -31,7 +32,8 @@ export const store = configureStore({
     createTaskReducer: createTaskReducer,
     respondReducer: respondReducer,
     requestReducer: requestReducer,
-    passportReducer: passportReducer
+    passportReducer: passportReducer,
+    dataUpdateReducer: dataUpdateReducer
   },
 })
 

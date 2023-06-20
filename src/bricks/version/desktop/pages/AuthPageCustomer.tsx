@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setActiveRole } from '../../../store/slices/role-type-slice'
 import { setCode, setFaceType } from '../../../store/slices/reg-slice'
+import { setUpdating } from '../../../store/slices/data-update-slice'
 import SelectField from '../comps/select/SelectField'
 import InputComponent from '../comps/input/Input'
 import ButtonComponent from '../comps/button/Button'
@@ -82,23 +83,57 @@ const AuthPage: React.FC = () => {
       && passValid2 === true
       && passValid3 === true ) {
 
-      !false && console.log(SURNAME)
-      !false && console.log(NAME)
-      !false && console.log(SECOND_NAME)
-      !false && console.log(EMAIL)
-      !false && console.log(NUMBER)
-      !false && console.log(PASSWORD)
-      !false && console.log(USER_FORK)
+      false && console.log(SURNAME)
+      false && console.log(NAME)
+      false && console.log(SECOND_NAME)
+      false && console.log(EMAIL)
+      false && console.log(NUMBER)
+      false && console.log(PASSWORD)
+      false && console.log(USER_FORK)
 
-      setPreloader(true)
-      SET_AUTH_REQUEST(true)
+      if ( USER_FORK === 'IP_FACE' ) {
 
-      // ---------------------------------------
-      setTimeout(() => {
-        setPreloader(false)
-        SET_AUTH_REQUEST(false)
-      }, 1400)
-      // ---------------------------------------
+        const urlString = 'https://api-fns.ru/api/search?q=' + NAME + '&key=59e55219511f91d7b35785b694fcdff24fbb50d3'
+
+        fetch(urlString)
+          .then(res => res.json())
+          .then(data => {
+
+            if ( data.items.length !== 0 ) {
+
+              setPreloader(true)
+              SET_AUTH_REQUEST(true)
+
+              // ---------------------------------------
+              setTimeout(() => {
+                setPreloader(false)
+                SET_AUTH_REQUEST(false)
+              }, 1400)
+              // ---------------------------------------
+
+            } else {
+
+              dispatch(setShow(true))
+              dispatch(setType('error'))
+              dispatch(setMessage('Имя пользователя или название введенной организации не найдено в базе ФНС. Попробуйте ввести заново'))
+
+            }
+
+          })
+
+        } else {
+
+          setPreloader(true)
+          SET_AUTH_REQUEST(true)
+
+          // ---------------------------------------
+          setTimeout(() => {
+            setPreloader(false)
+            SET_AUTH_REQUEST(false)
+          }, 1400)
+          // ---------------------------------------
+
+        }
 
     } else {
 
@@ -213,6 +248,8 @@ const AuthPage: React.FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setFaceType('')) }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(false)) }, [])
 
   const passValidateCSS: CSSProperties = {
     display: 'block',
@@ -308,7 +345,7 @@ const AuthPage: React.FC = () => {
                 : USER_FORK === "SELF_FACE"
                 ? "Введите ваше ФИО *"
                 : USER_FORK === "PHIS_FACE"
-                ? "Введите ваше ФИО *" : ""}
+                ? "Введите ваше ФИО *" : "Введите название организации *"}
               isError={nameError}
               isDisabled={false}
               labelShrinkLeft={"0px"}

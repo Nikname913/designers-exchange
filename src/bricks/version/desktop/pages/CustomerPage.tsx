@@ -1,16 +1,27 @@
-import React, { useEffect } from 'react'
+/* eslint-disable array-callback-return */
+/* eslint-disable array-callback-return */
+import React, { useEffect, useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
 import InputComponent from '../comps/input/Input'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { setSelectedUsersType } from '../../../store/slices/header-slice'
+import { setUpdating, setCFN } from '../../../store/slices/data-update-slice'
 import SelectField from '../comps/select/SelectField'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import Search from '@mui/icons-material/Search'
+import { styled } from '@mui/material/styles'
 import ButtonComponent from '../comps/button/Button'
 import Pagintation from '../services/pagination.service'
 import CustomerExecutorCardPreview from '../views/localViews/CustomerExecutorCardPrev'
+import CustomerExecutorCardPreviewLoading from '../views/localViews/CustomerExecutorCardPrevLoading'
 import cssContentArea from '../styles/views/contentArea.css'
 import cssAsideMenu from '../styles/pages/customersPageAside.css'
 import EmailIcon from '@mui/icons-material/Email'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
 import defaultAvatar from '../../../img/stock/avatar.svg'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
@@ -18,10 +29,24 @@ const { MenuContainer, TextFieldTitle, PagintationContainer } = cssAsideMenu
 
 const CustomerPage: React.FC = () => {
 
+  const [ filterLoading, setFilterLoading ] = useState<boolean>(false)
+
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const greyColor = useAppSelector(state => state.theme.grey)
+
+  const filterName = useAppSelector(state => state.dataUpdateReducer.customerFilterName)
   const customers = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
+    .filter(customer => {
+      const superName = (customer.bio.name + ' ' + customer.bio.surname).toLowerCase()
+      false && console.log(superName)
+      false && console.log(filterName)
+
+      if ( superName.indexOf(filterName.toLowerCase()) !== -1 ) {
+        return customer
+      }
+
+    })
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -65,12 +90,59 @@ const CustomerPage: React.FC = () => {
     cursor: 'pointer',
   }
 
+  const CustomTextField = styled(TextField)({
+    '& .MuiInputLabel-root': {}, /* placeholder стилизуется тут */
+    '& .MuiInputLabel-shrink': {
+      marginLeft: '0px',
+    },
+    '& .MuiInputBase-input': {
+      fontSize: '15px',
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingBottom: '18px',
+    },
+    '& .MuiInput-root:before': {
+      borderBottom: '1px solid #2E2E2E',
+      fontSize: '15px'
+    },
+    '& .MuiFormLabel-root': {
+      fontSize: '15px',
+      marginLeft: '2px',
+      marginTop: '-2.6px'
+    },
+    '& label.Mui-focused': {
+      color: '#2E2E2E',
+    },
+    '& .MuiInput-underline:after': {
+      display: 'none',
+      borderBottomColor: '#2E2E2E',
+    },
+    '& .MuiOutlinedInput-root': {
+      height: '50px',
+        '& fieldset': {},
+        '&:hover fieldset': {},
+        '&.Mui-focused fieldset': {
+          borderColor: '#167CBF'
+        },
+    },
+  })
+
   function executorPage() {
     navigate("/executors")
   }
 
+  const baseInputValueChangeEvent = (event: any) => {
+    setFilterLoading(true)
+    dispatch(setCFN(event.target.value))
+
+    setTimeout(() => { setFilterLoading(false) }, 1300 )
+  }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setSelectedUsersType('CUST')) }, [])
+  useEffect(() => { console.log('новый рендер') }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(true)) }, [])
 
   return (
     <ContentArea
@@ -86,7 +158,7 @@ const CustomerPage: React.FC = () => {
         </div>
       </div>
       <MenuContainer>
-        <InputComponent
+        { false && <InputComponent
           type={'TEXT_INPUT_OUTLINE_SEARCH'}
           valueType='text'
           required={false}
@@ -94,6 +166,7 @@ const CustomerPage: React.FC = () => {
           widthValue={300}
           heightValue={'50px'}
           label={"Поиск по заказчикам"}
+          store={[ '', () => {}]}
           isError={false}
           isDisabled={false}
           labelShrinkLeft={"0px"}
@@ -105,7 +178,51 @@ const CustomerPage: React.FC = () => {
             marginBottom: '8px',
             backgroundColor: 'white'
           }}
+        /> } 
+
+        <CustomTextField 
+          type={'text'}
+          autoComplete={"off"}
+          onFocus={() => dispatch(setUpdating(false))}
+          onBlur={baseInputValueChangeEvent}
+          id="standard-basic-search" 
+          label={"Поиск по заказчикам"}
+          disabled={false}
+          InputProps={{
+            endAdornment: 
+              <InputAdornment position="end">
+                <IconButton 
+                  style={{ marginRight: '-6px' }} 
+                  edge="end"
+                >
+                  <Search></Search>
+                </IconButton>
+              </InputAdornment>
+          }}
+          style={{ width: '100%', backgroundColor: 'white' }} 
         />
+
+        { filterName !== '' && <span
+          style={{
+            display: 'block',
+            position: 'relative',
+            backgroundColor: 'rgb(242, 244, 252)',
+            width: '100%',
+            height: '42px',
+            borderRadius: '4px',
+            lineHeight: '40px',
+            paddingLeft: '16px',
+            boxSizing: 'border-box',
+            marginBottom: '0px',
+            marginTop: '12px',
+            cursor: 'pointer',
+            fontSize: '13px',
+          }}
+        >
+          <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Поиск по словам: "}</i>
+          { filterName }
+        </span> }
+
         <TextFieldTitle>Сортировать по</TextFieldTitle>
         <SelectField 
           placeholder={"Сортировать по рейтингу"}
@@ -175,7 +292,13 @@ const CustomerPage: React.FC = () => {
         <ButtonComponent
           inner={'Сбросить все'} 
           type='CONTAINED_DEFAULT' 
-          action={() => console.log('this is button')}
+          action={() => { 
+            setFilterLoading(true)
+            dispatch(setCFN(''))
+            dispatch(setUpdating(true))
+            
+            setTimeout(() => { setFilterLoading(false) }, 1300 )
+          }}
           actionData={null}
           widthType={'px'}
           widthValue={300}
@@ -199,63 +322,84 @@ const CustomerPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { customers.map((item: any, index: number): ReactJSXElement => {
-          return (
-            <CustomerExecutorCardPreview
-              key={index}
-              isDisabledMessage={true}
-              userName={ item.bio && item.bio.name }
-              userId={item.clientId}
-              userAvatar={defaultAvatar}
-              userType={"CUSTOMER"}
-              userEmployment={""}
-              userLocation={ item.location && item.location.city }
-              userReviews={0}  
-              userRate={4.88}
-              userProjects={[ 0, 0, 0 ]}
-              cardWidth={"calc(50% - 8px)"}
-              marginBottom={'16px'}
-              marginRight={'0px'}
-              userTags={["[ options download ]"]}
-            />
-          )
-        })}
-        <CustomerExecutorCardPreview
-          isDisabledMessage={true}
-          userName={"[ пустая карточка ]"}
-          userAvatar={defaultAvatar}
-          userEmployment={""}
-          userLocation={"Екатеринбург"}
-          userReviews={0}  
-          userRate={4.88}
-          userProjects={[ 0, 0, 0 ]}
-          cardWidth={"calc(50% - 8px)"}
-          marginBottom={'16px'}
-          marginRight={'0px'}
-          userTags={["[ options download ]"]}
-        />
-        <CustomerExecutorCardPreview
-          isDisabledMessage={true}
-          userName={"[ пустая карточка ]"}
-          userAvatar={defaultAvatar}
-          userEmployment={""}
-          userLocation={"Екатеринбург"}
-          userReviews={0}  
-          userRate={4.88}
-          userProjects={[ 0, 0, 0 ]}
-          cardWidth={"calc(50% - 8px)"}
-          marginBottom={'16px'}
-          marginRight={'0px'}
-          userTags={["[ options download ]"]}
-        />
+        { filterLoading === false && <React.Fragment>
+          { customers.map((item: any, index: number): ReactJSXElement => {
+            return (
+              <CustomerExecutorCardPreview
+                key={index}
+                isDisabledMessage={true}
+                userName={ item.bio && item.bio.name }
+                userId={item.clientId}
+                userAvatar={defaultAvatar}
+                userType={"CUSTOMER"}
+                userEmployment={""}
+                userLocation={ item.location && item.location.city }
+                userReviews={0}  
+                userRate={5.00}
+                userProjects={[ 0, 0, 0 ]}
+                cardWidth={"calc(50% - 8px)"}
+                marginBottom={'16px'}
+                marginRight={'0px'}
+                userTags={item.spec}
+              />
+            )
+          })}
+        </React.Fragment> }
+        { filterLoading === false && <React.Fragment>
 
-        <PagintationContainer>
+          { customers.length === 0 && 
+            
+            <span 
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                width: '100%',
+                color: 'gray',
+                marginTop: '100px',
+                marginBottom: '80px'
+              }}
+            >
+              Пользователи не найдены
+            </span> 
+            
+          }
+
+        </React.Fragment> }
+        { filterLoading === true && <React.Fragment>
+          { Array(2).fill("").map((item: any, index: number): ReactJSXElement => {
+            return (
+              <CustomerExecutorCardPreviewLoading
+                key={index}
+                isDisabledMessage={true}
+                userName={ item.bio && item.bio.name }
+                userId={item.clientId}
+                userAvatar={defaultAvatar}
+                userType={"CUSTOMER"}
+                userEmployment={""}
+                userLocation={ item.location && item.location.city }
+                userReviews={0}  
+                userRate={5.00}
+                userProjects={[ 0, 0, 0 ]}
+                cardWidth={"calc(50% - 8px)"}
+                marginBottom={'16px'}
+                marginRight={'0px'}
+                userTags={item.spec}
+              />
+            )
+          })}
+        </React.Fragment> }
+
+        { filterLoading === true && <Stack sx={{ width: '100%', color: 'rgb(22, 124, 191)', borderRadius: '4px' }} spacing={2}>
+          <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+        </Stack> }
+
+        { filterLoading === false && <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
           <Pagintation count={
             ( customers.length / 20 ) < 1 ? 1 :
             ( customers.length / 20 ) + ( customers.length % 20 )
           }></Pagintation>
-        </PagintationContainer>
+        </PagintationContainer> }
 
       </CustExecContentInnerArea>
     </ContentArea>

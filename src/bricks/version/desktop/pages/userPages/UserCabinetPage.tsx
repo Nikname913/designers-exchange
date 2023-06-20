@@ -142,6 +142,7 @@ const ExecutorProfilePage: React.FC = () => {
   const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
   const [ borthDate, setBorthDate ] = useState<any>('')
   const [ disablePassportInputs, setDisablePassportInputs ] = useState<boolean>(true)
+  const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
 
   const [ DOCS_REQUEST, SET_DOCS_REQUEST ] = useState(false)
   const [loading, setLoading] = React.useState(false)
@@ -232,7 +233,7 @@ const ExecutorProfilePage: React.FC = () => {
 
   useEffect(() => {
 
-    !false && console.log(EXECUTOR)
+    false && console.log(EXECUTOR)
     false && console.log(CUSTOMER)
     false && console.log(USER_ID)
 
@@ -240,15 +241,15 @@ const ExecutorProfilePage: React.FC = () => {
 
   useEffect(() => {
 
-    setPassportSeriLocal(EXECUTOR[0].docs.passport.series)
-    setPassportNumberLocal(EXECUTOR[0].docs.passport.number)
-    setPassportDateLocal(EXECUTOR[0].docs.passport.date)
-    setPassportAdressLocal(EXECUTOR[0].docs.adress)
-    setPassportWhoLocal(EXECUTOR[0].docs.passport.whoGet)
-    setPassportSnilsLocal(EXECUTOR[0].docs.snils)
-    setPassportInnLocal(EXECUTOR[0].docs.inn)
+    USER_ROLE === 'EXECUTOR' && setPassportSeriLocal(EXECUTOR[0].docs.passport.series)
+    USER_ROLE === 'EXECUTOR' && setPassportNumberLocal(EXECUTOR[0].docs.passport.number)
+    USER_ROLE === 'EXECUTOR' && setPassportDateLocal(EXECUTOR[0].docs.passport.date)
+    USER_ROLE === 'EXECUTOR' && setPassportAdressLocal(EXECUTOR[0].docs.adress)
+    USER_ROLE === 'EXECUTOR' && setPassportWhoLocal(EXECUTOR[0].docs.passport.whoGet)
+    USER_ROLE === 'EXECUTOR' && setPassportSnilsLocal(EXECUTOR[0].docs.snils)
+    USER_ROLE === 'EXECUTOR' && setPassportInnLocal(EXECUTOR[0].docs.inn)
 
-  }, [ EXECUTOR ])
+  }, [ EXECUTOR, USER_ROLE ])
 
   useEffect(() => {
 
@@ -258,11 +259,32 @@ const ExecutorProfilePage: React.FC = () => {
       clearTimeout(timer.current)
     }
   }, [ passportInn ])
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTextSpredLine((prev: string): any => {
+        let value: string = ''
+
+        // ------------------------------------------------------------------
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        prev === '' ? value = '.'
+          : prev === '.' ? value = '..'
+          : prev === '..' ? value = '...'
+          // ----------------------------------------------------------------
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          : prev === '...' ? value = '' : null
+
+        return value
+      })
+    }, 1300)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   return (
     <React.Fragment>
 
-      { DOCS_REQUEST && <RequestActionsComponent
+      { DOCS_REQUEST && USER_ROLE === 'EXECUTOR' && <RequestActionsComponent
 
         callbackAction={() => {}}
         requestData={{
@@ -328,7 +350,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
-                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
+                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
                 <span 
@@ -379,7 +401,7 @@ const ExecutorProfilePage: React.FC = () => {
                 <img
                   alt={""}
                   src={semiMenu}
-                  style={{ display: 'block', marginLeft: '12px', cursor: 'pointer' }}
+                  style={{ display: 'block', marginLeft: '44px', marginTop: '-18px', cursor: 'pointer' }}
                   onClick={editProfile}
                 />
               </div>
@@ -402,7 +424,7 @@ const ExecutorProfilePage: React.FC = () => {
                     alt={""}
                     src={star}
                   />
-                  <span style={{ fontSize: '40px', marginLeft: '5px' }}>4.8</span>
+                  <span style={{ fontSize: '40px', marginLeft: '5px' }}>{"5.00"}</span>
                 </div>
                 <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"0 отзывов"}</span>
               </div>
@@ -572,7 +594,11 @@ const ExecutorProfilePage: React.FC = () => {
 
               })}
               
-              { EXECUTOR[0].spec && EXECUTOR[0].spec.length === 0 && <TagElement background={tagBackground}>{"Специализации не указаны"}</TagElement> }
+              { EXECUTOR[0].spec && EXECUTOR[0].spec.length === 0 && 
+              
+                <TagElement background={tagBackground}>{ 'Загрузка специализации' + tagsSpredLine }</TagElement> 
+                
+              }
               
               <span 
                 style={{ 
@@ -610,7 +636,9 @@ const ExecutorProfilePage: React.FC = () => {
                 <SelectField 
                   placeholder={"Сначала новые"}
                   params={{ width: 280, height: 50 }}
-                  data={[]}
+                  data={[
+                    { value: '1', label: 'Сначала новые' }
+                  ]}
                   multy={false}
                   action={() => {}}
                   actionType={""}
@@ -688,57 +716,48 @@ const ExecutorProfilePage: React.FC = () => {
               })}
 
               { EXECUTOR[0].reviews && EXECUTOR[0].reviews.length === 0 && <ReviewsContentLine style={{ marginBottom: '20px' }}>
-                <ReviewContainer background={reviewBackground}>
+                <ReviewContainer background={reviewBackground} style={{ borderRadius: '4px' }}>
                   <ReviewsContentLine style={{ justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
                       <img
                         alt={""}
                         src={avatarTwo}
-                        style={{ width: '30px', marginRight: '14px' }}
+                        style={{ width: '30px', marginRight: '14px', filter: 'grayscale(0.8)' }}
                       />
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 'bold', marginBottom: '5px' }}>[ шаблон отзыва на период разработки ]</span>
-                        <span style={{ color: greyColor2, fontSize: '12px' }}>13.13.2023</span>
+                        <span style={{ fontWeight: 'bold', marginBottom: '5px' }}>{ 'Подождите, идет загрузка отзывов' + tagsSpredLine }</span>
+                        <span style={{ color: greyColor2, fontSize: '12px' }}>01.01.2023</span>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '-14px' }}>
-                      <div style={{ marginRight: '8px' }}>
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                        <img
-                          alt={""}
-                          src={star}
-                        />
-                      </div>
-                      <div>
-                        <img
-                          alt={""}
-                          src={semiMenu}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </div>
+                    <div style={{ marginTop: '-14px' }}>
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
                     </div>
                   </ReviewsContentLine>
                   <ReviewsContentLine style={{ marginBottom: '10px', marginTop: '14px' }}>
-                    <span style={{ fontWeight: 'bold' }}>{"Конструктивные решения"}</span>
+                    <span style={{ fontWeight: 'bold' }}>{"Заголовок отзыва на пользователя"}</span>
                   </ReviewsContentLine>
                   <ReviewsContentLine>
                     <span style={{ lineHeight: '22px' }}>
-                      {"Данный шаблон отзыва никак не влияет на функциональность и показывается в том случае, если у данного пользователя нет списка отзывов, прописанных в базе. на период разработки ситуация, когда у пользователя нет отзывов - более чем частая, поэтому, чтобы не сыпался визуально внешний вид и чтобы избавить разработчика от необходимости набивать отзывы, будет показываться этот шаблон. упоминать о том что он есть - НЕ НУЖНО, разработчик в курсе. упоминать о том, что у отзыва вместо имени пользователя квадратные скобки - НЕ НУЖНО, разработчик в курсе"}
+                      {"Вы видите данную заглушку, потому что список отзывов прогружается слишком долго, либо потому что у этого пользователя еще нет отзывов на нашей платформе"}
                     </span>
                   </ReviewsContentLine>
                   <ReviewsContentLine></ReviewsContentLine>
@@ -1436,7 +1455,7 @@ const ExecutorProfilePage: React.FC = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50%', paddingLeft: '30px' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                     <span style={{ width: '50%' }}>Доступно</span>
-                    <span style={{ fontSize: '32px', fontWeight: 'bold', color: blueColor }}>0 ₽</span>
+                    <span style={{ fontSize: '28px', fontWeight: 'bold', color: blueColor }}>13 000₽</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', position: 'relative', marginTop: '14px' }}>
                     <span style={{ color: greyColor2, lineHeight: '18px', width: '50%' }}>Ожидаемое<br/>поступление</span>
@@ -1457,7 +1476,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>0 ₽</span>
+                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>25 000₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -1502,7 +1521,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Введите сумму вывода"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ "", () => null ]}
@@ -1578,7 +1597,7 @@ const ExecutorProfilePage: React.FC = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '50%', paddingLeft: '30px' }}>
                   <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
                     <span style={{ width: '50%' }}>Доступно</span>
-                    <span style={{ fontSize: '32px', fontWeight: 'bold', color: blueColor }}>13 000 ₽</span>
+                    <span style={{ fontSize: '28px', fontWeight: 'bold', color: blueColor }}>13 000₽</span>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%', position: 'relative', marginTop: '14px' }}>
                     <span style={{ color: greyColor2, lineHeight: '18px', width: '50%' }}>Ожидаемое<br/>поступление</span>
@@ -1599,7 +1618,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>25 000 ₽</span>
+                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>25 000₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -1618,6 +1637,7 @@ const ExecutorProfilePage: React.FC = () => {
                     actionParams={[]}
                     showIcon={true}
                     icon={null}
+                    isDisabled
                     iconStyles={{
                       marginTop: '-12px',
                       marginLeft: '6px',
@@ -1633,9 +1653,9 @@ const ExecutorProfilePage: React.FC = () => {
                   widthType={'%'}
                   widthValue={25}
                   heightValue={'50px'}
-                  label={"Начало"}
+                  label={"Начало периода"}
                   isError={false}
-                  isDisabled={false}
+                  isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
                   store={[ "Сидоров", () => null ]}
@@ -1657,9 +1677,9 @@ const ExecutorProfilePage: React.FC = () => {
                   widthType={'%'}
                   widthValue={25}
                   heightValue={'50px'}
-                  label={"Конец"}
+                  label={"Конец периода"}
                   isError={false}
-                  isDisabled={false}
+                  isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
                   store={[ "Сидоров", () => null ]}
@@ -1710,7 +1730,7 @@ const ExecutorProfilePage: React.FC = () => {
               >
                 <ReviewsContentLine>
                   <span style={{ width: '50%' }}>Пополнение кошелька</span>
-                  <span style={{ width: '25%', color: greyColor2 }}>23.03.2023</span>
+                  <span style={{ width: '25%', color: greyColor2 }}>01.01.2023</span>
                   <span style={{ width: '25%', textAlign: 'right', fontWeight: 'bold' }}>+ 20 000 ₽</span>
                 </ReviewsContentLine>
               </ReviewsContent>
@@ -1893,6 +1913,7 @@ const ExecutorProfilePage: React.FC = () => {
                       actionParams={[]}
                       showIcon={true}
                       icon={null}
+                      isDisabled
                       iconStyles={{
                         marginTop: '-12px',
                         marginLeft: '6px',
@@ -1909,10 +1930,10 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Выбор года"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
-                    store={[ "2023", () => null ]}
+                    store={[ "2022", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -2034,11 +2055,11 @@ const ExecutorProfilePage: React.FC = () => {
                       <div style={{ width: '50%' }}>
                         <span style={{ fontWeight: 'bold' }}>Акты</span>
                         <div style={{ marginTop: '10px' }}>
-                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
+                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
                           <span>Акт_выполненные.doc</span>
                         </div>
                         <div style={{ marginTop: '10px' }}>
-                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
+                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
                           <span>Акт_выполненные.doc</span>
                         </div>
                       </div>
@@ -2091,7 +2112,7 @@ const ExecutorProfilePage: React.FC = () => {
                   <div style={{ width: '50%' }}>
                     <span style={{ fontWeight: 'bold' }}>Акты</span>
                     <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
+                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
                       <span>Акт_выполненные.docx</span>
                     </div>
                   </div>
@@ -2127,7 +2148,7 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '22px' }}>{"Consectetur pharetra elit rhoncus convallis molestie sit auctor. Eget enim convallis nisl iaculis donec. Nulla porttitor orci tristique mattis mi faucibus phasellus. Quisque sagittis risus id orci at proin faucibus sodales leo. Arcu integer sed senectus et lacinia diam. Urna a vulputate bibendum in nulla malesuada lectus. Neque vestibulum imperdiet elit maecenas mattis sagittis"}</span>
                 </ReviewsContentLine>
                 <ReviewsContentLine style={{ marginTop: '26px' }}>
-                  { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
+                  { Array(3).fill('Специализация примера').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
                 </ReviewsContentLine>
               </ReviewsContent> }
 
@@ -2152,7 +2173,7 @@ const ExecutorProfilePage: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ width: '15%' }}>{"2009"}</span>
+                <span style={{ width: '15%', fontWeight: 'bold' }}>{"2009"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Курсы повышения квалификации"}</span>
                   <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
@@ -2166,7 +2187,7 @@ const ExecutorProfilePage: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ width: '15%' }}>{"2011"}</span>
+                <span style={{ width: '15%', fontWeight: 'bold' }}>{"2011"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Санкт-Петербургский государственный архитектурно-строительный университет"}</span>
                   <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
@@ -2186,10 +2207,10 @@ const ExecutorProfilePage: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ lineHeight: '20px', width: '15%' }}>{"декабрь 2011 - ноябрь 2015"}</span>
+                <span style={{ lineHeight: '20px', width: '15%', fontWeight: 'bold' }}>{"декабрь 2011 - ноябрь 2015"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ООО Технические Системы"}</span>
-                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
+                  <span style={{ lineHeight: '22px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
                 </div>
               </ReviewsContent>
               <ReviewsContent 
@@ -2201,10 +2222,10 @@ const ExecutorProfilePage: React.FC = () => {
                   marginBottom: '36px',
                 }}
               >
-                <span style={{ lineHeight: '20px', width: '15%' }}>{"октябрь 2009 - ноябрь 2011"}</span>
+                <span style={{ lineHeight: '20px', width: '15%', fontWeight: 'bold' }}>{"октябрь 2009 - ноябрь 2011"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ИП Иванов К.Ю."}</span>
-                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
+                  <span style={{ lineHeight: '22px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
                 </div>
               </ReviewsContent>
 

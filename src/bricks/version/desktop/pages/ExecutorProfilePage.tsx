@@ -21,7 +21,6 @@ import avatar from '../../../img/stock/avatar.svg'
 import avatarTwo from '../../../img/stock/avatarTwo.svg'
 import pen from '../../../img/icons/pen.svg'
 import correct from '../../../img/icons/correctBlue.svg'
-import semiMenu from '../../../img/icons/semiMenu.svg'
 import star from '../../../img/icons/star.svg'
 import info from '../../../img/icons/created/info.svg'
 import blank from '../../../img/icons/created/blank.svg'
@@ -74,6 +73,7 @@ const ExecutorProfilePage: React.FC = () => {
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const EXECUTORS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
   const EXECUTOR = EXECUTORS_LIST.filter((executor: any) => executor.clientId === userId)
+  const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
 
   const yelloColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
@@ -88,7 +88,7 @@ const ExecutorProfilePage: React.FC = () => {
   const flexDivCSS: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'flex-end',
     justifyContent: 'flex-start',
     position: 'relative'
   }
@@ -113,9 +113,30 @@ const ExecutorProfilePage: React.FC = () => {
   useEffect(() => {
 
     false && console.log(userId)
-    false && console.log(EXECUTOR)
+    !false && console.log(EXECUTOR)
 
   }, [ userId, EXECUTOR ])
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTextSpredLine((prev: string): any => {
+        let value: string = ''
+
+        // ------------------------------------------------------------------
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        prev === '' ? value = '.'
+          : prev === '.' ? value = '..'
+          : prev === '..' ? value = '...'
+          // ----------------------------------------------------------------
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          : prev === '...' ? value = '' : null
+
+        return value
+      })
+    }, 1300)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   return (
     <ContentArea
@@ -157,7 +178,15 @@ const ExecutorProfilePage: React.FC = () => {
               </span>
             </ContentLine>
             <ContentLine style={{ marginTop: '20px' }}>
-              <span style={{ color: greyColor2 }}>{"[ options download ]"}</span>
+              <span style={{ color: greyColor2 }}>
+                { EXECUTOR[0].faceType === 'SELF_FACE' 
+                  ? 'Самозанятый'
+                  : EXECUTOR[0].faceType === 'PHIS_FACE'
+                  ? 'Физическое лицо' 
+                  : EXECUTOR[0].faceType === 'IP_FACE'
+                  ? 'Юридическое лицо' : ''
+                 }
+              </span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
               <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
@@ -176,7 +205,7 @@ const ExecutorProfilePage: React.FC = () => {
                   fontSize: '12px', 
                   marginRight: '20px' 
                 }}
-              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>в работе</span>
+              ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>активные</span>
               <span 
                 style={{ 
                   color: greyColor2, 
@@ -207,11 +236,6 @@ const ExecutorProfilePage: React.FC = () => {
                   backgroundColor: whiteBlueBackground,
                 }}
               />
-              <img
-                alt={""}
-                src={semiMenu}
-                style={{ display: 'block', marginLeft: '12px', cursor: 'pointer' }}
-              />
             </div>
             <div
               style={{
@@ -232,7 +256,7 @@ const ExecutorProfilePage: React.FC = () => {
                   alt={""}
                   src={star}
                 />
-                <span style={{ fontSize: '40px', marginLeft: '5px' }}>4.8</span>
+                <span style={{ fontSize: '40px', marginLeft: '5px' }}>{"5.00"}</span>
               </div>
               <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"0 отзывов"}</span>
             </div>
@@ -320,29 +344,36 @@ const ExecutorProfilePage: React.FC = () => {
         <ContentContainerLocal style={{ justifyContent: 'space-between' }}>
           
           { profileViewStep === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('[ options download ]').map((item, index) => {
+            { EXECUTOR[0].spec?.map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
               )
 
             })}
+            { EXECUTOR[0].spec?.length === 0 && 
+            
+              <TagElement background={tagBackground}>
+                { 'Загрузка специализации' + tagsSpredLine }
+              </TagElement> 
+              
+            }
             <span 
               style={{ 
                 display: 'block', 
                 lineHeight: '36px', 
                 marginBottom: '10px', 
-                fontSize: '24px',
+                fontSize: '32px',
                 color: blueColor,
                 position: 'absolute',
                 left: '100%',
                 top: '0%',
-                marginLeft: '-80px',
+                marginLeft: '-94px',
                 marginTop: '36px'
               }}
             >{"BIM"}</span>
             <div style={{ width: '100%', marginTop: '20px' }}>
-              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Информация о пользователе</span>
             </div>
             <div style={{ width: '100%', marginTop: '24px' }}>
               <span style={{ lineHeight: '20px' }}>{"Пользователь не написал о себе подробную информацию"}</span>
@@ -355,7 +386,9 @@ const ExecutorProfilePage: React.FC = () => {
               <SelectField 
                 placeholder={"Сначала новые"}
                 params={{ width: 280, height: 50 }}
-                data={[]}
+                data={[
+                  { value: '1', label: 'Сначала новые' }
+                ]}
                 multy={false}
                 action={() => {}}
                 actionType={""}
@@ -369,12 +402,61 @@ const ExecutorProfilePage: React.FC = () => {
                 }}
               />
             </ReviewsContentLine>
+
+            { EXECUTOR[0].reviews?.length === 0 && <ReviewsContentLine style={{ marginBottom: '20px' }}>
+              <ReviewContainer background={reviewBackground} style={{ borderRadius: '4px' }}>
+                <ReviewsContentLine style={{ justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <img
+                      alt={""}
+                      src={avatarTwo}
+                      style={{ width: '30px', marginRight: '14px', filter: 'grayscale(0.8)' }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '5px' }}>{ 'Подождите, идет загрузка отзывов' + tagsSpredLine }</span>
+                      <span style={{ color: greyColor2, fontSize: '12px' }}>01.01.2023</span>
+                    </div>
+                  </div>
+                  <div style={{ marginTop: '-14px' }}>
+                    <img
+                      alt={""}
+                      src={star}
+                    />
+                    <img
+                      alt={""}
+                      src={star}
+                    />
+                    <img
+                      alt={""}
+                      src={star}
+                    />
+                    <img
+                      alt={""}
+                      src={star}
+                    />
+                    <img
+                      alt={""}
+                      src={star}
+                    />
+                  </div>
+                </ReviewsContentLine>
+                <ReviewsContentLine style={{ marginBottom: '10px', marginTop: '14px' }}>
+                  <span style={{ fontWeight: 'bold' }}>{"Заголовок отзыва на пользователя"}</span>
+                </ReviewsContentLine>
+                <ReviewsContentLine>
+                  <span style={{ lineHeight: '22px' }}>
+                    {"Вы видите данную заглушку, потому что список отзывов прогружается слишком долго, либо потому что у этого пользователя еще нет отзывов на нашей платформе"}
+                  </span>
+                </ReviewsContentLine>
+                <ReviewsContentLine></ReviewsContentLine>
+              </ReviewContainer>
+            </ReviewsContentLine> }
                 
-            { Array(4).fill(undefined).map((item, index) => {
+            { EXECUTOR[0].reviews?.map((item, index) => {
 
               return (
                 <ReviewsContentLine style={{ marginBottom: '20px' }} key={index}>
-                  <ReviewContainer background={reviewBackground}>
+                  <ReviewContainer background={reviewBackground} style={{ borderRadius: '4px' }}>
                     <ReviewsContentLine style={{ justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', flexDirection: 'row' }}>
                         <img
@@ -443,12 +525,12 @@ const ExecutorProfilePage: React.FC = () => {
                 display: 'block', 
                 lineHeight: '36px', 
                 marginBottom: '10px', 
-                fontSize: '24px',
+                fontSize: '32px',
                 color: blueColor,
                 position: 'absolute',
                 left: '100%',
                 top: '0%',
-                marginLeft: '-80px',
+                marginLeft: '-94px',
                 marginTop: '36px'
               }}
             >{"BIM"}</span>
@@ -473,12 +555,12 @@ const ExecutorProfilePage: React.FC = () => {
                 display: 'block', 
                 lineHeight: '36px', 
                 marginBottom: '10px', 
-                fontSize: '24px',
+                fontSize: '32px',
                 color: blueColor,
                 position: 'absolute',
                 left: '100%',
                 top: '0%',
-                marginLeft: '-80px',
+                marginLeft: '-94px',
                 marginTop: '36px'
               }}
             >{"BIM"}</span>

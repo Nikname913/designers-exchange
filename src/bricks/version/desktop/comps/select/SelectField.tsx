@@ -103,7 +103,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
         break
 
       case 'DISCOUNT_REDUCER': 
-        action(!param)
+        action(param)
         break
 
       default:

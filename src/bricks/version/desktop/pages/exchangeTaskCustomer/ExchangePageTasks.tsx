@@ -4,8 +4,9 @@
 import React, { ReactElement, useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { selectShowTask, selectActualTask } from '../../../../store/slices/task-content-slice'
+import { selectShowTask } from '../../../../store/slices/task-content-slice'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import ButtonComponent from '../../comps/button/Button'
 import SelectField from '../../comps/select/SelectField'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -19,6 +20,7 @@ import EmailIcon from '@mui/icons-material/Email'
 import arraySortIcon from '../../../../img/icons/sortArray.svg'
 import arraySortFilter from '../../../../img/icons/sortFilter.svg'
 import plusIcon from '../../../../img/icons/plusWhite.svg'
+import logo from '../../../../img/stock/logo.svg'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
 const { MenuContainer, 
@@ -110,10 +112,6 @@ const ExchangePage: React.FC = () => {
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
 
-  const actualTask = (param: string) => {
-    dispatch(selectActualTask(param))
-  } 
-
   const returnName = (param: string) => {
 
     let userName = ''
@@ -188,8 +186,6 @@ const ExchangePage: React.FC = () => {
 
   useEffect(() => {
 
-    console.log(TASKS_LIST.list)
-
     TASKS_LIST.list.filter(task => task.status === 'searching').map((item, index: number) => {
 
       if ( item.customer === ROLE_USER_ID ) setContentPlug(false)
@@ -197,6 +193,19 @@ const ExchangePage: React.FC = () => {
     })
 
   }, [ ROLE_USER_ID, TASKS_LIST.list ])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(false)) }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { console.log(TASKS_LIST.showOne) }, [ TASKS_LIST.showOne ])
+
+  useEffect(() => {
+
+    return () => {
+      false && dispatch(selectShowTask(''))
+    }
+  
+  }, [ dispatch ])
 
   return (
     <ContentArea
@@ -212,7 +221,9 @@ const ExchangePage: React.FC = () => {
         <div style={divCSS}>
           <span style={{ ...spanActiveCSS }}>
             Задания ({
-              TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length
+              typeShowTasks === 'active' 
+                ? TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length
+                : TASKS_LIST.listDeactive.filter(item => item.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length
             })
           </span>
           <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>
@@ -220,7 +231,9 @@ const ExchangePage: React.FC = () => {
               TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.customer === ROLE_USER_ID).length
             })
           </span>
-          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )</span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>
+            Архивные ( Null { /*TASKS_LIST.list.filter(item => item.status === 'backside').length*/ } )
+          </span>
         </div>
       </div>
       <MenuContainer style={{ marginBottom: '8px' }}>
@@ -255,7 +268,7 @@ const ExchangePage: React.FC = () => {
             marginBottom: '30px'
           }}
         /> 
-        { typeShowTasks === 'active' && <React.Fragment>
+        <React.Fragment>
           <div style={{ ...divRowCSS, marginTop: '0px', marginBottom: '20px' }}>
             <TextFieldTitle style={{ marginTop: '0px', marginBottom: '0px' }}>Сортировать по</TextFieldTitle>
             <img
@@ -291,11 +304,12 @@ const ExchangePage: React.FC = () => {
               width: '34px',
             }}
           />
-        </React.Fragment> }
+        </React.Fragment>
         <div style={{ ...divRowCSS, marginTop: '0px', marginBottom: '20px' }}>
           <TextFieldTitle 
             onClick={() => {
               setTypeShowTasks('active')
+              dispatch(selectShowTask(''))
               setPageTitle('Мои задания')
             }}
             style={{ 
@@ -347,6 +361,7 @@ const ExchangePage: React.FC = () => {
         <TextFieldTitle 
           onClick={() => {
             setTypeShowTasks('noactive')
+            dispatch(selectShowTask(''))
             setPageTitle('Отмененные задания')
           }}
           style={{ 
@@ -356,7 +371,7 @@ const ExchangePage: React.FC = () => {
             color: typeShowTasks === 'active' ? greyColor2 : 'inherit',
             cursor: 'pointer'
           }}
-        >Неактивные задания ({ TASKS_LIST.list.filter(task => task.status === 'backside').length })</TextFieldTitle>
+        >Неактивные задания ({ TASKS_LIST.listDeactive.filter(task => task.status === 'searching').length })</TextFieldTitle>
         <React.Fragment>
           { typeShowTasks === 'noactive' && <React.Fragment>
             <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ fontWeight: 'bold' }}>Отмененные</ExchangePageTaskCSS.TaskSpan>
@@ -365,14 +380,51 @@ const ExchangePage: React.FC = () => {
         </React.Fragment>
       </MenuContainer>
       <CustExecContentInnerArea>
-        { contentPlug && <span style={{ margin: '66px auto 0px' }}>{"В настоящий момент у вас нет активных заданий"}</span> }
+        
+        { contentPlug && <span style={{ margin: '66px auto 0px', color: 'gray' }}>{"В настоящий момент у вас нет активных заданий"}</span> }
+        
+        { typeShowTasks === 'active' ? <React.Fragment>
+          { TASKS_LIST.showOne === '' && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
+            <img
+              alt={""}
+              src={logo}
+              style={{ 
+                display: 'block',
+                position: 'relative',
+                width: '80px',
+                opacity: 0.666,
+                marginBottom: '22px' 
+              }}
+            />
+            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Созданные вами задания находятся в списке меню слева"}</span>
+            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Открытые задания - задания, которые прямо сейчас доступны для откликов"}</span>
+            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Неактивные задания - задания, которые вы сняли с публикации и в настоящее время такие задания видны только вам"}</span> 
+          </div> }
+        </React.Fragment> :
+        <React.Fragment>
+          { TASKS_LIST.listDeactive.length === 0 && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
+            <img
+              alt={""}
+              src={logo}
+              style={{ 
+                display: 'block',
+                position: 'relative',
+                width: '80px',
+                opacity: 0.666,
+                marginBottom: '22px' 
+              }}
+            />
+            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Сейчас у вас нет отмененных заданий или заданий в черновиках"}</span> 
+          </div> }
+        </React.Fragment> }
+
         { typeShowTasks === 'active' ? <React.Fragment>
           { TASKS_LIST.list.map((item, index) => {
 
             if ( TASKS_LIST.showOne === item.id ) {
 
               return (
-                <TaskTable key={index}
+                <TaskTable key={item.id}
                   taskInitDate={item.date}
                   taskTitle={item.name}
                   taskDeadline={item.deadline}
@@ -386,7 +438,7 @@ const ExchangePage: React.FC = () => {
                   cardWidth={'100%'}
                   viewType={"custSelfView"}
                   marbo={"0px"}
-                  actions={[actualTask]}
+                  actions={[]}
                   actionsParams={[item.id]}
                   deal={{
                     type: item.coast.issafe === true ? 'safe' : 'simple',
@@ -400,11 +452,13 @@ const ExchangePage: React.FC = () => {
             }
 
           })}
+
         </React.Fragment> : <React.Fragment>
-          { TASKS_LIST.list.filter(task => task.status === 'backside').map((item, index) => {
+          
+          { TASKS_LIST.listDeactive.filter(task => task.status === 'searching').map((item, index) => {
 
             return (
-              <TaskTable key={index}
+              <TaskTable key={item.id}
                 taskInitDate={item.date}
                 taskTitle={item.name}
                 taskDeadline={item.deadline}
@@ -416,9 +470,9 @@ const ExchangePage: React.FC = () => {
                 taskDescription={item.description}
                 dealStatus={item.status}
                 cardWidth={'100%'}
-                viewType={item.status}
+                viewType={"backside"}
                 marbo={"20px"}
-                actions={[actualTask]}
+                actions={[]}
                 actionsParams={[item.id]}
                 deal={{
                   type: item.coast.issafe === true ? 'safe' : 'simple',
@@ -431,93 +485,122 @@ const ExchangePage: React.FC = () => {
 
           })}
         </React.Fragment> }
-        { !contentPlug && <React.Fragment>
-          { typeShowTasks === 'active' && <div style={divRowCSS}>
-            <TextFieldTitle style={{ fontWeight: 'bold', margin: '0', marginTop: '-2px' }}>
-              Отклики на задание <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>({ returnRespondCount() })</i>
-            </TextFieldTitle>
-            <SelectField 
-              placeholder={"Сортировать"}
-              params={{ width: 300, height: 50 }}
-              data={[
-                { value: '1', label: '[ options download ]' },
-              ]}
-              multy={false}
-              action={() => {}}
-              actionType={""}
-              actionParams={[]}
-              showIcon={true}
-              icon={null}
-              iconStyles={{
-                marginTop: '-12px',
-                marginLeft: '6px',
-                width: '34px',
-              }}
-            />
-          </div> }
 
-          { typeShowTasks === 'active' && <React.Fragment>
+        <React.Fragment>
 
-            { TASKS_LIST.list
-              .map((item: { 
-                id: string, 
-                name: string, 
-                responds: Array<{ 
-                  executorID: string,
-                  deadline: string,
-                  coast: string,
-                  preSolution: string,
-                  prePay: string,
-                  expert: any,
-                  expertCoast: string,
-                  comment: string,
-                }> }, index: number): ReactElement => {
+          { TASKS_LIST.list.map((item) => {
 
-              return (
+            if ( TASKS_LIST.showOne === item.id ) { return <React.Fragment>
+
+              { typeShowTasks === 'active' && TASKS_LIST.showOne !== '' && <div style={divRowCSS}>
+                <TextFieldTitle style={{ fontWeight: 'bold', margin: '0', marginTop: '-2px' }}>
+                  Отклики на задание <i style={{ fontStyle: 'normal', color: '#8E9DA7' }}>({ returnRespondCount() })</i>
+                </TextFieldTitle>
+                <SelectField 
+                  placeholder={"Сортировать"}
+                  params={{ width: 300, height: 50 }}
+                  data={[
+                    { value: '1', label: '[ options download ]' },
+                  ]}
+                  multy={false}
+                  action={() => {}}
+                  actionType={""}
+                  actionParams={[]}
+                  showIcon={true}
+                  icon={null}
+                  iconStyles={{
+                    marginTop: '-12px',
+                    marginLeft: '6px',
+                    width: '34px',
+                  }}
+                />
+              </div> }
+
+              { typeShowTasks === 'active' && TASKS_LIST.showOne !== '' && <React.Fragment>
+
                 <React.Fragment>
-                  { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
+                  { TASKS_LIST.list
+                    .map((item: { 
+                      id: string, 
+                      name: string, 
+                      responds: Array<{ 
+                        executorID: string,
+                        deadline: string,
+                        coast: string,
+                        preSolution: string,
+                        prePay: string,
+                        expert: any,
+                        expertCoast: string,
+                        comment: string,
+                      }> }, index: number): ReactElement => {
 
-                    false && console.log(itemm)
+                    return (
+                      <React.Fragment>
+                        { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
 
-                    return (<RespondTable 
-                      containerCSS={{
-                        w: '100%',
-                        h: 'auto',
-                        mb: '20px',
-                        bg: 'white'
-                      }}
-                      userName={itemm.executorID}
-                      userJob={"[ options download ]"}
-                      userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
-                      userStat={{
-                        completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
-                        failed: false ? returnUserStat(itemm.executorID)[2] : 0, 
-                        worked: false ? returnUserStat(itemm.executorID)[1] : 0
-                      }}
-                      userPrice={itemm.coast}
-                      userDeadline={itemm.deadline.slice(0, 10)}
-                      userLocation={"Екатеринбург"}
-                      userTags={returnUserTags(itemm.executorID)}
-                      userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
-                      respondDate={"[ options download ]&&[ options download ]"}
-                      discription={itemm.comment}
-                    ></RespondTable>)
+                          false && console.log(itemm)
 
+                          return (<RespondTable 
+                            containerCSS={{
+                              w: '100%',
+                              h: 'auto',
+                              mb: '20px',
+                              bg: 'white'
+                            }}
+                            userName={itemm.executorID}
+                            userJob={"[ options download ]"}
+                            userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
+                            userStat={{
+                              completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
+                              failed: false ? returnUserStat(itemm.executorID)[2] : 0, 
+                              worked: false ? returnUserStat(itemm.executorID)[1] : 0
+                            }}
+                            userPrice={itemm.coast}
+                            userDeadline={itemm.deadline.slice(0, 10)}
+                            userLocation={"Екатеринбург"}
+                            userTags={returnUserTags(itemm.executorID)}
+                            userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
+                            respondDate={"[ options download ]&&[ options download ]"}
+                            discription={itemm.comment}
+                          ></RespondTable>)
+
+                        })}
+                      </React.Fragment>
+                    )
                   })}
                 </React.Fragment>
-              )
-
-            })}
-          </React.Fragment> }
-
-          <PagintationContainer>
-            <span style={showMoreButtonCSS}>Загрузить еще</span>
-            <Pagintation count={
-              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
-              ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
-            }></Pagintation>
-          </PagintationContainer>
-        </React.Fragment> }
+              </React.Fragment> }
+          </React.Fragment> }})}
+          
+          { TASKS_LIST.list.map((item) => {
+            if ( TASKS_LIST.showOne === item.id ) { 
+              return (
+                <React.Fragment>
+                  { typeShowTasks === 'active' && TASKS_LIST.showOne !== '' &&
+                    <React.Fragment>
+                      { TASKS_LIST.list.length > 0 && <PagintationContainer>
+                        <span style={showMoreButtonCSS}>Загрузить еще</span>
+                        <Pagintation count={
+                          ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+                          ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+                        }></Pagintation>
+                      </PagintationContainer> }
+                    </React.Fragment> }
+                </React.Fragment>
+              ) 
+            }
+          })}
+          { typeShowTasks === 'noactive' && 
+            <React.Fragment>
+              { TASKS_LIST.listDeactive.length > 0 && <PagintationContainer>
+                <span style={showMoreButtonCSS}>Загрузить еще</span>
+                <Pagintation count={
+                  ( TASKS_LIST.listDeactive.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+                  ( TASKS_LIST.listDeactive.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+                }></Pagintation>
+              </PagintationContainer> }
+            </React.Fragment> }
+        </React.Fragment>
 
       </CustExecContentInnerArea>
     </ContentArea>

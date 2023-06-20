@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import RequestActionsComponent from '../../services/request.service'
 import SelectField from '../../comps/select/SelectField'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -112,6 +113,9 @@ const ExchangePage: React.FC = () => {
     }
 
   }, [ localActualTask ])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(true)) }, [])
 
   return (
     <ContentArea
