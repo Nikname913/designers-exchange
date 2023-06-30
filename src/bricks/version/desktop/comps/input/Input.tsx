@@ -158,7 +158,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   })
 
   const CustomTextField = styled(TextField)({
-    '& .MuiInputLabel-root': {}, /* placeholder стилизуется тут */
+    '& .MuiInputLabel-root': {}, 
+    // ----------------------------------------------------------------
+    // placeholder стилизуется в строке выше
+    // ----------------------------------------------------------------
     '& .MuiInputLabel-shrink': {
       marginLeft: labelShrinkLeft,
     },

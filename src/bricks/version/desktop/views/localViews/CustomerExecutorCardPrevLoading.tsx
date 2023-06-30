@@ -209,7 +209,7 @@ const CustomerExecutorCardPreviewLoading: React.FC<ICustExecCardPrevProps> = (
         </CardWrapperContentLine>
         <CardWrapperContentLineTags marginTop={"34px"}>
 
-          { userTags.map((item, index) => {
+          { userTags && userTags.map((item, index) => {
 
             if ( index < tagsLimit ) {
 
@@ -225,7 +225,7 @@ const CustomerExecutorCardPreviewLoading: React.FC<ICustExecCardPrevProps> = (
 
           { tagsLimit === 4 && 
             <React.Fragment>
-              { userTags.length > 4 && <SpecializationTag onClick={fullTagslimit} backgroundColor={blueColor3}>
+              { userTags && userTags.length > 4 && <SpecializationTag onClick={fullTagslimit} backgroundColor={blueColor3}>
                 
                 {"+"}{ userTags.length - 4 }
               

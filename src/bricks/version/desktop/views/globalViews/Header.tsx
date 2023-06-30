@@ -198,7 +198,7 @@ const Header: React.FC = () => {
             alt={""}
             src={logo}
           />
-          <Logo style={{ fontSize: '30px' }}>BIRLOGO</Logo>
+          <Logo style={{ fontSize: '26px', letterSpacing: '3px' }}>ПРИЛОЖЕНИЕ</Logo>
         </div>
         <HeadMenu>
           <span style={menuItemStyle} onClick={() => navigate('/task-list-all')}>Биржа</span>
