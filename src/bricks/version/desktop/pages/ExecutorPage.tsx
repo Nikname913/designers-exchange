@@ -27,6 +27,13 @@ import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
 import defaultAvatar from '../../../img/stock/avatar.svg'
 
+import bearAvatar from '../../../img/avatars/bear.svg'
+import enotAvatar from '../../../img/avatars/enot.svg'
+import foxAvatar from '../../../img/avatars/fox.svg'
+import groupAvatar from '../../../img/avatars/group.svg'
+import manAvatar from '../../../img/avatars/man.svg'
+import womanAvatar from '../../../img/avatars/woman.svg'
+
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
 const { MenuContainer, TextFieldTitle, PagintationContainer } = cssAsideMenu
 
@@ -236,7 +243,7 @@ const ExecutorPage: React.FC = () => {
             placeholder={"Сортировать по специализации"}
             params={{ width: 300, mb: '11px', height: 58 }}
             data={[
-              { value: '1', label: '[ options download ]' },
+              { value: '1', label: 'Загрузка данных...' },
             ]}
             multy={true}
             action={() => {}}
@@ -262,7 +269,7 @@ const ExecutorPage: React.FC = () => {
           placeholder={"Местонахождение"}
           params={{ width: 300, mb: '2px', height: 58 }}
           data={[
-            { value: '1', label: '[ options download ]' },
+            { value: '1', label: 'Загрузка данных...' },
           ]}
           multy={false}
           action={() => {}}
@@ -341,9 +348,16 @@ const ExecutorPage: React.FC = () => {
               <CustomerExecutorCardPreview
                 key={index}
                 isDisabledMessage={false}
-                userName={ item.bio && item.bio.name + ' ' + item.bio.surname }
+                userName={ ( item.bio && item.bio.name !== item.bio.surname ) ? item.bio.name + ' ' + item.bio.surname : item.bio.name }
                 userId={item.clientId}
-                userAvatar={defaultAvatar}
+                userAvatar={
+                  item.avatar === '1' ? bearAvatar :
+                  item.avatar === '2' ? enotAvatar :
+                  item.avatar === '3' ? foxAvatar :
+                  item.avatar === '4' ? groupAvatar :
+                  item.avatar === '5' ? manAvatar :
+                  item.avatar === '6' ? womanAvatar : bearAvatar
+                }
                 userType={"EXECUTOR"}
                 userEmployment={""}
                 userLocation={ item.location && item.location.city }

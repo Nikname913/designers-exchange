@@ -41,7 +41,6 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const [ containerHeight, setContainerHeight ] = useState<string>('short')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState<string>('Показать больше')
-  const [ taskDescriptionLong, ] = useState<any>(taskDescription)
   const [ respondButtonText, setRespondButtonText ] = useState<string>('Откликнуться')
   const [ activatePreloader, setActivatePreloader ] = useState<boolean>(false)
   const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
@@ -324,7 +323,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               <div>
                 <p style={parCSS}>
                   <i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Описание: </i>
-                  {  containerHeight === 'short' ? taskDescription : taskDescriptionLong }
+                  {  containerHeight === 'short' ? taskDescription.slice(0, 180) + '...' : taskDescription }
                 </p>
               </div>
             </TACC.TextContentLine>

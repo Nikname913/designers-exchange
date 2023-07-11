@@ -8,7 +8,9 @@ export interface IRightContentReducer {
      'AgreementNewCC' | 
      'LawyerCC'       |
      'ArguementCC'    |
-     'EditProfileCC',
+     'EditProfileCC'  |
+     'EditProjectsCC' |
+     'EditEducationCC'
   scrollTop: number
 }
 

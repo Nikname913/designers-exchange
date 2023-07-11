@@ -319,7 +319,7 @@ const ExchangePage: React.FC = () => {
               color: typeShowTasks === 'noactive' ? greyColor2 : 'inherit',
               cursor: 'pointer' 
             }}
-          >Открытые задания ({ TASKS_LIST.list.filter(task => task.status === 'searching').length })</TextFieldTitle>
+          >Открытые задания ({ TASKS_LIST.list.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length })</TextFieldTitle>
           { typeShowTasks === 'active' && <img
             alt={""}
             src={arraySortFilter}
@@ -383,39 +383,41 @@ const ExchangePage: React.FC = () => {
         
         { contentPlug && <span style={{ margin: '66px auto 0px', color: 'gray' }}>{"В настоящий момент у вас нет активных заданий"}</span> }
         
-        { typeShowTasks === 'active' ? <React.Fragment>
-          { TASKS_LIST.showOne === '' && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
-            <img
-              alt={""}
-              src={logo}
-              style={{ 
-                display: 'block',
-                position: 'relative',
-                width: '80px',
-                opacity: 0.666,
-                marginBottom: '22px' 
-              }}
-            />
-            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Созданные вами задания находятся в списке меню слева"}</span>
-            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Открытые задания - задания, которые прямо сейчас доступны для откликов"}</span>
-            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Неактивные задания - задания, которые вы сняли с публикации и в настоящее время такие задания видны только вам"}</span> 
-          </div> }
-        </React.Fragment> :
-        <React.Fragment>
-          { TASKS_LIST.listDeactive.length === 0 && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
-            <img
-              alt={""}
-              src={logo}
-              style={{ 
-                display: 'block',
-                position: 'relative',
-                width: '80px',
-                opacity: 0.666,
-                marginBottom: '22px' 
-              }}
-            />
-            <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Сейчас у вас нет отмененных заданий или заданий в черновиках"}</span> 
-          </div> }
+        { !contentPlug && <React.Fragment>
+          { typeShowTasks === 'active' ? <React.Fragment>
+            { TASKS_LIST.showOne === '' && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
+              <img
+                alt={""}
+                src={logo}
+                style={{ 
+                  display: 'block',
+                  position: 'relative',
+                  width: '80px',
+                  opacity: 0.666,
+                  marginBottom: '22px' 
+                }}
+              />
+              <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Созданные вами задания находятся в списке меню слева"}</span>
+              <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Открытые задания - задания, которые прямо сейчас доступны для откликов"}</span>
+              <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Неактивные задания - задания, которые вы сняли с публикации и в настоящее время такие задания видны только вам"}</span> 
+            </div> }
+          </React.Fragment> :
+          <React.Fragment>
+            { TASKS_LIST.listDeactive.length === 0 && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '66px' }}>
+              <img
+                alt={""}
+                src={logo}
+                style={{ 
+                  display: 'block',
+                  position: 'relative',
+                  width: '80px',
+                  opacity: 0.666,
+                  marginBottom: '22px' 
+                }}
+              />
+              <span style={{ color: 'gray', width: '70%', textAlign: 'center', lineHeight: '24px' }}>{"Сейчас у вас нет отмененных заданий или заданий в черновиках"}</span> 
+            </div> }
+          </React.Fragment> }
         </React.Fragment> }
 
         { typeShowTasks === 'active' ? <React.Fragment>
@@ -500,7 +502,7 @@ const ExchangePage: React.FC = () => {
                   placeholder={"Сортировать"}
                   params={{ width: 300, height: 50 }}
                   data={[
-                    { value: '1', label: '[ options download ]' },
+                    { value: '1', label: 'Загрузка данных...' },
                   ]}
                   multy={false}
                   action={() => {}}
@@ -548,7 +550,7 @@ const ExchangePage: React.FC = () => {
                               bg: 'white'
                             }}
                             userName={itemm.executorID}
-                            userJob={"[ options download ]"}
+                            userJob={"Загрузка данных..."}
                             userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
                             userStat={{
                               completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
@@ -560,7 +562,7 @@ const ExchangePage: React.FC = () => {
                             userLocation={"Екатеринбург"}
                             userTags={returnUserTags(itemm.executorID)}
                             userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
-                            respondDate={"[ options download ]&&[ options download ]"}
+                            respondDate={"Загрузка данных...&&Загрузка данных..."}
                             discription={itemm.comment}
                           ></RespondTable>)
 

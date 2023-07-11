@@ -75,7 +75,7 @@ const DocumentLine: React.FC<IDocumentLineProps> = (props: IDocumentLineProps) =
           alt={""}
           src={semiMenu}
           style={{ cursor: 'pointer', marginLeft: '38px' }}
-          onClick={() => setShowMenu(true)}
+          onClick={() => setShowMenu(false)}
         />
 
         { showMenu && <div style={menuContainerCSS}>
@@ -105,7 +105,7 @@ const DocumentLine: React.FC<IDocumentLineProps> = (props: IDocumentLineProps) =
             alt={""}
             src={semiMenu}
             style={{ cursor: 'pointer', marginLeft: '38px' }}
-            onClick={() => setShowMenu(true)}
+            onClick={() => setShowMenu(false)}
           />
 
           { showMenu && <div style={menuContainerCSS}>

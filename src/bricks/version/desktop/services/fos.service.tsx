@@ -16,12 +16,19 @@ import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import css from '../styles/services/fosContainer.css'
 
+import bearAvatar from '../../../img/avatars/bear.svg'
+import enotAvatar from '../../../img/avatars/enot.svg'
+import foxAvatar from '../../../img/avatars/fox.svg'
+import groupAvatar from '../../../img/avatars/group.svg'
+import manAvatar from '../../../img/avatars/man.svg'
+import womanAvatar from '../../../img/avatars/woman.svg'
+
 import EmailIcon from '@mui/icons-material/Email'
 import closeIcon from '../../../img/icons/close.svg'
 import avatar from '../../../img/stock/avatar.svg'
 import cross from '../../../img/icons/greyCross.svg'
 import addUser from '../../../img/icons/addUser.svg'
-import download from '../../../img/icons/download.svg'
+import download from '../../../img/icons/download.png'
 import avatar1 from '../../../img/avatars/bear.svg'
 import avatar2 from '../../../img/avatars/enot.svg'
 import avatar3 from '../../../img/avatars/fox.svg'
@@ -40,9 +47,17 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const [ authDataPassError, setAuthDataPassError ] = useState(false)
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
+  const [ AVATAR_REQUEST, SET_AVATAR_REQUEST ] = useState(false)
   const [ RESPOND_REQUEST, SET_RESPOND_REQUEST ] = useState(false)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
+    .filter((executor: any) => executor.clientId === USER_ID)
+  const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
+    .filter((customer: any) => customer.clientId === USER_ID)
 
   const [ respondButtonInnerOne, setRespondButtonInnerOne ] = useState("Откликнуться")
+  const [ avatarNumber, setAvatarNumber ] = useState<string>('1')
 
   const AUTH_EMAIL = useAppSelector(state => state.enterReducer.email)
   const AUTH_PASSWORD = useAppSelector(state => state.enterReducer.password)
@@ -164,7 +179,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     position: 'relative',
     width: '600px',
     height: '200px',
-    borderRadius: '4px',
+    borderRadius: '8px',
     border: `2px dashed ${blueColor2}`,
     cursor: 'pointer',
     marginTop: '30px'
@@ -289,10 +304,27 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       }
 
   }
+
+  const changeAvatar = () => {
+
+    SET_AVATAR_REQUEST(true)
+    dispatch(setUpdating(true))
+    setTimeout(() => {
+
+      SET_AVATAR_REQUEST(false)
+
+    }, 1300)
+
+  }
   
   useEffect(() => { false && SET_AUTH_REQUEST(AUTH_REQUEST) }, [ AUTH_REQUEST ])
+  useEffect(() => { 
+    showType !== 'changeAvatar' && dispatch(setUpdating(false))
+    return () => {
+      dispatch(setUpdating(true)) 
+    } 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { dispatch(setUpdating(false)) }, [])
+  }, [ /* no deps */ ])
 
   return (
     <React.Fragment>
@@ -333,6 +365,20 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       
       /> }
 
+      { AVATAR_REQUEST && <RequestActionsComponent
+
+        callbackAction={success}
+        requestData={{
+          type: 'POST',
+          urlstring: '/change-user-avatar',
+          body: {
+            number: avatarNumber,
+            clientId: USER_ID
+          }
+        }}
+      
+      /> }
+
       <ShadowContainer 
         marginTop={scroll} 
         background={"rgba(0, 0, 0, 0.4)"}
@@ -358,7 +404,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Стоимость выполнения</span>
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine>
+                <RespondFromList.ContentLine style={{ alignItems: 'flex-start' }}>
                   <InputComponent
                     type={'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_FINISH'}
                     valueType='text'
@@ -366,7 +412,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"01 / 01 / 2023"}
+                    label={"10 / 08 / 2023"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -388,7 +434,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'55px'}
+                    heightValue={'50px'}
                     label={"Введите вашу стоимость"}
                     isError={false}
                     isDisabled={false}
@@ -399,11 +445,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '-7px',
+                      marginTop: '8px',
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '16px', marginTop: '13px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '16px', marginTop: '23px' }}>
                   <span style={spanTitleCSS}>Предварительное решение</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Сумма вашего аванса</span>
@@ -415,7 +461,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'55px'}
+                    heightValue={'50px'}
                     label={"Количество дней до решения"}
                     isError={false}
                     isDisabled={false}
@@ -436,7 +482,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'55px'}
+                    heightValue={'50px'}
                     label={"Введите сумму аванса"}
                     isError={false}
                     isDisabled={false}
@@ -451,12 +497,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '9px', marginTop: '14px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '9px', marginTop: '23px' }}>
                   <span style={spanTitleCSS}>Дата экспертизы</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Стоимость экспертизы</span>
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine>
+                <RespondFromList.ContentLine style={{ alignItems: 'flex-start' }}>
                   <InputComponent
                     type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
                     valueType='text'
@@ -464,7 +510,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     widthType={'%'}
                     widthValue={50}
                     heightValue={'50px'}
-                    label={"01 / 01 / 2023"}
+                    label={"10 / 08 / 2023"}
                     isError={false}
                     isDisabled={false}
                     labelShrinkLeft={"0px"}
@@ -486,7 +532,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     required={false}
                     widthType={'%'}
                     widthValue={50}
-                    heightValue={'55px'}
+                    heightValue={'50px'}
                     label={"Введите вашу стоимость"}
                     isError={false}
                     isDisabled={false}
@@ -497,11 +543,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       fontSize: '12px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginBottom: '-7px',
+                      marginTop: '8px',
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '16px', marginTop: '34px' }}>
+                <RespondFromList.ContentLine style={{ marginBottom: '18px', marginTop: '23px' }}>
                   <span style={spanTitleCSS}>Комментарий к отклику</span>
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine>
@@ -693,7 +739,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   placeholder={"Выбрать исполнителя"}
                   params={{ width: 300, height: 50 }}
                   data={[
-                    { value: '01', label: '[ options download ]'}
+                    { value: '01', label: 'Загрузка данных...'}
                   ]}
                   multy={false}
                   action={() => {}}
@@ -1717,12 +1763,63 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   />
                 </ChangeAvatar.CloseContainer>
                 <ChangeAvatar.ContentLine style={{ justifyContent: 'flex-start' }}>
-                  <div>
-                    <img
-                      alt={""}
-                      src={avatar}
-                      style={{ width: '150px' }}
-                    />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      width: '150px', 
+                      height: '150px',
+                      backgroundColor: 'rgb(217, 231, 240)',
+                      borderRadius: '50%',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    { USER_ROLE === 'EXECUTOR' &&
+                      <img
+                        alt={""}
+                        src={
+                          EXECUTOR[0].avatar === '1' ? bearAvatar :
+                          EXECUTOR[0].avatar === '2' ? enotAvatar :
+                          EXECUTOR[0].avatar === '3' ? foxAvatar :
+                          EXECUTOR[0].avatar === '4' ? groupAvatar :
+                          EXECUTOR[0].avatar === '5' ? manAvatar :
+                          EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                        }
+                        style={
+                          EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                          EXECUTOR[0].avatar === '2' ? { width: '100px',  } :
+                          EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                          EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                          EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                          EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                          { width: '100px', marginTop: '6px' }
+                        }
+                      /> 
+                    }
+                    { USER_ROLE === 'CUSTOMER' &&
+                      <img
+                        alt={""}
+                        src={
+                          CUSTOMER[0].avatar === '1' ? bearAvatar :
+                          CUSTOMER[0].avatar === '2' ? enotAvatar :
+                          CUSTOMER[0].avatar === '3' ? foxAvatar :
+                          CUSTOMER[0].avatar === '4' ? groupAvatar :
+                          CUSTOMER[0].avatar === '5' ? manAvatar :
+                          CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                        }
+                        style={
+                          CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                          CUSTOMER[0].avatar === '2' ? { width: '100px',  } :
+                          CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                          CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                          CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                          CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                          { width: '100px', marginTop: '6px' }
+                        }
+                      /> 
+                    }
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '30px' }}>
                     <span style={{ fontSize: '32px', marginBottom: '10px' }}>Аватар</span>
@@ -1730,7 +1827,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[0]}` }}
-                        onClick={() => setAvatarBorders([ blueColor2, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3 ])}
+                        onClick={() => {
+                          setAvatarNumber('1')
+                          setAvatarBorders([ blueColor2, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
@@ -1740,7 +1841,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       </div>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[1]}` }}
-                        onClick={() => setAvatarBorders([ greyColor3, blueColor2, greyColor3, greyColor3, greyColor3, greyColor3 ])}
+                        onClick={() => {
+                          setAvatarNumber('2')
+                          setAvatarBorders([ greyColor3, blueColor2, greyColor3, greyColor3, greyColor3, greyColor3 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
@@ -1750,17 +1855,30 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       </div>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[2]}` }}
-                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, blueColor2, greyColor3, greyColor3, greyColor3 ])}
+                        onClick={() => {
+                          setAvatarNumber('3')
+                          setAvatarBorders([ greyColor3, greyColor3, blueColor2, greyColor3, greyColor3, greyColor3 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
                           src={avatar3}
-                          style={{ ...miniAvatarCSS, marginBottom: '-3px' }}
+                          style={{
+                            display: 'block',
+                            position: 'relative',
+                            width: '66%', 
+                            marginBottom: '-5px'
+                           }}
                         />
                       </div>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[3]}` }}
-                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, blueColor2, greyColor3, greyColor3 ])}
+                        onClick={() => {
+                          setAvatarNumber('4')
+                          setAvatarBorders([ greyColor3, greyColor3, greyColor3, blueColor2, greyColor3, greyColor3 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
@@ -1770,7 +1888,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       </div>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[4]}` }}
-                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, blueColor2, greyColor3 ])}
+                        onClick={() => {
+                          setAvatarNumber('5')
+                          setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, blueColor2, greyColor3 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
@@ -1780,7 +1902,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       </div>
                       <div 
                         style={{ ...avatarContainerCSS, border: `3px solid ${avatarBorders[5]}` }}
-                        onClick={() => setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, blueColor2 ])}
+                        onClick={() => {
+                          setAvatarNumber('6')
+                          setAvatarBorders([ greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, blueColor2 ])
+                          changeAvatar()
+                        }}
                       >
                         <img
                           alt={""}
@@ -1796,7 +1922,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     <img
                       alt={""}
                       src={download}
-                      style={{ marginTop: '28px' }}
+                      style={{ marginTop: '28px', width: '95px', opacity: 0.6 }}
                     />
                     <span style={{ color: blueColor2, marginTop: '18px' }}>
                       <i style={{ fontStyle: 'normal', fontWeight: 600 }}>Выберите файл</i> или перетащите сюда
@@ -1805,8 +1931,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </ChangeAvatar.ContentLine>
                 <ChangeAvatar.ContentLine style={{ justifyContent: 'space-around', marginTop: '32px' }}>
                   <ButtonComponent
-                    inner={"Отправить на проверку"} 
-                    type='CONTAINED_DEFAULT' 
+                    inner={"Сохранить аватар"} 
+                    type='CONTAINED_DISABLED' 
                     action={validate}
                     actionData={null}
                     widthType={'px'}

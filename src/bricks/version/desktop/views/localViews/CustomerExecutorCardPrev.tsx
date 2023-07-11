@@ -11,6 +11,13 @@ import location from '../../../../img/icons/location.svg'
 import star from '../../../../img/icons/star.svg'
 import semiMenu from '../../../../img/icons/semiMenu.svg'
 
+import bearAvatar from '../../../../img/avatars/bear.svg'
+import enotAvatar from '../../../../img/avatars/enot.svg'
+import foxAvatar from '../../../../img/avatars/fox.svg'
+import groupAvatar from '../../../../img/avatars/group.svg'
+import manAvatar from '../../../../img/avatars/man.svg'
+import womanAvatar from '../../../../img/avatars/woman.svg'
+
 const { CardWrapper, 
   CardWrapperContentLine,
   CardWrapperContentLineTags,
@@ -82,12 +89,6 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     position: 'relative',
     height: '13.333px',
     marginRight: '6px'
-  }
-  const avatarCSS: React.CSSProperties = {
-    display: 'flex',
-    position: 'relative',
-    width: '100%',
-    boxSizing: 'border-box',
   }
   const ratingNumberCSS: React.CSSProperties = {
     display: 'block',
@@ -176,13 +177,82 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
         mar={marginRight}
       >
         <CardWrapperContentLine>
-          <UserAvatar>
-            <img
-              alt={""}
-              src={userAvatar}
-              style={avatarCSS}
+          <UserAvatar 
+            style={{
+              width: '84px',
+              height: '84px', 
+              borderRadius: '50%', 
+              backgroundColor: 'rgb(217, 231, 240)',
+            }}>
+              <div 
+                style={{
+                  width: '84px',
+                  height: '84px', 
+                  borderRadius: '50%',
+                  overflow: 'hidden', 
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                }}
+              >
+                <img
+                  alt={""}
+                  src={userAvatar}
+                  style={
+                    userAvatar === bearAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '58px',
+                      height: '58px', 
+                      boxSizing: 'border-box',
+                      marginTop: '6px'
+                    } : userAvatar === enotAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '58px',
+                      height: '58px', 
+                      boxSizing: 'border-box',
+                      marginTop: '2px'
+                    } : userAvatar === foxAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '55px',
+                      height: '55px', 
+                      boxSizing: 'border-box',
+                      marginTop: '2px'
+                    } : userAvatar === groupAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '75px',
+                      height: '75px', 
+                      boxSizing: 'border-box',
+                      marginTop: '20px'
+                    } : userAvatar === manAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '75px',
+                      height: '75px', 
+                      boxSizing: 'border-box',
+                      marginTop: '20px'
+                    } : userAvatar === womanAvatar ? {
+                      display: 'block',
+                      position: 'relative',
+                      width: '75px',
+                      height: '75px', 
+                      boxSizing: 'border-box',
+                      marginTop: '20px'
+                    } : {}
+                  }
+                />
+              </div>
+            <UserAvatarIsOnlineIndicator 
+              backgroundColor={ false ? onlineIndicatorColor : offlineIndicatorColor }
+              style={{
+                marginTop: '-17px',
+                marginLeft: '-22px',
+              }}
             />
-            <UserAvatarIsOnlineIndicator backgroundColor={false ? onlineIndicatorColor : offlineIndicatorColor}/>
           </UserAvatar>
           <UserTextInfo>
             <UserName>{ userName }</UserName>

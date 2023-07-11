@@ -16,10 +16,19 @@ export interface IUserContent {
       stat: Array<number>,
       tags: Array<string>,
       jobType: string,
-      role: string
+      role: string,
+      avatar?: string,
+      personalAvatar?: string,
+      alertData?: Array<any>,
+      portfolio?: Array<any>,
+      educationAndSkills?: Array<any>
     }>,
     listCustomers: Array<{
-      docs: any,
+      docs: any | Array<any>,
+      spec?: Array<string>,
+      reviews?: Array<any>,
+      aboutText?: string,
+      faceType?: string,
       mail?: string | number | boolean | undefined,
       number?: string | number | boolean | undefined,
       bio?: any,
@@ -29,7 +38,12 @@ export interface IUserContent {
       stat: Array<number>,
       tags: Array<string>,
       jobType: string,
-      role: string
+      role: string,
+      avatar?: string,
+      personalAvatar?: string,
+      alertData?: Array<any>,
+      portfolio?: Array<any>,
+      educationAndSkills?: Array<any>
     }>
   }
 }

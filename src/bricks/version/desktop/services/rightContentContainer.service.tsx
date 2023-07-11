@@ -9,14 +9,25 @@ import Switch from '@mui/material/Switch'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
+import Checkbox from '@mui/material/Checkbox'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
+import SelectFieldPercent from '../comps/select/SelectFieldPercentWidth'
 import ChatMessagesContainer from './chatMessagesContainer.service'
 import CommunicationTable from '../views/localViews/CommunicationTable'
 import ChapterController from '../views/localViews/СhapterController'
 import { IRightContentContainer } from '../../../models-ts/services/right-content-container-models'
+import RequestActionsComponent from './request.service'
 import css from '../styles/services/rightContentContainer.css'
+
+import bearAvatar from '../../../img/avatars/bear.svg'
+import enotAvatar from '../../../img/avatars/enot.svg'
+import foxAvatar from '../../../img/avatars/fox.svg'
+import groupAvatar from '../../../img/avatars/group.svg'
+import manAvatar from '../../../img/avatars/man.svg'
+import womanAvatar from '../../../img/avatars/woman.svg'
 
 import closeIcon from '../../../img/icons/close.svg'
 import defaulrAvatar from '../../../img/stock/avatar.svg'
@@ -36,12 +47,22 @@ import wait from '../../../img/icons/wait.svg'
 import plus from '../../../img/icons/plus.svg'
 import infoGrey from '../../../img/icons/infoGrey.svg'
 
-const { ShadowContainer, ShadowContainerInner, ChatFork, MasterDocFork, EditProfileFork } = css
+const { ShadowContainer, 
+  ShadowContainerInner, 
+  ChatFork, 
+  MasterDocFork, 
+  EditProfileFork,
+  EditProjectsEducationFork } = css
 
 const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightContentContainer) => {
 
   const dispatch = useAppDispatch()
   const [ docviewFormat, setDocviewFormat ] = useState<'lines' | 'tiles'>('tiles')
+  const [ spec, setSpec ] = useState<string>('')
+
+  const [ SPEC_REQUEST, SET_SPEC_REQUEST ] = useState(false)
+  const [ ABOUT_TEXT_REQUEST, SET_ABOUT_TEXT_REQUEST ] = useState(false)
+
   const localText = 'Nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin'
 
   const { contentType,
@@ -61,6 +82,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const chatBackground = useAppSelector(state => state.theme.white)
   const inputBackground = useAppSelector(state => state.theme.white)
   const chatSubmitColor = useAppSelector(state => state.theme.blue2)
+  const blueColor2 = useAppSelector(state => state.theme.blue2)
   const blankCorrectColor = useAppSelector(state => state.theme.blue4)
 
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
@@ -69,6 +91,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     .filter((executor: any) => executor.clientId === USER_ID)
   const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
     .filter((customer: any) => customer.clientId === USER_ID)
+  const ABOUT_TEXT = useAppSelector(state => state.aboutTextReducer.aboutText)
 
   const avatarCSS: CSSProperties = {
     display: 'block',
@@ -200,21 +223,62 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     dispatch(setShowFOS(true))
     dispatch(setShowTypeFOS('changeAvatar'))
   }
-
-  !false && console.log(EXECUTOR)
-  !false && console.log(CUSTOMER)
+  function changeAboutText(): void {
+    SET_ABOUT_TEXT_REQUEST(true)
+    setTimeout(() => { SET_ABOUT_TEXT_REQUEST(false) }, 1300)
+  }
   
   useEffect(() => {
 
     false && console.log(USER_ROLE)
     false && console.log(USER_ID)
-    !false && console.log(EXECUTOR)
-    !false && console.log(CUSTOMER)
+    false && console.log(EXECUTOR)
+    false && console.log(CUSTOMER)
 
   }, [ CUSTOMER, EXECUTOR, USER_ID, USER_ROLE ])
 
+  useEffect(() => {
+
+    if ( spec ) {
+
+      SET_SPEC_REQUEST(true)
+      setTimeout(() => { SET_SPEC_REQUEST(false) }, 1300)
+
+    }
+
+  }, [ spec ])
+
   return (
     <React.Fragment>
+
+      { SPEC_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/change-user-spec',
+          body: {
+            clientId: USER_ID,
+            spec: spec,
+          }
+        }}
+      
+      /> }
+
+      { ( ABOUT_TEXT_REQUEST && ABOUT_TEXT !== '' ) && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/change-user-about',
+          body: {
+            clientId: USER_ID,
+            text: ABOUT_TEXT,
+          }
+        }}
+      
+      /> }
+
       <ShadowContainer marginTop={scroll}>
         <ShadowContainerInner>
 
@@ -2951,101 +3015,328 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </EditProfileFork.CloseIcon>
                   </EditProfileFork.CloseIconContainer>
                   <EditProfileFork.ContentLine>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: '60px' }}>
-                      <img
-                        alt={""}
-                        src={defaulrAvatar}
-                        style={{ width: '150px' }}
-                      />
+                    <div
+                      style={{
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        marginRight: '44px',
+                        justifyContent: 'space-around',
+                        width: '150px', 
+                        height: '150px',
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      { USER_ROLE === 'EXECUTOR' &&
+                        <img
+                          alt={""}
+                          src={
+                            EXECUTOR[0].avatar === '1' ? bearAvatar :
+                            EXECUTOR[0].avatar === '2' ? enotAvatar :
+                            EXECUTOR[0].avatar === '3' ? foxAvatar :
+                            EXECUTOR[0].avatar === '4' ? groupAvatar :
+                            EXECUTOR[0].avatar === '5' ? manAvatar :
+                            EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                          }
+                          style={
+                            EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
+                            EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
+                            EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
+                            EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
+                            EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
+                            EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                            { width: '100px', marginTop: '6px' }
+                          }
+                          onClick={changeAvatar}
+                        /> 
+                      }
+                      { USER_ROLE === 'CUSTOMER' &&
+                        <img
+                          alt={""}
+                          src={
+                            CUSTOMER[0].avatar === '1' ? bearAvatar :
+                            CUSTOMER[0].avatar === '2' ? enotAvatar :
+                            CUSTOMER[0].avatar === '3' ? foxAvatar :
+                            CUSTOMER[0].avatar === '4' ? groupAvatar :
+                            CUSTOMER[0].avatar === '5' ? manAvatar :
+                            CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                          }
+                          style={
+                            CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
+                            CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
+                            CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
+                            CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
+                            CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
+                            CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                            { width: '100px', marginTop: '6px' }
+                          }
+                          onClick={changeAvatar}
+                        /> 
+                      }
                       <span 
-                        style={{ color: chatSubmitColor, marginTop: '16px', cursor: 'pointer' }}
+                        style={{ color: chatSubmitColor, marginTop: '16px', cursor: 'pointer', opacity: 0 }}
                         onClick={changeAvatar}
                       >Сменить</span>
                     </div>
                     <div>
                       <EditProfileFork.ContentLine>
-                        <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Самозанятой гражданин</span>
+                        <span style={{ fontWeight: 'bold', marginLeft: '20px', letterSpacing: '3px' }}>
+                          { EXECUTOR.length > 0  ?
+                            EXECUTOR[0].faceType : 
+                            CUSTOMER.length > 0  ?
+                            CUSTOMER[0].faceType : '' }
+                        </span>
                       </EditProfileFork.ContentLine>
                       <EditProfileFork.ContentLine style={{ marginTop: '20px' }}>
-                        <InputComponent
-                          type={'TEXT_INPUT_OUTLINE'}
-                          valueType='text'
-                          required={false}
-                          widthType={'%'}
-                          widthValue={33}
-                          heightValue={'50px'}
-                          label={"Фамилия"}
-                          isError={false}
-                          isDisabled={false}
-                          labelShrinkLeft={"0px"}
-                          innerLabel={null}
-                          store={[ 
-                            EXECUTOR.length > 0     ?
-                            EXECUTOR[0].bio.surname : 
-                            CUSTOMER.length > 0     ?
-                            CUSTOMER[0].bio.surname : '', () => null ]}
-                          css={{
-                            fontSize: '12px',
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            marginBottom: '0px',
-                            marginTop: '0px',
-                            backgroundColor: 'white',
-                            marginRight: '20px'
-                          }}
-                        />
-                        <InputComponent
-                          type={'TEXT_INPUT_OUTLINE'}
-                          valueType='text'
-                          required={false}
-                          widthType={'%'}
-                          widthValue={33}
-                          heightValue={'50px'}
-                          label={"Имя"}
-                          isError={false}
-                          isDisabled={false}
-                          labelShrinkLeft={"0px"}
-                          innerLabel={null}
-                          store={[ 
-                            EXECUTOR.length > 0     ?
-                            EXECUTOR[0].bio.name : 
-                            CUSTOMER.length > 0     ?
-                            CUSTOMER[0].bio.name : '', () => null ]}
-                          css={{
-                            fontSize: '12px',
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            marginBottom: '0px',
-                            marginTop: '0px',
-                            backgroundColor: 'white',
-                            marginRight: '20px'
-                          }}
-                        />
-                        <InputComponent
-                          type={'TEXT_INPUT_OUTLINE'}
-                          valueType='text'
-                          required={false}
-                          widthType={'%'}
-                          widthValue={33}
-                          heightValue={'50px'}
-                          label={"Отчество"}
-                          isError={false}
-                          isDisabled={false}
-                          labelShrinkLeft={"0px"}
-                          innerLabel={null}
-                          store={[ 
-                            EXECUTOR.length > 0     ?
-                            EXECUTOR[0].bio.secondName : '', () => null ]}
-                          css={{
-                            fontSize: '12px',
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            marginBottom: '0px',
-                            marginTop: '0px',
-                            backgroundColor: 'white'
-                          }}
-                        />
+
+                        { EXECUTOR.length > 0 && 
+                        ( EXECUTOR[0].faceType === 'SELF_FACE' || EXECUTOR[0].faceType === 'PHIS_FACE' ) && 
+
+                          <React.Fragment>
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Фамилия"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.surname : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.surname : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Имя"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.name : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.name : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Отчество"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.secondName : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white'
+                              }}
+                            />
+                          </React.Fragment> }
+                        { EXECUTOR.length > 0 && 
+                        ( EXECUTOR[0].faceType !== 'SELF_FACE' && EXECUTOR[0].faceType !== 'PHIS_FACE' ) && 
+
+                          <React.Fragment>
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'px'}
+                              widthValue={550}
+                              heightValue={'50px'}
+                              label={"Название организации или ИП"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.name : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.name : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                          </React.Fragment> }
+
+                        { CUSTOMER.length > 0 && 
+                        ( CUSTOMER[0].faceType === 'SELF_FACE' || CUSTOMER[0].faceType === 'PHIS_FACE' ) && 
+
+                          <React.Fragment>
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Фамилия"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.surname : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.surname : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Имя"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.name : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.name : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'%'}
+                              widthValue={33}
+                              heightValue={'50px'}
+                              label={"Отчество"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.secondName : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white'
+                              }}
+                            />
+                          </React.Fragment> }
+                        { CUSTOMER.length > 0 && 
+                        ( CUSTOMER[0].faceType !== 'SELF_FACE' && CUSTOMER[0].faceType !== 'PHIS_FACE' ) && 
+
+                          <React.Fragment>
+                            <InputComponent
+                              type={'TEXT_INPUT_OUTLINE'}
+                              valueType='text'
+                              required={false}
+                              widthType={'px'}
+                              widthValue={550}
+                              heightValue={'50px'}
+                              label={"Название организации или ИП"}
+                              isError={false}
+                              isDisabled={false}
+                              labelShrinkLeft={"0px"}
+                              innerLabel={null}
+                              store={[ 
+                                EXECUTOR.length > 0     ?
+                                EXECUTOR[0].bio.name : 
+                                CUSTOMER.length > 0     ?
+                                CUSTOMER[0].bio.name : '', () => null ]}
+                              css={{
+                                fontSize: '12px',
+                                position: 'relative',
+                                boxSizing: 'border-box',
+                                marginBottom: '0px',
+                                marginTop: '0px',
+                                backgroundColor: 'white',
+                                marginRight: '20px'
+                              }}
+                            />
+                          </React.Fragment> }
                       </EditProfileFork.ContentLine>
+                      <span
+                        style={{
+                          display: 'block',
+                          position: 'relative',
+                          width: '600px',
+                          lineHeight: '22px',
+                          backgroundColor: 'rgb(253, 237, 237)',
+                          padding: '14px',
+                          paddingLeft: '20px',
+                          borderRadius: '4px',
+                          marginTop: '16px'
+                        }}
+                      >{"Внимание! Некоторые функции, такие, как изменение ФИО, навыка или квалификации, вызывают ошибки в дальнейшем отображении данных. Данные фукнции скрыты до момента, когда будут решены критические вопросы"}</span>
                     </div>
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '44px' }} />
@@ -3054,19 +3345,46 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
                     <SelectField 
-                      placeholder={"Выберите специализацию [ список временно сокращен ]"}
+                      placeholder={"Выберите новую специализацию [ временно одна ]"}
                       params={{ width: 1400, mb: '0px', height: 50 }}
                       data={[
-                        { value: 1, label: 'Геодезические изыскания' },
-                        { value: 2, label: 'Геологические изыскания' },
-                        { value: 3, label: 'Гидрометеорология' },
-                        { value: 4, label: 'Экологические изыскания' },
-                        { value: 5, label: 'Исторические изыскания' },
-                        { value: 6, label: 'Обследование констукций' },
+                        { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+                        { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+                        { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+                        { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+                        { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+                        { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+                        { value: 'Генеральный план', label: 'Генеральный план' },
+                        { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+                        { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+                        { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+                        { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+                        { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+                        { value: 'Электроснабжение', label: 'Электроснабжение' },
+                        { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+                        { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+                        { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+                        { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+                        { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+                        { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+                        { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+                        { value: 'Сети связи', label: 'Сети связи' },
+                        { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+                        { value: 'Газоснабжение', label: 'Газоснабжение' },
+                        { value: 'Технология производства', label: 'Технология производства' },
+                        { value: 'Автоматизация', label: 'Автоматизация' },
+                        { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+                        { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+                        { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+                        { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+                        { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+                        { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+                        { value: 'Сметная документация', label: 'Сметная документация' },
+                        { value: 'Иная документация', label: 'Иная документация' }
                       ]}
-                      multy={true}
-                      action={() => {}}
-                      actionType={""}
+                      multy={false}
+                      action={setSpec}
+                      actionType={"AUTH_SPEC_TYPE"}
                       actionParams={[]}
                       showIcon={true}
                       icon={null}
@@ -3080,15 +3398,15 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <EditProfileFork.ContentLine style={{ marginTop: '30px' }}>
                     <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Мои навыки</span>
                   </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '14px' }}>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
                     <RadioGroup
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
                       name="row-radio-buttons-group"
                     >
-                      <FormControlLabel value="female" control={<Radio />} label="2D" />
-                      <FormControlLabel value="male" control={<Radio />} label="3D" />
-                      <FormControlLabel value="other" control={<Radio />} label="BIM" />
+                      <FormControlLabel value="female" control={<Radio disabled />} label="2D" />
+                      <FormControlLabel value="male" control={<Radio disabled />} label="3D" />
+                      <FormControlLabel value="other" control={<Radio checked disabled />} label="BIM" />
                     </RadioGroup>
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
@@ -3096,7 +3414,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE'}
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3104,10 +3422,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       heightValue={'50px'}
                       label={"Введите описание"}
                       isError={false}
-                      isDisabled={true}
+                      isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "", () => null ]}
+                      store={[ "ABOUT_TEXT", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3118,16 +3436,41 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </EditProfileFork.ContentLine>
-                  <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '44px' }} />
+                  <EditProfileFork.ContentLine style={{ marginTop: '23px' }}>
+                    <ButtonComponent
+                      inner={"Обновить информацию"} 
+                      type='CONTAINED_DEFAULT' 
+                      action={changeAboutText}
+                      actionData={null}
+                      widthType={'px'}
+                      widthValue={270}
+                      children={""}
+                      childrenCss={undefined}
+                      iconSrc={null}
+                      iconCss={undefined}
+                      muiIconSize={30}
+                      MuiIconChildren={ArrowUpwardIcon}
+                      css={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        padding: '4px',
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        color: 'black',
+                        width: '56px',
+                        height: '43px',
+                      }}
+                    />
+                  </EditProfileFork.ContentLine>
+                  <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '42px' }} />
                   <EditProfileFork.ContentLine style={{ marginTop: '0px' }}>
                     <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Пройти проверку квалификации</span>
                   </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '16px', marginBottom: '34px' }}>
+                  <EditProfileFork.ContentLine style={{ marginTop: '16px', marginBottom: '11px' }}>
                     <SelectField 
                       placeholder={"Выберите из списка"}
                       params={{ width: 420, mb: '0px', height: 50 }}
                       data={[
-                        { value: '1', label: '[ options download ]' },
+                        { value: '1', label: 'Загрузка списка квалификаций...' },
                       ]}
                       multy={true}
                       action={() => {}}
@@ -3135,6 +3478,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       actionParams={[]}
                       showIcon={true}
                       icon={null}
+                      isDisabled
                       iconStyles={{
                         marginTop: '-12px',
                         marginLeft: '6px',
@@ -3142,13 +3486,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </EditProfileFork.ContentLine>
-                  { Array(2)
+                  { Array(0)
                     .fill({ 
                       status: 'WHITE', 
                       data: { 
-                        name: 'Акт_выполненных работ.pdf', 
-                        date: '29.02.2023', 
-                        statusName: 'Подписан' 
+                        name: 'Ошибка сервера - список документов пуст..', 
+                        date: '01.01.2023', 
+                        statusName: 'Ожидание' 
                       }
                     }).map((item, index) => {
 
@@ -3163,7 +3507,926 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                   })}
                 </EditProfileFork.Container>
-            </React.Fragment>: <React.Fragment></React.Fragment> }
+            </React.Fragment> 
+            : contentType === 'EditProjectsCC'
+            
+            /* ---------------------------------------- */
+            /* базовое окно для добавления портфолио
+            /* ---------------------------------------- */
+
+            ? <React.Fragment>
+                <EditProjectsEducationFork.Container style={{ paddingTop: '40px', height: 'auto', minHeight: '100vh' }} backgroundColor={backgroundColor}>
+                  <EditProjectsEducationFork.CloseIconContainer>
+                    <EditProjectsEducationFork.CloseIcon onClick={showrightContent}>
+                      <img
+                        alt={""} 
+                        src={closeIcon}  
+                      />
+                    </EditProjectsEducationFork.CloseIcon>
+                  </EditProjectsEducationFork.CloseIconContainer>
+                  <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
+                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Добавление выполненного проекта</h3>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Введите название проекта"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
+                    <div style={{ display: 'block', width: '27%' }}>
+                      <span style={{ color: 'rgb(81, 102, 116)' }}>Начало проекта</span>
+                    </div>
+                    <div style={{ display: 'block', width: '23%' }} />
+                    <span  style={{ display: 'block', width: '16px' }}/>
+                    <div style={{ display: 'block', width: '27%' }}>
+                      <span style={{ color: 'rgb(81, 102, 116)' }}>Окончание проекта</span>
+                    </div>
+                    <div style={{ display: 'block', width: '23%' }} />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                    <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
+                      <SelectFieldPercent 
+                        placeholder={"Начало проекта"}
+                        params={{ width: 100, mb: '0px', height: 50 }}
+                        data={[
+                          { value: '1', label: 'Январь' },
+                          { value: '2', label: 'Февраль' },
+                          { value: '3', label: 'Март' },
+                          { value: '4', label: 'Апрель' },
+                          { value: '5', label: 'Май' },
+                          { value: '6', label: 'Июнь' },
+                          { value: '7', label: 'Июль' },
+                          { value: '8', label: 'Август' },
+                          { value: '9', label: 'Сентябрь' },
+                          { value: '10', label: 'Октябрь' },
+                          { value: '11', label: 'Ноябрь' },
+                          { value: '12 ', label: 'Декабрь' },
+                        ]}
+                        multy={false}
+                        action={setSpec}
+                        actionType={"AUTH_SPEC_TYPE"}
+                        actionParams={[]}
+                        showIcon={true}
+                        icon={null}
+                        iconStyles={{
+                          marginTop: '-12px',
+                          marginLeft: '6px',
+                          width: '34px',
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'block', width: '23%' }}>
+                      <InputComponent
+                        type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                        valueType='text'
+                        required={false}
+                        widthType={'%'}
+                        widthValue={100}
+                        heightValue={'50px'}
+                        label={"Введите год"}
+                        isError={false}
+                        isDisabled={false}
+                        labelShrinkLeft={"0px"}
+                        innerLabel={null}
+                        store={[ "ABOUT_TEXT", () => null ]}
+                        css={{
+                          fontSize: '12px',
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          marginBottom: '0px',
+                          marginTop: '0px',
+                          backgroundColor: 'white'
+                        }}
+                      />
+                    </div>
+                    <span  style={{ display: 'block', width: '16px' }}/>
+                    <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
+                      <SelectFieldPercent 
+                        placeholder={"Начало проекта"}
+                        params={{ width: 100, mb: '0px', height: 50 }}
+                        data={[
+                          { value: '1', label: 'Январь' },
+                          { value: '2', label: 'Февраль' },
+                          { value: '3', label: 'Март' },
+                          { value: '4', label: 'Апрель' },
+                          { value: '5', label: 'Май' },
+                          { value: '6', label: 'Июнь' },
+                          { value: '7', label: 'Июль' },
+                          { value: '8', label: 'Август' },
+                          { value: '9', label: 'Сентябрь' },
+                          { value: '10', label: 'Октябрь' },
+                          { value: '11', label: 'Ноябрь' },
+                          { value: '12 ', label: 'Декабрь' },
+                        ]}
+                        multy={false}
+                        action={setSpec}
+                        actionType={"AUTH_SPEC_TYPE"}
+                        actionParams={[]}
+                        showIcon={true}
+                        icon={null}
+                        iconStyles={{
+                          marginTop: '-12px',
+                          marginLeft: '6px',
+                          width: '34px',
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: 'block', width: '23%' }}>
+                      <InputComponent
+                        type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                        valueType='text'
+                        required={false}
+                        widthType={'%'}
+                        widthValue={100}
+                        heightValue={'50px'}
+                        label={"Введите год"}
+                        isError={false}
+                        isDisabled={false}
+                        labelShrinkLeft={"0px"}
+                        innerLabel={null}
+                        store={[ "ABOUT_TEXT", () => null ]}
+                        css={{
+                          fontSize: '12px',
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          marginBottom: '0px',
+                          marginTop: '0px',
+                          backgroundColor: 'white'
+                        }}
+                      />
+                    </div>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Сумма оплаты по акту"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Сумма оплаты по акту"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row', 
+                        alignItems: 'center', 
+                        marginTop: '20px',
+                        marginBottom: '20px', 
+                      }}
+                    >
+                      <span 
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-around',
+                          position: 'relative',
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: 'rgb(217, 231, 240)',
+                          marginRight: '10px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <img
+                          alt={""}
+                          src={plus}
+                          style={{ display: 'block', width: '14px' }}
+                        />
+                      </span>
+                      <span>Добавить еще один акт</span>
+                    </div>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginBottom: '8px' }}>
+                    <span style={{ color: '#516674' }}>
+                      <i style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Вложения</i> ( необязательно )
+                    </span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine>
+                    <span style={{ color: '#516674', lineHeight: '20px' }}>
+                      Добавьте файлы по проекту в формате .pdf или .jpg<br/>
+                      Максимально 3 файла, до 100 Мб<br/>
+                      Превью добавится из первого загруженного файла
+                    </span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
+                    <ButtonComponent
+                      inner={"Добавить файлы"} 
+                      type='CONTAINED_DEFAULT' 
+                      action={changeAboutText}
+                      actionData={null}
+                      widthType={'px'}
+                      widthValue={270}
+                      children={""}
+                      childrenCss={undefined}
+                      iconSrc={null}
+                      iconCss={undefined}
+                      muiIconSize={30}
+                      MuiIconChildren={ArrowUpwardIcon}
+                      css={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        padding: '4px',
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        color: 'black',
+                        width: '56px',
+                        height: '43px',
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px', marginBottom: '8px' }}>
+                    <span 
+                      style={{ color: '#516674' }}>
+                        <i style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Вложения и превью</i> ( необязательно )
+                      </span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine>
+                    <span style={{ color: '#516674', lineHeight: '20px' }}>
+                      Добавьте файлы по проекту в формате .pdf или .jpg<br/>
+                      Максимально 3 файла, до 100 Мб<br/>
+                      Превью добавится из первого загруженного файла
+                    </span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
+                    <ButtonComponent
+                      inner={"Добавить файлы"} 
+                      type='CONTAINED_DEFAULT' 
+                      action={changeAboutText}
+                      actionData={null}
+                      widthType={'px'}
+                      widthValue={270}
+                      children={""}
+                      childrenCss={undefined}
+                      iconSrc={null}
+                      iconCss={undefined}
+                      muiIconSize={30}
+                      MuiIconChildren={ArrowUpwardIcon}
+                      css={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        padding: '4px',
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        color: 'black',
+                        width: '56px',
+                        height: '43px',
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '28px' }}>
+                    <span style={{ fontWeight: 'bold' }}>Заполните параметры объекта</span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Общая площадь, кв.м."}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '16px' }}/>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Высота объекта, м."}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Общая площадь, кв.м."}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '16px' }}/>
+                    <SelectFieldPercent 
+                      placeholder={"Регион проекта"}
+                      params={{ width: 50, mb: '0px', height: 50 }}
+                      data={[
+                        { value: '1', label: 'Загрузка данных...' },
+                      ]}
+                      multy={false}
+                      action={setSpec}
+                      actionType={"AUTH_SPEC_TYPE"}
+                      actionParams={[]}
+                      showIcon={true}
+                      icon={null}
+                      iconStyles={{
+                        marginTop: '-12px',
+                        marginLeft: '6px',
+                        width: '34px',
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '26px' }}>
+                    <span style={{ fontWeight: 'bold' }}>Заполните описание объекта</span>
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Подробно опишите ваши задачи и обязанности на проекте"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ "ABOUT_TEXT", () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                    <SelectFieldPercent 
+                      placeholder={"Специализации вашего проекта"}
+                      params={{ width: 100, mb: '0px', height: 50 }}
+                      data={[
+                        { value: '1', label: 'Загрузка данных...' },
+                      ]}
+                      multy={false}
+                      action={setSpec}
+                      actionType={"AUTH_SPEC_TYPE"}
+                      actionParams={[]}
+                      showIcon={true}
+                      icon={null}
+                      iconStyles={{
+                        marginTop: '-12px',
+                        marginLeft: '6px',
+                        width: '34px',
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                  <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '30px 0px 40px' }}>
+                    <ButtonComponent
+                      inner={"Сохранить новый проект"} 
+                      type='CONTAINED_DEFAULT' 
+                      action={() => {}}
+                      actionData={null}
+                      widthType={'px'}
+                      widthValue={240}
+                      children={""}
+                      childrenCss={undefined}
+                      iconSrc={null}
+                      iconCss={undefined}
+                      muiIconSize={30}
+                      MuiIconChildren={ArrowUpwardIcon}
+                      css={{
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        padding: '4px',
+                        backgroundColor: blueColor2,
+                        color: 'white',
+                        width: '56px',
+                        height: '43px',
+                      }}
+                    />
+                  </EditProjectsEducationFork.ContentLine>
+                </EditProjectsEducationFork.Container>
+              </React.Fragment>
+              : contentType === 'EditEducationCC'
+            
+              /* ---------------------------------------- */
+              /* базовое окно для добавления опыа работы
+              /* ---------------------------------------- */
+  
+              ? <React.Fragment>
+                  <EditProjectsEducationFork.Container style={{ paddingTop: '40px', height: 'auto', minHeight: '100vh' }} backgroundColor={backgroundColor}>
+                    <EditProjectsEducationFork.CloseIconContainer>
+                      <EditProjectsEducationFork.CloseIcon onClick={showrightContent}>
+                        <img
+                          alt={""} 
+                          src={closeIcon}  
+                        />
+                      </EditProjectsEducationFork.CloseIcon>
+                    </EditProjectsEducationFork.CloseIconContainer>
+                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
+                      <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Данные об образовании</h3>
+                    </EditProjectsEducationFork.ContentLine>
+
+                    <React.Fragment>  
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={77}
+                          heightValue={'50px'}
+                          label={"Название курса или учебного заведения"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                        <span style={{ display: 'block', width: '16px' }}/>
+                        <div style={{ display: 'block', width: '23%' }}>
+                          <InputComponent
+                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            valueType='text'
+                            required={false}
+                            widthType={'%'}
+                            widthValue={100}
+                            heightValue={'50px'}
+                            label={"Год окончания"}
+                            isError={false}
+                            isDisabled={false}
+                            labelShrinkLeft={"0px"}
+                            innerLabel={null}
+                            store={[ "ABOUT_TEXT", () => null ]}
+                            css={{
+                              fontSize: '12px',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              marginBottom: '0px',
+                              marginTop: '0px',
+                              backgroundColor: 'white'
+                            }}
+                          />
+                        </div>
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Специальность или повышение квалификации"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                    </React.Fragment>
+
+                    <EditProjectsEducationFork.ContentLine>
+                      <div 
+                        style={{ 
+                          display: 'flex', 
+                          flexDirection: 'row', 
+                          alignItems: 'center', 
+                          marginTop: '20px',
+                          marginBottom: '20px', 
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <span 
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            position: 'relative',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgb(217, 231, 240)',
+                            marginRight: '10px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <img
+                            alt={""}
+                            src={plus}
+                            style={{ display: 'block', width: '14px' }}
+                          />
+                        </span>
+                        <span>Добавить место обучения</span>
+                      </div>
+                    </EditProjectsEducationFork.ContentLine>
+                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px', marginTop: '8px' }}>
+                      <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Опыт работы</h3>
+                    </EditProjectsEducationFork.ContentLine>
+
+                    <React.Fragment>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Нвазание организации"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Сайт организации"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                        <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
+                          <SelectFieldPercent 
+                            placeholder={"Начало работы"}
+                            params={{ width: 100, mb: '0px', height: 50 }}
+                            data={[
+                              { value: '1', label: 'Январь' },
+                              { value: '2', label: 'Февраль' },
+                              { value: '3', label: 'Март' },
+                              { value: '4', label: 'Апрель' },
+                              { value: '5', label: 'Май' },
+                              { value: '6', label: 'Июнь' },
+                              { value: '7', label: 'Июль' },
+                              { value: '8', label: 'Август' },
+                              { value: '9', label: 'Сентябрь' },
+                              { value: '10', label: 'Октябрь' },
+                              { value: '11', label: 'Ноябрь' },
+                              { value: '12 ', label: 'Декабрь' },
+                            ]}
+                            multy={false}
+                            action={setSpec}
+                            actionType={"AUTH_SPEC_TYPE"}
+                            actionParams={[]}
+                            showIcon={true}
+                            icon={null}
+                            iconStyles={{
+                              marginTop: '-12px',
+                              marginLeft: '6px',
+                              width: '34px',
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'block', width: '23%' }}>
+                          <InputComponent
+                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            valueType='text'
+                            required={false}
+                            widthType={'%'}
+                            widthValue={100}
+                            heightValue={'50px'}
+                            label={"Введите год"}
+                            isError={false}
+                            isDisabled={false}
+                            labelShrinkLeft={"0px"}
+                            innerLabel={null}
+                            store={[ "ABOUT_TEXT", () => null ]}
+                            css={{
+                              fontSize: '12px',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              marginBottom: '0px',
+                              marginTop: '0px',
+                              backgroundColor: 'white'
+                            }}
+                          />
+                        </div>
+                        <span style={{ display: 'block', width: '16px' }}/>
+                        <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
+                          <SelectFieldPercent 
+                            placeholder={"Окончание работы"}
+                            params={{ width: 100, mb: '0px', height: 50 }}
+                            data={[
+                              { value: '1', label: 'Январь' },
+                              { value: '2', label: 'Февраль' },
+                              { value: '3', label: 'Март' },
+                              { value: '4', label: 'Апрель' },
+                              { value: '5', label: 'Май' },
+                              { value: '6', label: 'Июнь' },
+                              { value: '7', label: 'Июль' },
+                              { value: '8', label: 'Август' },
+                              { value: '9', label: 'Сентябрь' },
+                              { value: '10', label: 'Октябрь' },
+                              { value: '11', label: 'Ноябрь' },
+                              { value: '12 ', label: 'Декабрь' },
+                            ]}
+                            multy={false}
+                            action={setSpec}
+                            actionType={"AUTH_SPEC_TYPE"}
+                            actionParams={[]}
+                            showIcon={true}
+                            icon={null}
+                            iconStyles={{
+                              marginTop: '-12px',
+                              marginLeft: '6px',
+                              width: '34px',
+                            }}
+                          />
+                        </div>
+                        <div style={{ display: 'block', width: '23%' }}>
+                          <InputComponent
+                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            valueType='text'
+                            required={false}
+                            widthType={'%'}
+                            widthValue={100}
+                            heightValue={'50px'}
+                            label={"Введите год"}
+                            isError={false}
+                            isDisabled={false}
+                            labelShrinkLeft={"0px"}
+                            innerLabel={null}
+                            store={[ "ABOUT_TEXT", () => null ]}
+                            css={{
+                              fontSize: '12px',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              marginBottom: '0px',
+                              marginTop: '0px',
+                              backgroundColor: 'white'
+                            }}
+                          />
+                        </div>
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '6px' }}>
+                        <div style={{ display: 'block', width: '27%' }} />
+                        <div style={{ display: 'block', width: '23%' }} />
+                        <span style={{ display: 'block', width: '16px' }}/>
+                        <div style={{ display: 'block', width: '27%' }}>
+                          <FormGroup style={{ width: '100%', fontSize: '13px' }}>
+                            <FormControlLabel 
+                              control={
+                                <Checkbox 
+                                  checked={false} 
+                                  onChange={() => {}} 
+                                />
+                              } 
+                              label="По настоящее время"
+                            />
+                          </FormGroup>
+                        </div>
+                        <div style={{ display: 'block', width: '23%' }} />
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Ваша должность в организации"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          valueType='text'
+                          required={false}
+                          widthType={'%'}
+                          widthValue={100}
+                          heightValue={'50px'}
+                          label={"Опишите подробно ваши обязанности на этой должнности"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          store={[ "ABOUT_TEXT", () => null ]}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '0px',
+                            marginTop: '0px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine>
+                        <div 
+                          style={{ 
+                            display: 'flex', 
+                            flexDirection: 'row', 
+                            alignItems: 'center', 
+                            marginTop: '20px',
+                            marginBottom: '20px', 
+                            cursor: 'pointer' 
+                          }}
+                        >
+                          <span 
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-around',
+                              position: 'relative',
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              backgroundColor: 'rgb(217, 231, 240)',
+                              marginRight: '10px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <img
+                              alt={""}
+                              src={plus}
+                              style={{ display: 'block', width: '14px' }}
+                            />
+                          </span>
+                          <span>Добавить место работы</span>
+                        </div>
+                      </EditProjectsEducationFork.ContentLine>
+                      <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '30px 0px 40px' }}>
+                        <ButtonComponent
+                          inner={"Сохранить изменения"} 
+                          type='CONTAINED_DEFAULT' 
+                          action={() => {}}
+                          actionData={null}
+                          widthType={'px'}
+                          widthValue={240}
+                          children={""}
+                          childrenCss={undefined}
+                          iconSrc={null}
+                          iconCss={undefined}
+                          muiIconSize={30}
+                          MuiIconChildren={ArrowUpwardIcon}
+                          css={{
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            padding: '4px',
+                            backgroundColor: blueColor2,
+                            color: 'white',
+                            width: '56px',
+                            height: '43px',
+                          }}
+                        />
+                      </EditProjectsEducationFork.ContentLine>
+                    </React.Fragment>
+                    
+                  </EditProjectsEducationFork.Container>
+                </React.Fragment> : <React.Fragment></React.Fragment> }
 
         </ShadowContainerInner>
       </ShadowContainer>

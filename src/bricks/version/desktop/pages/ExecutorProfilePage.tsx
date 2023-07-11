@@ -16,6 +16,15 @@ import cssProfileHeader from '../styles/views/profileHeader.css'
 import cssProfileAside from '../styles/pages/execProfilePageAside.css'
 import cssProfilePage from '../styles/pages/execProfilePage.css'
 import { CSSProperties } from 'styled-components'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
+
+import bearAvatar from '../../../img/avatars/bear.svg'
+import enotAvatar from '../../../img/avatars/enot.svg'
+import foxAvatar from '../../../img/avatars/fox.svg'
+import groupAvatar from '../../../img/avatars/group.svg'
+import manAvatar from '../../../img/avatars/man.svg'
+import womanAvatar from '../../../img/avatars/woman.svg'
 
 import avatar from '../../../img/stock/avatar.svg'
 import avatarTwo from '../../../img/stock/avatarTwo.svg'
@@ -147,23 +156,61 @@ const ExecutorProfilePage: React.FC = () => {
       <HeaderContainer>
         <LeftContainer>
           <BootstrapTooltip 
-            title="Был в сети 13 мая в 16:00"
+            title="Server's error - code 500"
             TransitionComponent={Fade} 
             followCursor 
             arrow
           >
-            <img
-              alt={""}
-              src={avatar}
-              style={{ width: '150px' }}
-            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-around',
+                width: '150px', 
+                height: '150px',
+                backgroundColor: 'rgb(217, 231, 240)',
+                borderRadius: '50%',
+                overflow: 'hidden'
+              }}
+            >
+              <img
+                alt={""}
+                src={
+                  EXECUTOR[0].avatar === '1' ? bearAvatar :
+                  EXECUTOR[0].avatar === '2' ? enotAvatar :
+                  EXECUTOR[0].avatar === '3' ? foxAvatar :
+                  EXECUTOR[0].avatar === '4' ? groupAvatar :
+                  EXECUTOR[0].avatar === '5' ? manAvatar :
+                  EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                }
+                style={
+                  EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                  EXECUTOR[0].avatar === '2' ? { width: '100px',  } :
+                  EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                  EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                  EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                  EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                  { width: '100px', marginTop: '6px' }
+                }
+              />
+            </div>
           </BootstrapTooltip>
           <AvatarIndicator background={yelloColor}/>
         </LeftContainer>
         <RightContainer>
           <div style={flexDivCSS}>
             <ContentLine>
-              <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name + ' ' + EXECUTOR[0].bio.surname }</h2>
+              { ( EXECUTOR[0].faceType !== 'PHIS_FACE' && EXECUTOR[0].faceType !== 'SELF_FACE' ) 
+                  
+                && <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name }</h2>
+              
+              }
+              { ( EXECUTOR[0].faceType === 'PHIS_FACE' || EXECUTOR[0].faceType === 'SELF_FACE' ) 
+                
+                && <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name + ' ' + EXECUTOR[0].bio.surname }</h2>
+              
+              }
               <span style={{ marginLeft: '20px', marginRight: '12px', marginTop: '5px' }}>
                 <img
                   alt={""}
@@ -189,7 +236,7 @@ const ExecutorProfilePage: React.FC = () => {
               </span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
-              <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
+              <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
               <span 
@@ -513,7 +560,7 @@ const ExecutorProfilePage: React.FC = () => {
           </ReviewsContent> }
 
           { profileViewStep === 'portfolio' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('[ options download ]').map((item, index) => {
+            { Array(2).fill('Загрузка специализации..').map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
@@ -535,15 +582,23 @@ const ExecutorProfilePage: React.FC = () => {
               }}
             >{"BIM"}</span>
             <div style={{ width: '100%', marginTop: '20px' }}>
-              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>[ информация о работах пользователя ]</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Получение информации с сервера...</span>
             </div>
-            <div style={{ width: '100%', marginTop: '24px' }}>
-              <span style={{ lineHeight: '20px' }}>{"Vitae cum in imperdiet bibendum porttitor orci tellus eu. Morbi ut vitae tincidunt nullam sit lobortis. Bibendum vel elementum nisi est sed. Nec commodo cursus adipiscing amet et gravida lectus. Amet elit sit diam nunc a etiam. Pharetra lacus purus tellus auctor cras integer porttitor tellus tristique. Mus quis arcu commodo convallis. Vestibulum arcu in facilisi interdum accumsan eros. Imperdiet pulvinar massa dictum aenean aliquam diam aenean velit tempor. Dui morbi dui vitae tempus ut elementum placerat libero tristique"}</span>
-            </div>
+            <Stack
+              spacing={2} 
+              sx={{ 
+                width: '100%', 
+                color: 'rgb(22, 124, 191)', 
+                borderRadius: '4px',
+                marginTop: '30px',
+                marginBottom: '80px' 
+              }} >
+              <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+            </Stack>
           </TagsContent> }
 
           { profileViewStep === 'education' && <TagsContent style={{ flexWrap: 'wrap' }}>
-            { Array(4).fill('[ options download ]').map((item, index) => {
+            { Array(2).fill('Загрузка специализации..').map((item, index) => {
 
               return (
                 <TagElement background={tagBackground}>{ item }</TagElement>
@@ -565,11 +620,19 @@ const ExecutorProfilePage: React.FC = () => {
               }}
             >{"BIM"}</span>
             <div style={{ width: '100%', marginTop: '20px' }}>
-              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>[ информация об опыте пользователя ]</span>
+              <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Получение информации с сервера...</span>
             </div>
-            <div style={{ width: '100%', marginTop: '24px' }}>
-              <span style={{ lineHeight: '20px' }}>{"Vitae cum in imperdiet bibendum porttitor orci tellus eu. Morbi ut vitae tincidunt nullam sit lobortis. Bibendum vel elementum nisi est sed. Nec commodo cursus adipiscing amet et gravida lectus. Amet elit sit diam nunc a etiam. Pharetra lacus purus tellus auctor cras integer porttitor tellus tristique. Mus quis arcu commodo convallis. Vestibulum arcu in facilisi interdum accumsan eros. Imperdiet pulvinar massa dictum aenean aliquam diam aenean velit tempor. Dui morbi dui vitae tempus ut elementum placerat libero tristique"}</span>
-            </div>
+            <Stack
+              spacing={2} 
+              sx={{ 
+                width: '100%', 
+                color: 'rgb(22, 124, 191)', 
+                borderRadius: '4px',
+                marginTop: '30px',
+                marginBottom: '80px' 
+              }} >
+              <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+            </Stack>
           </TagsContent> }
 
           { profileViewStep === 'orders' && <React.Fragment>

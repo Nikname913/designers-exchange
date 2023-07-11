@@ -24,6 +24,13 @@ import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
 import defaultAvatar from '../../../img/stock/avatar.svg'
 
+import bearAvatar from '../../../img/avatars/bear.svg'
+import enotAvatar from '../../../img/avatars/enot.svg'
+import foxAvatar from '../../../img/avatars/fox.svg'
+import groupAvatar from '../../../img/avatars/group.svg'
+import manAvatar from '../../../img/avatars/man.svg'
+import womanAvatar from '../../../img/avatars/woman.svg'
+
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
 const { MenuContainer, TextFieldTitle, PagintationContainer } = cssAsideMenu
 
@@ -330,7 +337,14 @@ const CustomerPage: React.FC = () => {
                 isDisabledMessage={true}
                 userName={ item.bio && item.bio.name }
                 userId={item.clientId}
-                userAvatar={defaultAvatar}
+                userAvatar={
+                  item.avatar === '1' ? bearAvatar :
+                  item.avatar === '2' ? enotAvatar :
+                  item.avatar === '3' ? foxAvatar :
+                  item.avatar === '4' ? groupAvatar :
+                  item.avatar === '5' ? manAvatar :
+                  item.avatar === '6' ? womanAvatar : bearAvatar
+                }
                 userType={"CUSTOMER"}
                 userEmployment={""}
                 userLocation={ item.location && item.location.city }

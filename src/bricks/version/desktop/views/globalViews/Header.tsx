@@ -16,12 +16,19 @@ import css from '../../styles/views/header.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import logo from '../../../../img/stock/logo.svg'
-import defaultAvatar from '../../../../img/stock/avatar.svg'
+
 import questionIcon from '../../../../img/icons/question.svg'
 import postIcon from '../../../../img/icons/post.svg'
 import bellIcon from '../../../../img/icons/bell.svg'
 import walletIcon from '../../../../img/icons/wallet.svg'
 import arrowIcon from '../../../../img/icons/arrowDropDown.svg'
+
+import bearAvatar from '../../../../img/avatars/bear.svg'
+import enotAvatar from '../../../../img/avatars/enot.svg'
+import foxAvatar from '../../../../img/avatars/fox.svg'
+import groupAvatar from '../../../../img/avatars/group.svg'
+import manAvatar from '../../../../img/avatars/man.svg'
+import womanAvatar from '../../../../img/avatars/woman.svg'
 
 const { HeadWrapper,
   HeadWrapperInner, 
@@ -32,7 +39,9 @@ const { HeadWrapper,
   HeadControllersIcon,
   HeadControllersAvatar } = css
 
-const Header: React.FC = () => {
+const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) => {
+
+  const { userCity } = props
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -42,6 +51,11 @@ const Header: React.FC = () => {
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const ORDER_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
   const selectedUsersType = useAppSelector(state => state.headerReducer.selectedUsersType)
+
+  const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
+    .filter((executor: any) => executor.clientId === USER_ID)
+  const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
+    .filter((customer: any) => customer.clientId === USER_ID)
 
   const wallet = useAppSelector(state => state.headerReducer.walletCount)
   const alertData = useAppSelector(state => state.headerReducer.alertData)
@@ -83,9 +97,10 @@ const Header: React.FC = () => {
   const avatarStyle: CSSProperties = {
     display: 'block',
     position: 'relative',
-    width: '50px',
-    height: '50px',
+    width: '33px',
+    height: '33px',
     cursor: 'pointer',
+    marginTop: '3px'
   }
   const questionIconStyle: CSSProperties = {
     display: 'block',
@@ -153,7 +168,7 @@ const Header: React.FC = () => {
   useEffect(() => console.log(db), [])
   useEffect(() => { 
 
-    dispatch(setAlertData([]))
+    false && dispatch(setAlertData([]))
 
     if ( ORDER_LIST.length > 0 ) {
 
@@ -175,7 +190,7 @@ const Header: React.FC = () => {
         }
       })
 
-      dispatch(setAlertData(alerts[0]))
+      false && dispatch(setAlertData(alerts[0]))
 
     }
 
@@ -199,6 +214,21 @@ const Header: React.FC = () => {
             src={logo}
           />
           <Logo style={{ fontSize: '26px', letterSpacing: '3px' }}>ПРИЛОЖЕНИЕ</Logo>
+          <span
+            style={{ 
+              display: 'block',
+              position: 'absolute',
+              left: '0%',
+              top: '100%',
+              marginTop: '-9px',
+              marginLeft: '53px',
+              fontWeight: 'bold',
+              color: 'rgb(22, 124, 191)',
+              opacity: 0.8
+             }}
+          >
+            { userCity }
+          </span>
         </div>
         <HeadMenu>
           <span style={menuItemStyle} onClick={() => navigate('/task-list-all')}>Биржа</span>
@@ -258,7 +288,7 @@ const Header: React.FC = () => {
               src={bellIcon}
               style={{ ...bellIconStyle }}
             />
-            { alertData && alertData.length > 0 && <span
+            { USER_ROLE === 'CUSTOMER' && ( alertData && alertData.length > 0 ) && <span
               style={{
                 display: 'block',
                 position: 'absolute',
@@ -277,6 +307,44 @@ const Header: React.FC = () => {
                 boxSizing: 'border-box'
               }}
             >{ alertData.length }</span> }
+            { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].alertData?.length && <span
+              style={{
+                display: 'block',
+                position: 'absolute',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                backgroundColor: 'rgb(22, 124, 191)',
+                top: '0',
+                left: '100%',
+                marginLeft: '-8px',
+                color: 'white',
+                fontSize: '9px',
+                textAlign: 'center',
+                lineHeight: '18px',
+                paddingRight: '1px',
+                boxSizing: 'border-box'
+              }}
+            >{ EXECUTOR[0].alertData?.length }</span> }
+            { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].alertData?.length && <span
+              style={{
+                display: 'block',
+                position: 'absolute',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                backgroundColor: 'rgb(22, 124, 191)',
+                top: '0',
+                left: '100%',
+                marginLeft: '-8px',
+                color: 'white',
+                fontSize: '9px',
+                textAlign: 'center',
+                lineHeight: '18px',
+                paddingRight: '1px',
+                boxSizing: 'border-box'
+              }}
+            >{ EXECUTOR[0].alertData?.length }</span> }
           </HeadControllersIcon>
           <span style={{ display: 'block', width: '30px' }} />
           <HeadControllersIcon backgroundColor={'transparent'}>
@@ -297,6 +365,13 @@ const Header: React.FC = () => {
             }}
           >{ wallet } ₽</span>
           <HeadControllersAvatar 
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              overflow: 'hidden',
+            }}
             backgroundColor={blueColorForIcon}
             onClick={() => {
               USER_ROLE === 'EXECUTOR' && navigate('/exec-office')
@@ -304,11 +379,86 @@ const Header: React.FC = () => {
             }}
           >
 
-            <img
+            { USER_ROLE === 'EXECUTOR' && EXECUTOR.length > 0 && <img
               alt={""}
-              src={defaultAvatar}
-              style={avatarStyle}
-            />
+              src={
+                EXECUTOR[0].avatar === '1' ? bearAvatar :
+                EXECUTOR[0].avatar === '2' ? enotAvatar :
+                EXECUTOR[0].avatar === '3' ? foxAvatar :
+                EXECUTOR[0].avatar === '4' ? groupAvatar :
+                EXECUTOR[0].avatar === '5' ? manAvatar :
+                EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+              }
+              style={
+                EXECUTOR[0].avatar === '1' ? { ...avatarStyle } :
+                EXECUTOR[0].avatar === '2' ? { ...avatarStyle } :
+                EXECUTOR[0].avatar === '3' ? { ...avatarStyle } :
+                EXECUTOR[0].avatar === '4' ? {
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '15px'
+                } :
+                EXECUTOR[0].avatar === '5' ? { 
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '10px'
+                } :
+                EXECUTOR[0].avatar === '6' ? { 
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '10px'
+                } : { ...avatarStyle }
+              }
+            /> }
+            { USER_ROLE === 'CUSTOMER' && CUSTOMER.length > 0 && <img
+              alt={""}
+              src={
+                CUSTOMER[0].avatar === '1' ? bearAvatar :
+                CUSTOMER[0].avatar === '2' ? enotAvatar :
+                CUSTOMER[0].avatar === '3' ? foxAvatar :
+                CUSTOMER[0].avatar === '4' ? groupAvatar :
+                CUSTOMER[0].avatar === '5' ? manAvatar :
+                CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+              }
+              style={
+                CUSTOMER[0].avatar === '1' ? { ...avatarStyle } :
+                CUSTOMER[0].avatar === '2' ? { ...avatarStyle } :
+                CUSTOMER[0].avatar === '3' ? { ...avatarStyle } :
+                CUSTOMER[0].avatar === '4' ? {
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '15px'
+                } :
+                CUSTOMER[0].avatar === '5' ? { 
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '10px'
+                } :
+                CUSTOMER[0].avatar === '6' ? { 
+                  display: 'block',
+                  position: 'relative',
+                  width: '43px',
+                  height: '43px',
+                  cursor: 'pointer',
+                  marginTop: '10px'
+                } : { ...avatarStyle }
+              }
+            /> }
 
           </HeadControllersAvatar>
         </HeadControllers> }

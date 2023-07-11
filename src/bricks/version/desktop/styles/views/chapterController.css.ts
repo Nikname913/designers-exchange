@@ -59,6 +59,8 @@ const css = {
     top: 100%;
     margin-top: 14px;
     font-size: 12px;
+    height: 60px;
+    overflow: hidden;
   `,
   ChapterContainerAddButton: styled.div`
     display: flex;

@@ -272,7 +272,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             </div>
             
             <div style={actionsDivContainerCSS}>
-              { ROLE_TYPE === 'EXECUTOR' ? <ButtonComponent
+              { ROLE_TYPE === 'EXECUTOR' && <ButtonComponent
                 inner={respondButtonText} 
                 type="CONTAINED_DEFAULT"
                 action={() => {
@@ -341,7 +341,8 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   boxSizing: 'border-box',
                   marginBottom: '16px'
                 }}
-              /> : <SelectField 
+              /> }
+              { ROLE_TYPE === 'CUSTOMER' && <SelectField 
                 placeholder={"Действие"}
                 params={{ width: 100, height: 50 }}
                 data={[

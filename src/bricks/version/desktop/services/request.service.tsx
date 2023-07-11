@@ -18,7 +18,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
           break
   
         case 'POST':
-          const response = await fetch(urlstring, {
+          const response = await fetch('http://85.193.88.125:3000' + urlstring, {
             method: 'POST',
             headers: { "Content-type": "application/json; charset=UTF-8" }, 
             body: JSON.stringify(body)

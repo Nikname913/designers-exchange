@@ -57,7 +57,7 @@ const css = {
       height: 30px;
       width: 30px;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     `,
     ChatHeader: styled.div`
       display: flex;
@@ -154,7 +154,7 @@ const css = {
       height: 30px;
       width: 30px;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
     `,
     ContentLine: styled.div`
       display: flex;
@@ -215,7 +215,55 @@ const css = {
       height: 30px;
       width: 30px;
       cursor: pointer;
-      margin-bottom: 30px;
+      margin-bottom: 28px;
+    `,
+    ContentLine: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width: 100%;
+    `,
+    Delimiter: styled.span<{ background?: string }>`
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 2px;
+      background-color: ${props => props.background ? props.background : '#D9E7F0'};
+    `,
+  },
+  EditProjectsEducationFork: {
+    Container: styled.div<{ backgroundColor: string }>`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      box-sizing: border-box;
+      background-color: ${props => props.backgroundColor};
+      height: auto;
+      min-height: 100vh;
+      width: calc(100% - 500px);
+      padding-top: 40px;
+      padding-left: 40px;
+      padding-right: 200px;
+    `,
+    CloseIconContainer: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      position: relative;
+      width: 100%;
+    `,
+    CloseIcon: styled.span`
+      display: block;
+      position: relative;
+      height: 30px;
+      width: 30px;
+      cursor: pointer;
+      margin-bottom: 28px;
     `,
     ContentLine: styled.div`
       display: flex;

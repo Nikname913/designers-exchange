@@ -102,9 +102,14 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
   function actionsReducer(param: Object | string | []) {
 
     const acty = actionType
+
     switch(acty) {
 
       case 'AUTH_FACE_TYPE': 
+        action(param)
+        break
+
+      case 'AUTH_SPEC_TYPE': 
         action(param)
         break
 
@@ -157,7 +162,7 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
             inputValue.label === 'Индивидуальный предприниматель' ? 'IP_FACE'
             : inputValue.label === 'Юридическое лицо' ? 'IP_FACE' 
             : inputValue.label === 'Физическое лицо' ? 'PHIS_FACE' 
-            : inputValue.label === 'Самозанятый' ? 'SELF_FACE' : ''
+            : inputValue.label === 'Самозанятый' ? 'SELF_FACE' : inputValue.label
           )
           false && console.log(actionParams)
         }}

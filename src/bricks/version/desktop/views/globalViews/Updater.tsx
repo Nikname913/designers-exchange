@@ -4,25 +4,29 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 // ----------------------------------------------------------------
 import React, { useState, useEffect } from 'react'
-import { useAppDispatch } from '../../../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setList, setListOrders, setListDeactive } from '../../../../store/slices/task-content-slice'
 import { setCustomers, setExecutors } from '../../../../store/slices/user-content-slice'
+import { setAlertData } from '../../../../store/slices/header-slice'
 import RequestActionsComponent from '../../services/request.service'
 
 const Updater: React.FC = () => {
 
   const dispatch = useAppDispatch()
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
 
   {/* ---------------------------------------- */}
   {/* useState для переключения выполнения запросов */}
   {/* ---------------------------------------- */}
 
+  const [ GET_ALERTS_REQUEST, SET_ALERTS_REQUEST ] = useState(false)
   const [ GET_TASKS_REQUEST, SET_TASKS_REQUEST ] = useState(false)
   const [ GET_TASKS_DEACTIVE_REQUEST, SET_TASKS_DEACTIVE_REQUEST ] = useState(false)
   const [ GET_ORDERS_REQUEST, SET_ORDERS_REQUEST ] = useState(false)
   const [ GET_CUSTOMERS_REQUEST, SET_CUSTOMERS_REQUEST ] = useState(false)
   const [ GET_EXECUTORS_REQUEST, SET_EXECUTORS_REQUEST ] = useState(false)
 
+  const [ alertsUpdate, setAlertsUpdate ] = useState(false)
   const [ tasksUpdate, setTasksUpdate ] = useState(false)
   const [ tasksDeactiveUpdate, setTasksDeactiveUpdate ] = useState(false)
   const [ ordersUpdate, setOrdersUpdate ] = useState(false)
@@ -32,6 +36,18 @@ const Updater: React.FC = () => {
   {/* ---------------------------------------- */}
   {/* useState для переключения выполнения запросов */}
   {/* ---------------------------------------- */}
+
+  const callbackSetAlertsList = (param: any) => {
+    
+    const data = param.filter((item: any) => item.customer === USER_ID).map((item: any, index: number) => {
+
+      return item.alertData
+
+    })
+
+    dispatch(setAlertData(data))
+
+  }
 
   const callbackSetTasksList = (param: any) => {
     
@@ -187,6 +203,12 @@ const Updater: React.FC = () => {
 
   useEffect(() => {
     
+    SET_ALERTS_REQUEST(true)
+    setTimeout(() => SET_ALERTS_REQUEST(false), 1400)
+
+  }, [ alertsUpdate ])
+  useEffect(() => {
+    
     SET_TASKS_REQUEST(true)
     setTimeout(() => SET_TASKS_REQUEST(false), 1400)
 
@@ -216,6 +238,12 @@ const Updater: React.FC = () => {
 
   }, [ executorsUpdate ])
 
+  useEffect(() => {
+
+    const alertUpdateRound = setInterval(() => setAlertsUpdate(prev => !!!prev), 4400)
+    false && clearInterval(alertUpdateRound)
+
+  }, [])
   useEffect(() => {
 
     const taskUpdateRound = setInterval(() => setTasksUpdate(prev => !!!prev), 4400)
@@ -249,6 +277,20 @@ const Updater: React.FC = () => {
 
   return (
     <React.Fragment>
+
+      { GET_ALERTS_REQUEST && <RequestActionsComponent
+
+        callbackAction={callbackSetAlertsList}
+        requestData={{
+          type: 'POST',
+          urlstring: '/get-task-list',
+          body: {
+            status: ''
+          }
+        }}
+      
+      /> }
+
       { GET_TASKS_REQUEST && <RequestActionsComponent
 
         callbackAction={callbackSetTasksList}

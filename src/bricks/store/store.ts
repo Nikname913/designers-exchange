@@ -15,6 +15,9 @@ import respondReducer from './slices/respond-slice'
 import requestReducer from './slices/request-reduce-slice'
 import passportReducer from './slices/passport-slice'
 import dataUpdateReducer from './slices/data-update-slice'
+import filterReducer from './slices/filter-slice'
+import bussDataReducer from './slices/bussData-slice'
+import aboutTextReducer from './slices/about-text-slice'
 
 export const store = configureStore({
   reducer: {
@@ -33,7 +36,10 @@ export const store = configureStore({
     respondReducer: respondReducer,
     requestReducer: requestReducer,
     passportReducer: passportReducer,
-    dataUpdateReducer: dataUpdateReducer
+    dataUpdateReducer: dataUpdateReducer,
+    filterReducer: filterReducer,
+    bussDataReducer: bussDataReducer,
+    aboutTextReducer: aboutTextReducer
   },
 })
 

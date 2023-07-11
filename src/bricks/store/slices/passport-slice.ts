@@ -10,6 +10,7 @@ const initialState: IPassportReducer = {
   adress: '',
   snils: '',
   inn: '',
+  borth: '',
   focused: ''
 }
 
@@ -38,11 +39,14 @@ const passportReducer = createSlice({
     setInn: (state, action: PayloadAction<string>) => {
       state.inn = action.payload
     },
+    setBorth: (state, action: PayloadAction<string>) => {
+      state.borth = action.payload
+    },
     setFocused: (state, action: PayloadAction<string>) => {
       state.focused = action.payload
     },
   }
 })
 
-export const { setSeri, setNumber, setWho, setDate, setAdress, setSnils, setInn, setFocused } = passportReducer.actions
+export const { setSeri, setNumber, setWho, setDate, setAdress, setSnils, setInn, setBorth, setFocused } = passportReducer.actions
 export default passportReducer.reducer

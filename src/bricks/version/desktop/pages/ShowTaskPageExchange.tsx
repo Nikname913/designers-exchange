@@ -318,24 +318,43 @@ const ShowTaskPage: React.FC = () => {
                   { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
 
                     return <React.Fragment>
-                      { item.chapters && item.chapters.map(chapter => {
+                      { item.chapters && item.chapters.map((chapter, index) => {
 
                         return (
                           <React.Fragment>
-                            <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                            <LeftMenuIconButton 
+                              backgroundColor={"transparent"} 
+                              style={{ 
+                                minHeight: '64px', 
+                                height: 'auto', 
+                                marginBottom: '0px', 
+                                padding: '18px 0px 22px',
+                                lineHeight: '20px',
+                              }}
+                            >
                               <img
                                 alt={""}
                                 src={checkMark}
                               />
-                              <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
+                              <span 
+                                style={{ 
+                                  ...buttonLabelDeactiveCSS, 
+                                  fontWeight: 500,
+                                  display: 'block',
+                                  width: '88%',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                { chapter.title }
+                              </span>
                             </LeftMenuIconButton>
-                            <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                            { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
                           </React.Fragment>
                         )
 
                       })}
 
-                      { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                      { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
                         <img
                           alt={""}
                           src={timeIcon}
@@ -534,8 +553,8 @@ const ShowTaskPage: React.FC = () => {
                       justify:'flex-start',
                     }}
                     width={"100%"}
-                    height={"250px"}
-                    style={{ paddingLeft: '36px', paddingRight: '36px', paddingTop: '30px' }}
+                    height={""}
+                    style={{ minHeight: '160px', paddingLeft: '36px', paddingRight: '36px', paddingTop: '30px' }}
                   >
                     <WhiteContainerContentLine justify={"space-between"}>
                       <WhiteContainerTitle>Описание</WhiteContainerTitle>

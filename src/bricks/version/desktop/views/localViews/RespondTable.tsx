@@ -164,7 +164,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           body: {
             taskID: TASKS_LIST.showOne,
             initiator: USER_ID,
-            "message": `dc03e94480e4e1d46da4acbe452756ddd3ef4553591b828309beeaeb81f6db08::поздравляем, вы были выбраны в качестве исполнителя в проект [ ${TASKS_LIST.showOne} ]`
+            message: `dc03e94480e4e1d46da4acbe452756ddd3ef4553591b828309beeaeb81f6db08::поздравляем, вы были выбраны в качестве исполнителя в проект [ ${TASKS_LIST.showOne} ]`
           }
         }}
       

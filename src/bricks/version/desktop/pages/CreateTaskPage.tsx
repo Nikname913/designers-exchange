@@ -16,7 +16,8 @@ import { setTitle,
   setChapterLN,
   setChapterLD,
   setTechTaskFile,
-  removeTechTaskFile
+  removeTechTaskFile,
+  resetTechTaskFile
  } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -127,6 +128,7 @@ const CreateTaskPage: React.FC = () => {
   }
 
   const changeTechTaskFile = (param: File) => {
+    dispatch(resetTechTaskFile(''))
     dispatch(setTechTaskFile(param))
   }
 
@@ -550,7 +552,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Необходимые навыки"}
             params={{ width: 50, mb: '18px', height: 50 }}
             data={[
-              { value: '1', label: '[ options download ]' },
+              { value: '1', label: 'Загрузка данных...' },
             ]}
             multy={false}
             action={() => {}}
@@ -696,7 +698,7 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Государственная"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: '[ options download ]' },
+              { value: '1', label: 'Загрузка данных...' },
             ]}
             multy={false}
             action={() => {}}
@@ -973,7 +975,7 @@ const CreateTaskPage: React.FC = () => {
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
             <ButtonComponent
-              inner={'[ options download ]'} 
+              inner={'Добавить файлы'} 
               type='CONTAINED_DISABLED' 
               action={() => {}}
               actionData={null}
@@ -999,8 +1001,13 @@ const CreateTaskPage: React.FC = () => {
           </div>
         </TextFieldContainerLine>
         { TASK_TECH_FILE.length > 0 && <TextFieldContainerLine style={{ marginBottom: '0px' }}>
-          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '6px' }}>
-            { TASK_TECH_FILE.map(fileData => {
+          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '12px' }}>
+            { TASK_TECH_FILE.filter(
+              
+              fileData => (
+                fileData.name.indexOf('.txt') !== -1 || 
+                fileData.name.indexOf('.doc') !== -1 ||
+                fileData.name.indexOf('.docx') !== -1 )).map(fileData => {
 
               return (
                 <div 
@@ -1021,7 +1028,7 @@ const CreateTaskPage: React.FC = () => {
                       cursor: 'pointer',
                       marginRight: '8px'
                     }}
-                  >{`${fileData.name}`}</span>
+                  >{`Приложение тех. задание: ${fileData.name}`}</span>
                   <CloseIcon 
                     style={{ width: '16px', cursor: 'pointer' }}
                     onClick={() => removeFile(fileData.name)}
@@ -1030,6 +1037,34 @@ const CreateTaskPage: React.FC = () => {
               )
 
             })}
+
+            { TASK_TECH_FILE.filter(fileData => (
+                fileData.name.indexOf('.txt')  !== -1 || 
+                fileData.name.indexOf('.doc')  !== -1 ||
+                fileData.name.indexOf('.docx') !== -1 )).length === 0 && <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between' 
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'block', 
+                      position: 'relative', 
+                      lineHeight: '28px', 
+                      fontWeight: 'bold',
+                      color: 'rgb(81, 102, 116)',
+                      cursor: 'pointer',
+                      marginRight: '8px'
+                    }}
+                  >{`Неверный формат файла`}</span>
+                  <CloseIcon 
+                    style={{ width: '16px', cursor: 'pointer' }}
+                    onClick={() => dispatch(resetTechTaskFile(''))}
+                  />
+                </div> }
           </div>
         </TextFieldContainerLine> }
         <TextFieldTitle 
@@ -1074,7 +1109,7 @@ const CreateTaskPage: React.FC = () => {
               placeholder={"Выберите необходимые навыки"}
               params={{ width: 50, mb: '16px', height: 50 }}
               data={[
-                { value: '1', label: '[ options download ]' },
+                { value: '1', label: 'Загрузка данных...' },
               ]}
               multy={true}
               action={() => {}}
@@ -1115,7 +1150,7 @@ const CreateTaskPage: React.FC = () => {
           </TextFieldContainerLine>
           <TextFieldContainerLine>
             <ButtonComponent
-              inner={'[ options download ]'} 
+              inner={'Загрузка данных...'} 
               type='CONTAINED_DISABLED' 
               action={() => console.log('this is button')}
               actionData={null}

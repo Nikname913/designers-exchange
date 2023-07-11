@@ -3,12 +3,40 @@ import { useAppSelector } from '../../../../store/hooks'
 import ButtonComponent from '../../comps/button/Button'
 import css from '../../styles/views/chapterController.css'
 import AddIcon from '@mui/icons-material/Add'
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
+import { styled } from '@mui/material/styles'
+import { Fade } from '@mui/material'
 
 const { ChapterContainerLine, 
   ChapterContainerStepRound,
   ChapterContainerStepRoundInner,
   ChapterContainerStepRoundLabelText,
   ChapterContainerAddButton } = css
+
+const BootstrapTooltip = styled(({ className, ...props }: TooltipProps) => (
+
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+
+))(({ theme }) => ({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: theme.palette.common.white,
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: theme.palette.common.white,
+    top: '-4px',
+    left: '-2px',
+    boxShadow: '0px 3px 16px 2px rgba(0, 0, 0, 0.12)',
+    color: 'black',
+    padding: '10px',
+    paddingTop: '11px',
+    paddingBottom: '12px',
+    paddingLeft: '14px',
+    paddingRight: '14px',
+    lineHeight: '16px',
+    fontSize: '12px',
+    fontWeight: 'normal'
+  },
+}))
 
 const ChapterController: 
   React.FC<{ 
@@ -63,11 +91,18 @@ const ChapterController:
               { item.chapters && item.chapters.map((chapter, chapterIndex) => {
 
                 return (
-                  <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
-                    <ChapterContainerStepRoundLabelText textAlign={"center"}>
-                      { chapter.title }
-                    </ChapterContainerStepRoundLabelText>
-                  </ChapterContainerStepRound>
+                  <BootstrapTooltip 
+                    title={chapter.title}
+                    TransitionComponent={Fade} 
+                    followCursor 
+                    arrow
+                  >
+                    <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
+                      <ChapterContainerStepRoundLabelText textAlign={"center"}>
+                        { chapter.title }
+                      </ChapterContainerStepRoundLabelText>
+                    </ChapterContainerStepRound>
+                  </BootstrapTooltip>
                 )
 
               })}

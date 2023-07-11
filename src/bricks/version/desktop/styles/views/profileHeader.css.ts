@@ -29,8 +29,8 @@ const css = {
   AvatarIndicator: styled.span<{ background: string }>`
     display: block;
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background-color: ${props => props.background};
     left: 100%;

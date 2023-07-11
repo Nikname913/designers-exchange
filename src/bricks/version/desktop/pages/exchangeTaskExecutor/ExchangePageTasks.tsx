@@ -170,7 +170,7 @@ const ExchangePage: React.FC = () => {
           placeholder={"Сортировать по новизне"}
           params={{ width: 300, mb: '35px', height: 50 }}
           data={[
-            { value: '1', label: '[ options download ]' },
+            { value: '1', label: 'Загрузка данных...' },
           ]}
           multy={false}
           action={() => {}}

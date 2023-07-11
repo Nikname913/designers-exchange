@@ -12,7 +12,10 @@ import { setSeri,
   setDate,
   setAdress, 
   setSnils, 
+  setBorth,
   setInn } from '../../../../store/slices/passport-slice'
+import { setPostAddress } from '../../../../store/slices/bussData-slice'
+import { setUpdating } from '../../../../store/slices/data-update-slice'
 import CabinetAlarmLine from '../../views/localViews/CabinetAlarmLine'
 import InputComponent from '../../comps/input/Input'
 import SelectField from '../../comps/select/SelectField'
@@ -31,6 +34,9 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { green } from '@mui/material/colors'
 import ReportIcon from '@mui/icons-material/Report'
+import FormGroup from '@mui/material/FormGroup'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import Checkbox from '@mui/material/Checkbox'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -38,6 +44,13 @@ import Fab from '@mui/material/Fab'
 import CheckIcon from '@mui/icons-material/Check'
 import SaveIcon from '@mui/icons-material/Save'
 import CircularProgress from '@mui/material/CircularProgress'
+
+import bearAvatar from '../../../../img/avatars/bear.svg'
+import enotAvatar from '../../../../img/avatars/enot.svg'
+import foxAvatar from '../../../../img/avatars/fox.svg'
+import groupAvatar from '../../../../img/avatars/group.svg'
+import manAvatar from '../../../../img/avatars/man.svg'
+import womanAvatar from '../../../../img/avatars/woman.svg'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import avatar from '../../../../img/stock/avatar.svg'
@@ -111,6 +124,7 @@ const ExecutorProfilePage: React.FC = () => {
   const alertData = useAppSelector(state => state.headerReducer.alertData)
 
   const yelloColor = useAppSelector(state => state.theme.yellow)
+  const greenColor = useAppSelector(state => state.theme.green)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
   const blueColor = useAppSelector(state => state.theme.blue1)
@@ -128,7 +142,27 @@ const ExecutorProfilePage: React.FC = () => {
   const passportDate = useAppSelector(state => state.passportReducer.date)
   const passportAdress = useAppSelector(state => state.passportReducer.adress)
   const passportSnils = useAppSelector(state => state.passportReducer.snils)
+  const passportBorth = useAppSelector(state => state.passportReducer.borth)
   const passportInn = useAppSelector(state => state.passportReducer.inn)
+
+  const SHORT_NAME = useAppSelector(state => state.bussDataReducer.shortName)
+  const FULL_NAME = useAppSelector(state => state.bussDataReducer.fullName)
+  const BUSS_INN = useAppSelector(state => state.bussDataReducer.inn)
+  const BUSS_KPP = useAppSelector(state => state.bussDataReducer.kpp)
+  const BUSS_OGRN = useAppSelector(state => state.bussDataReducer.ogrn)
+  const YUR_ADDRESS = useAppSelector(state => state.bussDataReducer.yurAddress)
+  const POST_ADDRESS = useAppSelector(state => state.bussDataReducer.postAddress)
+  const BOSS_NAME = useAppSelector(state => state.bussDataReducer.boss.name)
+  const BOSS_TYPE = useAppSelector(state => state.bussDataReducer.boss.type)
+
+  const [ addressIP, setAddressIP ] = useState<{
+    ip: string,
+    city: string,
+    country_code: string,
+    country_name: string,
+    postal: string,
+    time: string
+  }>()
 
   const [ ,setPassportSeriLocal ] = useState<string>('')
   const [ ,setPassportNumberLocal ] = useState<string>('')
@@ -140,14 +174,24 @@ const ExecutorProfilePage: React.FC = () => {
 
   const [ authDataPass, setAuthDataPass ] = useState<string>('Qwerty12345')
   const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
-  const [ borthDate, setBorthDate ] = useState<any>('')
   const [ disablePassportInputs, setDisablePassportInputs ] = useState<boolean>(true)
   const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
 
   const [ DOCS_REQUEST, SET_DOCS_REQUEST ] = useState(false)
-  const [loading, setLoading] = React.useState(false)
-  const [success, setSuccess] = React.useState(false)
+  const [ COMPANY_REQUEST, SET_COMPANY_REQUEST ] = useState(false)
+  const [ BORTH_REQUEST, SET_BORTH_REQUEST ] = useState(false)
+
+  const [ loadingBio, setLoadingbio ] = React.useState(false)
+  const [ successBio, setSuccessBio ] = React.useState(false)
+  const [ loading, setLoading ] = React.useState(false)
+  const [ success, setSuccess ] = React.useState(false)
+
+  const [ addressCheck, setAddressCheck ] = React.useState<boolean>(false)
+  const [ bossTypeOne, setBossTypeOne ] = React.useState<boolean>(false)
+  const [ bossTypeTwo, setBossTypeTwo ] = React.useState<boolean>(false)
+
   const timer = useRef<number>()
+  const indicatorElement = useRef<any>()
 
   const flexDivCSS: CSSProperties = {
     display: 'flex',
@@ -188,6 +232,15 @@ const ExecutorProfilePage: React.FC = () => {
     dispatch(setShow(true))
     dispatch(setShowType('EditProfileCC'))
   }
+  function editProjectsCases(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('EditProjectsCC'))
+  }
+  function editEducationCases(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('EditEducationCC'))
+  }
+
   const changePass = (param: string): void => {
     setAuthDataPass(param)
     setAuthDataPassError(false)
@@ -231,25 +284,111 @@ const ExecutorProfilePage: React.FC = () => {
 
   }
 
+  const updateCompany = () => {
+
+    if (!loading) {
+      setSuccess(false)
+      setLoading(true)
+      timer.current = window.setTimeout(() => {
+        setSuccess(true)
+        setLoading(false)
+      }, 1400)
+    }
+
+    SET_COMPANY_REQUEST(true)
+    setDisablePassportInputs(true)
+
+    setTimeout(() => {
+      SET_COMPANY_REQUEST(false)
+    }, 1400)
+
+  }
+
+  const updateBorth = () => {
+
+    if (!loadingBio) {
+      setSuccessBio(false)
+      setLoadingbio(true)
+      timer.current = window.setTimeout(() => {
+        setSuccessBio(true)
+        setLoadingbio(false)
+      }, 1400)
+    }
+
+    SET_BORTH_REQUEST(true)
+
+    setTimeout(() => {
+      SET_BORTH_REQUEST(false)
+      false && dispatch(setSeri(''))
+      false && dispatch(setNumPas(''))
+      false && dispatch(setFocusedPas(''))
+      false && dispatch(setWho(''))
+      false && dispatch(setDate(''))
+      false && dispatch(setAdress(''))
+      false && dispatch(setSnils(''))
+      false && dispatch(setInn(''))
+
+    }, 1400)
+
+  }
+
+  const getDataIP = async () => {
+
+    fetch('http://ipwho.is/')
+      .then(res => res.json())
+      .then(
+        (data: {
+          ip: string,
+          city: string,
+          country_code: string,
+          country: string,
+          latitude: number,
+          longitude: number,
+          postal: string,
+          timezone: {
+            current_time: string
+          }
+        }): PromiseLike<never> | void => {
+
+          console.log(data)
+
+          setAddressIP({
+            ip: data.ip,
+            city: data.city,
+            country_code: data.country_code,
+            country_name: data.country,
+            postal: data.postal,
+            time: data.timezone.current_time.split('T')[1].split('+')[0]
+          })
+        })
+
+  }
+
   useEffect(() => {
 
-    false && console.log(EXECUTOR)
-    false && console.log(CUSTOMER)
+    USER_ROLE === 'EXECUTOR' && false && console.log(EXECUTOR)
+    USER_ROLE === 'CUSTOMER' && false && console.log(CUSTOMER)
     false && console.log(USER_ID)
 
-  },[CUSTOMER, EXECUTOR, USER_ID])
+  },[ CUSTOMER, EXECUTOR, USER_ID, USER_ROLE ])
 
   useEffect(() => {
 
-    USER_ROLE === 'EXECUTOR' && setPassportSeriLocal(EXECUTOR[0].docs.passport.series)
-    USER_ROLE === 'EXECUTOR' && setPassportNumberLocal(EXECUTOR[0].docs.passport.number)
-    USER_ROLE === 'EXECUTOR' && setPassportDateLocal(EXECUTOR[0].docs.passport.date)
-    USER_ROLE === 'EXECUTOR' && setPassportAdressLocal(EXECUTOR[0].docs.adress)
-    USER_ROLE === 'EXECUTOR' && setPassportWhoLocal(EXECUTOR[0].docs.passport.whoGet)
-    USER_ROLE === 'EXECUTOR' && setPassportSnilsLocal(EXECUTOR[0].docs.snils)
-    USER_ROLE === 'EXECUTOR' && setPassportInnLocal(EXECUTOR[0].docs.inn)
+    USER_ROLE === 'EXECUTOR' && false && setPassportSeriLocal(EXECUTOR[0].docs.passport.series)
+    USER_ROLE === 'EXECUTOR' && false && setPassportNumberLocal(EXECUTOR[0].docs.passport.number)
+    USER_ROLE === 'EXECUTOR' && false && setPassportDateLocal(EXECUTOR[0].docs.passport.date)
+    USER_ROLE === 'EXECUTOR' && false && setPassportAdressLocal(EXECUTOR[0].docs.adress)
+    USER_ROLE === 'EXECUTOR' && false && setPassportWhoLocal(EXECUTOR[0].docs.passport.whoGet)
+    USER_ROLE === 'EXECUTOR' && false && setPassportSnilsLocal(EXECUTOR[0].docs.snils)
+    USER_ROLE === 'EXECUTOR' && false && setPassportInnLocal(EXECUTOR[0].docs.inn)
+    USER_ROLE === 'EXECUTOR' && false && setPassportInnLocal(EXECUTOR[0].docs.inn)
 
   }, [ EXECUTOR, USER_ROLE ])
+
+  // ------------------------------------------------------------------
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // useEffect(() => console.log(EXECUTOR[0].faceType), [])
+  // ------------------------------------------------------------------
 
   useEffect(() => {
 
@@ -276,15 +415,39 @@ const ExecutorProfilePage: React.FC = () => {
         return value
       })
     }, 1300)
+
     return () => {
       clearInterval(timer)
     }
+  
+  }, [])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(true)) }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { addressCheck && dispatch(setPostAddress('')) }, [ addressCheck ])
+
+  useEffect(() => { getDataIP() }, [])
+  useEffect(() => {
+
+    indicatorElement.current.style.transition = 'all 300ms'
+
+    const indicatorRound = setInterval(() => {
+      indicatorElement.current.style.filter === 'grayscale(0)'
+        ? indicatorElement.current.style.filter = 'grayscale(0.8)'
+        : indicatorElement.current.style.filter = 'grayscale(0)'
+    }, 800)
+
+    return () => {
+      clearInterval(indicatorRound)
+    }
+
   }, [])
 
   return (
     <React.Fragment>
 
-      { DOCS_REQUEST && USER_ROLE === 'EXECUTOR' && <RequestActionsComponent
+      { DOCS_REQUEST && USER_ROLE && <RequestActionsComponent
 
         callbackAction={() => {}}
         requestData={{
@@ -304,6 +467,42 @@ const ExecutorProfilePage: React.FC = () => {
       
       /> }
 
+      { COMPANY_REQUEST && USER_ROLE && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-user-company',
+          body: {
+            clientId: USER_ID,
+            shortName: SHORT_NAME,
+            fullName: FULL_NAME,
+            inn: BUSS_INN,
+            kpp: BUSS_KPP,
+            ogrn: BUSS_OGRN,
+            yurAddress: YUR_ADDRESS,
+            postAddress: addressCheck ? YUR_ADDRESS : POST_ADDRESS,
+            bossName: BOSS_NAME,
+            bossType: BOSS_TYPE
+          }
+        }}
+      
+      /> }
+
+      { BORTH_REQUEST && USER_ROLE && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-user-borth',
+          body: {
+            clientId: USER_ID,
+            borth: passportBorth
+          }
+        }}
+      
+      /> }
+
       { USER_ROLE === 'EXECUTOR' ? <ContentArea
         flexDirection={null}
         alignItems={null}
@@ -312,23 +511,61 @@ const ExecutorProfilePage: React.FC = () => {
         <HeaderContainer>
           <LeftContainer>
             <BootstrapTooltip 
-              title="Был в сети 13 мая в 16:00"
+              title="Вы онлайн"
               TransitionComponent={Fade} 
               followCursor 
               arrow
             >
-              <img
-                alt={""}
-                src={avatar}
-                style={{ width: '150px' }}
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                  width: '150px', 
+                  height: '150px',
+                  backgroundColor: 'rgb(217, 231, 240)',
+                  borderRadius: '50%',
+                  overflow: 'hidden'
+                }}
+              >
+                <img
+                  alt={""}
+                  src={
+                    EXECUTOR[0].avatar === '1' ? bearAvatar :
+                    EXECUTOR[0].avatar === '2' ? enotAvatar :
+                    EXECUTOR[0].avatar === '3' ? foxAvatar :
+                    EXECUTOR[0].avatar === '4' ? groupAvatar :
+                    EXECUTOR[0].avatar === '5' ? manAvatar :
+                    EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                  }
+                  style={
+                    EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                    EXECUTOR[0].avatar === '2' ? { width: '100px',  } :
+                    EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                    EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                    EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                    EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                    { width: '100px', marginTop: '6px' }
+                  }
+                />
+              </div>
             </BootstrapTooltip>
-            <AvatarIndicator background={yelloColor}/>
+            <AvatarIndicator ref={indicatorElement} background={true ? greenColor : yelloColor}/>
           </LeftContainer>
           <RightContainer>
             <div style={flexDivCSS}>
               <ContentLine>
-                <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name + ' ' + EXECUTOR[0].bio.surname }</h2>
+                { ( EXECUTOR[0].faceType !== 'PHIS_FACE' && EXECUTOR[0].faceType !== 'SELF_FACE' ) 
+                  
+                  && <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name }</h2>
+                
+                }
+                { ( EXECUTOR[0].faceType === 'PHIS_FACE' || EXECUTOR[0].faceType === 'SELF_FACE' ) 
+                  
+                  && <h2 style={{ fontSize: '30px', margin: 0 }}>{ EXECUTOR[0].bio.name + ' ' + EXECUTOR[0].bio.surname }</h2>
+                
+                }
                 <span style={{ marginLeft: '20px', marginRight: '12px', marginTop: '5px' }}>
                   <img
                     alt={""}
@@ -350,7 +587,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
-                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
+                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
                 <span 
@@ -788,7 +1025,7 @@ const ExecutorProfilePage: React.FC = () => {
                   widthType={'%'}
                   widthValue={50}
                   heightValue={'50px'}
-                  label={ EXECUTOR[0].number === '' ? "Номер телефона не добавлен" : ""}
+                  label={ EXECUTOR[0].number === '' ? "Номер телефона не добавлен" : "" }
                   isError={false}
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
@@ -867,8 +1104,8 @@ const ExecutorProfilePage: React.FC = () => {
                 <span style={{ display: 'block', width: '20px' }} />
                 <div style={{ display: 'block', width: '50%' }} />
               </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '32px' }}>
-                <span style={{ fontWeight: 'bold' }}>{"Локация"}</span>
+              <ReviewsContentLine style={{ marginBottom: '18px', marginTop: '32px' }}>
+                <span style={{ fontWeight: 'bold' }}>{"Локация пользователя"}</span>
               </ReviewsContentLine>
               <ReviewsContentLine style={{ marginTop: '20px' }}>
                 <InputComponent
@@ -883,7 +1120,7 @@ const ExecutorProfilePage: React.FC = () => {
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ "Российская Федерация", () => null ]}
+                  store={[ addressIP?.country_name, () => null ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -906,7 +1143,7 @@ const ExecutorProfilePage: React.FC = () => {
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ "+5:00 Екатеринбург", () => null ]}
+                  store={[ addressIP?.city, () => null ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -918,413 +1155,745 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
               <Delimiter style={{ marginTop: '40px' }} background={blueColor3}/>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
-                <span style={{ fontWeight: 'bold' }}>{"Персональные данные"}</span>
-              </ReviewsContentLine>
-              <ReviewsContentLine>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Фамилия пользователя"}
-                  isError={false}
-                  isDisabled={true}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ EXECUTOR[0].bio.surname, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Имя пользователя"}
-                  isError={false}
-                  isDisabled={true}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ EXECUTOR[0].bio.name, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Отчество"}
-                  isError={false}
-                  isDisabled={true}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ EXECUTOR[0].bio.secondName, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '12px' }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer 
-                    sx={{ width: '50%' }} 
-                    components={['DatePicker']}
-                  >
-                    <DatePicker 
-                      sx={{ backgroundColor: 'white', width: '100%' }} 
-                      label={"Дата рождения"} 
-                      value={borthDate}
-                      onChange={newValue => setBorthDate(newValue)}
-                    />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <span style={{ display: 'block', width: '20px' }} />
-                <div style={{ display: 'block', width: '50%' }} />
-              </ReviewsContentLine>
-              <ReviewsContentLine 
-                style={{ 
-                  marginTop: '35px', 
-                  flexDirection: 'column',
-                  alignItems: 'flex-start',
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Паспорт серия - ${EXECUTOR[0].docs.passport.series}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Паспорт номер - ${EXECUTOR[0].docs.passport.number}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Паспорт дата выдачи - ${EXECUTOR[0].docs.passport.date}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Кем выдан паспорт - ${EXECUTOR[0].docs.passport.whoGet}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Адрес регистрации - ${EXECUTOR[0].docs.adress}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Дополнительно СНИЛС - ${EXECUTOR[0].docs.snils}`}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <img
-                    alt={""}
-                    src={correct}
-                    style={{ filter: 'grayscale(1)' }}
-                  />
-                  <span 
-                    style={{ 
-                      fontWeight: 'bold', 
-                      lineHeight: '32px',
-                      marginLeft: '14px'
-                    }}
-                  >
-                    {`Дополнительно ИНН - ${EXECUTOR[0].docs.inn}`}
-                  </span>
-                  { EXECUTOR[0].docs.inn.indexOf('*') !== (-1) && <React.Fragment>
-                    <ReportIcon style={{ color: '#d32f2f', marginLeft: '14px' }}/>
-                    <span 
-                      style={{ 
-                        fontWeight: 'bold', 
-                        lineHeight: '32px',
-                        marginLeft: '6px',
-                        color: '#d32f2f'
-                      }}
-                    >
-                      {"Не соответствует паспорту"}
-                    </span>
-                  </React.Fragment> }
-                </div>
+              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '30px' }}>
+                {( EXECUTOR[0].faceType === 'PHIS_FACE' || EXECUTOR[0].faceType === 'SELF_FACE' ) 
                 
-                <span
-                  style={{
-                    display: 'block',
-                    position: 'relative',
-                    width: '600px',
-                    lineHeight: '22px',
-                    backgroundColor: 'rgb(253, 237, 237)',
-                    padding: '14px',
-                    paddingLeft: '20px',
-                    borderRadius: '4px',
-                    marginTop: '16px'
-                  }}
-                >{"Ваши паспортные данные не подтверждены. Для подтверждения заполните все поля и прикрепите фотографии документов "}</span>
-              
+                  && <span style={{ fontWeight: 'bold' }}>{"Персональные данные физического лица"}</span> 
+
+                } 
+                {( EXECUTOR[0].faceType !== 'PHIS_FACE' && EXECUTOR[0].faceType !== 'SELF_FACE' ) 
+                
+                  && <span style={{ fontWeight: 'bold' }}>{"Юридическое лицо"}</span> 
+
+                } 
               </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
-                <span 
-                  style={{ fontWeight: 'bold', cursor: 'pointer' }}
-                  onClick={() => setDisablePassportInputs(false)}
-                >
-                  {"Персональные данные - паспорт и документы | Разблокировать поля и перейти к заполнению"}
-                </span>
-              </ReviewsContentLine>
-              <ReviewsContentLine>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Паспорт серия"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_SERI', () => EXECUTOR[0].docs.passport.series ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Паспорт номер"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_NUMBER', () => EXECUTOR[0].docs.passport.number ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '12px' }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DemoContainer 
-                    sx={{ width: '50%' }} 
-                    components={['DatePicker']}
-                  >
-                    <DatePicker 
-                      sx={{ backgroundColor: 'white', width: '100%' }} 
-                      label={"Дата выдачи документа"} 
-                      value={passportDate}
-                      onChange={newValue => dispatch(setDate(newValue))}
-                      disabled={disablePassportInputs}
+              {( EXECUTOR[0].faceType === 'PHIS_FACE' || EXECUTOR[0].faceType === 'SELF_FACE' ) && 
+                <React.Fragment>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Фамилия пользователя"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ EXECUTOR[0].bio.surname, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
                     />
-                  </DemoContainer>
-                </LocalizationProvider>
-                <span style={{ display: 'block', width: '20px' }} />
-                <div style={{ display: 'block', width: '50%' }} />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={100}
-                  heightValue={'50px'}
-                  label={"Кем выдан"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_WHO_GET', () => EXECUTOR[0].docs.passport.whoGet ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={100}
-                  heightValue={'50px'}
-                  label={"Адрес регистрации"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_ADRESS', () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"СНИЛС"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_SNILS', () => EXECUTOR[0].docs.snils ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DOCS'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"ИНН"}
-                  isError={false}
-                  isDisabled={disablePassportInputs}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ 'PASSPORT_INN', () => EXECUTOR[0].docs.inn ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '40px', marginBottom: '36px', justifyContent: 'space-between' }}>
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Имя пользователя"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ EXECUTOR[0].bio.name, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Отчество"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ EXECUTOR[0].bio.secondName, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '12px' }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer 
+                        sx={{ width: '50%' }} 
+                        components={['DatePicker']}
+                      >
+                        <DatePicker 
+                          sx={{ backgroundColor: 'white', width: '100%' }} 
+                          label={"Дата рождения"} 
+                          value={passportBorth}
+                          onChange={(newValue: any) => dispatch(setBorth(newValue))}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <div style={{ display: 'block', width: '50%' }} />
+                  </ReviewsContentLine>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '26px' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateBorth}
+                      >
+                        { successBio ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loadingBio && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateBorth}
+                      >
+                        { successBio ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loadingBio && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                  <ReviewsContentLine 
+                    style={{ 
+                      marginTop: '16px', 
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дата рождения - ${EXECUTOR[0].bio.borth}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт серия - ${EXECUTOR[0].docs.passport.series}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт номер - ${EXECUTOR[0].docs.passport.number}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт дата выдачи - ${EXECUTOR[0].docs.passport.date}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Кем выдан паспорт - ${EXECUTOR[0].docs.passport.whoGet}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Адрес регистрации - ${EXECUTOR[0].docs.adress}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дополнительно СНИЛС - ${EXECUTOR[0].docs.snils}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дополнительно ИНН - ${EXECUTOR[0].docs.inn}`}
+                      </span>
+                      { EXECUTOR[0].docs.inn.indexOf('*') !== (-1) && <React.Fragment>
+                        <ReportIcon style={{ color: '#d32f2f', marginLeft: '14px' }}/>
+                        <span 
+                          style={{ 
+                            fontWeight: 'bold', 
+                            lineHeight: '32px',
+                            marginLeft: '6px',
+                            color: '#d32f2f'
+                          }}
+                        >
+                          {"Не соответствует паспорту"}
+                        </span>
+                      </React.Fragment> }
+                    </div>
+                    
+                    <span
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        width: '600px',
+                        lineHeight: '22px',
+                        backgroundColor: 'rgb(253, 237, 237)',
+                        padding: '14px',
+                        paddingLeft: '20px',
+                        borderRadius: '4px',
+                        marginTop: '16px'
+                      }}
+                    >{"Ваши паспортные данные не подтверждены. Для подтверждения заполните все поля и прикрепите фотографии документов"}</span>
+                    <span
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        width: '600px',
+                        lineHeight: '22px',
+                        backgroundColor: 'rgb(253, 237, 237)',
+                        padding: '14px',
+                        paddingLeft: '20px',
+                        borderRadius: '4px',
+                        marginTop: '16px'
+                      }}
+                    >{"Важно! Для корректной верификации вашего ИНН через базу данных ФНС вам необходимо заполнить настоящую дату рождения, а также полное ФИО"}</span>
+                  
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
+                    <span 
+                      style={{ fontWeight: 'bold', cursor: 'pointer' }}
+                      onClick={() => setDisablePassportInputs(false)}
+                    >
+                      {"Персональные данные - паспорт и документы | Разблокировать поля и перейти к заполнению"}
+                    </span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Паспорт серия"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_SERI', () => EXECUTOR[0].docs.passport.series ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Паспорт номер"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_NUMBER', () => EXECUTOR[0].docs.passport.number ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '12px' }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer 
+                        sx={{ width: '50%' }} 
+                        components={['DatePicker']}
+                      >
+                        <DatePicker 
+                          sx={{ backgroundColor: 'white', width: '100%' }} 
+                          label={"Дата выдачи документа"} 
+                          value={passportDate}
+                          onChange={newValue => dispatch(setDate(newValue))}
+                          disabled={disablePassportInputs}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <div style={{ display: 'block', width: '50%' }} />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Кем выдан"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_WHO_GET', () => EXECUTOR[0].docs.passport.whoGet ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Адрес регистрации"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_ADRESS', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"СНИЛС"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_SNILS', () => EXECUTOR[0].docs.snils ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"ИНН"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_INN', () => EXECUTOR[0].docs.inn ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                </React.Fragment> }
+                {( EXECUTOR[0].faceType !== 'PHIS_FACE' && EXECUTOR[0].faceType !== 'SELF_FACE' ) && 
+                <React.Fragment>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.shortName ? EXECUTOR[0].docs.shortName : "Краткое наименование организации"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'SHORT_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.fullName ? EXECUTOR[0].docs.fullName : "Полное наименование организации"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'FULL_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.inn ? EXECUTOR[0].docs.inn : "ИНН"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_INN', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.kpp ? EXECUTOR[0].docs.kpp : "КПП"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_KPP', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.ogrn ? EXECUTOR[0].docs.ogrn : "ОГРН"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_OGRN', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.yurAddress ? EXECUTOR[0].docs.yurAddress : "Юридический адрес"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'YUR_ADDRESS', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.postAddress ? EXECUTOR[0].docs.postAddress : "Почтовый адрес"}
+                      isError={false}
+                      isDisabled={addressCheck}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'POST_ADDRESS', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <FormGroup style={{ width: '50%' }}>
+                      <FormControlLabel 
+                        control={
+                          <Checkbox 
+                            checked={addressCheck} 
+                            onChange={() => setAddressCheck(!addressCheck)} 
+                          />
+                        } 
+                        label="Совпадает с юридическим"
+                      />
+                    </FormGroup>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={ EXECUTOR[0].docs.bossName ? EXECUTOR[0].docs.bossName : "ФИО генеральнрого директора"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BOSS_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <FormGroup style={{ width: '50%' }}>
+                      <FormControlLabel 
+                        control={
+                          <Checkbox 
+                            checked={bossTypeOne} 
+                            onChange={() => { 
+                              setBossTypeOne(!bossTypeOne)
+                              setBossTypeTwo(false)
+                            }}
+                          />
+                        } 
+                        label="Действует на основании устава"
+                      />
+                      <FormControlLabel 
+                        style={{ marginTop: '-6px' }} 
+                        control={
+                          <Checkbox
+                            checked={bossTypeTwo} 
+                            onChange={() => {
+                              setBossTypeTwo(!bossTypeTwo)
+                              setBossTypeOne(false)
+                            }}
+                          />
+                        } 
+                        label="Действует на основании приказа"
+                      />
+                    </FormGroup>
+                  </ReviewsContentLine>
+                </React.Fragment> }
+              <ReviewsContentLine style={{ marginTop: '19px', marginBottom: '36px', justifyContent: 'space-between' }}>
                 <ButtonComponent
                   inner={"Пройти проверку данных"} 
                   type='CONTAINED_DEFAULT' 
@@ -1348,66 +1917,128 @@ const ExecutorProfilePage: React.FC = () => {
                     height: '43px',
                   }}
                 />
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Box sx={{ m: 1, position: 'relative' }}>
-                    <Fab
-                      aria-label="save"
-                      color="primary"
-                      sx={buttonSx}
-                      style={{
-                        textTransform: 'none',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                      }}
-                      onClick={updateDocs}
-                      disabled={disablePassportInputs}
-                    >
-                      {success ? <CheckIcon /> : <SaveIcon />}
-                    </Fab>
-                    {loading && (
-                      <CircularProgress
-                        size={68}
-                        sx={{
-                          color: green[500],
-                          position: 'absolute',
-                          top: -6,
-                          left: -6,
-                          zIndex: 1,
+                { ( EXECUTOR[0].faceType === 'PHIS_FACE' || EXECUTOR[0].faceType === 'SELF_FACE' ) && 
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
                         }}
-                      />
-                    )}
-                  </Box>
-                  <Box sx={{ m: 1, position: 'relative' }}>
-                    <Button
-                      variant="contained"
-                      sx={buttonSx}
-                      style={{
-                        width: '270px',
-                        height: '43px',
-                        textTransform: 'none',
-                        fontSize: '16px',
-                        fontWeight: 'normal',
-                      }}
-                      disabled={disablePassportInputs}
-                      onClick={updateDocs}
-                    >
-                      { success ? "Изменения сохранены" : "Сохранить изменения" }
-                    </Button>
-                    {loading && (
-                      <CircularProgress
-                        size={24}
-                        sx={{
-                          color: green[500],
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          marginTop: '-12px',
-                          marginLeft: '-12px',
+                        onClick={updateDocs}
+                        disabled={disablePassportInputs}
+                      >
+                        { success ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loading && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
                         }}
-                      />
-                    )}
-                  </Box>
-                </Box>
+                        disabled={disablePassportInputs}
+                        onClick={updateDocs}
+                      >
+                        { success ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loading && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box> }
+                  { ( EXECUTOR[0].faceType !== 'PHIS_FACE' && EXECUTOR[0].faceType !== 'SELF_FACE' ) && 
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateCompany}
+                        disabled={false}
+                      >
+                        { success ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loading && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        disabled={false}
+                        onClick={updateCompany}
+                      >
+                        { success ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loading && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box> }
               </ReviewsContentLine>
             </React.Fragment> }
 
@@ -1416,6 +2047,21 @@ const ExecutorProfilePage: React.FC = () => {
             {/* ---------------------------------------- */}
 
             { profileViewStep === 'wallet' && <React.Fragment>
+
+              <span
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  width: '600px',
+                  lineHeight: '22px',
+                  backgroundColor: 'rgb(253, 237, 237)',
+                  padding: '14px',
+                  paddingLeft: '20px',
+                  borderRadius: '4px',
+                  marginTop: '0px',
+                  marginBottom: '20px'
+                }}
+              >{"Внимание! Функция работы кошелька напрямую связана с корректной работой системы с API платежной системы cloud payments"}</span>
 
               <ReviewsContent 
                 style={{ 
@@ -1747,11 +2393,60 @@ const ExecutorProfilePage: React.FC = () => {
 
             { profileViewStep === 'alarms' && <React.Fragment>
 
-              { alertData.map((item, index) => {
+              { EXECUTOR[0].alertData?.map((item, index) => {
 
                 return (
                   <React.Fragment key={index}>
                     <ReviewsContentLine>
+                      <CabinetAlarmLine
+                        // ----------------------------------------------------------------
+                        // background={index === 0 ? "#FADCDC" : "#D9E7F0"}
+                        // ----------------------------------------------------------------
+                        background={index === 0 ? "#E8F0F6" : "#E8F0F6"}
+                        isNew={true}
+                        buttons={[
+                          <ButtonComponent
+                            inner={"Подтверждение"} 
+                            type='CONTAINED_DISABLED' 
+                            action={() => {}}
+                            actionData={null}
+                            widthType={'%'}
+                            widthValue={40}
+                            children={""}
+                            childrenCss={undefined}
+                            iconSrc={null}
+                            iconCss={undefined}
+                            muiIconSize={30}
+                            MuiIconChildren={ArrowUpwardIcon}
+                            css={{
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              padding: '4px',
+                              backgroundColor: 'transparent',
+                              color: 'black',
+                              width: '56px',
+                              height: '43px',
+                              border: '1px dashed grey',
+                              opacity: 0.6
+                            }}
+                          />
+                        ]}
+                        content={{
+                          date: '[ ошибка сервера - данные не получены ]',
+                          text: item.message
+                        }}
+                      />
+                    </ReviewsContentLine>
+                  </React.Fragment>
+                )
+
+              }) }
+
+              { alertData.map((item, index) => {
+
+                return (
+                  <React.Fragment key={index}>
+                    <ReviewsContentLine style={{ display: 'none' }}>
                       <CabinetAlarmLine
                         // ----------------------------------------------------------------
                         // background={index === 0 ? "#FADCDC" : "#D9E7F0"}
@@ -1784,7 +2479,7 @@ const ExecutorProfilePage: React.FC = () => {
                           />
                         ]}
                         content={{
-                          date: '[ options download ]',
+                          date: 'Загрузка данных...',
                           text: item.split('>>>>')[1].split('>>')[1].split('::')[1]
                         }}
                       />
@@ -1849,6 +2544,21 @@ const ExecutorProfilePage: React.FC = () => {
             {/* ---------------------------------------- */}
 
             { profileViewStep === 'documents' && <React.Fragment>
+
+            <span
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  width: '600px',
+                  lineHeight: '22px',
+                  backgroundColor: 'rgb(253, 237, 237)',
+                  padding: '14px',
+                  paddingLeft: '20px',
+                  borderRadius: '4px',
+                  marginTop: '0px',
+                  marginBottom: '20px'
+                }}
+              >{"Внимание! Вкладка документов будет содержать только раздел с формированием выписки, раздел электронной подписи будет скрыт"}</span>
 
               <ReviewsContent 
                 style={{ 
@@ -2017,7 +2727,32 @@ const ExecutorProfilePage: React.FC = () => {
 
             { profileViewStep === 'portfolio' && <React.Fragment>
 
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '14px' }}>
+              { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].portfolio?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '18px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного проекта в портфолио.<br/>
+                  Расскажите о ваших завершенных проектах, приложите акты.
+                </span>
+              
+              }  
+
+              <div
+                onClick={editProjectsCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
                 <span 
                   style={{
                     display: 'flex',
@@ -2030,7 +2765,6 @@ const ExecutorProfilePage: React.FC = () => {
                     borderRadius: '50%',
                     backgroundColor: blueColor3,
                     marginRight: '10px',
-                    cursor: 'pointer'
                   }}
                 >
                   <img
@@ -2102,56 +2836,6 @@ const ExecutorProfilePage: React.FC = () => {
 
               }) }
 
-              { EXECUTOR[0].reviews && EXECUTOR[0].reviews.length === 0 && <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '18px' }}>[ шаблон карточки примера проекта ]</span>
-                <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки</span>
-                    <span>{"январь 2020 - март 2022"}</span>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Акты</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
-                      <span>Акт_выполненные.docx</span>
-                    </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Общая площадь, кв.м</span>
-                      <span>360</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
-                      <span>13</span>
-                    </div>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
-                      <span>4</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
-                      <span>Москва, Россия</span>
-                    </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine>
-                  <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '30px' }}>Описание проекта</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '16px' }}>
-                  <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '22px' }}>{"Consectetur pharetra elit rhoncus convallis molestie sit auctor. Eget enim convallis nisl iaculis donec. Nulla porttitor orci tristique mattis mi faucibus phasellus. Quisque sagittis risus id orci at proin faucibus sodales leo. Arcu integer sed senectus et lacinia diam. Urna a vulputate bibendum in nulla malesuada lectus. Neque vestibulum imperdiet elit maecenas mattis sagittis"}</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '26px' }}>
-                  { Array(3).fill('Специализация примера').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
-                </ReviewsContentLine>
-              </ReviewsContent> }
-
             </React.Fragment> }
 
             {/* ---------------------------------------- */}
@@ -2162,10 +2846,34 @@ const ExecutorProfilePage: React.FC = () => {
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Образование"}</span>
-                <span style={{ color: '#516674' }}>{"Редактировать"}</span>
+                <span
+                  onClick={editEducationCases} 
+                  style={{ 
+                    color: '#516674', 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  {"Редактировать"}
+                </span>
               </ReviewsContentLine>
 
-              <ReviewsContent 
+              { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].educationAndSkills?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '0px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного места обучения<br/>
+                  Добавьте сюда оконченные учебные заведения и пройденные курсы
+                </span>
+              
+              } 
+
+              { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
                   flexDirection: 'row', 
@@ -2173,33 +2881,42 @@ const ExecutorProfilePage: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ width: '15%', fontWeight: 'bold' }}>{"2009"}</span>
+                <span style={{ width: '15%' }}>{"2009"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Курсы повышения квалификации"}</span>
                   <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
                 </div>
-              </ReviewsContent>
-              <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ width: '15%', fontWeight: 'bold' }}>{"2011"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Санкт-Петербургский государственный архитектурно-строительный университет"}</span>
-                  <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
-                </div>
-              </ReviewsContent>
+              </ReviewsContent> }
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
-                <span style={{ color: '#516674' }}>{"Редактировать"}</span>
+                <span
+                  onClick={editEducationCases} 
+                  style={{ 
+                    color: '#516674', 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  {"Редактировать"}
+                </span>
               </ReviewsContentLine>
 
-              <ReviewsContent 
+              { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].educationAndSkills?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '0px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного места работы
+                </span>
+              
+              }
+
+              { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
                   flexDirection: 'row', 
@@ -2207,27 +2924,12 @@ const ExecutorProfilePage: React.FC = () => {
                   justifyContent: 'space-between',
                 }}
               >
-                <span style={{ lineHeight: '20px', width: '15%', fontWeight: 'bold' }}>{"декабрь 2011 - ноябрь 2015"}</span>
+                <span style={{ lineHeight: '20px', width: '15%' }}>{"декабрь 2011 - ноябрь 2015"}</span>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ООО Технические Системы"}</span>
-                  <span style={{ lineHeight: '22px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
+                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
                 </div>
-              </ReviewsContent>
-              <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                  marginBottom: '36px',
-                }}
-              >
-                <span style={{ lineHeight: '20px', width: '15%', fontWeight: 'bold' }}>{"октябрь 2009 - ноябрь 2011"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ИП Иванов К.Ю."}</span>
-                  <span style={{ lineHeight: '22px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
-                </div>
-              </ReviewsContent>
+              </ReviewsContent> }
 
             </React.Fragment> }
 
@@ -2392,7 +3094,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Введите ваш пароль"}
                     isError={authDataPassError}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ authDataPass, changePass ]}
@@ -2415,7 +3117,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Введите новый пароль"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ "", () => null ]}
@@ -2437,7 +3139,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Повторите новый пароль"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ "2023", () => null ]}
@@ -2548,18 +3250,47 @@ const ExecutorProfilePage: React.FC = () => {
         <HeaderContainer>
           <LeftContainer>
             <BootstrapTooltip 
-              title="Был в сети 13 мая в 16:00"
+              title="Вы онлайн"
               TransitionComponent={Fade} 
               followCursor 
               arrow
             >
-              <img
-                alt={""}
-                src={avatar}
-                style={{ width: '150px' }}
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-around',
+                  width: '150px', 
+                  height: '150px',
+                  backgroundColor: 'rgb(217, 231, 240)',
+                  borderRadius: '50%',
+                  overflow: 'hidden'
+                }}
+              >
+                <img
+                  alt={""}
+                  src={
+                    CUSTOMER[0].avatar === '1' ? bearAvatar :
+                    CUSTOMER[0].avatar === '2' ? enotAvatar :
+                    CUSTOMER[0].avatar === '3' ? foxAvatar :
+                    CUSTOMER[0].avatar === '4' ? groupAvatar :
+                    CUSTOMER[0].avatar === '5' ? manAvatar :
+                    CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                  }
+                  style={
+                    CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                    CUSTOMER[0].avatar === '2' ? { width: '100px',  } :
+                    CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                    CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                    CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                    CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                    { width: '100px', marginTop: '6px' }
+                  }
+                />
+              </div>
             </BootstrapTooltip>
-            <AvatarIndicator background={yelloColor}/>
+            <AvatarIndicator ref={indicatorElement} background={true ? greenColor : yelloColor}/>
           </LeftContainer>
           <RightContainer>
             <div style={flexDivCSS}>
@@ -2579,10 +3310,14 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
               </ContentLine>
               <ContentLine style={{ marginTop: '20px' }}>
-                <span style={{ color: greyColor2 }}>{"[ options download ]"}</span>
+                <span style={{ color: greyColor2 }}>
+                  { CUSTOMER[0].faceType 
+                    ? generateFaceType(CUSTOMER[0].faceType) 
+                    : generateFaceType('') }
+                </span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
-                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2022 года"}</span>
+                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
                 <span 
@@ -2808,13 +3543,29 @@ const ExecutorProfilePage: React.FC = () => {
             {/* ---------------------------------------- */}
 
             { profileViewStep === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
-              { Array(4).fill('[ options download ]').map((item, index) => {
+              { CUSTOMER[0].spec && CUSTOMER[0].spec.map(
+                ( item: 
+                       string                                                             | 
+                       number                                                             | 
+                       boolean                                                            | 
+                       React.ReactElement<any, string | React.JSXElementConstructor<any>> | 
+                       React.ReactFragment                                                | 
+                       React.ReactPortal                                                  | 
+                       null                                                               | 
+                       undefined, 
+                       index: any ) => {
 
                 return (
                   <TagElement background={tagBackground}>{ item }</TagElement>
                 )
 
               })}
+              
+              { CUSTOMER[0].spec && CUSTOMER[0].spec.length === 0 && 
+              
+                <TagElement background={tagBackground}>{ 'Загрузка специализации' + tagsSpredLine }</TagElement> 
+                
+              }
               <span 
                 style={{ 
                   display: 'block', 
@@ -2833,7 +3584,12 @@ const ExecutorProfilePage: React.FC = () => {
                 <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
               </div>
               <div style={{ width: '100%', marginTop: '24px' }}>
-                <span style={{ lineHeight: '20px' }}>{"Заполните больше информации о себе"}</span>
+                <span style={{ lineHeight: '20px' }}>
+                  { CUSTOMER[0].aboutText && 
+                    CUSTOMER[0].aboutText !== '' 
+                      ? CUSTOMER[0].aboutText 
+                      : "Заполните больше информации о себе или вашей компании" }
+                </span>
               </div>
             </TagsContent> }
             
@@ -2861,7 +3617,7 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
                   
-              { Array(4).fill(undefined).map((item, index) => {
+              { CUSTOMER[0].reviews && CUSTOMER[0].reviews.map((item, index) => {
 
                 return (
                   <ReviewsContentLine style={{ marginBottom: '20px' }} key={index}>
@@ -2914,7 +3670,7 @@ const ExecutorProfilePage: React.FC = () => {
                         <span style={{ fontWeight: 'bold' }}>{"Конструктивные решения"}</span>
                       </ReviewsContentLine>
                       <ReviewsContentLine>
-                        <span style={{ lineHeight: '20px' }}>{"Vel molestie turpis placerat platea nulla risus. Donec viverra sem eget sit quam. Mi massa aliquet leo orci eu condimentum vestibulum ante. Erat tortor suspendisse odio vitae mattis. Augue sapien pulvinar dolor cras etiam vitae et eu. Quam risus ornare in adipiscing orci nulla arcu laoreet. Ultrices velit bibendum pretium morbi sem ultrices"}</span>
+                        <span style={{ lineHeight: '22px' }}>{"Vel molestie turpis placerat platea nulla risus. Donec viverra sem eget sit quam. Mi massa aliquet leo orci eu condimentum vestibulum ante. Erat tortor suspendisse odio vitae mattis. Augue sapien pulvinar dolor cras etiam vitae et eu. Quam risus ornare in adipiscing orci nulla arcu laoreet. Ultrices velit bibendum pretium morbi sem ultrices"}</span>
                       </ReviewsContentLine>
                       <ReviewsContentLine></ReviewsContentLine>
                     </ReviewContainer>
@@ -2922,6 +3678,55 @@ const ExecutorProfilePage: React.FC = () => {
                 )
 
               })}
+
+              { CUSTOMER[0].reviews && CUSTOMER[0].reviews.length === 0 && <ReviewsContentLine style={{ marginBottom: '20px' }}>
+                <ReviewContainer background={reviewBackground} style={{ borderRadius: '4px' }}>
+                  <ReviewsContentLine style={{ justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <img
+                        alt={""}
+                        src={avatarTwo}
+                        style={{ width: '30px', marginRight: '14px', filter: 'grayscale(0.8)' }}
+                      />
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 'bold', marginBottom: '5px' }}>{ 'Подождите, идет загрузка отзывов' + tagsSpredLine }</span>
+                        <span style={{ color: greyColor2, fontSize: '12px' }}>01.01.2023</span>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '-14px' }}>
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                      <img
+                        alt={""}
+                        src={star}
+                      />
+                    </div>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginBottom: '10px', marginTop: '14px' }}>
+                    <span style={{ fontWeight: 'bold' }}>{"Заголовок отзыва на пользователя"}</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine>
+                    <span style={{ lineHeight: '22px' }}>
+                      {"Вы видите данную заглушку, потому что список отзывов прогружается слишком долго, либо потому что у этого пользователя еще нет отзывов на нашей платформе"}
+                    </span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine></ReviewsContentLine>
+                </ReviewContainer>
+              </ReviewsContentLine> }
 
               <PagintationContainer style={{ marginBottom: '12px' }}>
                 <span style={showMoreButtonCSS}>Загрузить еще</span>
@@ -2947,7 +3752,7 @@ const ExecutorProfilePage: React.FC = () => {
                   widthType={'%'}
                   widthValue={50}
                   heightValue={'50px'}
-                  label={"Номер телефона"}
+                  label={ CUSTOMER[0].number === '' ? "Номер телефона не добавлен" : "" }
                   isError={false}
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
@@ -3015,8 +3820,8 @@ const ExecutorProfilePage: React.FC = () => {
                 <span style={{ display: 'block', width: '20px' }} />
                 <div style={{ display: 'block', width: '50%' }} />
               </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '32px' }}>
-                <span style={{ fontWeight: 'bold' }}>{"Локация"}</span>
+              <ReviewsContentLine style={{ marginBottom: '18px', marginTop: '32px' }}>
+                <span style={{ fontWeight: 'bold' }}>{"Локация пользователя"}</span>
               </ReviewsContentLine>
               <ReviewsContentLine style={{ marginTop: '20px' }}>
                 <InputComponent
@@ -3031,7 +3836,7 @@ const ExecutorProfilePage: React.FC = () => {
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ "Российская Федерация", () => null ]}
+                  store={[ addressIP?.country_name, () => null ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -3054,7 +3859,7 @@ const ExecutorProfilePage: React.FC = () => {
                   isDisabled={true}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ "+5:00 Екатеринбург", () => null ]}
+                  store={[ addressIP?.city, () => null ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -3066,277 +3871,714 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
               <Delimiter style={{ marginTop: '40px' }} background={blueColor3}/>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
-                <span style={{ fontWeight: 'bold' }}>{"Персональные данные"}</span>
+              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '30px' }}>
+                {( CUSTOMER[0].faceType === 'PHIS_FACE' || CUSTOMER[0].faceType === 'SELF_FACE' ) 
+                
+                  && <span style={{ fontWeight: 'bold' }}>{"Персональные данные физического лица"}</span> 
+
+                } 
+                {( CUSTOMER[0].faceType !== 'PHIS_FACE' && CUSTOMER[0].faceType !== 'SELF_FACE' ) 
+                
+                  && <span style={{ fontWeight: 'bold' }}>{"Юридическое лицо"}</span> 
+
+                } 
               </ReviewsContentLine>
-              <ReviewsContentLine>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Фамилия пользователя"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].bio.surname, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Имя пользователя"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].bio.name, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={33.33333}
-                  heightValue={'50px'}
-                  label={"Отчество"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].bio.secondName, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '12px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DATEPICK'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Дата рождения"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].bio.borth, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <div style={{ display: 'block', width: '50%' }} />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
-                <span style={{ fontWeight: 'bold' }}>{"Персональные данные"}</span>
-              </ReviewsContentLine>
-              <ReviewsContentLine>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Паспорт серия"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.passport.series, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Паспорт номер"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.passport.number, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '12px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE_DATEPICK'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"Дата выдачи"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.passport.date, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <div style={{ display: 'block', width: '50%' }} />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={100}
-                  heightValue={'50px'}
-                  label={"Кем выдан"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.passport.whiGet, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={100}
-                  heightValue={'50px'}
-                  label={"Адрес регистрации"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.address, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '20px' }}>
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"СНИЛС"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.snils, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-                <span style={{ display: 'block', width: '20px' }} />
-                <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
-                  valueType='text'
-                  required={false}
-                  widthType={'%'}
-                  widthValue={50}
-                  heightValue={'50px'}
-                  label={"ИНН"}
-                  isError={false}
-                  isDisabled={false}
-                  labelShrinkLeft={"0px"}
-                  innerLabel={null}
-                  store={[ CUSTOMER[0].docs.inn, () => null ]}
-                  css={{
-                    fontSize: '12px',
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    marginBottom: '0px',
-                    marginTop: '0px',
-                    backgroundColor: 'white'
-                  }}
-                />
-              </ReviewsContentLine>
-              <ReviewsContentLine style={{ marginTop: '40px', marginBottom: '36px', justifyContent: 'space-between' }}>
+              {( CUSTOMER[0].faceType === 'PHIS_FACE' || CUSTOMER[0].faceType === 'SELF_FACE' ) && 
+                <React.Fragment>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Фамилия пользователя"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ CUSTOMER[0].bio.surname, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Имя пользователя"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ CUSTOMER[0].bio.name, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"Отчество"}
+                      isError={false}
+                      isDisabled={true}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ CUSTOMER[0].bio.secondName, () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '12px' }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer 
+                        sx={{ width: '50%' }} 
+                        components={['DatePicker']}
+                      >
+                        <DatePicker 
+                          sx={{ backgroundColor: 'white', width: '100%' }} 
+                          label={"Дата рождения"} 
+                          value={passportBorth}
+                          onChange={(newValue: any) => dispatch(setBorth(newValue))}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <div style={{ display: 'block', width: '50%' }} />
+                  </ReviewsContentLine>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '26px' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateBorth}
+                      >
+                        { successBio ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loadingBio && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateBorth}
+                      >
+                        { successBio ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loadingBio && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box>
+                  <ReviewsContentLine 
+                    style={{ 
+                      marginTop: '16px', 
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дата рождения - ${CUSTOMER[0].bio.borth}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт серия - ${CUSTOMER[0].docs.passport.series}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт номер - ${CUSTOMER[0].docs.passport.number}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Паспорт дата выдачи - ${CUSTOMER[0].docs.passport.date}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Кем выдан паспорт - ${CUSTOMER[0].docs.passport.whoGet}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Адрес регистрации - ${CUSTOMER[0].docs.adress}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дополнительно СНИЛС - ${CUSTOMER[0].docs.snils}`}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <img
+                        alt={""}
+                        src={correct}
+                        style={{ filter: 'grayscale(1)' }}
+                      />
+                      <span 
+                        style={{ 
+                          fontWeight: 'bold', 
+                          lineHeight: '32px',
+                          marginLeft: '14px'
+                        }}
+                      >
+                        {`Дополнительно ИНН - ${CUSTOMER[0].docs.inn}`}
+                      </span>
+                      { CUSTOMER[0].docs.inn.indexOf('*') !== (-1) && <React.Fragment>
+                        <ReportIcon style={{ color: '#d32f2f', marginLeft: '14px' }}/>
+                        <span 
+                          style={{ 
+                            fontWeight: 'bold', 
+                            lineHeight: '32px',
+                            marginLeft: '6px',
+                            color: '#d32f2f'
+                          }}
+                        >
+                          {"Не соответствует паспорту"}
+                        </span>
+                      </React.Fragment> }
+                    </div>
+                    
+                    <span
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        width: '600px',
+                        lineHeight: '22px',
+                        backgroundColor: 'rgb(253, 237, 237)',
+                        padding: '14px',
+                        paddingLeft: '20px',
+                        borderRadius: '4px',
+                        marginTop: '16px'
+                      }}
+                    >{"Ваши паспортные данные не подтверждены. Для подтверждения заполните все поля и прикрепите фотографии документов"}</span>
+                    <span
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        width: '600px',
+                        lineHeight: '22px',
+                        backgroundColor: 'rgb(253, 237, 237)',
+                        padding: '14px',
+                        paddingLeft: '20px',
+                        borderRadius: '4px',
+                        marginTop: '16px'
+                      }}
+                    >{"Важно! Для корректной верификации вашего ИНН через базу данных ФНС вам необходимо заполнить настоящую дату рождения, а также полное ФИО"}</span>
+                  
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '33px' }}>
+                    <span 
+                      style={{ fontWeight: 'bold', cursor: 'pointer' }}
+                      onClick={() => setDisablePassportInputs(false)}
+                    >
+                      {"Персональные данные - паспорт и документы | Разблокировать поля и перейти к заполнению"}
+                    </span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Паспорт серия"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_SERI', () => CUSTOMER[0].docs.passport.series ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Паспорт номер"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_NUMBER', () => CUSTOMER[0].docs.passport.number ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '12px' }}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DemoContainer 
+                        sx={{ width: '50%' }} 
+                        components={['DatePicker']}
+                      >
+                        <DatePicker 
+                          sx={{ backgroundColor: 'white', width: '100%' }} 
+                          label={"Дата выдачи документа"} 
+                          value={passportDate}
+                          onChange={newValue => dispatch(setDate(newValue))}
+                          disabled={disablePassportInputs}
+                        />
+                      </DemoContainer>
+                    </LocalizationProvider>
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <div style={{ display: 'block', width: '50%' }} />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Кем выдан"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_WHO_GET', () => CUSTOMER[0].docs.passport.whoGet ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Адрес регистрации"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_ADRESS', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"СНИЛС"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_SNILS', () => CUSTOMER[0].docs.snils ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"ИНН"}
+                      isError={false}
+                      isDisabled={disablePassportInputs}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'PASSPORT_INN', () => CUSTOMER[0].docs.inn ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                </React.Fragment> }
+                {( CUSTOMER[0].faceType !== 'PHIS_FACE' && CUSTOMER[0].faceType !== 'SELF_FACE' ) && 
+                <React.Fragment>
+                  <ReviewsContentLine>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Краткое наименование организации"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'SHORT_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Полное наименование организации"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'FULL_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"ИНН"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_INN', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"КПП"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_KPP', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={33.33333}
+                      heightValue={'50px'}
+                      label={"ОГРН"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BUSS_OGRN', () => null ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={100}
+                      heightValue={'50px'}
+                      label={"Юридический адрес"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'YUR_ADDRESS', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"Почтовый адрес"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'POST_ADDRESS', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <FormGroup style={{ width: '50%' }}>
+                      <FormControlLabel control={<Checkbox />} label="Совпадает с юридическим"/>
+                    </FormGroup>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '20px' }}>
+                    <InputComponent
+                      type={'TEXT_INPUT_OUTLINE_DOCS_BUSS'}
+                      valueType='text'
+                      required={false}
+                      widthType={'%'}
+                      widthValue={50}
+                      heightValue={'50px'}
+                      label={"ФИО генерального директора"}
+                      isError={false}
+                      isDisabled={false}
+                      labelShrinkLeft={"0px"}
+                      innerLabel={null}
+                      store={[ 'BOSS_NAME', () => {} ]}
+                      css={{
+                        fontSize: '12px',
+                        position: 'relative',
+                        boxSizing: 'border-box',
+                        marginBottom: '0px',
+                        marginTop: '0px',
+                        backgroundColor: 'white'
+                      }}
+                    />
+                    <span style={{ display: 'block', width: '20px' }} />
+                    <FormGroup style={{ width: '50%' }}>
+                      <FormControlLabel control={<Checkbox />} label="Действует на основании устава"/>
+                      <FormControlLabel style={{ marginTop: '-6px' }} control={<Checkbox />} label="Действует на основании приказа"/>
+                    </FormGroup>
+                  </ReviewsContentLine>
+                </React.Fragment> }
+              <ReviewsContentLine style={{ marginTop: '19px', marginBottom: '36px', justifyContent: 'space-between' }}>
                 <ButtonComponent
                   inner={"Пройти проверку данных"} 
                   type='CONTAINED_DEFAULT' 
@@ -3360,29 +4602,128 @@ const ExecutorProfilePage: React.FC = () => {
                     height: '43px',
                   }}
                 />
-                <ButtonComponent
-                  inner={"Сохранить изменения"} 
-                  type='CONTAINED_DEFAULT' 
-                  action={() => {}}
-                  actionData={null}
-                  widthType={'px'}
-                  widthValue={270}
-                  children={""}
-                  childrenCss={undefined}
-                  iconSrc={null}
-                  iconCss={undefined}
-                  muiIconSize={30}
-                  MuiIconChildren={ArrowUpwardIcon}
-                  css={{
-                    position: 'relative',
-                    boxSizing: 'border-box',
-                    padding: '4px',
-                    backgroundColor: blueColor2,
-                    color: 'white',
-                    width: '56px',
-                    height: '43px',
-                  }}
-                />
+                { ( CUSTOMER[0].faceType === 'PHIS_FACE' || CUSTOMER[0].faceType === 'SELF_FACE' ) && 
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateDocs}
+                        disabled={disablePassportInputs}
+                      >
+                        { success ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loading && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        disabled={disablePassportInputs}
+                        onClick={updateDocs}
+                      >
+                        { success ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loading && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box> }
+                  { ( CUSTOMER[0].faceType !== 'PHIS_FACE' && CUSTOMER[0].faceType !== 'SELF_FACE' ) && 
+                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Fab
+                        aria-label="save"
+                        color="primary"
+                        sx={buttonSx}
+                        style={{
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        onClick={updateCompany}
+                        disabled={false}
+                      >
+                        { success ? <CheckIcon /> : <SaveIcon /> }
+                      </Fab>
+                      { loading && (
+                        <CircularProgress
+                          size={68}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: -6,
+                            left: -6,
+                            zIndex: 1,
+                          }}
+                        />
+                      )}
+                    </Box>
+                    <Box sx={{ m: 1, position: 'relative' }}>
+                      <Button
+                        variant="contained"
+                        sx={buttonSx}
+                        style={{
+                          width: '270px',
+                          height: '43px',
+                          textTransform: 'none',
+                          fontSize: '16px',
+                          fontWeight: 'normal',
+                        }}
+                        disabled={false}
+                        onClick={updateCompany}
+                      >
+                        { success ? "Изменения сохранены" : "Сохранить изменения" }
+                      </Button>
+                      { loading && (
+                        <CircularProgress
+                          size={24}
+                          sx={{
+                            color: green[500],
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            marginTop: '-12px',
+                            marginLeft: '-12px',
+                          }}
+                        />
+                      )}
+                    </Box>
+                  </Box> }
               </ReviewsContentLine>
 
             </React.Fragment> }
@@ -3392,6 +4733,21 @@ const ExecutorProfilePage: React.FC = () => {
             {/* ---------------------------------------- */}
 
             { profileViewStep === 'wallet' && <React.Fragment>
+
+            <span
+              style={{
+                display: 'block',
+                position: 'relative',
+                width: '600px',
+                lineHeight: '22px',
+                backgroundColor: 'rgb(253, 237, 237)',
+                padding: '14px',
+                paddingLeft: '20px',
+                borderRadius: '4px',
+                marginTop: '0px',
+                marginBottom: '20px'
+              }}
+            >{"Внимание! Функция работы кошелька напрямую связана с корректной работой системы с API платежной системы cloud payments"}</span>
 
               <ReviewsContent 
                 style={{ 
@@ -3722,11 +5078,25 @@ const ExecutorProfilePage: React.FC = () => {
 
             { profileViewStep === 'alarms' && <React.Fragment>
 
+              <span
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  width: '600px',
+                  lineHeight: '22px',
+                  backgroundColor: 'rgb(253, 237, 237)',
+                  padding: '14px',
+                  paddingLeft: '20px',
+                  borderRadius: '8px',
+                  marginBottom: '20px'
+                }}
+              >{"Внимание! Первые четыре шаблона визуального блока уведомления на этапе тестирования будут отображаться в кабинете заказчика, они нужны для сохранения изначального работающего варианта модуля"}</span>
+
               { Array(2).fill(null).map((item, index) => {
 
                 return (
                   <React.Fragment key={index}>
-                    <ReviewsContentLine>
+                    <ReviewsContentLine style={{ opacity: 0.6 }}>
                       <CabinetAlarmLine
                         background={index === 0 ? "#FADCDC" : "#D9E7F0"}
                         isNew={true}
@@ -3766,11 +5136,11 @@ const ExecutorProfilePage: React.FC = () => {
 
               })}
 
-              { Array(3).fill(null).map((item, index) => {
+              { Array(2).fill(null).map((item, index) => {
 
                 return (
                   <React.Fragment key={index}>
-                    <ReviewsContentLine>
+                    <ReviewsContentLine style={{ opacity: 0.6 }}>
                       <CabinetAlarmLine
                         background={"#E8F0F6"}
                         isNew={false}
@@ -3810,8 +5180,62 @@ const ExecutorProfilePage: React.FC = () => {
 
               })}
 
-              <ReviewsContentLine style={{ justifyContent: 'space-around', color: greyColor, marginTop: '30px' }}>
-                <span>{"Показать все"}</span>
+              { alertData.map((item: Array<any>, index: number): ReactElement => {
+
+                return (
+                  <React.Fragment key={index}>
+                    { item.map((itemDown: { initiator: string, message: string }, indexDown: number): ReactElement => {
+
+                      return (
+                        <React.Fragment>
+                          <ReviewsContentLine>
+                            <CabinetAlarmLine
+                              background={'#D9E7F0'}
+                              isNew={true}
+                              buttons={[
+                                <ButtonComponent
+                                  inner={"Подтверждение"} 
+                                  type='CONTAINED_DISABLED' 
+                                  action={() => {}}
+                                  actionData={null}
+                                  widthType={'%'}
+                                  widthValue={40}
+                                  children={""}
+                                  childrenCss={undefined}
+                                  iconSrc={null}
+                                  iconCss={undefined}
+                                  muiIconSize={30}
+                                  MuiIconChildren={ArrowUpwardIcon}
+                                  css={{
+                                    position: 'relative',
+                                    boxSizing: 'border-box',
+                                    padding: '4px',
+                                    backgroundColor: 'transparent',
+                                    color: 'black',
+                                    width: '56px',
+                                    height: '43px',
+                                    border: '1px dashed grey',
+                                    opacity: 0.6
+                                  }}
+                                />
+                              ]}
+                              content={{
+                                date: '[ ошибка сервера - данные не получены ]',
+                                text: 'Новое уведомление. ' + itemDown.message.split('::')[1]
+                              }}
+                            />
+                          </ReviewsContentLine>
+                        </React.Fragment>
+                      )
+
+                    }) }
+                  </React.Fragment>
+                )
+
+              }) }
+
+              <ReviewsContentLine style={{ justifyContent: 'space-around', color: greyColor, marginTop: '30px', marginBottom: '42px' }}>
+                <span style={{ cursor: 'pointer' }}>{"Показать все"}</span>
               </ReviewsContentLine>
 
             </React.Fragment> }
@@ -3821,6 +5245,21 @@ const ExecutorProfilePage: React.FC = () => {
             {/* ---------------------------------------- */}
 
             { profileViewStep === 'documents' && <React.Fragment>
+
+              <span
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  width: '600px',
+                  lineHeight: '22px',
+                  backgroundColor: 'rgb(253, 237, 237)',
+                  padding: '14px',
+                  paddingLeft: '20px',
+                  borderRadius: '4px',
+                  marginTop: '0px',
+                  marginBottom: '20px'
+                }}
+              >{"Внимание! Вкладка документов будет содержать только раздел с формированием выписки, раздел электронной подписи будет скрыт"}</span>
 
               <ReviewsContent 
                 style={{ 
@@ -3988,7 +5427,32 @@ const ExecutorProfilePage: React.FC = () => {
 
             { profileViewStep === 'portfolio' && <React.Fragment>
 
-              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '14px' }}>
+              { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].portfolio?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '18px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного проекта в портфолио.<br/>
+                  Расскажите о ваших завершенных проектах, приложите акты.
+                </span>
+              
+              }    
+
+              <div
+                onClick={editProjectsCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
                 <span 
                   style={{
                     display: 'flex',
@@ -4001,7 +5465,6 @@ const ExecutorProfilePage: React.FC = () => {
                     borderRadius: '50%',
                     backgroundColor: blueColor3,
                     marginRight: '10px',
-                    cursor: 'pointer'
                   }}
                 >
                   <img
@@ -4012,7 +5475,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
                 <span>Добавить новый проект</span>
               </div>
-              <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start' }}>
+              { false && <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start' }}>
                 <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Проектирование вентиляции малоэтажного дома в Москве</span>
                 <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
                   <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
@@ -4064,8 +5527,8 @@ const ExecutorProfilePage: React.FC = () => {
                 <ReviewsContentLine style={{ marginTop: '26px' }}>
                   { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
                 </ReviewsContentLine>
-              </ReviewsContent>
-              <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px', marginBottom: '36px' }}>
+              </ReviewsContent> }
+              { false && <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px', marginBottom: '36px' }}>
                 <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Проектирование вентиляции малоэтажного дома в Москве</span>
                 <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
                   <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
@@ -4117,7 +5580,7 @@ const ExecutorProfilePage: React.FC = () => {
                 <ReviewsContentLine style={{ marginTop: '26px' }}>
                   { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
                 </ReviewsContentLine>
-              </ReviewsContent>
+              </ReviewsContent> }
 
             </React.Fragment> }
 
@@ -4129,10 +5592,34 @@ const ExecutorProfilePage: React.FC = () => {
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Образование"}</span>
-                <span style={{ color: '#516674' }}>{"Редактировать"}</span>
+                <span
+                  onClick={editEducationCases} 
+                  style={{ 
+                    color: '#516674', 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  {"Редактировать"}
+                </span>
               </ReviewsContentLine>
 
-              <ReviewsContent 
+              { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].educationAndSkills?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '0px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного места обучения<br/>
+                  Добавьте сюда оконченные учебные заведения и пройденные курсы
+                </span>
+              
+              }    
+
+              { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
                   flexDirection: 'row', 
@@ -4145,28 +5632,37 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Курсы повышения квалификации"}</span>
                   <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
                 </div>
-              </ReviewsContent>
-              <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ width: '15%' }}>{"2011"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Санкт-Петербургский государственный архитектурно-строительный университет"}</span>
-                  <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
-                </div>
-              </ReviewsContent>
+              </ReviewsContent> }
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
-                <span style={{ color: '#516674' }}>{"Редактировать"}</span>
+                <span
+                  onClick={editEducationCases} 
+                  style={{ 
+                    color: '#516674', 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  {"Редактировать"}
+                </span>
               </ReviewsContentLine>
 
-              <ReviewsContent 
+              { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].educationAndSkills?.length === 0 && 
+
+                <span 
+                  style={{ 
+                    lineHeight: '23px', 
+                    width: '100%',
+                    marginTop: '0px',
+                    marginBottom: '14px', 
+                  }}
+                >
+                  Вы не добавили пока еще ни одного места работы
+                </span>
+              
+              }    
+
+              { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
                   flexDirection: 'row', 
@@ -4179,22 +5675,7 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ООО Технические Системы"}</span>
                   <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
                 </div>
-              </ReviewsContent>
-              <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                  marginBottom: '36px',
-                }}
-              >
-                <span style={{ lineHeight: '20px', width: '15%' }}>{"октябрь 2009 - ноябрь 2011"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ИП Иванов К.Ю."}</span>
-                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
-                </div>
-              </ReviewsContent>
+              </ReviewsContent> }
 
             </React.Fragment> }
 
@@ -4359,7 +5840,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Введите ваш пароль"}
                     isError={authDataPassError}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ authDataPass, changePass ]}
@@ -4382,7 +5863,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Введите новый пароль"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ "", () => null ]}
@@ -4404,7 +5885,7 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Повторите новый пароль"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
                     store={[ "", () => null ]}

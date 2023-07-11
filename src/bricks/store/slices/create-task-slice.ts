@@ -115,6 +115,9 @@ const createTaskReducer = createSlice({
       let filesData = state.techTaskFile
       let filterFilesData = filesData.filter(file => file.name !== action.payload)
       state.techTaskFile = filterFilesData
+    },
+    resetTechTaskFile(state, action: PayloadAction<string>) {
+      state.techTaskFile = []
     }
   }
 })
@@ -141,5 +144,6 @@ export const {
   setChapterLD,
   setFocused,
   setTechTaskFile,
-  removeTechTaskFile } = createTaskReducer.actions
+  removeTechTaskFile,
+  resetTechTaskFile } = createTaskReducer.actions
 export default createTaskReducer.reducer

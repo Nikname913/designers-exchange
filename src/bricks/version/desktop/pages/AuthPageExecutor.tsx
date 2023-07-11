@@ -22,6 +22,8 @@ const AuthPage: React.FC = () => {
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AGREE, SET_AGREE ] = useState(false)
   const [ preloader, setPreloader ] = useState(false)
+  const [ spec, setSpec ] = useState<string>('')
+
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
@@ -77,27 +79,56 @@ const AuthPage: React.FC = () => {
       && PASSWORD !== ''
       && FACE_TYPE !== ''
       && AGREE
+      && spec
       && passValid1 === true
       && passValid2 === true
       && passValid3 === true ) {
 
-      setPreloader(true)
-      SET_AUTH_REQUEST(true)
+        if ( FACE_TYPE === 'IP_FACE' ) {
 
-      !false && console.log(SURNAME)
-      !false && console.log(NAME)
-      !false && console.log(SECOND_NAME)
-      !false && console.log(EMAIL)
-      !false && console.log(NUMBER)
-      !false && console.log(PASSWORD)
-      !false && console.log(FACE_TYPE)
+        const urlString = 'http://85.193.88.125:3000/check-face'
 
-      // ---------------------------------------
-      setTimeout(() => {
-        setPreloader(false)
-        SET_AUTH_REQUEST(false)
-      }, 1400)
-      // ---------------------------------------
+        fetch(urlString, {
+          method: 'POST',
+          headers: { "Content-type": "application/json; charset=UTF-8" }, 
+          body: JSON.stringify({
+            faceString: NAME
+          })
+        })
+          .then(res => res.json())
+          .then(data => {
+
+            if ( data.items.length !== 0 ) {
+
+              setPreloader(true)
+              SET_AUTH_REQUEST(true)
+
+              setTimeout(() => {
+                setPreloader(false)
+                SET_AUTH_REQUEST(false)
+              }, 1400)
+
+            } else {
+
+              dispatch(setShow(true))
+              dispatch(setType('error'))
+              dispatch(setMessage('Имя пользователя или название введенной организации не найдено в базе ФНС. Попробуйте ввести заново'))
+
+            }
+
+          })
+
+        } else {
+
+          setPreloader(true)
+          SET_AUTH_REQUEST(true)
+
+          setTimeout(() => {
+            setPreloader(false)
+            SET_AUTH_REQUEST(false)
+          }, 1400)
+
+        }
 
     } else {
 
@@ -117,6 +148,12 @@ const AuthPage: React.FC = () => {
         dispatch(setShow(true))
         dispatch(setType('error'))
         dispatch(setMessage('Нужно заполнить поле "Статус" указав там форму занятости'))
+      }
+
+      if ( spec === '' ) {
+        dispatch(setShow(true))
+        dispatch(setType('error'))
+        dispatch(setMessage('Нужно заполнить выбрать основную специализацию'))
       }
 
     }
@@ -248,6 +285,7 @@ const AuthPage: React.FC = () => {
             secondName: SECOND_NAME,
             number: NUMBER,
             faceType: FACE_TYPE,
+            specArr: spec
           }
         }}
       
@@ -450,7 +488,7 @@ const AuthPage: React.FC = () => {
                 { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
                 { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
                 { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
-                { value: 'Обследование строительных конструкций', label: 'Обследование констукций' },
+                { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
                 { value: 'Генеральный план', label: 'Генеральный план' },
                 { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
                 { value: 'Архитектурные решения', label: 'Архитектурные решения' },
@@ -473,15 +511,15 @@ const AuthPage: React.FC = () => {
                 { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
                 { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
                 { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
-                { value: 'Энергетическая эффективность', label: 'Энергетическая эффективностьи' },
+                { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
                 { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
                 { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
                 { value: 'Сметная документация', label: 'Сметная документация' },
                 { value: 'Иная документация', label: 'Иная документация' }
               ]}
-              multy={true}
-              action={() => {}}
-              actionType={""}
+              multy={false}
+              action={setSpec}
+              actionType={"AUTH_SPEC_TYPE"}
               actionParams={[]}
               showIcon={true}
               icon={null}

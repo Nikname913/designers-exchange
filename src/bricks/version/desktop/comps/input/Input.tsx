@@ -43,7 +43,20 @@ import { setSeri,
   setSnils, 
   setInn,
   setFocused as setFocusedPas } from '../../../../store/slices/passport-slice'
+import { setShortName,
+  setFullName,
+  setInn as setInnBuss,
+  setKpp,
+  setOgrn,
+  setYurAddress,
+  setPostAddress, 
+  setBossName,
+  setBossType,
+  setFocused as setFocusedBuss } from '../../../../store/slices/bussData-slice'
 import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
+import { setFromCoast, setToCoast, setFocused as setFocusedFilter } from '../../../../store/slices/filter-slice'
+import { setAboutText, setFocused as setFocusedAboutText } from '../../../../store/slices/about-text-slice'
+
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -54,6 +67,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { Dayjs } from 'dayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { ruRU } from '@mui/x-date-pickers'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import { IInput } from '../../../../models-ts/comps/comps-models'
@@ -141,6 +155,36 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const PASSPORT_INN = useAppSelector(state => state.passportReducer.inn)
   const PASSPORT_FOCUS = useAppSelector(state => state.passportReducer.focused)
 
+  // ----------------------------------------------------------------
+  // данные для фильтра
+  // ----------------------------------------------------------------
+
+  const FROM_COAST = useAppSelector(state => state.filterReducer.fromCoast)
+  const TO_COAST = useAppSelector(state => state.filterReducer.toCoast)
+  const FILTER_FOCUS = useAppSelector(state => state.filterReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для заведения компании в лк
+  // ----------------------------------------------------------------
+
+  const SHORT_NAME = useAppSelector(state => state.bussDataReducer.shortName)
+  const FULL_NAME = useAppSelector(state => state.bussDataReducer.fullName)
+  const BUSS_INN = useAppSelector(state => state.bussDataReducer.inn)
+  const BUSS_KPP = useAppSelector(state => state.bussDataReducer.kpp)
+  const BUSS_OGRN = useAppSelector(state => state.bussDataReducer.ogrn)
+  const YUR_ADDRESS = useAppSelector(state => state.bussDataReducer.yurAddress)
+  const POST_ADDRESS = useAppSelector(state => state.bussDataReducer.postAddress)
+  const BOSS_NAME = useAppSelector(state => state.bussDataReducer.boss.name)
+  const BOSS_TYPE = useAppSelector(state => state.bussDataReducer.boss.type)
+  const BUSS_FOCUS = useAppSelector(state => state.bussDataReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для заведения текста о себе
+  // ----------------------------------------------------------------
+
+  const ABOUT_TEXT = useAppSelector(state => state.aboutTextReducer.aboutText)
+  const ABOUT_FOCUS = useAppSelector(state => state.aboutTextReducer.focused)
+
   interface IState {
     showPassword: boolean,
     password: string
@@ -200,6 +244,7 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     },
   })
 
+  // ----------------------------------------------------------------
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleChange = (prop: keyof IState) => (event: React.ChangeEvent<HTMLInputElement>) => {
     setValues({ ...values, [prop]: event.target.value })
@@ -211,15 +256,18 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     store && store[1](event.target.value)
   } 
 
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
   const reduceAuthState = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     if ( store ) {
 
-      store[0] === 'NAME' && dispatch(setName(event.target.value))
-      store[0] === 'SURNAME' && dispatch(setSurname(event.target.value))
-      store[0] === 'SECOND_NAME' && dispatch(setSecondName(event.target.value))
-      store[0] === 'EMAIL' && dispatch(setEmail(event.target.value))
-      store[0] === 'NUMBER' && dispatch(setNumber(event.target.value.replace(/\D/g,'')))
+      store[0] === 'NAME' && event.target.value.length < 21 && dispatch(setName(event.target.value))
+      store[0] === 'SURNAME' && event.target.value.length < 21 && dispatch(setSurname(event.target.value))
+      store[0] === 'SECOND_NAME' && event.target.value.length < 21 && dispatch(setSecondName(event.target.value))
+      store[0] === 'EMAIL' && event.target.value.length < 41 && dispatch(setEmail(event.target.value))
+      store[0] === 'NUMBER' && event.target.value.replace(/\D/g,'').length < 12 && dispatch(setNumber(event.target.value.replace(/\D/g,'')))
       store[0] === 'SPEC' && dispatch(setSpec(event.target.value))
       store[0] === 'PASSWORD' && dispatch(setPassword(event.target.value))
       store[0] === 'CODE' && dispatch(setCode(event.target.value))
@@ -285,6 +333,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     }
 
   }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
   const reduceNewTaskState = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -356,6 +407,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   }
 
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
   const reduceRespondState = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     if ( store ) {
@@ -423,6 +477,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   }
 
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
   const reducePassportData = (event: React.ChangeEvent<HTMLInputElement>) => {
 
     if ( store ) {
@@ -469,6 +526,146 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     }
 
   }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceFilterData = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'FROM_COAST' && dispatch(setFromCoast(event.target.value))
+      store[0] === 'TO_COAST' && dispatch(setToCoast(event.target.value))
+
+      store[0] === 'FROM_COAST' && dispatch(setFocusedFilter('FROM_COAST'))
+      store[0] === 'TO_COAST' && dispatch(setFocusedFilter('TO_COAST'))
+
+    }
+
+  }
+
+  const reduceFilterDataFocus = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setUpdating(false))
+
+      store[0] === 'FROM_COAST' && dispatch(setFocusedFilter('FROM_COAST'))
+      store[0] === 'TO_COAST' && dispatch(setFocusedFilter('TO_COAST'))
+
+    }
+
+  }
+
+  const reduceFilterDataBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedFilter(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceBussData = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'SHORT_NAME' && dispatch(setShortName(event.target.value))
+      store[0] === 'FULL_NAME' && dispatch(setFullName(event.target.value))
+      store[0] === 'BUSS_INN' && dispatch(setInnBuss(event.target.value))
+      store[0] === 'BUSS_KPP' && dispatch(setKpp(event.target.value))
+      store[0] === 'BUSS_OGRN' && dispatch(setOgrn(event.target.value))
+      store[0] === 'YUR_ADDRESS' && dispatch(setYurAddress(event.target.value))
+      store[0] === 'POST_ADDRESS' && dispatch(setPostAddress(event.target.value))
+      store[0] === 'BOSS_NAME' && dispatch(setBossName(event.target.value))
+      store[0] === 'BOSS_TYPE' && dispatch(setBossType(Number(event.target.value)))
+
+      store[0] === 'SHORT_NAME' && dispatch(setFocusedBuss('SHORT_NAME'))
+      store[0] === 'FULL_NAME' && dispatch(setFocusedBuss('FULL_NAME'))
+      store[0] === 'BUSS_INN' && dispatch(setFocusedBuss('BUSS_INN'))
+      store[0] === 'BUSS_KPP' && dispatch(setFocusedBuss('BUSS_KPP'))
+      store[0] === 'BUSS_OGRN' && dispatch(setFocusedBuss('BUSS_OGRN'))
+      store[0] === 'YUR_ADDRESS' && dispatch(setFocusedBuss('YUR_ADDRESS'))
+      store[0] === 'POST_ADDRESS' && dispatch(setFocusedBuss('POST_ADDRESS'))
+      store[0] === 'BOSS_NAME' && dispatch(setFocusedBuss('BOSS_NAME'))
+      store[0] === 'BOSS_TYPE' && dispatch(setFocusedBuss('BOSS_TYPE'))
+
+    }
+
+  }
+
+  const reduceBussDataFocus = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setUpdating(false))
+
+      store[0] === 'SHORT_NAME' && dispatch(setFocusedBuss('SHORT_NAME'))
+      store[0] === 'FULL_NAME' && dispatch(setFocusedBuss('FULL_NAME'))
+      store[0] === 'BUSS_INN' && dispatch(setFocusedBuss('BUSS_INN'))
+      store[0] === 'BUSS_KPP' && dispatch(setFocusedBuss('BUSS_KPP'))
+      store[0] === 'BUSS_OGRN' && dispatch(setFocusedBuss('BUSS_OGRN'))
+      store[0] === 'YUR_ADDRESS' && dispatch(setFocusedBuss('YUR_ADDRESS'))
+      store[0] === 'POST_ADDRESS' && dispatch(setFocusedBuss('POST_ADDRESS'))
+      store[0] === 'BOSS_NAME' && dispatch(setFocusedBuss('BOSS_NAME'))
+      store[0] === 'BOSS_TYPE' && dispatch(setFocusedBuss('BOSS_TYPE'))
+
+    }
+
+  }
+
+  const reduceBussDataBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedBuss(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceAboutText = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'ABOUT_TEXT' && dispatch(setAboutText(event.target.value))
+      store[0] === 'ABOUT_TEXT' && dispatch(setFocusedAboutText('ABOUT_TEXT'))
+
+    }
+
+  }
+
+  const reduceAboutTextFocus = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setUpdating(false))
+
+      store[0] === 'ABOUT_TEXT' && dispatch(setFocusedAboutText('ABOUT_TEXT'))
+
+    }
+
+  }
+
+  const reduceAboutTextBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedAboutText(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
 
   const clickShowPassword = () => {
     setValues({
@@ -554,6 +751,35 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // на типа просто TEXT_INPUT_OUTLINE 
           // ---------------------------------------------------------------- !!!
 
+          : type === 'TEXT_INPUT_OUTLINE_FILTER'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'FROM_COAST' ? FROM_COAST :
+                  store[0] === 'TO_COAST' ? TO_COAST : ''
+              }
+              onChange={reduceFilterData}
+              onFocus={reduceFilterDataFocus}
+              onBlur={reduceFilterDataBlur}
+              autoFocus={store && FILTER_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_NEW_TASK'
           ? <CustomTextField 
               ref={inputRef}
@@ -615,6 +841,70 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_DOCS_BUSS'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'SHORT_NAME' ? SHORT_NAME :
+                  store[0] === 'FULL_NAME' ? FULL_NAME :
+                  store[0] === 'BUSS_INN' ? BUSS_INN :
+                  store[0] === 'BUSS_KPP' ? BUSS_KPP :
+                  store[0] === 'BUSS_OGRN' ? BUSS_OGRN : 
+                  store[0] === 'YUR_ADDRESS' ? YUR_ADDRESS :
+                  store[0] === 'POST_ADDRESS' ? POST_ADDRESS :
+                  store[0] === 'BOSS_NAME' ? BOSS_NAME :
+                  store[0] === 'BOSS_TYPE' ? BOSS_TYPE : ''
+              }
+              onChange={reduceBussData}
+              onFocus={reduceBussDataFocus}
+              onBlur={reduceBussDataBlur}
+              autoFocus={store && BUSS_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />  
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_ABOUT_TEXT'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'ABOUT_TEXT' ? ABOUT_TEXT : ''
+              }
+              onChange={reduceAboutText}
+              onFocus={reduceAboutTextFocus}
+              onBlur={reduceAboutTextBlur}
+              autoFocus={store && ABOUT_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />  
 
           // ---------------------------------------------------------------- !!! 
           // данный тип интпута создан временно, нужно перекинуть функционал
@@ -689,6 +979,24 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               error={isError}
               disabled={isDisabled}
               autoComplete={"off"}
+              InputProps={{
+                endAdornment: 
+                  <InputAdornment 
+                    position="end"
+                    style={{ marginRight: '6px' }}
+                  >
+                    { !store ? 0 :
+                      store[0] === 'SURNAME' ? 20 - SURNAME.length :
+                      store[0] === 'NAME' ? 20 - NAME.length :
+                      store[0] === 'ORG_NAME' ? 20 - NAME.length :
+                      store[0] === 'SECOND_NAME' ? 20 - SECOND_NAME.length :
+                      store[0] === 'EMAIL' ? 40 - EMAIL.length :
+                      store[0] === 'EMAIL_ENTER' ? 40 - EMAIL_ENTER.length : 
+                      store[0] === 'NUMBER' ? 11 - NUMBER.length :
+                      store[0] === 'PASSWORD' ? 30 - PASSWORD.length :
+                      store[0] === 'CODE' ? CODE : 0 }
+                  </InputAdornment>
+              }}
               style={{
                 ...css,
                 width: '100%'
@@ -853,7 +1161,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // ---------------------------------------------------------------- !!!
 
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_START'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs} 
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}
@@ -869,7 +1180,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               </DemoContainer>
             </LocalizationProvider>
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_FINISH'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs}
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}
@@ -883,7 +1197,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               </DemoContainer>
             </LocalizationProvider>
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs}
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}
@@ -897,7 +1214,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               </DemoContainer>
             </LocalizationProvider>
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_FINISH'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs}
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}
@@ -911,7 +1231,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               </DemoContainer>
             </LocalizationProvider>
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_EXPERT'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs}
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}
@@ -930,7 +1253,10 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // ---------------------------------------------------------------- !!!
 
           : type === 'TEXT_INPUT_OUTLINE_DATEPICK'
-          ? <LocalizationProvider dateAdapter={AdapterDayjs}>
+          ? <LocalizationProvider 
+              dateAdapter={AdapterDayjs}
+              localeText={ruRU.components.MuiLocalizationProvider.defaultProps.localeText}
+            >
               <DemoContainer 
                 sx={{ width: '100%' }} 
                 components={['DatePicker']}

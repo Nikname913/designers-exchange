@@ -16,6 +16,8 @@ import Alert from './services/alert.service'
 import FOS from './services/fos.service'
 import RightContentContainer from './services/rightContentContainer.service'
 import Updater from './views/globalViews/Updater'
+import Fab from '@mui/material/Fab'
+import SmartphoneIcon from '@mui/icons-material/Smartphone'
 
 const DeskRoutesMemo = React.memo(DeskRoutes)
 
@@ -36,12 +38,13 @@ const Main: React.FC = () => {
   
   const mainContainer = useRef<HTMLElement | null>(null)
   const requestReduceValue = useAppSelector(state => state.requestReducer.reduceValue)
-  const [ ,setAddressIP ] = useState<{
-    IPv4: string,
+  const [ addressIP, setAddressIP ] = useState<{
+    ip: string,
     city: string,
     country_code: string,
     country_name: string,
     postal: string,
+    time: string
   }>()
 
   const dispatch = useAppDispatch()
@@ -58,27 +61,33 @@ const Main: React.FC = () => {
 
   const getDataIP = async () => {
 
-    fetch('https://geolocation-db.com/json/')
+    fetch('http://ipwho.is/')
       .then(res => res.json())
       .then(
         (data: {
-          IPv4: string,
+          ip: string,
           city: string,
           country_code: string,
-          country_name: string,
+          country: string,
           latitude: number,
           longitude: number,
           postal: string,
-          state: string
-        }): PromiseLike<never> | void => 
+          timezone: {
+            current_time: string
+          }
+        }): PromiseLike<never> | void => {
+
+          console.log(data)
+
           setAddressIP({
-            IPv4: data.IPv4,
+            ip: data.ip,
             city: data.city,
             country_code: data.country_code,
-            country_name: data.country_name,
-            postal: data.postal
+            country_name: data.country,
+            postal: data.postal,
+            time: data.timezone.current_time.split('T')[1].split('+')[0]
           })
-      )
+        })
 
   }
 
@@ -129,9 +138,25 @@ const Main: React.FC = () => {
           showShadow={true} 
           scroll={scrollFosContent} 
         /> }
-        <Header></Header>
+        <Header userCity={addressIP?.city}></Header>
         <DeskRoutesMemo></DeskRoutesMemo>
         <Footer></Footer>
+        <Fab 
+          color="primary" 
+          aria-label="add"
+          style={{
+            display: 'block',
+            position: 'fixed',
+            width: '70px',
+            height: '70px',
+            top: '100vh',
+            left: '0%',
+            marginTop: '-100px',
+            marginLeft: '30px'
+          }}
+        >
+          <SmartphoneIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />
+        </Fab>
       </main>
     </React.Fragment>
   )

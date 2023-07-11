@@ -6,6 +6,7 @@ export interface IPassportReducer {
   adress: string,
   snils: string,
   inn: string,
+  borth: string,
   focused: string,
 }
 

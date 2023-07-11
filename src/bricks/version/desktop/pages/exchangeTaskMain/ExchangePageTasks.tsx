@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 /* eslint-disable react-hooks/exhaustive-deps */
 // ----------------------------------------------------------------
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
@@ -11,7 +11,13 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
 import { setUpdating } from '../../../../store/slices/data-update-slice'
+import { setTFN } from '../../../../store/slices/filter-slice'
 import SelectField from '../../comps/select/SelectField'
+import TextField from '@mui/material/TextField'
+import InputAdornment from '@mui/material/InputAdornment'
+import IconButton from '@mui/material/IconButton'
+import Search from '@mui/icons-material/Search'
+import { styled } from '@mui/material/styles'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
 import Pagintation from '../../services/pagination.service'
@@ -28,11 +34,38 @@ const { MenuContainer,
 
 const ExchangePage: React.FC = () => {
 
+  const [ ,setFilterLoading ] = useState<boolean>(false)
+
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
+  const filterCoastFrom = useAppSelector(state => state.filterReducer.fromCoast)
+  const filterCoastTo = useAppSelector(state => state.filterReducer.toCoast)
+  const filterName = useAppSelector(state => state.filterReducer.taskFilterName)
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
-  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const TASKS_LIST_CLEAR = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+
+  let TASKS_LIST: Array<any> = []
+
+  if ( filterCoastFrom !== '' ) 
+
+    TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => +item.coast.value >= +filterCoastFrom)
+      .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+
+  if ( filterCoastTo !== '' ) 
+
+    TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => +item.coast.value <= +filterCoastTo)
+      .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+
+  if ( filterCoastFrom !== '' && filterCoastTo !== '' )
+  
+    TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => (+item.coast.value >= +filterCoastFrom && +item.coast.value <= +filterCoastTo))
+      .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+
+  if ( filterCoastFrom === '' && filterCoastTo === '' )
+
+    TASKS_LIST = TASKS_LIST_CLEAR.list
+      .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
 
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
@@ -78,17 +111,54 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
+  const CustomTextField = styled(TextField)({
+    '& .MuiInputLabel-root': {}, /* placeholder стилизуется тут */
+    '& .MuiInputLabel-shrink': {
+      marginLeft: '0px',
+    },
+    '& .MuiInputBase-input': {
+      fontSize: '15px',
+    },
+    '& .MuiOutlinedInput-input': {
+      paddingBottom: '18px',
+    },
+    '& .MuiInput-root:before': {
+      borderBottom: '1px solid #2E2E2E',
+      fontSize: '15px'
+    },
+    '& .MuiFormLabel-root': {
+      fontSize: '15px',
+      marginLeft: '2px',
+      marginTop: '-2.6px'
+    },
+    '& label.Mui-focused': {
+      color: '#2E2E2E',
+    },
+    '& .MuiInput-underline:after': {
+      display: 'none',
+      borderBottomColor: '#2E2E2E',
+    },
+    '& .MuiOutlinedInput-root': {
+      height: '50px',
+        '& fieldset': {},
+        '&:hover fieldset': {},
+        '&.Mui-focused fieldset': {
+          borderColor: '#167CBF'
+        },
+    },
+  })
+
   const orders = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-all')
-    if ( TASKS_LIST.list.filter(item => item.status === 'work').length === 0 ) {
+    TASKS_LIST.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-all')
+    if ( TASKS_LIST.filter(item => item.status === 'work').length === 0 ) {
       dispatch(setShow(true))
       dispatch(setType("info"))
       dispatch(setMessage("В настоящий момент задания в работе отсутствуют"))
     }
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-all')
-    if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
+    TASKS_LIST.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-all')
+    if ( TASKS_LIST.filter(item => item.status === 'backside').length === 0 ) {
       dispatch(setShow(true))
       dispatch(setType("info"))
       dispatch(setMessage("В настоящий момент задания в архиве отсутствуют"))
@@ -99,8 +169,17 @@ const ExchangePage: React.FC = () => {
     dispatch(selectActualTask(param))
   }
 
+  const baseInputValueChangeEvent = (event: any) => {
+    setFilterLoading(true)
+    dispatch(setTFN(event.target.value))
+
+    setTimeout(() => { setFilterLoading(false) }, 1300 )
+  }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setUpdating(true)) }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { console.log(TASKS_LIST[0]) }, [])
 
   return (
     <ContentArea
@@ -112,19 +191,19 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Задания</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS }}>Открытые задания ({TASKS_LIST.list.filter(item => item.status === 'searching').length})</span>
-          { false && <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.list.filter(item => item.status === 'work').length})</span> }
-          { false && <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.list.filter(item => item.status === 'backside').length})</span> }
+          <span style={{ ...spanActiveCSS }}>Открытые задания ({TASKS_LIST.filter(item => item.status === 'searching').length})</span>
+          { false && <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.filter(item => item.status === 'work').length})</span> }
+          { false && <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ({TASKS_LIST.filter(item => item.status === 'backside').length})</span> }
         </div>
       </div>
       <MenuContainer>
 
         { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" || ROLE_TYPE === "UNDEFINED" ? <React.Fragment>
 
-          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '18px' }}>Стоимость</TextFieldTitle>
+          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '18px' }}>Сумма гонорара</TextFieldTitle>
           <CoastRangeContainer>
             <InputComponent
-              type={'TEXT_INPUT_OUTLINE'}
+              type={'TEXT_INPUT_OUTLINE_FILTER'}
               valueType='text'
               required={false}
               widthType={'px'}
@@ -132,9 +211,10 @@ const ExchangePage: React.FC = () => {
               heightValue={'50px'}
               label={"Цена от"}
               isError={false}
-              isDisabled={true}
+              isDisabled={false}
               labelShrinkLeft={"0px"}
               innerLabel={null}
+              store={[ "FROM_COAST", () => null ]}
               css={{
                 fontSize: '12px',
                 position: 'relative',
@@ -144,7 +224,7 @@ const ExchangePage: React.FC = () => {
               }}
             />
             <InputComponent
-              type={'TEXT_INPUT_OUTLINE'}
+              type={'TEXT_INPUT_OUTLINE_FILTER'}
               valueType='text'
               required={false}
               widthType={'px'}
@@ -152,9 +232,10 @@ const ExchangePage: React.FC = () => {
               heightValue={'50px'}
               label={"Цена до"}
               isError={false}
-              isDisabled={true}
+              isDisabled={false}
               labelShrinkLeft={"0px"}
               innerLabel={null}
+              store={[ "TO_COAST", () => null ]}
               css={{
                 fontSize: '12px',
                 position: 'relative',
@@ -164,7 +245,7 @@ const ExchangePage: React.FC = () => {
               }}
             />
           </CoastRangeContainer>
-          <InputComponent
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_SEARCH'}
             valueType='text'
             required={false}
@@ -184,13 +265,57 @@ const ExchangePage: React.FC = () => {
               marginTop: '5px',
               backgroundColor: 'white',
             }}
+          /> }
+
+          <CustomTextField 
+            type={'text'}
+            autoComplete={"off"}
+            onFocus={() => dispatch(setUpdating(false))}
+            onBlur={baseInputValueChangeEvent}
+            id="standard-basic-search" 
+            label={"Найти задания"}
+            disabled={false}
+            InputProps={{
+              endAdornment: 
+                <InputAdornment position="end">
+                  <IconButton 
+                    style={{ marginRight: '-6px' }} 
+                    edge="end"
+                  >
+                    <Search></Search>
+                  </IconButton>
+                </InputAdornment>
+            }}
+            style={{ width: '100%', backgroundColor: 'white', marginTop: '6px' }} 
           />
-          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
+          { filterName !== '' && <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              backgroundColor: 'rgb(242, 244, 252)',
+              width: '100%',
+              height: '42px',
+              borderRadius: '4px',
+              lineHeight: '40px',
+              paddingLeft: '16px',
+              boxSizing: 'border-box',
+              marginBottom: '0px',
+              marginTop: '12px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Поиск по словам: "}</i>
+            { filterName }
+          </span> }
+
+          <TextFieldTitle style={{ marginTop: '33px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
           <SelectField 
             placeholder={"Новизне"}
-            params={{ width: 300, mb: '40px', height: 50 }}
+            params={{ width: 300, mb: '0px', height: 50 }}
             data={[
-              { value: '1', label: '[ options downloading ]' },
+              { value: '1', label: 'Сначала более ранние' },
+              { value: '1', label: 'Сначала более поздние' },
             ]}
             multy={false}
             action={() => {}}
@@ -204,12 +329,32 @@ const ExchangePage: React.FC = () => {
               width: '34px',
             }}
           />
-          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Фильтры</TextFieldTitle>
+          { true && <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              backgroundColor: 'rgb(253, 237, 237)',
+              width: '100%',
+              height: '42px',
+              borderRadius: '4px',
+              lineHeight: '41.2222px',
+              paddingLeft: '16px',
+              boxSizing: 'border-box',
+              marginBottom: '33px',
+              marginTop: '12px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Сортировка: "}</i>
+            {"Неверный формат даты"}
+          </span> }
+          <TextFieldTitle style={{ marginTop: '0px', marginBottom: '20px' }}>Фильтровать по</TextFieldTitle>
           <SelectField 
             placeholder={"Местонахождение"}
             params={{ width: 300, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: '[ options downloading ]' },
+              { value: '1', label: 'Данные не получены...' },
             ]}
             multy={false}
             action={() => {}}
@@ -225,9 +370,41 @@ const ExchangePage: React.FC = () => {
           />
           <SelectField 
             placeholder={"Сортировать по специализации"}
-            params={{ width: 300, mb: '40px', height: 50 }}
+            params={{ width: 300, mb: '33px', height: 50 }}
             data={[
-              { value: '1', label: '[ options downloading ]' },
+              { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+              { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+              { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+              { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+              { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+              { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+              { value: 'Генеральный план', label: 'Генеральный план' },
+              { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+              { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+              { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+              { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+              { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+              { value: 'Электроснабжение', label: 'Электроснабжение' },
+              { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+              { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+              { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+              { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+              { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+              { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+              { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+              { value: 'Сети связи', label: 'Сети связи' },
+              { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+              { value: 'Газоснабжение', label: 'Газоснабжение' },
+              { value: 'Технология производства', label: 'Технология производства' },
+              { value: 'Автоматизация', label: 'Автоматизация' },
+              { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+              { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+              { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+              { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+              { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+              { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+              { value: 'Сметная документация', label: 'Сметная документация' },
+              { value: 'Иная документация', label: 'Иная документация' }
             ]}
             multy={false}
             action={() => {}}
@@ -246,13 +423,13 @@ const ExchangePage: React.FC = () => {
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Безопасная сделка"/>
             <FormControlLabel control={<Checkbox disabled/>} label="Простая сделка"/>
           </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '38px' }}>Навыки</TextFieldTitle>
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Навыки в задании</TextFieldTitle>
           <FormGroup style={{ fontSize: '15px !important' }}>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="2D"/>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="3D"/>
             <FormControlLabel control={<Checkbox disabled/>} label="BIM"/>
           </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '36px' }}>Экспертиза</TextFieldTitle>
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Вид экспертизы</TextFieldTitle>
           <FormGroup>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Без экспертизы"/>
           </FormGroup>
@@ -284,7 +461,7 @@ const ExchangePage: React.FC = () => {
         </React.Fragment> : <React.Fragment></React.Fragment> }
       </MenuContainer>
       <CustExecContentInnerArea>
-        { TASKS_LIST.list.filter(item => item.status === 'searching').map((item, index) => {
+        { TASKS_LIST.filter(item => item.status === 'searching').map((item, index) => {
 
           return (
             <TaskTable 
@@ -313,10 +490,9 @@ const ExchangePage: React.FC = () => {
             />
           )
         })}
-        <React.Fragment>
 
-          { TASKS_LIST.list.length === 0 && 
-            
+        <React.Fragment>
+          { TASKS_LIST.length === 0 && 
             <span 
               style={{
                 display: 'block',
@@ -326,19 +502,14 @@ const ExchangePage: React.FC = () => {
                 marginTop: '100px',
                 marginBottom: '80px'
               }}
-            >
-              На бирже нет активных заданий
-            </span> 
-            
-          }
-
+            >На бирже нет активных заданий</span> }
         </React.Fragment>
 
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
           <Pagintation count={
-            ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
-            ( TASKS_LIST.list.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.list.filter(item => item.status === 'searching').length % 10 ) 
+            ( TASKS_LIST.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
+            ( TASKS_LIST.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.filter(item => item.status === 'searching').length % 10 ) 
           }></Pagintation>
         </PagintationContainer>
 
