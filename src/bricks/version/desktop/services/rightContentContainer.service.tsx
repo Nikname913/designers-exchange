@@ -1,9 +1,13 @@
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { ReactElement, useState, useEffect } from 'react'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/right-content-slice'
 import { setShow as setShowFOS, 
   setShowType as setShowTypeFOS } from '../../../store/slices/fos-slice'
+import { setAboutText } from '../../../store/slices/about-text-slice'
 import DocumentLine from '../views/localViews/DocumentLine'
 import Switch from '@mui/material/Switch'
 import Radio from '@mui/material/Radio'
@@ -36,6 +40,7 @@ import clipIcon from '../../../img/icons/clip.svg'
 import tillIcon from '../../../img/icons/till.svg'
 import linesIcon from '../../../img/icons/lines.svg'
 import arraySortIcon from '../../../img/icons/sortArray.svg'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import document from '../../../img/icons/chatActions/blankRound.svg'
 import semiMenu from '../../../img/icons/semiMenu.svg'
 import correctIcon from '../../../img/icons/correct.svg'
@@ -62,6 +67,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
   const [ SPEC_REQUEST, SET_SPEC_REQUEST ] = useState(false)
   const [ ABOUT_TEXT_REQUEST, SET_ABOUT_TEXT_REQUEST ] = useState(false)
+
+  const [ educationCounter, setEducationCounter ] = useState<number>(1)
+  const [ skillCounter, setSkillCounter] = useState<number>(1)
+  const [ actsCounter, setActsCounter] = useState<number>(1)
 
   const localText = 'Nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin'
 
@@ -92,6 +101,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
     .filter((customer: any) => customer.clientId === USER_ID)
   const ABOUT_TEXT = useAppSelector(state => state.aboutTextReducer.aboutText)
+
+  const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
 
   const avatarCSS: CSSProperties = {
     display: 'block',
@@ -232,8 +243,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
     false && console.log(USER_ROLE)
     false && console.log(USER_ID)
-    false && console.log(EXECUTOR)
-    false && console.log(CUSTOMER)
+    !false && console.log(EXECUTOR)
+    !false && console.log(CUSTOMER)
 
   }, [ CUSTOMER, EXECUTOR, USER_ID, USER_ROLE ])
 
@@ -247,6 +258,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     }
 
   }, [ spec ])
+
+  useEffect(() => {
+
+    EXECUTOR.length > 0 && EXECUTOR[0].aboutText && dispatch(setAboutText(EXECUTOR[0].aboutText))
+    CUSTOMER.length > 0 && CUSTOMER[0].aboutText && dispatch(setAboutText(CUSTOMER[0].aboutText))
+
+  }, [])
 
   return (
     <React.Fragment>
@@ -481,11 +499,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '40px' }}>
                     <div style={{ display: 'flex', flexDirection: 'row' }}>
-                      <div style={{ display: 'block', position: 'relative', width: '120px' }}>
+                      <div style={{ display: 'block', position: 'relative', width: '100px' }}>
                         <img
                           alt={""}
-                          src={document}
-                          style={{ width: '120px' }}
+                          src={doc}
+                          style={{ width: '100px' }}
                         />
                         <img
                           alt={""}
@@ -508,11 +526,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </div>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '80px' }}>
-                      <div style={{ display: 'block', position: 'relative', width: '120px' }}>
+                      <div style={{ display: 'block', position: 'relative', width: '100px' }}>
                         <img
                           alt={""}
-                          src={document}
-                          style={{ width: '120px' }}
+                          src={doc}
+                          style={{ width: '100px', filter: 'grayscale(80%)' }}
                         />
                         <img
                           alt={""}
@@ -537,7 +555,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '50px' }}/>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '30px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block' }}>Акты</span>
+                    <span style={{ fontWeight: 'bold', display: 'block' }}>Акты выполненных работ</span>
                     <ButtonComponent
                       inner={"Загрузить акт"} 
                       type='CONTAINED_DEFAULT' 
@@ -561,12 +579,26 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </MasterDocFork.ContentLine>
+                  <span
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      width: '600px',
+                      lineHeight: '22px',
+                      backgroundColor: 'rgb(253, 237, 237)',
+                      padding: '14px',
+                      paddingLeft: '20px',
+                      borderRadius: '4px',
+                      marginTop: '0px',
+                      marginBottom: '16px'
+                    }}
+                  >{"Статичные элементы отображаются мне для напоминания, чтоб ничего не забыть"}</span>
 
                   { Array(2)
                     .fill({ 
                       status: 'GREEN', 
                       data: { 
-                        name: 'Акт_выполненных работ.pdf', 
+                        name: 'элемент-документ-статичный.pdf', 
                         date: '29.02.2023', 
                         statusName: 'Подписан' 
                       }
@@ -611,7 +643,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '36px' }}/>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '20px', alignItems: 'flex-end' }}>
-                    <span>Файлы в заказе</span>
+                    <span style={{ fontWeight: '600' }}>Файлы в заказе</span>
                     <div style={fileSorterCSS}>
                       <SelectField 
                         placeholder={"Сортировать по дате"}
@@ -645,7 +677,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'GREEN', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Подписан',
                           size: 220
@@ -666,7 +698,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'WHITE', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Ожидает',
                           size: 220
@@ -683,14 +715,14 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       )
 
                     })}
-                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '20px', marginTop: '30px', alignItems: 'flex-end' }}>
-                      <span>Раздел Пожарная безопасность</span>
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '20px', marginTop: '26px', alignItems: 'flex-end' }}>
+                      <span style={{ fontWeight: '600' }}>Раздел Пожарная безопасность</span>
                     </MasterDocFork.ContentLine>
                     { Array(2)
                       .fill({ 
                         status: 'GREEN', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Подписан',
                           size: 220
@@ -711,7 +743,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'WHITE', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Ожидает',
                           size: 220
@@ -734,7 +766,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'GREEN', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Подписан',
                           size: 220
@@ -823,7 +855,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'WHITE', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Ожидает',
                           size: 220
@@ -915,7 +947,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'GREEN', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Подписан',
                           size: 220
@@ -1004,7 +1036,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       .fill({ 
                         status: 'WHITE', 
                         data: { 
-                          name: 'Акт_выполненных работ.pdf', 
+                          name: 'элемент-документ-статичный.pdf', 
                           date: '29.02.2023', 
                           statusName: 'Ожидает',
                           size: 220
@@ -1090,7 +1122,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                     })}
                   </MasterDocFork.ContentLine> }
-                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '100px' }}>
+                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '33px', marginBottom: '100px' }}>
                     
                     { docviewFormat === 'lines' && <div/> }
                     
@@ -1138,10 +1170,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </MasterDocFork.CloseIcon>
                   </MasterDocFork.CloseIconContainer>
                   <MasterDocFork.ContentLine>
-                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '38px' }}>Пожарная безопасность</h3>
+                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '30px' }}>Пожарная безопасность</h3>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
-                    <span style={{ lineHeight: '22px' }}>{"Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin."}</span>
+                    <span style={{ lineHeight: '24px' }}>{"Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin."}</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
                     <ButtonComponent
@@ -2454,7 +2486,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       widthType={'%'}
                       widthValue={100}
                       heightValue={'50px'}
-                      label={"Lorem ipsum dolor sit amet consectetur adipisicing elit"}
+                      label={"Опишите, пожалуйста, вашу проблему или спорный вопрос по проекту"}
                       isError={false}
                       isDisabled={true}
                       labelShrinkLeft={"0px"}
@@ -2548,11 +2580,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </div>
                     </div>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '44px', marginBottom: '24px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Претензия</span>
+                  <MasterDocFork.ContentLine style={{ marginTop: '34px', marginBottom: '24px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Содержание претензии</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginBottom: '0px' }}>
-                    <span style={{ lineHeight: '22px' }}>{ localText }</span>
+                    <span style={{ lineHeight: '24px' }}>{ localText }</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '0px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '50%' }}>Общая сумма заказа</span>
@@ -2638,8 +2670,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </MasterDocFork.WhiteContainer>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '60px', marginBottom: '0px' }}/>
-                  <MasterDocFork.ContentLine style={{ marginTop: '38px', marginBottom: '24px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Решение</span>
+                  <MasterDocFork.ContentLine style={{ marginTop: '46px', marginBottom: '24px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Решение юриста</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
                     <MasterDocFork.WhiteContainer width={"50%"} style={{ height: '150px' }}>
@@ -2710,11 +2742,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </div>
                     </MasterDocFork.WhiteContainer>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '10px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', width: '50%' }}>Комментарий</span>
+                  <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '16px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', width: '50%' }}>Комментарий юриста</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginBottom: '30px' }}>
-                    <span style={{ lineHeight: '22px' }}>{ localText }</span>
+                    <span style={{ lineHeight: '24px' }}>{ localText }</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginBottom: '48px' }}>
                     <ButtonComponent
@@ -2764,7 +2796,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '46px' }}/>
+                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '10px' }}/>
                   <MasterDocFork.ContentLine style={{ marginTop: '0px', marginBottom: '20px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Общение</span>
                   </MasterDocFork.ContentLine>
@@ -3029,58 +3061,75 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         overflow: 'hidden',
                         cursor: 'pointer',
                       }}
-                    >
-                      { USER_ROLE === 'EXECUTOR' &&
-                        <img
-                          alt={""}
-                          src={
-                            EXECUTOR[0].avatar === '1' ? bearAvatar :
-                            EXECUTOR[0].avatar === '2' ? enotAvatar :
-                            EXECUTOR[0].avatar === '3' ? foxAvatar :
-                            EXECUTOR[0].avatar === '4' ? groupAvatar :
-                            EXECUTOR[0].avatar === '5' ? manAvatar :
-                            EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
-                          }
-                          style={
-                            EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
-                            EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
-                            EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
-                            EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
-                            EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
-                            EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
-                            { width: '100px', marginTop: '6px' }
-                          }
-                          onClick={changeAvatar}
-                        /> 
-                      }
-                      { USER_ROLE === 'CUSTOMER' &&
-                        <img
-                          alt={""}
-                          src={
-                            CUSTOMER[0].avatar === '1' ? bearAvatar :
-                            CUSTOMER[0].avatar === '2' ? enotAvatar :
-                            CUSTOMER[0].avatar === '3' ? foxAvatar :
-                            CUSTOMER[0].avatar === '4' ? groupAvatar :
-                            CUSTOMER[0].avatar === '5' ? manAvatar :
-                            CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
-                          }
-                          style={
-                            CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
-                            CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
-                            CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
-                            CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
-                            CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
-                            CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
-                            { width: '100px', marginTop: '6px' }
-                          }
-                          onClick={changeAvatar}
-                        /> 
-                      }
-                      <span 
-                        style={{ color: chatSubmitColor, marginTop: '16px', cursor: 'pointer', opacity: 0 }}
+                    > 
+                      { avatarFile === 404 && <React.Fragment>
+                        { USER_ROLE === 'EXECUTOR' &&
+                          <img
+                            alt={""}
+                            src={
+                              EXECUTOR[0].avatar === '1' ? bearAvatar :
+                              EXECUTOR[0].avatar === '2' ? enotAvatar :
+                              EXECUTOR[0].avatar === '3' ? foxAvatar :
+                              EXECUTOR[0].avatar === '4' ? groupAvatar :
+                              EXECUTOR[0].avatar === '5' ? manAvatar :
+                              EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                            }
+                            style={
+                              EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
+                              EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
+                              EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
+                              EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
+                              EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
+                              EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                              { width: '100px', marginTop: '6px' }
+                            }
+                            onClick={changeAvatar}
+                          /> 
+                        }
+                        { USER_ROLE === 'CUSTOMER' &&
+                          <img
+                            alt={""}
+                            src={
+                              CUSTOMER[0].avatar === '1' ? bearAvatar :
+                              CUSTOMER[0].avatar === '2' ? enotAvatar :
+                              CUSTOMER[0].avatar === '3' ? foxAvatar :
+                              CUSTOMER[0].avatar === '4' ? groupAvatar :
+                              CUSTOMER[0].avatar === '5' ? manAvatar :
+                              CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                            }
+                            style={
+                              CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
+                              CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
+                              CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
+                              CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
+                              CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
+                              CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                              { width: '100px', marginTop: '6px' }
+                            }
+                            onClick={changeAvatar}
+                          /> 
+                        }
+                      </React.Fragment> }
+                      { avatarFile === 200 && <img
+                      
+                        alt={""}
+                        src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                        style={{ height: '100%' }}
                         onClick={changeAvatar}
-                      >Сменить</span>
+                        
+                      /> }
                     </div>
+                    <span 
+                      style={{
+                        display: 'block',
+                        position: 'absolute', 
+                        color: chatSubmitColor, 
+                        marginLeft: '48px',
+                        marginTop: '190px',
+                        cursor: 'pointer', 
+                      }}
+                      onClick={changeAvatar}
+                    >Сменить</span>
                     <div>
                       <EditProfileFork.ContentLine>
                         <span style={{ fontWeight: 'bold', marginLeft: '20px', letterSpacing: '3px' }}>
@@ -3525,9 +3574,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </EditProjectsEducationFork.CloseIcon>
                   </EditProjectsEducationFork.CloseIconContainer>
                   <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
-                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Добавление выполненного проекта</h3>
+                    <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Добавление выполненного проекта</h3>
                   </EditProjectsEducationFork.ContentLine>
-                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                     <InputComponent
                       type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                       valueType='text'
@@ -3556,7 +3605,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       <span style={{ color: 'rgb(81, 102, 116)' }}>Начало проекта</span>
                     </div>
                     <div style={{ display: 'block', width: '23%' }} />
-                    <span  style={{ display: 'block', width: '16px' }}/>
+                    <span style={{ display: 'block', width: '16px' }}/>
                     <div style={{ display: 'block', width: '27%' }}>
                       <span style={{ color: 'rgb(81, 102, 116)' }}>Окончание проекта</span>
                     </div>
@@ -3568,18 +3617,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         placeholder={"Начало проекта"}
                         params={{ width: 100, mb: '0px', height: 50 }}
                         data={[
-                          { value: '1', label: 'Январь' },
-                          { value: '2', label: 'Февраль' },
-                          { value: '3', label: 'Март' },
-                          { value: '4', label: 'Апрель' },
-                          { value: '5', label: 'Май' },
-                          { value: '6', label: 'Июнь' },
-                          { value: '7', label: 'Июль' },
-                          { value: '8', label: 'Август' },
-                          { value: '9', label: 'Сентябрь' },
-                          { value: '10', label: 'Октябрь' },
-                          { value: '11', label: 'Ноябрь' },
-                          { value: '12 ', label: 'Декабрь' },
+                          { value: '1', label: 'Месяц - Январь' },
                         ]}
                         multy={false}
                         action={setSpec}
@@ -3618,24 +3656,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         }}
                       />
                     </div>
-                    <span  style={{ display: 'block', width: '16px' }}/>
+                    <span style={{ display: 'block', width: '16px' }}/>
                     <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
                       <SelectFieldPercent 
                         placeholder={"Начало проекта"}
                         params={{ width: 100, mb: '0px', height: 50 }}
                         data={[
-                          { value: '1', label: 'Январь' },
-                          { value: '2', label: 'Февраль' },
-                          { value: '3', label: 'Март' },
-                          { value: '4', label: 'Апрель' },
-                          { value: '5', label: 'Май' },
-                          { value: '6', label: 'Июнь' },
-                          { value: '7', label: 'Июль' },
-                          { value: '8', label: 'Август' },
-                          { value: '9', label: 'Сентябрь' },
-                          { value: '10', label: 'Октябрь' },
-                          { value: '11', label: 'Ноябрь' },
-                          { value: '12 ', label: 'Декабрь' },
+                          { value: '1', label: 'Месяц - Январь' },
                         ]}
                         multy={false}
                         action={setSpec}
@@ -3675,7 +3702,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       />
                     </div>
                   </EditProjectsEducationFork.ContentLine>
-                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                  { Array(actsCounter).fill(null).map((item, index) => <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
                     <InputComponent
                       type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                       valueType='text'
@@ -3698,42 +3725,46 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         backgroundColor: 'white'
                       }}
                     />
-                  </EditProjectsEducationFork.ContentLine>
-                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
-                    <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
-                      valueType='text'
-                      required={false}
-                      widthType={'%'}
-                      widthValue={50}
-                      heightValue={'50px'}
-                      label={"Сумма оплаты по акту"}
-                      isError={false}
-                      isDisabled={false}
-                      labelShrinkLeft={"0px"}
-                      innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
-                      css={{
-                        fontSize: '12px',
-                        position: 'relative',
-                        boxSizing: 'border-box',
-                        marginBottom: '0px',
-                        marginTop: '0px',
-                        backgroundColor: 'white'
+                    <span style={{ display: 'block', width: '16px' }}/>
+                    <div style={{ display: 'block', width: '50%' }}/>
+                    { index === actsCounter - 1 && actsCounter > 1 && <span
+                      onClick={() => setActsCounter(prev => prev - 1)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-around',
+                        position: 'absolute',
+                        left: '50%',
+                        marginLeft: '8px',
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        marginRight: '10px',
+                        cursor: 'pointer'
                       }}
-                    />
-                  </EditProjectsEducationFork.ContentLine>
+                    >
+                      <img
+                        alt={""}
+                        src={plus}
+                        style={{ display: 'block', width: '14px', transform: 'rotate(45deg)' }}
+                      />
+                    </span> }
+                  </EditProjectsEducationFork.ContentLine> )}
                   <EditProjectsEducationFork.ContentLine>
                     <div 
+                      onClick={() => setActsCounter(prev => prev < 3 ? prev + 1 : prev)}
                       style={{ 
                         display: 'flex', 
                         flexDirection: 'row', 
                         alignItems: 'center', 
                         marginTop: '20px',
                         marginBottom: '20px', 
+                        cursor: 'pointer'
                       }}
                     >
-                      <span 
+                      <span
                         style={{
                           display: 'flex',
                           flexDirection: 'row',
@@ -3745,7 +3776,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           borderRadius: '50%',
                           backgroundColor: 'rgb(217, 231, 240)',
                           marginRight: '10px',
-                          cursor: 'pointer'
+                          cursor: 'pointer',
+                          filter: actsCounter < 3 ? 'grayscale(0)' : 'grayscale(1)'
                         }}
                       >
                         <img
@@ -3757,13 +3789,27 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       <span>Добавить еще один акт</span>
                     </div>
                   </EditProjectsEducationFork.ContentLine>
+                  <span
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      width: '600px',
+                      lineHeight: '22px',
+                      backgroundColor: 'rgb(253, 237, 237)',
+                      padding: '14px',
+                      paddingLeft: '20px',
+                      borderRadius: '4px',
+                      marginTop: '3px',
+                      marginBottom: '29px'
+                    }}
+                  >{"Внимание! Действует временное ограничение на добавление файлов - можно добавить не более 1 одного файла, рекомендуемые форматы txt и jpg"}</span>
                   <EditProjectsEducationFork.ContentLine style={{ marginBottom: '8px' }}>
                     <span style={{ color: '#516674' }}>
-                      <i style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Вложения</i> ( необязательно )
+                      <i style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Вложения к проекту</i> ( необязательно )
                     </span>
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine>
-                    <span style={{ color: '#516674', lineHeight: '20px' }}>
+                    <span style={{ color: '#516674', lineHeight: '22px' }}>
                       Добавьте файлы по проекту в формате .pdf или .jpg<br/>
                       Максимально 3 файла, до 100 Мб<br/>
                       Превью добавится из первого загруженного файла
@@ -3801,7 +3847,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </span>
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine>
-                    <span style={{ color: '#516674', lineHeight: '20px' }}>
+                    <span style={{ color: '#516674', lineHeight: '22px' }}>
                       Добавьте файлы по проекту в формате .pdf или .jpg<br/>
                       Максимально 3 файла, до 100 Мб<br/>
                       Превью добавится из первого загруженного файла
@@ -3810,7 +3856,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
                     <ButtonComponent
                       inner={"Добавить файлы"} 
-                      type='CONTAINED_DEFAULT' 
+                      type='CONTAINED_DISABLED' 
                       action={changeAboutText}
                       actionData={null}
                       widthType={'px'}
@@ -3957,7 +4003,39 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       placeholder={"Специализации вашего проекта"}
                       params={{ width: 100, mb: '0px', height: 50 }}
                       data={[
-                        { value: '1', label: 'Загрузка данных...' },
+                        { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+                        { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+                        { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+                        { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+                        { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+                        { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+                        { value: 'Генеральный план', label: 'Генеральный план' },
+                        { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+                        { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+                        { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+                        { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+                        { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+                        { value: 'Электроснабжение', label: 'Электроснабжение' },
+                        { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+                        { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+                        { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+                        { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+                        { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+                        { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+                        { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+                        { value: 'Сети связи', label: 'Сети связи' },
+                        { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+                        { value: 'Газоснабжение', label: 'Газоснабжение' },
+                        { value: 'Технология производства', label: 'Технология производства' },
+                        { value: 'Автоматизация', label: 'Автоматизация' },
+                        { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+                        { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+                        { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+                        { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+                        { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+                        { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+                        { value: 'Сметная документация', label: 'Сметная документация' },
+                        { value: 'Иная документация', label: 'Иная документация' }
                       ]}
                       multy={false}
                       action={setSpec}
@@ -4016,11 +4094,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.CloseIcon>
                     </EditProjectsEducationFork.CloseIconContainer>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
-                      <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Данные об образовании</h3>
+                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Данные об образовании</h3>
                     </EditProjectsEducationFork.ContentLine>
 
-                    <React.Fragment>  
-                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                    { Array(educationCounter).fill(null).map((item, index) => <React.Fragment>  
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                         <InputComponent
                           type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                           valueType='text'
@@ -4068,6 +4146,30 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             }}
                           />
                         </div>
+                        { index === educationCounter - 1 && educationCounter > 1 && <span
+                          onClick={() => setEducationCounter(prev => prev - 1)}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            position: 'absolute',
+                            left: '100%',
+                            marginLeft: '14px',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgb(217, 231, 240)',
+                            marginRight: '10px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <img
+                            alt={""}
+                            src={plus}
+                            style={{ display: 'block', width: '14px', transform: 'rotate(45deg)' }}
+                          />
+                        </span> }
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                         <InputComponent
@@ -4093,10 +4195,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           }}
                         />
                       </EditProjectsEducationFork.ContentLine>
-                    </React.Fragment>
+                    </React.Fragment> )}
 
                     <EditProjectsEducationFork.ContentLine>
                       <div 
+                        onClick={() => setEducationCounter(prev => prev < 3 ? prev + 1 : prev)}
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'row', 
@@ -4106,7 +4209,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           cursor: 'pointer'
                         }}
                       >
-                        <span 
+                        <span
                           style={{
                             display: 'flex',
                             flexDirection: 'row',
@@ -4118,7 +4221,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             borderRadius: '50%',
                             backgroundColor: 'rgb(217, 231, 240)',
                             marginRight: '10px',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            filter: educationCounter < 3 ? 'grayscale(0)' : 'grayscale(1)'
                           }}
                         >
                           <img
@@ -4131,11 +4235,29 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </div>
                     </EditProjectsEducationFork.ContentLine>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px', marginTop: '8px' }}>
-                      <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Опыт работы</h3>
+                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Опыт работы</h3>
                     </EditProjectsEducationFork.ContentLine>
 
-                    <React.Fragment>
-                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
+                    { Array(skillCounter).fill(null).map((item, index) => <React.Fragment>
+                      
+                      { index > 0 && 
+                        
+                        <span
+                          style={{
+                            display: 'block',
+                            position: 'relative',
+                            width: '100%',
+                            textAlign: 'center',
+                            marginTop: '19px',
+                            opacity: 0.8
+                          }}
+                        >
+                          Новое место работы
+                        </span> 
+                        
+                      }
+
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                         <InputComponent
                           type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                           valueType='text'
@@ -4143,7 +4265,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           widthType={'%'}
                           widthValue={100}
                           heightValue={'50px'}
-                          label={"Нвазание организации"}
+                          label={"Название организации"}
                           isError={false}
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
@@ -4158,6 +4280,30 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             backgroundColor: 'white'
                           }}
                         />
+                        { index === skillCounter - 1 && skillCounter > 1 && <span
+                          onClick={() => setSkillCounter(prev => prev - 1)}
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            position: 'absolute',
+                            left: '100%',
+                            marginLeft: '14px',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgb(217, 231, 240)',
+                            marginRight: '10px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          <img
+                            alt={""}
+                            src={plus}
+                            style={{ display: 'block', width: '14px', transform: 'rotate(45deg)' }}
+                          />
+                        </span> }
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                         <InputComponent
@@ -4189,18 +4335,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             placeholder={"Начало работы"}
                             params={{ width: 100, mb: '0px', height: 50 }}
                             data={[
-                              { value: '1', label: 'Январь' },
-                              { value: '2', label: 'Февраль' },
-                              { value: '3', label: 'Март' },
-                              { value: '4', label: 'Апрель' },
-                              { value: '5', label: 'Май' },
-                              { value: '6', label: 'Июнь' },
-                              { value: '7', label: 'Июль' },
-                              { value: '8', label: 'Август' },
-                              { value: '9', label: 'Сентябрь' },
-                              { value: '10', label: 'Октябрь' },
-                              { value: '11', label: 'Ноябрь' },
-                              { value: '12 ', label: 'Декабрь' },
+                              { value: '1', label: 'Месяц - Январь' },
                             ]}
                             multy={false}
                             action={setSpec}
@@ -4245,18 +4380,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             placeholder={"Окончание работы"}
                             params={{ width: 100, mb: '0px', height: 50 }}
                             data={[
-                              { value: '1', label: 'Январь' },
-                              { value: '2', label: 'Февраль' },
-                              { value: '3', label: 'Март' },
-                              { value: '4', label: 'Апрель' },
-                              { value: '5', label: 'Май' },
-                              { value: '6', label: 'Июнь' },
-                              { value: '7', label: 'Июль' },
-                              { value: '8', label: 'Август' },
-                              { value: '9', label: 'Сентябрь' },
-                              { value: '10', label: 'Октябрь' },
-                              { value: '11', label: 'Ноябрь' },
-                              { value: '12 ', label: 'Декабрь' },
+                              { value: '1', label: 'Месяц - Январь' },
                             ]}
                             multy={false}
                             action={setSpec}
@@ -4363,67 +4487,70 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           }}
                         />
                       </EditProjectsEducationFork.ContentLine>
-                      <EditProjectsEducationFork.ContentLine>
-                        <div 
-                          style={{ 
-                            display: 'flex', 
-                            flexDirection: 'row', 
-                            alignItems: 'center', 
-                            marginTop: '20px',
-                            marginBottom: '20px', 
-                            cursor: 'pointer' 
+                    </React.Fragment> )}
+
+                    <EditProjectsEducationFork.ContentLine>
+                      <div 
+                        onClick={() => setSkillCounter(prev => prev < 6 ? prev + 1 : prev)}
+                        style={{ 
+                          display: 'flex', 
+                          flexDirection: 'row', 
+                          alignItems: 'center', 
+                          marginTop: '20px',
+                          marginBottom: '20px', 
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                            position: 'relative',
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: 'rgb(217, 231, 240)',
+                            marginRight: '10px',
+                            cursor: 'pointer',
+                            filter: skillCounter < 6 ? 'grayscale(0)' : 'grayscale(1)'
                           }}
                         >
-                          <span 
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                              justifyContent: 'space-around',
-                              position: 'relative',
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '50%',
-                              backgroundColor: 'rgb(217, 231, 240)',
-                              marginRight: '10px',
-                              cursor: 'pointer'
-                            }}
-                          >
-                            <img
-                              alt={""}
-                              src={plus}
-                              style={{ display: 'block', width: '14px' }}
-                            />
-                          </span>
-                          <span>Добавить место работы</span>
-                        </div>
-                      </EditProjectsEducationFork.ContentLine>
-                      <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '30px 0px 40px' }}>
-                        <ButtonComponent
-                          inner={"Сохранить изменения"} 
-                          type='CONTAINED_DEFAULT' 
-                          action={() => {}}
-                          actionData={null}
-                          widthType={'px'}
-                          widthValue={240}
-                          children={""}
-                          childrenCss={undefined}
-                          iconSrc={null}
-                          iconCss={undefined}
-                          muiIconSize={30}
-                          MuiIconChildren={ArrowUpwardIcon}
-                          css={{
-                            position: 'relative',
-                            boxSizing: 'border-box',
-                            padding: '4px',
-                            backgroundColor: blueColor2,
-                            color: 'white',
-                            width: '56px',
-                            height: '43px',
-                          }}
+                        <img
+                          alt={""}
+                          src={plus}
+                          style={{ display: 'block', width: '14px' }}
                         />
-                      </EditProjectsEducationFork.ContentLine>
-                    </React.Fragment>
+                      </span>
+                        <span>Добавить место работы</span>
+                      </div>
+                    </EditProjectsEducationFork.ContentLine>
+                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '30px 0px 40px' }}>
+                      <ButtonComponent
+                        inner={"Сохранить изменения"} 
+                        type='CONTAINED_DEFAULT' 
+                        action={() => {}}
+                        actionData={null}
+                        widthType={'px'}
+                        widthValue={240}
+                        children={""}
+                        childrenCss={undefined}
+                        iconSrc={null}
+                        iconCss={undefined}
+                        muiIconSize={30}
+                        MuiIconChildren={ArrowUpwardIcon}
+                        css={{
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          padding: '4px',
+                          backgroundColor: blueColor2,
+                          color: 'white',
+                          width: '56px',
+                          height: '43px',
+                        }}
+                      />
+                    </EditProjectsEducationFork.ContentLine>
                     
                   </EditProjectsEducationFork.Container>
                 </React.Fragment> : <React.Fragment></React.Fragment> }

@@ -6,6 +6,7 @@ import EmailIcon from '@mui/icons-material/Email'
 import { styled } from '@mui/material/styles'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow } from '../../../store/slices/right-content-slice'
+import { selectActualTask } from '../../../store/slices/task-content-slice'
 import SelectField from '../comps/select/SelectField'
 import ButtonComponent from '../comps/button/Button'
 import TaskTable from '../views/localViews/TaskTable'
@@ -83,7 +84,9 @@ const ExecutorProfilePage: React.FC = () => {
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
   const CUSTOMERS_LIST = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
   const CUSTOMER = CUSTOMERS_LIST.filter((customer: any) => customer.clientId === userId)
+
   const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
+  const [ checkAvatarStatus, setCheckAvatarStatus ] = useState<number>(404)
 
   const yelloColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
@@ -120,6 +123,10 @@ const ExecutorProfilePage: React.FC = () => {
     false && dispatch(setShow(true))
   }
 
+  const actualTask = (param: string) => {
+    dispatch(selectActualTask(param))
+  }
+
   useEffect(() => {
 
     console.log(userId)
@@ -148,6 +155,33 @@ const ExecutorProfilePage: React.FC = () => {
     }
   }, [])
 
+  useEffect(() => { 
+   
+    ( async () => {
+
+      const myHeaders = new Headers()
+      myHeaders.append("Content-Type", "application/json")
+  
+      const fileName: any = userId ? userId + '.avatar.jpg' : 'undefined.avatar.jpg'
+  
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+  
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => setCheckAvatarStatus(response.status))
+  
+    })()
+
+  }, [ userId ])
+
   return (
     <ContentArea
       flexDirection={null}
@@ -175,7 +209,7 @@ const ExecutorProfilePage: React.FC = () => {
                 overflow: 'hidden'
               }}
             >
-              <img
+              { checkAvatarStatus === 404 && <img
                 alt={""}
                 src={
                   CUSTOMER[0].avatar === '1' ? bearAvatar :
@@ -194,7 +228,12 @@ const ExecutorProfilePage: React.FC = () => {
                   CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
                   { width: '100px', marginTop: '6px' }
                 }
-              />
+              /> }
+              { checkAvatarStatus === 200 && <img
+                alt={""}
+                src={`http://85.193.88.125:3000/techDocs/${userId}.avatar.jpg`} 
+                style={{ height: '100%', cursor: 'pointer' }}
+              /> }
             </div>
           </BootstrapTooltip>
           <AvatarIndicator background={yelloColor}/>
@@ -237,7 +276,7 @@ const ExecutorProfilePage: React.FC = () => {
               </span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
-              <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
+              <span style={{ color: greyColor2 }}>{"Заказчик на бирже с 2023 года"}</span>
             </ContentLine>
             <ContentLine style={{ marginTop: '10px' }}>
               <span 
@@ -309,7 +348,7 @@ const ExecutorProfilePage: React.FC = () => {
                   alt={""}
                   src={star}
                 />
-                <span style={{ fontSize: '40px', marginLeft: '5px' }}>4.8</span>
+                <span style={{ fontSize: '40px', marginLeft: '5px' }}>5.0</span>
               </div>
               <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"0 отзывов"}</span>
             </div>
@@ -429,7 +468,7 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
             </div>
             <div style={{ width: '100%', marginTop: '24px' }}>
-              <span style={{ lineHeight: '20px' }}>{"Пользователь не написал о себе подробную информацию"}</span>
+              <span style={{ lineHeight: '20px' }}>{ CUSTOMER[0].aboutText ? CUSTOMER[0].aboutText : "Пользователь не написал о себе подробную информацию" }</span>
             </div>
           </TagsContent> }
           
@@ -640,10 +679,12 @@ const ExecutorProfilePage: React.FC = () => {
           </TagsContent> }
 
           { profileViewStep === 'orders' && <React.Fragment>
-            { TASKS_LIST.list.filter(item => item.status === 'work').map((item, index): ReactElement => {
+            { TASKS_LIST.list
+              .filter(item => item.status === 'searching')
+              .filter(item => item.customer === CUSTOMER[0].clientId).map((item, index): ReactElement => {
               return (
                 <TaskTable key={index}
-                  viewType={item.status}
+                  viewType={'mainView'}
                   taskInitDate={item.date}
                   taskTitle={item.name}
                   taskDeadline={item.deadline}
@@ -656,6 +697,8 @@ const ExecutorProfilePage: React.FC = () => {
                   dealStatus={item.status}
                   cardWidth={'100%'}
                   marbo={"16px"}
+                  actions={[actualTask]}
+                  actionsParams={[item.id, item.responds]}
                   deal={{
                     type: item.coast.issafe === true ? 'safe' : 'simple',
                     coast: item.coast.value,
@@ -666,7 +709,9 @@ const ExecutorProfilePage: React.FC = () => {
               )
             })}
 
-            { TASKS_LIST.list.filter(item => item.status === 'work').length === 0 && 
+            { TASKS_LIST.list
+              .filter(item => item.status === 'searching')
+              .filter(item => item.customer === CUSTOMER[0].clientId).length === 0 && 
               
               <span 
                 style={{ 
@@ -696,14 +741,28 @@ const ExecutorProfilePage: React.FC = () => {
               />
             </ReviewsContentLine>
 
-            { CUSTOMERS_LIST.map((item: { 
-              id: string,
+            { CUSTOMERS_LIST.map((item: {
+              docs: any | Array<any>,
+              spec?: Array<string>,
+              reviews?: Array<any>,
+              aboutText?: string,
+              faceType?: string,
+              mail?: string | number | boolean | undefined,
+              number?: string | number | boolean | undefined,
+              bio?: any,
+              clientId: string,
               name: string,
               rate: number,
               stat: Array<number>,
               tags: Array<string>,
               jobType: string,
-              role: string }, index: number): ReactElement => {
+              role: string,
+              avatar?: string,
+              personalAvatar?: string,
+              alertData?: Array<any>,
+              portfolio?: Array<any>,
+              educationAndSkills?: Array<any>
+            }, index: number): ReactElement => {
               return (
                 <CustomerExecutorCardPreview
                   key={index}
@@ -732,14 +791,28 @@ const ExecutorProfilePage: React.FC = () => {
               />
             </ReviewsContentLine>
 
-            { CUSTOMERS_LIST.map((item: { 
-              id: string,
+            { CUSTOMERS_LIST.map((item: {
+              docs: any | Array<any>,
+              spec?: Array<string>,
+              reviews?: Array<any>,
+              aboutText?: string,
+              faceType?: string,
+              mail?: string | number | boolean | undefined,
+              number?: string | number | boolean | undefined,
+              bio?: any,
+              clientId: string,
               name: string,
               rate: number,
               stat: Array<number>,
               tags: Array<string>,
               jobType: string,
-              role: string }, index: number): ReactElement => {
+              role: string,
+              avatar?: string,
+              personalAvatar?: string,
+              alertData?: Array<any>,
+              portfolio?: Array<any>,
+              educationAndSkills?: Array<any>
+            }, index: number): ReactElement => {
               if ( index < 2 ) { return (
                 <CustomerExecutorCardPreview
                   key={index}

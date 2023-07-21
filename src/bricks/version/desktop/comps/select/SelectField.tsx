@@ -113,6 +113,10 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
         action(param)
         break
 
+      case 'INVITE_USER': 
+        action(param)
+        break
+
       case 'DISCOUNT_REDUCER': 
         action(param)
         break
@@ -158,13 +162,16 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
           }
         })}
         onChange={inputValue => {
-          action && actionsReducer(
+          action && actionType !== 'INVITE_USER' && actionsReducer(
             inputValue.label === 'Индивидуальный предприниматель' ? 'IP_FACE'
             : inputValue.label === 'Юридическое лицо' ? 'IP_FACE' 
             : inputValue.label === 'Физическое лицо' ? 'PHIS_FACE' 
             : inputValue.label === 'Самозанятый' ? 'SELF_FACE' : inputValue.label
           )
+            
+          action && actionType === 'INVITE_USER' && actionsReducer(inputValue.value)
           false && console.log(actionParams)
+        
         }}
       />
     

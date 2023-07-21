@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { IHeaderReducer } from '../../models-ts/reducers/header-reducer-models'
 
 const initialState: IHeaderReducer = {
-  walletCount: 20000,
+  walletCount: 0,
   alertData: [],
   selectedUsersType: 'CUST'
 }

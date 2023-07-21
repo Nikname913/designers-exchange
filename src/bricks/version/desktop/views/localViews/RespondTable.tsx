@@ -82,7 +82,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
   const statContainerCSS: CSSProperties = {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'flex-start',
     position: 'relative',
   }
@@ -155,7 +155,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
   return (
     <React.Fragment>
 
-      { ACCEPT_REQUEST && <RequestActionsComponent
+      { ACCEPT_REQUEST && false && <RequestActionsComponent
 
         callbackAction={() => {navigate('/order-view/cu')}}
         requestData={{
@@ -282,7 +282,22 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           </div>
         </ContentLine>
         <ContentLine>
-          <span style={{ letterSpacing: '1px', color: greyColor2 }}>{ `${respondDate.split('&&')[0]} в ${respondDate.split('&&')[1]}` }</span>
+          { respondDate.split('&&')[0] !== 'Загрузка данных...' && <span 
+            style={{ 
+              letterSpacing: '1px', 
+              color: greyColor2 
+            }}
+          >
+            { `${respondDate.split('&&')[0]} в ${respondDate.split('&&')[1]}` }
+          </span> }
+          { respondDate.split('&&')[0] === 'Загрузка данных...' && <span 
+            style={{ 
+              letterSpacing: '1px', 
+              color: greyColor2 
+            }}
+          >
+            { `${respondDate.split('&&')[0].split('...')[0]} о времени отклика...` }
+          </span> }
         </ContentLine>
         <ContentLine style={{ marginTop: '10px' }}>
           <span style={{ lineHeight: '24px' }}><i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Комментарий: </i>{ `${ discription }` }</span>
@@ -314,7 +329,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
               action={skipRespond}
               actionData={null}
               widthType={"px"}
-              widthValue={120}
+              widthValue={160}
               children={""}
               childrenCss={{}}
               iconSrc={null}
@@ -338,7 +353,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
               action={acceptRespond}
               actionData={null}
               widthType={"px"}
-              widthValue={120}
+              widthValue={160}
               children={""}
               childrenCss={{}}
               iconSrc={null}

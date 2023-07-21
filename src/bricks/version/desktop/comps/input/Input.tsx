@@ -56,6 +56,7 @@ import { setShortName,
 import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../../../../store/slices/enter-slice'
 import { setFromCoast, setToCoast, setFocused as setFocusedFilter } from '../../../../store/slices/filter-slice'
 import { setAboutText, setFocused as setFocusedAboutText } from '../../../../store/slices/about-text-slice'
+import { setFee, setComment as setCommentInvite, setFocused as setFocusedInvite } from '../../../../store/slices/invite-form-slice' 
 
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import TextField from '@mui/material/TextField'
@@ -184,6 +185,14 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   const ABOUT_TEXT = useAppSelector(state => state.aboutTextReducer.aboutText)
   const ABOUT_FOCUS = useAppSelector(state => state.aboutTextReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для приглашения в команду
+  // ----------------------------------------------------------------
+
+  const INVITE_FEE = useAppSelector(state => state.inviteFromReducer.fee)
+  const INVITE_COMMENT = useAppSelector(state => state.inviteFromReducer.comment)
+  const INVITE_FOCUS = useAppSelector(state => state.inviteFromReducer.focused)
 
   interface IState {
     showPassword: boolean,
@@ -534,8 +543,8 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
     if ( store ) {
 
-      store[0] === 'FROM_COAST' && dispatch(setFromCoast(event.target.value))
-      store[0] === 'TO_COAST' && dispatch(setToCoast(event.target.value))
+      store[0] === 'FROM_COAST' && dispatch(setFromCoast(event.target.value.replace(/\D/g,'')))
+      store[0] === 'TO_COAST' && dispatch(setToCoast(event.target.value.replace(/\D/g,'')))
 
       store[0] === 'FROM_COAST' && dispatch(setFocusedFilter('FROM_COAST'))
       store[0] === 'TO_COAST' && dispatch(setFocusedFilter('TO_COAST'))
@@ -576,9 +585,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
       store[0] === 'SHORT_NAME' && dispatch(setShortName(event.target.value))
       store[0] === 'FULL_NAME' && dispatch(setFullName(event.target.value))
-      store[0] === 'BUSS_INN' && dispatch(setInnBuss(event.target.value))
-      store[0] === 'BUSS_KPP' && dispatch(setKpp(event.target.value))
-      store[0] === 'BUSS_OGRN' && dispatch(setOgrn(event.target.value))
+      store[0] === 'BUSS_INN' && dispatch(setInnBuss(event.target.value.replace(/\D/g,'')))
+      store[0] === 'BUSS_KPP' && dispatch(setKpp(event.target.value.replace(/\D/g,'')))
+      store[0] === 'BUSS_OGRN' && dispatch(setOgrn(event.target.value.replace(/\D/g,'')))
       store[0] === 'YUR_ADDRESS' && dispatch(setYurAddress(event.target.value))
       store[0] === 'POST_ADDRESS' && dispatch(setPostAddress(event.target.value))
       store[0] === 'BOSS_NAME' && dispatch(setBossName(event.target.value))
@@ -659,6 +668,44 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
     if ( store ) {
 
       dispatch(setFocusedAboutText(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceInviteForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'INVITE_FEE' && dispatch(setFee(event.target.value.replace(/\D/g,'')))
+      store[0] === 'INVITE_COMMENT' && dispatch(setCommentInvite(event.target.value))
+
+      store[0] === 'INVITE_COMMENT' && dispatch(setFocusedInvite('INVITE_COMMENT'))
+      store[0] === 'INVITE_FEE' && dispatch(setFocusedInvite('INVITE_FEE'))
+
+    }
+
+  }
+
+  const reduceInviteFormFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'INVITE_COMMENT' && dispatch(setFocusedInvite('INVITE_COMMENT'))
+      store[0] === 'INVITE_FEE' && dispatch(setFocusedInvite('INVITE_FEE'))
+
+    }
+
+  }
+
+  const reduceInviteFormBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedInvite(''))
 
     }
 
@@ -911,6 +958,35 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // на типа просто TEXT_INPUT_OUTLINE 
           // ---------------------------------------------------------------- !!!
 
+          : type === 'TEXT_INPUT_OUTLINE_INVITE'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'INVITE_FEE' ? INVITE_FEE :
+                  store[0] === 'INVITE_COMMENT' ? INVITE_COMMENT : ''
+              }
+              onChange={reduceInviteForm}
+              onFocus={reduceInviteFormFocus}
+              onBlur={reduceInviteFormBlur}
+              autoFocus={store && INVITE_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />  
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_INLABEL_TASK'
           ? <CustomTextField 
               required={required}
@@ -943,11 +1019,6 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
-
-          // ---------------------------------------------------------------- !!! 
-          // данный тип интпута создан временно, нужно перекинуть функционал
-          // на типа просто TEXT_INPUT_OUTLINE 
-          // ---------------------------------------------------------------- !!!
 
           // ---------------------------------------------------------------- !!! 
           // данный тип интпута создан временно, нужно перекинуть функционал
@@ -1002,11 +1073,6 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                 width: '100%'
               }} 
             />
-
-          // ---------------------------------------------------------------- !!! 
-          // данный тип интпута создан временно, нужно перекинуть функционал
-          // на типа просто TEXT_INPUT_OUTLINE 
-          // ---------------------------------------------------------------- !!!
 
           // ---------------------------------------------------------------- !!! 
           // данный тип интпута создан временно, нужно перекинуть функционал

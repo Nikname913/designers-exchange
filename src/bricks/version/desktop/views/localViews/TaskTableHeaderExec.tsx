@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useAppSelector } from '../../../../store/hooks'
 import ButtonComponent from '../../comps/button/Button'
 import SelectField from '../../comps/select/SelectFieldPercentWidth'
@@ -22,6 +22,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     taskTitle,
     taskDeadline,
     taskExpertType,
+    taskExpertDate,
     taskSpecializationTags,
     cardWidth,
     marbo,
@@ -29,11 +30,13 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     actionsParams } = props
 
   const [ containerHeight, ] = useState('auto')
+  const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
+
   const containerBackground = useAppSelector(state => state.theme.white)
   const tagColor = useAppSelector(state => state.theme.blue4)
   const greyColor = useAppSelector(state => state.theme.grey)
   const taskStatusColor = useAppSelector(state => state.theme.blue1)
-  const indicatorColorOrange = useAppSelector(state => state.theme.yellow)
+  const indicatorColorGreen = useAppSelector(state => state.theme.green)
   const indicatorLabelColor = useAppSelector(state => state.theme.grey2)
   const ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
@@ -72,6 +75,60 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     marginLeft: '20px'
   }
 
+  const coastDelimeter = (param: string | undefined): string => {
+
+    let enterString: string | undefined = param
+    let enterStringLen: number = enterString ? enterString.length : 0
+    let exitString: string = ''
+
+    if ( enterString ) {
+      switch(enterStringLen) {
+
+        case 4:
+          exitString = enterString[0] + ' ' + enterString.slice(1)
+          break
+        case 5:
+          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
+          break
+        case 6:
+          exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
+          break
+        case 7:
+          exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
+          break
+        case 8:
+          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
+          break
+
+      }
+    }
+
+    return exitString
+
+  }
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTextSpredLine((prev: string): any => {
+        let value: string = ''
+
+        // ------------------------------------------------------------------
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        prev === '' ? value = '.'
+          : prev === '.' ? value = '..'
+          : prev === '..' ? value = '...'
+          // ----------------------------------------------------------------
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          : prev === '...' ? value = '' : null
+
+        return value
+      })
+    }, 1300)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+
   return (
     <React.Fragment>
       <TaskContainer 
@@ -101,7 +158,14 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
             <TACC.TextContentLine style={{ marginBottom: '0px' }}>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Сроки:</span>
-                <span>{ taskDeadline }</span>
+                <span>{ 
+                  'С ' + taskDeadline.split('-')[0] + '-' +
+                  taskDeadline.split('-')[1] + '-' +
+                  taskDeadline.split('-')[2] + ' По ' +
+                  taskDeadline.split('-')[3] + '-' +
+                  taskDeadline.split('-')[4] + '-' + 
+                  taskDeadline.split('-')[5] 
+                }</span>
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Аванс:</span>
@@ -109,16 +173,18 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>до 20.02.2023</span>
+                <span>{ taskExpertDate ? taskExpertDate : 'Дата экспертизы' + tagsSpredLine }</span>
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>
                   <span style={titleSpan2CSS}>Аванс</span>
-                  <TACC.CoastSpan>{ deal.prepaid }₽</TACC.CoastSpan>
+                  { deal.prepaid?.toString() !== 'Договорной' && <TACC.CoastSpan>{ coastDelimeter(deal.prepaid?.toString()) }₽</TACC.CoastSpan> }
+                  { deal.prepaid?.toString() === 'Договорной' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.prepaid }</TACC.CoastSpan> }
                 </div>
                 <div style={divRowCSS}>
-                  <span style={titleSpan2CSS}>Экспертиза</span>
-                  <TACC.CoastSpan>{ deal.expert }₽</TACC.CoastSpan>
+                  <span style={titleSpan2CSS}>Экспертиза</span> 
+                  { deal.expert?.toString() !== 'Договорная' && <TACC.CoastSpan>{ coastDelimeter(deal.expert?.toString()) }₽</TACC.CoastSpan> }
+                  { deal.expert?.toString() === 'Договорная' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.expert }</TACC.CoastSpan> }
                 </div>
               </div>
             </TACC.TextContentLine>
@@ -126,12 +192,13 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           <TaskContainerActions>
             <div style={actionsDivContainerCSS}>
               <TACA.TaskStatus>
-                { dealStatus === 'searching' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
-                  <TACA.TaskStatusIndicator background={indicatorColorOrange}/> 
-                    Поиск исполнителей
+                { dealStatus === 'work' && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                  <TACA.TaskStatusIndicator background={indicatorColorGreen}/> 
+                    В работе
                 </TACA.TaskStatusLabel> }
               </TACA.TaskStatus>
-              <TACA.TaskCoast color={taskStatusColor}>{ deal.coast }₽</TACA.TaskCoast>
+              { deal.coast?.toString() !== 'Договорная' && <TACA.TaskCoast color={taskStatusColor}>{ coastDelimeter(deal.coast?.toString()) }₽</TACA.TaskCoast> }
+              { deal.coast?.toString() === 'Договорная' && <TACA.TaskCoast color={taskStatusColor}>{ deal.coast }</TACA.TaskCoast> }
 
               { deal.type === 'safe' ? <React.Fragment>
                 { dealStatus !== 'complete' ? <React.Fragment>

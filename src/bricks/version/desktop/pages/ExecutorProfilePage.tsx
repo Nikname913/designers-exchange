@@ -423,7 +423,7 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Информация о пользователе</span>
             </div>
             <div style={{ width: '100%', marginTop: '24px' }}>
-              <span style={{ lineHeight: '20px' }}>{"Пользователь не написал о себе подробную информацию"}</span>
+              <span style={{ lineHeight: '20px' }}>{ EXECUTOR[0].aboutText ? EXECUTOR[0].aboutText : "Пользователь не написал о себе подробную информацию" }</span>
             </div>
           </TagsContent> }
           
@@ -692,14 +692,28 @@ const ExecutorProfilePage: React.FC = () => {
               />
             </ReviewsContentLine>
 
-            { EXECUTORS_LIST.map((item: { 
-              id: string,
+            { EXECUTORS_LIST.map((item: {
+              docs: any | Array<any>,
+              spec?: Array<string>,
+              reviews?: Array<any>,
+              aboutText?: string,
+              faceType?: string,
+              mail?: string | number | boolean | undefined,
+              number?: string | number | boolean | undefined,
+              bio?: any,
+              clientId: string,
               name: string,
               rate: number,
               stat: Array<number>,
               tags: Array<string>,
               jobType: string,
-              role: string }, index: number): ReactElement => {
+              role: string,
+              avatar?: string,
+              personalAvatar?: string,
+              alertData?: Array<any>,
+              portfolio?: Array<any>,
+              educationAndSkills?: Array<any>
+            }, index: number): ReactElement => {
               return (
                 <CustomerExecutorCardPreview
                   key={index}
@@ -728,14 +742,28 @@ const ExecutorProfilePage: React.FC = () => {
               />
             </ReviewsContentLine>
 
-            { EXECUTORS_LIST.map((item: { 
-              id: string,
+            { EXECUTORS_LIST.map((item: {
+              docs: any | Array<any>,
+              spec?: Array<string>,
+              reviews?: Array<any>,
+              aboutText?: string,
+              faceType?: string,
+              mail?: string | number | boolean | undefined,
+              number?: string | number | boolean | undefined,
+              bio?: any,
+              clientId: string,
               name: string,
               rate: number,
               stat: Array<number>,
               tags: Array<string>,
               jobType: string,
-              role: string }, index: number): ReactElement => {
+              role: string,
+              avatar?: string,
+              personalAvatar?: string,
+              alertData?: Array<any>,
+              portfolio?: Array<any>,
+              educationAndSkills?: Array<any>
+            }, index: number): ReactElement => {
               if ( index < 2 ) { return (
                 <CustomerExecutorCardPreview
                   key={index}

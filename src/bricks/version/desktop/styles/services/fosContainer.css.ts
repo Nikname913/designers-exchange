@@ -228,6 +228,66 @@ const css = {
       margin-top: 18px;
       cursor: pointer;
     `
+  },
+  ShowFile: {
+    FOS: styled.div`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      background-color: #F2F4FC;
+      border-radius: 8px;
+      width: 1010px;
+      height: 90vh;
+      box-sizing: border-box;
+      overflow: hidden;
+    `,
+    FOSInner: styled.div`
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      position: relative;
+      box-sizing: border-box;
+      width: 1030px;
+      height: 90vh;
+      overflow-Y: scroll;
+      padding-right: 84px;
+      padding-left: 80px;
+      margin-top: 13px;
+      margin-bottom: 13px;
+    `,
+    FOSFile: styled.div`
+      display: block;
+      position: relative;
+      width: 100%;
+      background-color: white;
+      border-radius: 4px;
+      box-shadow: 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
+      margin-top: 13px;
+      margin-bottom: 16px;
+    `,
+    ContentLine: styled.div`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      width: 100%;
+    `,
+    CloseContainer: styled.span`
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+      position: absolute;
+      left: 100%;
+      top: 0%;
+      margin-left: -42px;
+      margin-top: 18px;
+      cursor: pointer;
+    `
   }
 }
 

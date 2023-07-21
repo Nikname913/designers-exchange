@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import { setList, setListOrders, setListDeactive } from '../../../../store/slices/task-content-slice'
 import { setCustomers, setExecutors } from '../../../../store/slices/user-content-slice'
 import { setAlertData } from '../../../../store/slices/header-slice'
+import { setAvatarFile } from '../../../../store/slices/avatar-slice'
 import RequestActionsComponent from '../../services/request.service'
 
 const Updater: React.FC = () => {
@@ -204,37 +205,37 @@ const Updater: React.FC = () => {
   useEffect(() => {
     
     SET_ALERTS_REQUEST(true)
-    setTimeout(() => SET_ALERTS_REQUEST(false), 1400)
+    setTimeout(() => SET_ALERTS_REQUEST(false), 1300)
 
   }, [ alertsUpdate ])
   useEffect(() => {
     
     SET_TASKS_REQUEST(true)
-    setTimeout(() => SET_TASKS_REQUEST(false), 1400)
+    setTimeout(() => SET_TASKS_REQUEST(false), 1300)
 
   }, [ tasksUpdate ])
   useEffect(() => {
     
     SET_TASKS_DEACTIVE_REQUEST(true)
-    setTimeout(() => SET_TASKS_DEACTIVE_REQUEST(false), 1400)
+    setTimeout(() => SET_TASKS_DEACTIVE_REQUEST(false), 1300)
 
   }, [ tasksDeactiveUpdate ])
   useEffect(() => {
     
     SET_ORDERS_REQUEST(true)
-    setTimeout(() => SET_ORDERS_REQUEST(false), 1400)
+    setTimeout(() => SET_ORDERS_REQUEST(false), 1300)
 
   }, [ ordersUpdate ])
   useEffect(() => {
 
     SET_CUSTOMERS_REQUEST(true)
-    setTimeout(() => SET_CUSTOMERS_REQUEST(false), 1400)
+    setTimeout(() => SET_CUSTOMERS_REQUEST(false), 1300)
 
   }, [ customersUpdate ])
   useEffect(() => {
 
     SET_EXECUTORS_REQUEST(true)
-    setTimeout(() => SET_EXECUTORS_REQUEST(false), 1400)
+    setTimeout(() => SET_EXECUTORS_REQUEST(false), 1300)
 
   }, [ executorsUpdate ])
 
@@ -274,6 +275,34 @@ const Updater: React.FC = () => {
     false && clearInterval(executorsUpdateRound)
 
   }, [])
+
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const ext = '.jpg'
+      const fileName: string = USER_ID + '.avatar' + ext
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => dispatch(setAvatarFile(response.status)))
+
+    })()
+
+  }, [ alertsUpdate ])
 
   return (
     <React.Fragment>

@@ -71,6 +71,7 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
 
   const [ tagsLimit, setTagsLimit ] = useState<number>(4)
   const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
+  const [ checkAvatarStatus, setCheckAvatarStatus ] = useState<number>(404)
 
   const spanCSS2: React.CSSProperties = {
     display: 'block',
@@ -167,6 +168,33 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     }
   }, [])
 
+  useEffect(() => { 
+   
+    ( async () => {
+
+      const myHeaders = new Headers()
+      myHeaders.append("Content-Type", "application/json")
+  
+      const fileName: any = userId ? userId + '.avatar.jpg' : 'undefined.avatar.jpg'
+  
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+  
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+  
+      await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => setCheckAvatarStatus(response.status))
+  
+    })()
+
+  }, [ userId ])
+
   return (
     <React.Fragment>
       <CardWrapper
@@ -194,9 +222,10 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
                   flexDirection: 'row',
                   alignItems: 'center',
                   justifyContent: 'space-around',
+                  boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
                 }}
               >
-                <img
+                { checkAvatarStatus === 404 && <img
                   alt={""}
                   src={userAvatar}
                   style={
@@ -244,7 +273,12 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
                       marginTop: '20px'
                     } : {}
                   }
-                />
+                /> }
+                { checkAvatarStatus === 200 && <img
+                  alt={""}
+                  src={`http://85.193.88.125:3000/techDocs/${userId}.avatar.jpg`} 
+                  style={{ height: '100%', cursor: 'pointer' }}
+                /> }
               </div>
             <UserAvatarIsOnlineIndicator 
               backgroundColor={ false ? onlineIndicatorColor : offlineIndicatorColor }

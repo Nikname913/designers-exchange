@@ -6,7 +6,9 @@ export interface ICabinetAlarmLineProps {
   isNew: boolean,
   content: {
     date: string,
-    text: string
+    text: string,
+    order?: string,
+    actions?: string
   }
 }
 

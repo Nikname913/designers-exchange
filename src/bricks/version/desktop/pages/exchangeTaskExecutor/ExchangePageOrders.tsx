@@ -126,7 +126,7 @@ const ExchangePage: React.FC = () => {
         </div>
         <MenuContainer>
           { ROLE_TYPE === "CUSTOMER" || ROLE_TYPE === "EXECUTOR" ? <React.Fragment>
-            <TextFieldTitle style={{ marginTop: '0px' }}>Сортировать по</TextFieldTitle>
+            <TextFieldTitle style={{ marginTop: '0px', marginBottom: '18px' }}>Сортировать по</TextFieldTitle>
             <SelectField 
               placeholder={"Новизне"}
               params={{ width: 300, mb: '35px', height: 50 }}
@@ -139,6 +139,7 @@ const ExchangePage: React.FC = () => {
               action={() => {}}
               actionType={""}
               actionParams={[]}
+              isDisabled
               showIcon={true}
               icon={null}
               iconStyles={{
@@ -156,7 +157,7 @@ const ExchangePage: React.FC = () => {
               heightValue={'50px'}
               label={"Найти задания"}
               isError={false}
-              isDisabled={false}
+              isDisabled={true}
               labelShrinkLeft={"0px"}
               innerLabel={null}
               css={{
@@ -179,6 +180,7 @@ const ExchangePage: React.FC = () => {
               action={() => {}}
               actionType={""}
               actionParams={[]}
+              isDisabled
               showIcon={true}
               icon={null}
               iconStyles={{
@@ -199,6 +201,7 @@ const ExchangePage: React.FC = () => {
               action={() => {}}
               actionType={""}
               actionParams={[]}
+              isDisabled
               showIcon={true}
               icon={null}
               iconStyles={{
@@ -208,21 +211,24 @@ const ExchangePage: React.FC = () => {
               }}
             />
             <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Только задания ТС"/>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Безопасная сделка"/>
-              <FormControlLabel control={<Checkbox/>} label="Простая сделка"/>
+              <FormControlLabel control={<Checkbox disabled checked={true}/>} label="Только задания ТС"/>
+              <FormControlLabel control={<Checkbox disabled/>} label="Безопасная сделка"/>
+              <FormControlLabel control={<Checkbox disabled/>} label="Простая сделка"/>
             </FormGroup>
             <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Навыки</TextFieldTitle>
             <FormGroup style={{ fontSize: '15px !important' }}>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="2D"/>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="3D"/>
-              <FormControlLabel control={<Checkbox/>} label="BIM"/>
+              <FormControlLabel control={<Checkbox disabled checked={true}/>} label="2D"/>
+              <FormControlLabel control={<Checkbox disabled checked={true}/>} label="3D"/>
+              <FormControlLabel control={<Checkbox disabled checked={true}/>} label="BIM"/>
             </FormGroup>
             <TextFieldTitle style={{ marginBottom: '10px', marginTop: '10px' }}>Экспертиза</TextFieldTitle>
             <FormGroup>
-              <FormControlLabel control={<Checkbox defaultChecked/>} label="Без экспертизы"/>
+              <FormControlLabel control={<Checkbox disabled checked={true} />} label="Любая экспертиза"/>
+              <FormControlLabel control={<Checkbox disabled />} label="Без экспертизы"/>
+              <FormControlLabel control={<Checkbox disabled />} label="Государственная"/>
+              <FormControlLabel control={<Checkbox disabled />} label="Частная"/>
             </FormGroup>
-            <TextFieldTitle style={{ marginBottom: '14px', marginTop: '10px' }}>Цена</TextFieldTitle>
+            <TextFieldTitle style={{ marginBottom: '14px', marginTop: '10px' }}>Стоимость заказа</TextFieldTitle>
             <CoastRangeContainer>
               <InputComponent
                 type={'TEXT_INPUT_OUTLINE'}
@@ -233,7 +239,7 @@ const ExchangePage: React.FC = () => {
                 heightValue={'50px'}
                 label={"Цена от"}
                 isError={false}
-                isDisabled={false}
+                isDisabled={true}
                 labelShrinkLeft={"0px"}
                 innerLabel={null}
                 css={{
@@ -253,7 +259,7 @@ const ExchangePage: React.FC = () => {
                 heightValue={'50px'}
                 label={"Цена до"}
                 isError={false}
-                isDisabled={false}
+                isDisabled={true}
                 labelShrinkLeft={"0px"}
                 innerLabel={null}
                 css={{
@@ -293,7 +299,7 @@ const ExchangePage: React.FC = () => {
           </React.Fragment> : <React.Fragment></React.Fragment> }
         </MenuContainer>
         <CustExecContentInnerArea>
-          { TASKS_LIST.listOrders.filter(item => item.status === 'work').map((item, index: number) => {
+          { TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.executor === USER_ID).map((item, index: number) => {
             return (
               <TaskTable key={index}
                 viewType={item.status}

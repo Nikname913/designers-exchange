@@ -36,7 +36,9 @@ import SupportPage from '../pages/SupportPage'
 import TeamPage from '../pages/TeamPage'
 import TermsOfUsePage from '../pages/TermsOfUsePage'
 import WorkerPage from '../pages/WorkerPage'
+
 import CreateTaskPage from '../pages/CreateTaskPage'
+import CreateTaskPageEdit from '../pages/CreateTaskPageEdit'
 
 const DeskRoutes: React.FC = () => {
 
@@ -73,7 +75,7 @@ const DeskRoutes: React.FC = () => {
           element={<CustomerProfilePage/>} 
         />
         <Route 
-          path='cust-office' 
+          path='cust-office/:viewtype' 
           element={<ExecutorCabinetPage/>} 
         />
 
@@ -155,7 +157,7 @@ const DeskRoutes: React.FC = () => {
           element={<ExecutorProfilePage/>} 
         />
         <Route 
-          path='exec-office' 
+          path='exec-office/:viewtype' 
           element={<ExecutorCabinetPage/>} 
         />
         <Route 
@@ -199,6 +201,10 @@ const DeskRoutes: React.FC = () => {
           element={<CreateTaskPage/>} 
         />
         <Route 
+          path='edit-task/:taskId'  
+          element={<CreateTaskPageEdit/>} 
+        />
+        <Route 
           path='task-review' 
           element={<ShowTasksPageExchange/>} 
         />
@@ -228,7 +234,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route
           path='/'
-          element={<MainPage/>}
+          element={<ExchangePageTasks/>}
         />
         <Route 
           path='*' 

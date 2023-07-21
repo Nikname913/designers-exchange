@@ -51,6 +51,7 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const ORDER_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
   const selectedUsersType = useAppSelector(state => state.headerReducer.selectedUsersType)
+  const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
 
   const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
     .filter((executor: any) => executor.clientId === USER_ID)
@@ -115,7 +116,8 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
   const bellIconStyle: CSSProperties = {
     display: 'block',
     position: 'relative',
-    width: '28px'
+    width: '28px',
+    cursor: 'pointer',
   }
   const walletIconStyle: CSSProperties = {
     display: 'block',
@@ -203,6 +205,13 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
 
   }, [ selectedUsersType ])
 
+  useEffect(() => { false && console.log(alertData) }, [ alertData ])
+  useEffect(() => {
+
+    if ( USER_ROLE === 'EXECUTOR' ) { console.log(EXECUTOR[0]) }
+
+  }, [])
+
   return (
     <React.Fragment>
       <HeadWrapper backgroundColor={"transparent"}>
@@ -287,8 +296,40 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
               alt={""}
               src={bellIcon}
               style={{ ...bellIconStyle }}
+              onClick={() => {
+                USER_ROLE === 'CUSTOMER' && navigate('cust-office/alarms')
+                USER_ROLE === 'EXECUTOR' && navigate('exec-office/alarms')
+              }}
             />
-            { USER_ROLE === 'CUSTOMER' && ( alertData && alertData.length > 0 ) && <span
+            { ( USER_ROLE === 'EXECUTOR' 
+            
+              && EXECUTOR.length > 0 
+              && EXECUTOR[0].alertData
+              && alertData ) && EXECUTOR[0].alertData?.length && <span
+              
+              style={{
+                display: 'block',
+                position: 'absolute',
+                width: '18px',
+                height: '18px',
+                borderRadius: '50%',
+                backgroundColor: 'rgb(22, 124, 191)',
+                top: '0',
+                left: '100%',
+                marginLeft: '-8px',
+                color: 'white',
+                fontSize: '10px',
+                textAlign: 'center',
+                lineHeight: '18px',
+                paddingRight: '0.4px',
+                boxSizing: 'border-box'
+              }}
+            >{ EXECUTOR[0].alertData?.length + alertData.reduce((akkum, alert) => akkum.concat(alert), []).length }</span> }
+            { ( USER_ROLE === 'CUSTOMER' 
+              
+              && CUSTOMER.length > 0 
+              && CUSTOMER[0].alertData 
+              && alertData ) && CUSTOMER[0].alertData?.length && <span
               style={{
                 display: 'block',
                 position: 'absolute',
@@ -306,48 +347,17 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
                 paddingRight: '1px',
                 boxSizing: 'border-box'
               }}
-            >{ alertData.length }</span> }
-            { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].alertData?.length && <span
-              style={{
-                display: 'block',
-                position: 'absolute',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                backgroundColor: 'rgb(22, 124, 191)',
-                top: '0',
-                left: '100%',
-                marginLeft: '-8px',
-                color: 'white',
-                fontSize: '9px',
-                textAlign: 'center',
-                lineHeight: '18px',
-                paddingRight: '1px',
-                boxSizing: 'border-box'
-              }}
-            >{ EXECUTOR[0].alertData?.length }</span> }
-            { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].alertData?.length && <span
-              style={{
-                display: 'block',
-                position: 'absolute',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                backgroundColor: 'rgb(22, 124, 191)',
-                top: '0',
-                left: '100%',
-                marginLeft: '-8px',
-                color: 'white',
-                fontSize: '9px',
-                textAlign: 'center',
-                lineHeight: '18px',
-                paddingRight: '1px',
-                boxSizing: 'border-box'
-              }}
-            >{ EXECUTOR[0].alertData?.length }</span> }
+            >{ CUSTOMER[0].alertData?.length + alertData.reduce((akkum, alert) => akkum.concat(alert), []).length }</span> }
           </HeadControllersIcon>
           <span style={{ display: 'block', width: '30px' }} />
-          <HeadControllersIcon backgroundColor={'transparent'}>
+          <HeadControllersIcon 
+            backgroundColor={'transparent'}
+            style={{ cursor: 'pointer' }}
+            onClick={() => {
+              USER_ROLE === 'CUSTOMER' && navigate('cust-office/wallet')
+              USER_ROLE === 'EXECUTOR' && navigate('exec-office/wallet')
+            }}
+          >
             <img
               alt={""}
               src={walletIcon}
@@ -356,12 +366,18 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
           </HeadControllersIcon>
           </div>
           <span 
+            onClick={() => {
+              USER_ROLE === 'CUSTOMER' && navigate('cust-office/wallet')
+              USER_ROLE === 'EXECUTOR' && navigate('exec-office/wallet')
+            }}
             style={{ 
               ...menuItemStyle, 
               color: greyColor, 
               fontWeight: '600', 
               fontSize: '16px',
-              marginRight: '30px'
+              marginRight: '30px',
+              marginLeft: '4px',
+              cursor: 'pointer'
             }}
           >{ wallet } ₽</span>
           <HeadControllersAvatar 
@@ -374,91 +390,99 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
             }}
             backgroundColor={blueColorForIcon}
             onClick={() => {
-              USER_ROLE === 'EXECUTOR' && navigate('/exec-office')
-              USER_ROLE === 'CUSTOMER' && navigate('/cust-office')
+              USER_ROLE === 'EXECUTOR' && navigate('/exec-office/about')
+              USER_ROLE === 'CUSTOMER' && navigate('/cust-office/about')
             }}
           >
 
-            { USER_ROLE === 'EXECUTOR' && EXECUTOR.length > 0 && <img
-              alt={""}
-              src={
-                EXECUTOR[0].avatar === '1' ? bearAvatar :
-                EXECUTOR[0].avatar === '2' ? enotAvatar :
-                EXECUTOR[0].avatar === '3' ? foxAvatar :
-                EXECUTOR[0].avatar === '4' ? groupAvatar :
-                EXECUTOR[0].avatar === '5' ? manAvatar :
-                EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
-              }
-              style={
-                EXECUTOR[0].avatar === '1' ? { ...avatarStyle } :
-                EXECUTOR[0].avatar === '2' ? { ...avatarStyle } :
-                EXECUTOR[0].avatar === '3' ? { ...avatarStyle } :
-                EXECUTOR[0].avatar === '4' ? {
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '15px'
-                } :
-                EXECUTOR[0].avatar === '5' ? { 
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '10px'
-                } :
-                EXECUTOR[0].avatar === '6' ? { 
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '10px'
-                } : { ...avatarStyle }
-              }
-            /> }
-            { USER_ROLE === 'CUSTOMER' && CUSTOMER.length > 0 && <img
-              alt={""}
-              src={
-                CUSTOMER[0].avatar === '1' ? bearAvatar :
-                CUSTOMER[0].avatar === '2' ? enotAvatar :
-                CUSTOMER[0].avatar === '3' ? foxAvatar :
-                CUSTOMER[0].avatar === '4' ? groupAvatar :
-                CUSTOMER[0].avatar === '5' ? manAvatar :
-                CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
-              }
-              style={
-                CUSTOMER[0].avatar === '1' ? { ...avatarStyle } :
-                CUSTOMER[0].avatar === '2' ? { ...avatarStyle } :
-                CUSTOMER[0].avatar === '3' ? { ...avatarStyle } :
-                CUSTOMER[0].avatar === '4' ? {
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '15px'
-                } :
-                CUSTOMER[0].avatar === '5' ? { 
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '10px'
-                } :
-                CUSTOMER[0].avatar === '6' ? { 
-                  display: 'block',
-                  position: 'relative',
-                  width: '43px',
-                  height: '43px',
-                  cursor: 'pointer',
-                  marginTop: '10px'
-                } : { ...avatarStyle }
-              }
-            /> }
+            { avatarFile === 404 && <React.Fragment>
+              { USER_ROLE === 'EXECUTOR' && EXECUTOR.length > 0 && <img
+                alt={""}
+                src={
+                  EXECUTOR[0].avatar === '1' ? bearAvatar :
+                  EXECUTOR[0].avatar === '2' ? enotAvatar :
+                  EXECUTOR[0].avatar === '3' ? foxAvatar :
+                  EXECUTOR[0].avatar === '4' ? groupAvatar :
+                  EXECUTOR[0].avatar === '5' ? manAvatar :
+                  EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                }
+                style={
+                  EXECUTOR[0].avatar === '1' ? { ...avatarStyle } :
+                  EXECUTOR[0].avatar === '2' ? { ...avatarStyle } :
+                  EXECUTOR[0].avatar === '3' ? { ...avatarStyle } :
+                  EXECUTOR[0].avatar === '4' ? {
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '15px'
+                  } :
+                  EXECUTOR[0].avatar === '5' ? { 
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '10px'
+                  } :
+                  EXECUTOR[0].avatar === '6' ? { 
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '10px'
+                  } : { ...avatarStyle }
+                }
+              /> }
+              { USER_ROLE === 'CUSTOMER' && CUSTOMER.length > 0 && <img
+                alt={""}
+                src={
+                  CUSTOMER[0].avatar === '1' ? bearAvatar :
+                  CUSTOMER[0].avatar === '2' ? enotAvatar :
+                  CUSTOMER[0].avatar === '3' ? foxAvatar :
+                  CUSTOMER[0].avatar === '4' ? groupAvatar :
+                  CUSTOMER[0].avatar === '5' ? manAvatar :
+                  CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                }
+                style={
+                  CUSTOMER[0].avatar === '1' ? { ...avatarStyle } :
+                  CUSTOMER[0].avatar === '2' ? { ...avatarStyle } :
+                  CUSTOMER[0].avatar === '3' ? { ...avatarStyle } :
+                  CUSTOMER[0].avatar === '4' ? {
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '15px'
+                  } :
+                  CUSTOMER[0].avatar === '5' ? { 
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '10px'
+                  } :
+                  CUSTOMER[0].avatar === '6' ? { 
+                    display: 'block',
+                    position: 'relative',
+                    width: '43px',
+                    height: '43px',
+                    cursor: 'pointer',
+                    marginTop: '10px'
+                  } : { ...avatarStyle }
+                }
+              /> }
+            </React.Fragment> }
+            { avatarFile === 200 && <img
+                alt={""}
+                src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`} 
+                style={{ height: '100%', cursor: 'pointer' }}
+              /> 
+            } 
 
           </HeadControllersAvatar>
         </HeadControllers> }

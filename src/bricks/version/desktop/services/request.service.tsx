@@ -31,26 +31,22 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
 
         case 'POSTFILE_TTDF':
 
-          const formData = new FormData()
-          formData.append('taskID', body[0])
-          formData.append('taskTechDocsFile', body[1])
+          var formdata = new FormData()
+          formdata.append("taskTechDocsId", body[0])
+          formdata.append("taskTechDocsFile", body[1])
 
-          let options: {
-            method: string,
-            headers?: any,
-            body: any
-          } = {
+          var requestOptions: any = {
             method: 'POST',
-            body: formData,
+            body: formdata,
+            redirect: 'follow'
           }
 
-          false && delete options.headers['Content-Type']
+          fetch("http://85.193.88.125:3000/add-file-techtask", requestOptions)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error))
 
-          const responseFile = await fetch(urlstring, options)
-           .then(res => res.json())
-
-          false && console.log(responseFile)
-          callbackAction(responseFile)
+          callbackAction('')
 
           break
           

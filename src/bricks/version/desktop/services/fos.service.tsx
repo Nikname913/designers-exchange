@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { ReactElement, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
@@ -36,21 +39,35 @@ import avatar4 from '../../../img/avatars/group.svg'
 import avatar5 from '../../../img/avatars/man.svg'
 import avatar6 from '../../../img/avatars/woman.svg'
 
-const { ShadowContainer, RespondFromList, Command, AuthNHelp, ChangeAvatar } = css
+const { ShadowContainer, RespondFromList, Command, AuthNHelp, ChangeAvatar, ShowFile } = css
 
 const FOS: React.FC<IFos> = (props: IFos) => {
 
   const { showType, scroll } = props
 
-  const [ authDataLogin, setAuthDataLogin ] = useState('nik.shipov@gmail.com')
-  const [ authDataLoginError, setAuthDataLoginError ] = useState(false)
-  const [ authDataPassError, setAuthDataPassError ] = useState(false)
+  const [ authDataLogin, setAuthDataLogin ] = useState<string>('nik.shipov@gmail.com')
+  const [ authDataLoginError, setAuthDataLoginError ] = useState<boolean>(false)
+  const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
+  const [ whoInvite, setWhoInvite ] = useState<string>('')
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AVATAR_REQUEST, SET_AVATAR_REQUEST ] = useState(false)
+  const [ AVATAR_CUSTOM_REQUEST, SET_AVATAR_CUSTOM_REQUEST ] = useState(false)
   const [ RESPOND_REQUEST, SET_RESPOND_REQUEST ] = useState(false)
+  const [ INVITE_REQUEST, SET_INVITE_REQUEST ] = useState(false)
+
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const ORDERS = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  const SHOW_TASK: string = useAppSelector(
+    state => state.taskContentReducer.TASKS_DATA.actualOne 
+      ? state.taskContentReducer.TASKS_DATA.actualOne 
+      : state.taskContentReducer.TASKS_DATA.showOne)
+      
+  const GONORAR_MAX: number = ORDERS.filter(order => order.id === SHOW_TASK)[0] 
+    ? ORDERS.filter(order => order.id === SHOW_TASK)[0].coast.value : 20000
+
+  const EXECUTORS = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
   const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
     .filter((executor: any) => executor.clientId === USER_ID)
   const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
@@ -74,6 +91,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const RESPOND_DATE_FINISH = useAppSelector(state => state.respondReducer.dateFinish)
   const RESPOND_DATE_EXPERT = useAppSelector(state => state.respondReducer.dateExpert)
 
+  const INVITE_FEE = useAppSelector(state => state.inviteFromReducer.fee)
+  const INVITE_COMMENT = useAppSelector(state => state.inviteFromReducer.comment)
+
+  const selectTaskActual = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
+
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterBackground = useAppSelector(state => state.theme.blue3)
   const greenColor = useAppSelector(state => state.theme.green)
@@ -86,6 +108,14 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
+  const [ customAavatar, setCustomAavatar ] = useState<File>()
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
   const [ avatarBorders, setAvatarBorders ] = useState<Array<any>>([
     greyColor3, greyColor3, greyColor3, greyColor3, greyColor3, greyColor3
   ])
@@ -120,7 +150,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const nameTitlesCSS: CSSProperties = {
     display: 'block',
     position: 'relative',
-    fontSize: '18px',
+    fontSize: '16px',
     lineHeight: '22px',
     marginBottom: '5px'
   }
@@ -218,6 +248,18 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     dispatch(setShowType('authSupport'))
   }
 
+  const inviteAction = (): void => {
+    dispatch(setShowRCC('undefined'))
+    dispatch(setShow(true))
+    dispatch(setShowType("inviteOnTeam"))
+  }
+
+  const commandAction = (): void => {
+    dispatch(setShowRCC('undefined'))
+    dispatch(setShow(true))
+    dispatch(setShowType("commandRoot"))
+  }
+
   const validate = (): void => {
 
     setAuthDataLoginError(false)
@@ -260,6 +302,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       dispatch(setShow(false))
       dispatch(setShowRCC(false))
       navigate('/customers')
+      
     } else {
 
       if ( param.email === 'incorrect' ) setAuthDataLoginError(true)
@@ -299,7 +342,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       } else {
 
         setRespondButtonInnerOne("Заполните все поля")
-        setTimeout(() => setRespondButtonInnerOne("Откликнуться"), 1400)
+        setTimeout(() => setRespondButtonInnerOne("Откликнуться"), 1300)
 
       }
 
@@ -316,6 +359,94 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     }, 1300)
 
   }
+
+  const changeAvatarCustom = (param: File) => {
+
+    setCustomAavatar(param)
+
+  }
+
+  const changeAvatarCustomSend = () => {
+
+    SET_AVATAR_CUSTOM_REQUEST(true)
+    dispatch(setUpdating(true))
+    setTimeout(() => {
+
+      SET_AVATAR_CUSTOM_REQUEST(false)
+
+    }, 1300)
+
+  }
+
+  const inviteExecutor = () => {
+
+    false && console.log((GONORAR_MAX * 0.48).toFixed(0))
+
+    if ( whoInvite && INVITE_FEE ) {
+
+      if ( Number(INVITE_FEE) <= ( GONORAR_MAX * 0.48 ) ) {
+
+        SET_INVITE_REQUEST(true)
+        dispatch(setUpdating(true))
+        setTimeout(() => {
+
+          SET_INVITE_REQUEST(false)
+
+        }, 1300)
+
+        dispatch(setShowAlert(true))
+        dispatch(setType('success'))
+        dispatch(setMessage('Приглашение отправлено новому исполнителю'))
+
+      } else {
+
+        console.log('helloo')
+
+        dispatch(setShowAlert(true))
+        dispatch(setType('error'))
+        dispatch(setMessage('Вы ввели слишком большой гонорар. Уменьшите сумму и отправьте приглашение повторно'))
+
+      }
+
+    }
+
+  }
+
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileName: string = selectTaskActual.split('NTID-')[1] + '.techtask.txt'
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+
+      setTechTaskFile({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+    })()
+
+  }, [ selectTaskActual ])
   
   useEffect(() => { false && SET_AUTH_REQUEST(AUTH_REQUEST) }, [ AUTH_REQUEST ])
   useEffect(() => { 
@@ -323,8 +454,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     return () => {
       dispatch(setUpdating(true)) 
     } 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ /* no deps */ ])
+  }, [ ])
 
   return (
     <React.Fragment>
@@ -374,6 +504,36 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           body: {
             number: avatarNumber,
             clientId: USER_ID
+          }
+        }}
+      
+      /> }
+
+      { AVATAR_CUSTOM_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POSTFILE_TTDF',
+          urlstring: '/add-file-techtask',
+          body: [ USER_ID, customAavatar ]
+        }}
+      
+      /> }
+
+      { INVITE_REQUEST && <RequestActionsComponent
+
+        callbackAction={success}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-alarm-system',
+          body: {
+            userId: whoInvite, 
+            message: 'Вас приглашают в совместную работу над проектом',
+            fee: INVITE_FEE,
+            comment: INVITE_COMMENT,
+            order: SHOW_TASK,
+            type: 'success', 
+            actions: 'INVITE_ON_ORDER'
           }
         }}
       
@@ -732,18 +892,26 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 onClick={closeFos}
               />
               <RespondFromList.ContentLine>
-                <RespondFromList.Title style={{ marginBottom: '38px' }}>Пригласить в команду</RespondFromList.Title>
+                <RespondFromList.Title style={{ marginBottom: '28px' }}>Пригласить в команду</RespondFromList.Title>
               </RespondFromList.ContentLine>
+              <RespondFromList.ContentLine style={{ marginBottom: '17px', marginTop: '0px' }}>
+                <span style={spanTitleCSS}>Выбрать соисполнителя в проект</span>
+              </RespondFromList.ContentLine> 
               <RespondFromList.ContentLine>
                 <SelectField 
                   placeholder={"Выбрать исполнителя"}
-                  params={{ width: 300, height: 50 }}
-                  data={[
-                    { value: '01', label: 'Загрузка данных...'}
-                  ]}
+                  params={{ width: 400, height: 50 }}
+                  data={EXECUTORS.filter(user => user.clientId !== USER_ID).map(item => {
+
+                    return {
+                      value: item.clientId,
+                      label: item.bio.name,
+                    }
+
+                  })}
                   multy={false}
-                  action={() => {}}
-                  actionType={""}
+                  action={setWhoInvite}
+                  actionType={"INVITE_USER"}
                   actionParams={[]}
                   showIcon={true}
                   icon={null}
@@ -754,22 +922,23 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </RespondFromList.ContentLine>
-              <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '24px' }}>
+              <RespondFromList.ContentLine style={{ marginBottom: '17px', marginTop: '24px' }}>
                 <span style={spanTitleCSS}>Предлагаемый гонорар</span>
               </RespondFromList.ContentLine> 
               <RespondFromList.ContentLine>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_INVITE'}
                   valueType='text'
                   required={false}
                   widthType={'px'}
-                  widthValue={300}
+                  widthValue={400}
                   heightValue={'50px'}
-                  label={"Введите сумму гонорара"}
+                  label={"Максимальный гонорар - " + (GONORAR_MAX * 0.48).toFixed(0)}
                   isError={false}
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
+                  store={[ "INVITE_FEE", () => null ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -778,12 +947,26 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </RespondFromList.ContentLine>
-              <RespondFromList.ContentLine style={{ marginBottom: '15px', marginTop: '24px' }}>
+              <span
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  width: '100%',
+                  lineHeight: '22px',
+                  backgroundColor: '#D9E7F0',
+                  padding: '14px',
+                  paddingLeft: '20px',
+                  borderRadius: '4px',
+                  marginTop: '14px',
+                }}
+              >{"Вы сами устанавливаете гонорар членам вашей команды, однако помните что сумма всех гонораров не может быть больше, чем 50% от стоимости заказа"}</span>
+              <RespondFromList.ContentLine style={{ marginBottom: '17px', marginTop: '24px' }}>
                 <span style={spanTitleCSS}>Комментарий к приглашению</span>
               </RespondFromList.ContentLine> 
               <RespondFromList.ContentLine>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE'}
+                    type={'TEXT_INPUT_OUTLINE_INVITE'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
@@ -791,9 +974,10 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     heightValue={'50px'}
                     label={"Ваш комментарий"}
                     isError={false}
-                    isDisabled={true}
+                    isDisabled={false}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
+                    store={[ "INVITE_COMMENT", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',
@@ -806,7 +990,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <ButtonComponent
                     inner={"Отправить приглашение"} 
                     type="CONTAINED_DEFAULT" 
-                    action={() => {}}
+                    action={inviteExecutor}
                     actionData={null}
                     widthType={"px"}
                     widthValue={265}
@@ -823,7 +1007,34 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       borderRadius: '6px',
                       position: 'relative',
                       boxSizing: 'border-box',
-                      marginTop: '50px',
+                      marginTop: '24px',
+                      marginBottom: '14px',
+                    }}
+                  />
+                </RespondFromList.ContentLine> 
+                <RespondFromList.ContentLine style={{ justifyContent: 'space-around' }}>
+                  <ButtonComponent
+                    inner={"Посмотреть команду"} 
+                    type="CONTAINED_DEFAULT" 
+                    action={commandAction}
+                    actionData={null}
+                    widthType={"px"}
+                    widthValue={265}
+                    children={""}
+                    childrenCss={{}}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={null}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      backgroundColor: blueColor6,
+                      color: 'rgb(81, 102, 116)',
+                      fontSize: '12px',
+                      height: '46px',
+                      borderRadius: '6px',
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      marginTop: '0px',
                       marginBottom: '24px',
                     }}
                   />
@@ -841,7 +1052,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
+                  <Command.Title style={{ marginBottom: '28px' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Отправлено приглашение</Command.SubTitle>
@@ -878,13 +1089,27 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   <span style={coastSpanCSS}>{"20 000₽"}</span>
                 </Command.ContentLine>
                 <Command.ContentLine style={{ justifyContent: 'flex-start', marginTop: '30px', marginBottom: '34px' }}>
-                  <span style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginRight: '10px', cursor: 'pointer' }}>
+                  <span 
+                    onClick={inviteAction}
+                    style={{ 
+                      display: 'flex', 
+                      flexDirection: 'row', 
+                      alignItems: 'center', 
+                      marginRight: '10px', 
+                      cursor: 'pointer' 
+                    }}
+                  >
                     <img
                       alt={""}
                       src={addUser}
                     />
                   </span>
-                  <span style={{ cursor: 'pointer' }}>Пригласить в заказ</span>
+                  <span 
+                    onClick={inviteAction}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    Пригласить в заказ
+                  </span>
                 </Command.ContentLine>
                 <Command.ContentLine style={{ marginBottom: '32px' }}>
                   <Command.HorizontalDelimiter background={delimiterBackground} />
@@ -903,7 +1128,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameTitlesCSS}>{ USER_ID.slice(0, 40) + '...' }</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -934,7 +1159,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                           <SelectField 
                             placeholder={"Выберите действие"}
                             params={{ width: 300, height: 50 }}
-                            data={[]}
+                            data={[
+                              { value: '1', label: 'Загрузка действия' }
+                            ]}
                             multy={false}
                             action={() => {}}
                             actionType={""}
@@ -1067,7 +1294,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner style={{ width: '686px' }}>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
+                  <Command.Title style={{ marginBottom: '28px', textAlign: 'center' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Главный исполнитель</Command.SubTitle>
@@ -1083,7 +1310,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameTitlesCSS}>{ USER_ID.slice(0, 40) + '...' }</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1190,7 +1417,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               />
               <Command.FOSInner style={{ width: '686px' }}>
                 <Command.ContentLine>
-                  <Command.Title style={{ marginBottom: '40px' }}>Команда проекта</Command.Title>
+                  <Command.Title style={{ marginBottom: '28px', textAlign: 'center' }}>Команда проекта</Command.Title>
                 </Command.ContentLine>
                 <Command.ContentLine>
                   <Command.SubTitle>Главный исполнитель</Command.SubTitle>
@@ -1206,7 +1433,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       <Command.AvatarContainerIndicator background={yellowColor} />
                     </Command.AvatarContainer>
                     <Command.NameContainer>
-                      <span style={nameTitlesCSS}>[ username download ]</span>
+                      <span style={nameTitlesCSS}>{ USER_ID.slice(0, 40) + '...' }</span>
                       <span style={nameSubtitleCSS}>Самозанятый</span>
                     </Command.NameContainer>
                   </div>
@@ -1919,6 +2146,34 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </ChangeAvatar.ContentLine>
                 <ChangeAvatar.ContentLine>
                   <div style={downloadAreaCSS}>
+
+                    <ButtonComponent
+                      inner={''} 
+                      type='UPLOAD' 
+                      action={() => {}}
+                      actionData={[ changeAvatarCustom ]}
+                      widthType={'%'}
+                      widthValue={100}
+                      children={''}
+                      childrenCss={undefined}
+                      iconSrc={null}
+                      iconCss={undefined}
+                      muiIconSize={null}
+                      MuiIconChildren={EmailIcon}
+                      css={{
+                        backgroundColor: 'transparent',
+                        color: 'grey',
+                        fontSize: '12px',
+                        height: '200px',
+                        borderRadius: '6px',
+                        position: 'absolute',
+                        boxSizing: 'border-box',
+                        boxShadow: 'none',
+                        top: '0%',
+                        left: '0%'
+                      }}
+                    />
+
                     <img
                       alt={""}
                       src={download}
@@ -1932,8 +2187,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 <ChangeAvatar.ContentLine style={{ justifyContent: 'space-around', marginTop: '32px' }}>
                   <ButtonComponent
                     inner={"Сохранить аватар"} 
-                    type='CONTAINED_DISABLED' 
-                    action={validate}
+                    type='CONTAINED_DEFAULT' 
+                    action={changeAvatarCustomSend}
                     actionData={null}
                     widthType={'px'}
                     widthValue={240}
@@ -1955,6 +2210,81 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   />
                 </ChangeAvatar.ContentLine>
               </ChangeAvatar.FOS>
+          </React.Fragment> 
+          : showType === 'showFile' 
+          ? <React.Fragment>
+
+            <ShowFile.FOS>
+              <ShowFile.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </ShowFile.CloseContainer>
+              <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
+                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
+                <ButtonComponent
+                  inner={"Скачать файл"} 
+                  type="CONTAINED_DEFAULT"
+                  action={() => {}}
+                  actionData={null}
+                  widthType={"px"}
+                  widthValue={184}
+                  children={""}
+                  childrenCss={{}}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={null}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    backgroundColor: '#167CBF',
+                    color: 'white',
+                    fontSize: '12px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '6px',
+                  }}
+                />
+              </ShowFile.ContentLine>
+              <ShowFile.FOSInner>
+                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
+                  { techTaskFile.text }
+                </ShowFile.FOSFile>
+              </ShowFile.FOSInner>
+              <ShowFile.ContentLine style={{ justifyContent: 'space-around' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    position: 'relative',
+                    width: '30px',
+                    height: '30px',
+                    lineHeight: '30px',
+                    textAlign: 'center',
+                    fontSize: '13px',
+                    borderRadius: '6px',
+                    backgroundColor: 'white',
+                    color: 'grey'
+                  }}
+                >
+                  1
+                </span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '14px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Сохранен</span>
+                <span>Нет данных</span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Размер</span>
+                <span>{ techTaskFile.size + ' байт' }</span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px', marginBottom: '33px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Загружен</span>
+                <span>Нет данных</span>
+              </ShowFile.ContentLine>
+            </ShowFile.FOS>
+
           </React.Fragment> : <React.Fragment></React.Fragment>
         
         }

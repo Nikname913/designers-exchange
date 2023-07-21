@@ -123,7 +123,7 @@ const css = {
     width: 100%;
     font-size: 12px;
     padding-left: 10px;
-    margin-top: 20px;
+    margin-top: 6px;
     color: ${props => props.color};
   `,
   FileIconSize: styled.span<{ color: string }>`

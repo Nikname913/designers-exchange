@@ -8,6 +8,7 @@ import { ITaskTableProps } from '../../../../models-ts/views/task-table-models'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import { setTask, setExecutor } from '../../../../store/slices/respond-slice'
+import { selectShowTask } from '../../../../store/slices/task-content-slice'
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import css from '../../styles/views/taskTable.css'
 import location from '../../../../img/icons/location.svg'
@@ -37,7 +38,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     cardWidth,
     marbo,
     actions,
-    actionsParams } = props
+    actionsParams,
+    taskId } = props
 
   const [ containerHeight, setContainerHeight ] = useState<string>('short')
   const [ showTaskDescriptionText, setShowTaskDescriptionText ] = useState<string>('Показать больше')
@@ -162,7 +164,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     let userName = 'undefined'
 
     USERS_LIST.listExecutors.forEach(item => {
-      if ( item.id === taskExecutor ) {
+      if ( item.clientId === taskExecutor ) {
         userName = item.name
       }
     })
@@ -177,7 +179,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(true)
     setTimeout(() => { 
       SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(false)
-    }, 1400)
+    }, 1300)
 
   }
   function changeStatusActive() {
@@ -188,7 +190,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
     setTimeout(() => { 
       SET_CHANGE_TASK_STATUS_REQUEST_ACTIVE(false)
       setActivatePreloader(false)
-    }, 1400)
+    }, 1300)
 
   }
 
@@ -213,6 +215,9 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
       clearInterval(timer)
     }
   }, [])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { taskId && console.log(taskId) }, [])
 
   return (
     <React.Fragment>
@@ -505,7 +510,8 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 inner={"Редактировать"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
-                  false && navigate('/task-view')
+                  navigate(`/edit-task/${taskId}`)
+                  taskId && dispatch(selectShowTask(taskId))
                   actions && actions[0] && actions[0](actionsParams && actionsParams[0])
                 }}
                 actionData={null}

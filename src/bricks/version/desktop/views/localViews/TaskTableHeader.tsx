@@ -131,7 +131,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
       SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(true)
       setTimeout(() => { 
         SET_CHANGE_TASK_STATUS_REQUEST_DEACTIVE(false)
-      }, 1400)
+      }, 1300)
 
     }
 
@@ -139,8 +139,8 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   useEffect(() => {
 
-    console.log(TASK_ACTUAL_ONE)
-    console.log(TASK_SHOW_ONE) 
+    false && console.log(TASK_ACTUAL_ONE)
+    false && console.log(TASK_SHOW_ONE) 
 
   }, [ TASK_ACTUAL_ONE, TASK_SHOW_ONE ])
   useEffect(() => {

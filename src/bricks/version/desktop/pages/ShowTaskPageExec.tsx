@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/fos-slice'
@@ -9,6 +9,9 @@ import ChapterController from '../views/localViews/СhapterControllerShow'
 import cssContentArea from '../styles/views/contentArea.css'
 import css from '../styles/pages/showTaskPage.css'
 import EmailIcon from '@mui/icons-material/Email'
+import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
 
 import backIcon from '../../../img/icons/back.svg'
 import infoIcon from '../../../img/icons/created/info.svg'
@@ -39,6 +42,21 @@ const { WhiteContainer,
   FileIconTitle,
   FileIconSize } = css
 
+const LinearProgressWithPercent = (props: LinearProgressProps & { value: number }) => {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant="body2" color="text.secondary">{`${Math.round(
+          props.value,
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  );
+}
+
 const ShowTaskPage: React.FC = () => {
 
   const navigate = useNavigate()
@@ -46,6 +64,9 @@ const ShowTaskPage: React.FC = () => {
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+  
+  const [ progress, setProgress ] = useState<number>(10)
+  const [ counter, setCounter ] = useState<number>(0)
 
   const backwardButtonColor = useAppSelector(state => state.theme.grey)
   const activeLeftMenuIconColor = useAppSelector(state => state.theme.blue3)
@@ -154,6 +175,15 @@ const ShowTaskPage: React.FC = () => {
   }
 
   useEffect(() => console.log(selectTask), [ selectTask ])
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10))
+      setCounter(prev => prev + 1)
+    }, 1300)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
 
   return (
     <React.Fragment>
@@ -201,7 +231,7 @@ const ShowTaskPage: React.FC = () => {
               cardWidth={null}
               marbo={"20px"}
               actions={[ respondAction ]}
-              actionsParams={undefined}
+              actionsParams={[ item.id, item.responds ]}
               deal={{
                 type: item.coast.issafe === true ? 'safe' : 'simple',
                 coast: item.coast.value,
@@ -332,7 +362,7 @@ const ShowTaskPage: React.FC = () => {
                           alt={""}
                           src={starIcon}
                         />
-                        <span style={rateSpanCSS}>4.88</span>
+                        <span style={rateSpanCSS}>5.00</span>
                       </div>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"}>
@@ -527,9 +557,34 @@ const ShowTaskPage: React.FC = () => {
                   > 
                     <div style={{ ...divAttachmentsCSS, width: '70%' }}>
                       <WhiteContainerContentLine justify={"space-between"}>
-                        <WhiteContainerTitle>Вложения</WhiteContainerTitle>
+                        <WhiteContainerTitle>Файлы вложения</WhiteContainerTitle>
                       </WhiteContainerContentLine>
-                      <WhiteContainerContentLine 
+
+                      {/* ---------------------------------------------------- */}
+                      {/* заглушка на время нестабильной работы апи */}
+                      {/* ---------------------------------------------------- */}
+
+                        <Box sx={{ width: '100%', marginTop: '30px' }}>
+                          <LinearProgressWithPercent style={{ borderRadius: '4px' }} value={progress}/>
+                        </Box>
+                        { counter > 4 && <span 
+                          style={{ 
+                            color: 'gray', 
+                            width: '100%', 
+                            lineHeight: '24px',
+                            marginTop: '9px',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => navigate('/task-list-cust')}
+                        >
+                          {"Загрузка занимает больше времени.."}
+                        </span> }
+
+                      {/* ---------------------------------------------------- */}
+                      {/* заглушка на время нестабильной работы апи */}
+                      {/* ---------------------------------------------------- */}
+
+                      { false && <WhiteContainerContentLine 
                         justify={"space-between"} 
                         style={{ 
                           marginTop: '30px', 
@@ -582,23 +637,25 @@ const ShowTaskPage: React.FC = () => {
                           <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
                           <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
                         </FileIconContainer>
-                      </WhiteContainerContentLine>
+                      </WhiteContainerContentLine> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '30%' }}>
-                      <WhiteContainerContentLine justify={"space-between"}>
-                        <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
-                      </WhiteContainerContentLine>
-                      <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
-                        <FileIconContainer style={{ width: '90%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
-                          <img
-                            alt={""}
-                            src={doc}
-                            style={{ ...fileIconCSS, width: '70%' }}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                      </WhiteContainerContentLine>
+                      { false && <React.Fragment>
+                        <WhiteContainerContentLine justify={"space-between"}>
+                          <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
+                        </WhiteContainerContentLine>
+                        <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
+                          <FileIconContainer style={{ width: '90%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
+                            <img
+                              alt={""}
+                              src={doc}
+                              style={{ ...fileIconCSS, width: '70%' }}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                        </WhiteContainerContentLine>
+                      </React.Fragment> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '100%' }}>
                     <ButtonComponent

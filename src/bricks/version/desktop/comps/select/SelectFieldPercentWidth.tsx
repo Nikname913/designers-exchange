@@ -69,6 +69,12 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       border: 'none',
       zIndex: 20
     }),
+    menuList: (theme: Object) => ({
+      ...theme,
+      display: 'block',
+      position: 'relative',
+      width: 'calc(100% + 23px)'
+    }),
     option: (theme: Object) => ({
       ...theme,
       fontSize: '13px',

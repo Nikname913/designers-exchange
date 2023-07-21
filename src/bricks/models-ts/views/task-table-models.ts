@@ -21,6 +21,7 @@ export interface ITaskTableProps {
   marbo: string | null,
   actions?: Array<any>,
   actionsParams?: Array<any>,
+  taskId?: string
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

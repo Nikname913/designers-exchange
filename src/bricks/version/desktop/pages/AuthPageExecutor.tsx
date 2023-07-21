@@ -106,7 +106,7 @@ const AuthPage: React.FC = () => {
               setTimeout(() => {
                 setPreloader(false)
                 SET_AUTH_REQUEST(false)
-              }, 1400)
+              }, 1300)
 
             } else {
 
@@ -126,7 +126,7 @@ const AuthPage: React.FC = () => {
           setTimeout(() => {
             setPreloader(false)
             SET_AUTH_REQUEST(false)
-          }, 1400)
+          }, 1300)
 
         }
 

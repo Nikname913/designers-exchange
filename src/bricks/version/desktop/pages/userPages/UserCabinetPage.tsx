@@ -1,4 +1,5 @@
 import React, { ReactElement, useState, useEffect, useRef } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { Fade } from '@mui/material'
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
 import EmailIcon from '@mui/icons-material/Email'
@@ -114,6 +115,9 @@ const ExecutorProfilePage: React.FC = () => {
     'settings'>('about')
 
   const dispatch = useAppDispatch()
+  const { viewtype } = useParams()
+  const navigate = useNavigate()
+
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
@@ -122,6 +126,7 @@ const ExecutorProfilePage: React.FC = () => {
     .filter((customer: any) => customer.clientId === USER_ID)
 
   const alertData = useAppSelector(state => state.headerReducer.alertData)
+  const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
 
   const yelloColor = useAppSelector(state => state.theme.yellow)
   const greenColor = useAppSelector(state => state.theme.green)
@@ -180,6 +185,7 @@ const ExecutorProfilePage: React.FC = () => {
   const [ DOCS_REQUEST, SET_DOCS_REQUEST ] = useState(false)
   const [ COMPANY_REQUEST, SET_COMPANY_REQUEST ] = useState(false)
   const [ BORTH_REQUEST, SET_BORTH_REQUEST ] = useState(false)
+  const [ REMOVE_ALARM, SET_REMOVE_ALARM ] = useState(false)
 
   const [ loadingBio, setLoadingbio ] = React.useState(false)
   const [ successBio, setSuccessBio ] = React.useState(false)
@@ -189,6 +195,8 @@ const ExecutorProfilePage: React.FC = () => {
   const [ addressCheck, setAddressCheck ] = React.useState<boolean>(false)
   const [ bossTypeOne, setBossTypeOne ] = React.useState<boolean>(false)
   const [ bossTypeTwo, setBossTypeTwo ] = React.useState<boolean>(false)
+
+  const [ alarmOrder, setAlarmOrder ] = React.useState<string>('')
 
   const timer = useRef<number>()
   const indicatorElement = useRef<any>()
@@ -263,7 +271,7 @@ const ExecutorProfilePage: React.FC = () => {
       timer.current = window.setTimeout(() => {
         setSuccess(true)
         setLoading(false)
-      }, 1400)
+      }, 1300)
     }
 
     SET_DOCS_REQUEST(true)
@@ -280,7 +288,7 @@ const ExecutorProfilePage: React.FC = () => {
       false && dispatch(setSnils(''))
       false && dispatch(setInn(''))
 
-    }, 1400)
+    }, 1300)
 
   }
 
@@ -292,7 +300,7 @@ const ExecutorProfilePage: React.FC = () => {
       timer.current = window.setTimeout(() => {
         setSuccess(true)
         setLoading(false)
-      }, 1400)
+      }, 1300)
     }
 
     SET_COMPANY_REQUEST(true)
@@ -300,7 +308,7 @@ const ExecutorProfilePage: React.FC = () => {
 
     setTimeout(() => {
       SET_COMPANY_REQUEST(false)
-    }, 1400)
+    }, 1300)
 
   }
 
@@ -312,7 +320,7 @@ const ExecutorProfilePage: React.FC = () => {
       timer.current = window.setTimeout(() => {
         setSuccessBio(true)
         setLoadingbio(false)
-      }, 1400)
+      }, 1300)
     }
 
     SET_BORTH_REQUEST(true)
@@ -328,7 +336,18 @@ const ExecutorProfilePage: React.FC = () => {
       false && dispatch(setSnils(''))
       false && dispatch(setInn(''))
 
-    }, 1400)
+    }, 1300)
+
+  }
+
+  const removeInviteAlarm = (param: string): void => {
+
+    setAlarmOrder(param)
+
+    SET_REMOVE_ALARM(true)
+    setTimeout(() => {
+      SET_REMOVE_ALARM(false)
+    }, 1300)
 
   }
 
@@ -444,6 +463,20 @@ const ExecutorProfilePage: React.FC = () => {
 
   }, [])
 
+  useEffect(() => {
+
+    viewtype === 'about' && setProfileViewStep('about')
+    viewtype === 'about-full' && setProfileViewStep('allAbout')
+    viewtype === 'wallet' && setProfileViewStep('wallet')
+    viewtype === 'alarms' && setProfileViewStep('alarms')
+    viewtype === 'docs' && setProfileViewStep('documents')
+    viewtype === 'cases' && setProfileViewStep('portfolio')
+    viewtype === 'education' && setProfileViewStep('education')
+    viewtype === 'team' && setProfileViewStep('settings')
+    viewtype === 'settings' && setProfileViewStep('settings')
+
+  }, [ viewtype ])
+
   return (
     <React.Fragment>
 
@@ -498,6 +531,21 @@ const ExecutorProfilePage: React.FC = () => {
           body: {
             clientId: USER_ID,
             borth: passportBorth
+          }
+        }}
+      
+      /> }
+
+      { REMOVE_ALARM && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/remove-alarm-system',
+          body: {
+            userId: USER_ID, 
+            order: alarmOrder,
+            actions: 'INVITE_ON_ORDER'
           }
         }}
       
@@ -671,7 +719,10 @@ const ExecutorProfilePage: React.FC = () => {
         <ContentContainer>
           <MenuContainer>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('about')}
+              onClick={() => {
+                setProfileViewStep('about')
+                navigate('/exec-office/about')
+              }}
               backgroundColor={ 
                 profileViewStep === 'about' 
                   ? activeLeftMenuIconColor 
@@ -686,7 +737,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>О пользователе</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('allAbout')}
+              onClick={() => {
+                setProfileViewStep('allAbout')
+                navigate('/exec-office/about-full')
+              }}
               backgroundColor={ 
                 profileViewStep === 'allAbout' 
                   ? activeLeftMenuIconColor 
@@ -701,7 +755,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Полные данные</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('wallet')}
+              onClick={() => {
+                setProfileViewStep('wallet')
+                navigate('/exec-office/wallet')
+              }}
               backgroundColor={ 
                 profileViewStep === 'wallet' 
                   ? activeLeftMenuIconColor 
@@ -716,7 +773,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Кошелек</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('alarms')}
+              onClick={() => {
+                setProfileViewStep('alarms')
+                navigate('/exec-office/alarms')
+              }}
               backgroundColor={ 
                 profileViewStep === 'alarms' 
                   ? activeLeftMenuIconColor 
@@ -731,7 +791,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Уведомления</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('documents')}
+              onClick={() => {
+                setProfileViewStep('documents')
+                navigate('/exec-office/docs')
+              }}
               backgroundColor={ 
                 profileViewStep === 'documents' 
                   ? activeLeftMenuIconColor 
@@ -746,7 +809,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Документы</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('portfolio')} 
+              onClick={() => {
+                setProfileViewStep('portfolio')
+                navigate('/exec-office/cases')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'portfolio' 
                   ? activeLeftMenuIconColor 
@@ -761,7 +827,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Портфолио</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('education')} 
+              onClick={() => {
+                setProfileViewStep('education')
+                navigate('/exec-office/education')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'education'
                   ? activeLeftMenuIconColor 
@@ -776,7 +845,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Образование и опыт</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('settings')} 
+              onClick={() => {
+                setProfileViewStep('settings')
+                navigate('/exec-office/team')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'team'
                   ? activeLeftMenuIconColor 
@@ -791,7 +863,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Команда</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('settings')} 
+              onClick={() => {
+                setProfileViewStep('settings')
+                navigate('/exec-office/settings')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'settings'
                   ? activeLeftMenuIconColor 
@@ -812,7 +887,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль общей информации о пользователе */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
+            { profileViewStep === 'about' && viewtype === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
               { EXECUTOR[0].spec && EXECUTOR[0].spec.map(
                 ( item: 
                        string                                                             | 
@@ -859,12 +934,12 @@ const ExecutorProfilePage: React.FC = () => {
                   { EXECUTOR[0].aboutText && 
                     EXECUTOR[0].aboutText !== '' 
                       ? EXECUTOR[0].aboutText 
-                      : "Заполните больше информации о себе и своих навыках, чтобы повысить шанс на решение заказачика в вашу пользу" }
+                      : "Заполните больше информации о себе и своих навыках, чтобы повысить шанс на решение заказчика в вашу пользу" }
                 </span>
               </div>
             </TagsContent> }
             
-            { profileViewStep === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
+            { profileViewStep === 'about' && viewtype === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                   <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы</span>
@@ -1012,7 +1087,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль подробной информации о пользователе */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'allAbout' && <React.Fragment>
+            { profileViewStep === 'allAbout' && viewtype === 'about-full' && <React.Fragment>
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Контакты"}</span>
@@ -2046,7 +2121,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль платежных данных */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'wallet' && <React.Fragment>
+            { profileViewStep === 'wallet' && viewtype === 'wallet' && <React.Fragment>
 
               <span
                 style={{
@@ -2368,7 +2443,7 @@ const ExecutorProfilePage: React.FC = () => {
               <ReviewsContent 
                 style={{ 
                   marginTop: '16px', 
-                  marginBottom: '10px', 
+                  marginBottom: '38px', 
                   flexDirection: 'row', 
                   alignItems: 'flex-start',
                   justifyContent: 'space-between' 
@@ -2380,18 +2455,13 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ width: '25%', textAlign: 'right', fontWeight: 'bold' }}>+ 20 000 ₽</span>
                 </ReviewsContentLine>
               </ReviewsContent>
-              <PagintationContainer>
-                <span style={showMoreButtonCSS}>Загрузить еще</span>
-                <Pagintation count={1}></Pagintation>
-              </PagintationContainer>
-
             </React.Fragment> }
 
             {/* ---------------------------------------- */}
             {/* модуль уведомлений пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'alarms' && <React.Fragment>
+            { profileViewStep === 'alarms' && viewtype === 'alarms' && <React.Fragment>
 
               { EXECUTOR[0].alertData?.map((item, index) => {
 
@@ -2404,7 +2474,57 @@ const ExecutorProfilePage: React.FC = () => {
                         // ----------------------------------------------------------------
                         background={index === 0 ? "#E8F0F6" : "#E8F0F6"}
                         isNew={true}
-                        buttons={[
+                        buttons={ item.actions === 'INVITE_ON_ORDER' ? [
+                          <ButtonComponent
+                            inner={"Принять"} 
+                            type='CONTAINED_DEFAULT' 
+                            action={() => {}}
+                            actionData={null}
+                            widthType={'%'}
+                            widthValue={40}
+                            children={""}
+                            childrenCss={undefined}
+                            iconSrc={null}
+                            iconCss={undefined}
+                            muiIconSize={30}
+                            MuiIconChildren={ArrowUpwardIcon}
+                            css={{
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              padding: '4px',
+                              backgroundColor: 'white',
+                              color: 'black',
+                              width: '56px',
+                              height: '43px',
+                              marginRight: '12px'
+                            }}
+                          />,
+                          <ButtonComponent
+                            inner={"Отказаться"} 
+                            type='CONTAINED_DEFAULT' 
+                            action={() => {
+                              removeInviteAlarm(item.order)
+                            }}
+                            actionData={null}
+                            widthType={'%'}
+                            widthValue={40}
+                            children={""}
+                            childrenCss={undefined}
+                            iconSrc={null}
+                            iconCss={undefined}
+                            muiIconSize={30}
+                            MuiIconChildren={ArrowUpwardIcon}
+                            css={{
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              padding: '4px',
+                              backgroundColor: 'white',
+                              color: 'black',
+                              width: '56px',
+                              height: '43px'
+                            }}
+                          />
+                        ] : [
                           <ButtonComponent
                             inner={"Подтверждение"} 
                             type='CONTAINED_DISABLED' 
@@ -2432,8 +2552,8 @@ const ExecutorProfilePage: React.FC = () => {
                           />
                         ]}
                         content={{
-                          date: '[ ошибка сервера - данные не получены ]',
-                          text: item.message
+                          date: '[ Формат времени не совпадает ]',
+                          text: item.message + '||' + ( item.fee ? item.fee : '---' ) + '||' + ( item.comment ? item.comment : '---' )
                         }}
                       />
                     </ReviewsContentLine>
@@ -2543,7 +2663,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль документов пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'documents' && <React.Fragment>
+            { profileViewStep === 'documents' && viewtype === 'docs' && <React.Fragment>
 
             <span
                 style={{
@@ -2566,7 +2686,8 @@ const ExecutorProfilePage: React.FC = () => {
                   flexDirection: 'row', 
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '24px'
+                  padding: '24px',
+                  opacity: '0.6'
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -2574,7 +2695,7 @@ const ExecutorProfilePage: React.FC = () => {
                     alt={""}
                     src={pen}
                   />
-                  <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Электронная подпись</span>
+                  <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Электронная подпись [ неактуальный элемент ]</span>
                 </div>
                 <ButtonComponent
                   inner={"Загрузить"} 
@@ -2725,7 +2846,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль портфолио пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'portfolio' && <React.Fragment>
+            { profileViewStep === 'portfolio' && viewtype === 'cases' && <React.Fragment>
 
               { USER_ROLE === 'EXECUTOR' && EXECUTOR[0].portfolio?.length === 0 && 
 
@@ -2842,7 +2963,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль опыта и образования пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'education' && <React.Fragment>
+            { profileViewStep === 'education' && viewtype === 'education' && <React.Fragment>
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Образование"}</span>
@@ -2873,6 +2994,39 @@ const ExecutorProfilePage: React.FC = () => {
               
               } 
 
+              <div
+                onClick={editEducationCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                <span 
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    position: 'relative',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: blueColor3,
+                    marginRight: '10px',
+                  }}
+                >
+                  <img
+                    alt={""}
+                    src={plus}
+                    style={{ display: 'block', width: '14px' }}
+                  />
+                </span>
+                <span>Добавить новое место учебы</span>
+              </div>
+
               { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
@@ -2888,7 +3042,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </div>
               </ReviewsContent> }
 
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
+              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '50px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
                 <span
                   onClick={editEducationCases} 
@@ -2916,6 +3070,39 @@ const ExecutorProfilePage: React.FC = () => {
               
               }
 
+              <div
+                onClick={editEducationCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                <span 
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    position: 'relative',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: blueColor3,
+                    marginRight: '10px',
+                  }}
+                >
+                  <img
+                    alt={""}
+                    src={plus}
+                    style={{ display: 'block', width: '14px' }}
+                  />
+                </span>
+                <span>Добавить новое место работы</span>
+              </div>
+
               { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
@@ -2937,7 +3124,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль команды пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'team' && <React.Fragment>
+            { profileViewStep === 'team' && viewtype === 'team' && <React.Fragment>
 
               { false && <ReviewsContentLine style={{ marginTop: '16px', marginBottom: '24px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '18px' }}>Вас пригласили</span>
@@ -2994,14 +3181,28 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
 
-              { EXECUTOR.map((item: { 
-                id: string,
+              { EXECUTOR.map((item: {
+                docs: any | Array<any>,
+                spec?: Array<string>,
+                reviews?: Array<any>,
+                aboutText?: string,
+                faceType?: string,
+                mail?: string | number | boolean | undefined,
+                number?: string | number | boolean | undefined,
+                bio?: any,
+                clientId: string,
                 name: string,
                 rate: number,
                 stat: Array<number>,
                 tags: Array<string>,
                 jobType: string,
-                role: string }, index: number): ReactElement => {
+                role: string,
+                avatar?: string,
+                personalAvatar?: string,
+                alertData?: Array<any>,
+                portfolio?: Array<any>,
+                educationAndSkills?: Array<any>
+              }, index: number): ReactElement => {
                 return (
                   <CustomerExecutorCardPreview
                     key={index}
@@ -3031,14 +3232,28 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
 
-              { EXECUTOR.map((item: { 
-                id: string,
+              { EXECUTOR.map((item: {
+                docs: any | Array<any>,
+                spec?: Array<string>,
+                reviews?: Array<any>,
+                aboutText?: string,
+                faceType?: string,
+                mail?: string | number | boolean | undefined,
+                number?: string | number | boolean | undefined,
+                bio?: any,
+                clientId: string,
                 name: string,
                 rate: number,
                 stat: Array<number>,
                 tags: Array<string>,
                 jobType: string,
-                role: string }, index: number): ReactElement => {
+                role: string,
+                avatar?: string,
+                personalAvatar?: string,
+                alertData?: Array<any>,
+                portfolio?: Array<any>,
+                educationAndSkills?: Array<any>
+              }, index: number): ReactElement => {
                 if ( index < 2 ) { return (
                   <CustomerExecutorCardPreview
                     key={index}
@@ -3069,7 +3284,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль команды пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'settings' && <React.Fragment>
+            { profileViewStep === 'settings' && viewtype === 'settings' && <React.Fragment>
 
               <ReviewsContent 
                 style={{ 
@@ -3268,7 +3483,7 @@ const ExecutorProfilePage: React.FC = () => {
                   overflow: 'hidden'
                 }}
               >
-                <img
+                { avatarFile === 404 && <img
                   alt={""}
                   src={
                     CUSTOMER[0].avatar === '1' ? bearAvatar :
@@ -3287,7 +3502,12 @@ const ExecutorProfilePage: React.FC = () => {
                     CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
                     { width: '100px', marginTop: '6px' }
                   }
-                />
+                /> }
+                { avatarFile === 200 && <img
+                  alt={""}
+                  src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                  style={{ height: '100%' }}
+                /> }
               </div>
             </BootstrapTooltip>
             <AvatarIndicator ref={indicatorElement} background={true ? greenColor : yelloColor}/>
@@ -3317,7 +3537,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
-                <span style={{ color: greyColor2 }}>{"Исполнитель на бирже с 2023 года"}</span>
+                <span style={{ color: greyColor2 }}>{"Заказчик на бирже с 2023 года"}</span>
               </ContentLine>
               <ContentLine style={{ marginTop: '10px' }}>
                 <span 
@@ -3391,7 +3611,7 @@ const ExecutorProfilePage: React.FC = () => {
                     alt={""}
                     src={star}
                   />
-                  <span style={{ fontSize: '40px', marginLeft: '5px' }}>4.8</span>
+                  <span style={{ fontSize: '40px', marginLeft: '5px' }}>5.0</span>
                 </div>
                 <span style={{ color: greyColor2, fontSize: '12px', marginTop: '5px' }}>{"0 отзывов"}</span>
               </div>
@@ -3401,7 +3621,10 @@ const ExecutorProfilePage: React.FC = () => {
         <ContentContainer>
           <MenuContainer>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('about')}
+              onClick={() => {
+                setProfileViewStep('about')
+                navigate('/cust-office/about')
+              }}
               backgroundColor={ 
                 profileViewStep === 'about' 
                   ? activeLeftMenuIconColor 
@@ -3416,7 +3639,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>О пользователе</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('allAbout')}
+              onClick={() => {
+                setProfileViewStep('allAbout')
+                navigate('/cust-office/about-full')
+              }}
               backgroundColor={ 
                 profileViewStep === 'allAbout' 
                   ? activeLeftMenuIconColor 
@@ -3431,7 +3657,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Полные данные</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('wallet')}
+              onClick={() => {
+                setProfileViewStep('wallet')
+                navigate('/cust-office/wallet')
+              }}
               backgroundColor={ 
                 profileViewStep === 'wallet' 
                   ? activeLeftMenuIconColor 
@@ -3446,7 +3675,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Кошелек</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('alarms')}
+              onClick={() => {
+                setProfileViewStep('alarms')
+                navigate('/cust-office/alarms')
+              }}
               backgroundColor={ 
                 profileViewStep === 'alarms' 
                   ? activeLeftMenuIconColor 
@@ -3461,7 +3693,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Уведомления</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton 
-              onClick={() => setProfileViewStep('documents')}
+              onClick={() => {
+                setProfileViewStep('documents')
+                navigate('/cust-office/docs')
+              }}
               backgroundColor={ 
                 profileViewStep === 'documents' 
                   ? activeLeftMenuIconColor 
@@ -3476,7 +3711,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Документы</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('portfolio')} 
+              onClick={() => {
+                setProfileViewStep('portfolio')
+                navigate('/cust-office/cases')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'portfolio' 
                   ? activeLeftMenuIconColor 
@@ -3491,7 +3729,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Портфолио</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('education')} 
+              onClick={() => {
+                setProfileViewStep('education')
+                navigate('/cust-office/education')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'education'
                   ? activeLeftMenuIconColor 
@@ -3506,7 +3747,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Образование и опыт</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('settings')} 
+              onClick={() => {
+                setProfileViewStep('settings')
+                navigate('/cust-office/team')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'team'
                   ? activeLeftMenuIconColor 
@@ -3521,7 +3765,10 @@ const ExecutorProfilePage: React.FC = () => {
               <span style={buttonLabelCSS}>Команда</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
-              onClick={() => setProfileViewStep('settings')} 
+              onClick={() => {
+                setProfileViewStep('settings')
+                navigate('/cust-office/settings')
+              }} 
               backgroundColor={ 
                 profileViewStep === 'settings'
                   ? activeLeftMenuIconColor 
@@ -3542,7 +3789,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль общей информации о пользователе */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
+            { profileViewStep === 'about' && viewtype === 'about' && <TagsContent style={{ flexWrap: 'wrap' }}>
               { CUSTOMER[0].spec && CUSTOMER[0].spec.map(
                 ( item: 
                        string                                                             | 
@@ -3593,7 +3840,7 @@ const ExecutorProfilePage: React.FC = () => {
               </div>
             </TagsContent> }
             
-            { profileViewStep === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
+            { profileViewStep === 'about' && viewtype === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
                   <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы</span>
@@ -3739,7 +3986,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль подробной информации о пользователе */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'allAbout' && <React.Fragment>
+            { profileViewStep === 'allAbout' && viewtype === 'about-full' && <React.Fragment>
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Контакты"}</span>
@@ -4732,7 +4979,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль платежных данных */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'wallet' && <React.Fragment>
+            { profileViewStep === 'wallet' && viewtype === 'wallet' && <React.Fragment>
 
             <span
               style={{
@@ -5053,7 +5300,7 @@ const ExecutorProfilePage: React.FC = () => {
               <ReviewsContent 
                 style={{ 
                   marginTop: '16px', 
-                  marginBottom: '10px', 
+                  marginBottom: '38px', 
                   flexDirection: 'row', 
                   alignItems: 'flex-start',
                   justifyContent: 'space-between' 
@@ -5065,18 +5312,13 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ width: '25%', textAlign: 'right', fontWeight: 'bold' }}>+ 20 000 ₽</span>
                 </ReviewsContentLine>
               </ReviewsContent>
-              <PagintationContainer>
-                <span style={showMoreButtonCSS}>Загрузить еще</span>
-                <Pagintation count={1}></Pagintation>
-              </PagintationContainer>
-
             </React.Fragment> }
 
             {/* ---------------------------------------- */}
             {/* модуль уведомлений пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'alarms' && <React.Fragment>
+            { profileViewStep === 'alarms' && viewtype === 'alarms' && <React.Fragment>
 
               <span
                 style={{
@@ -5180,11 +5422,11 @@ const ExecutorProfilePage: React.FC = () => {
 
               })}
 
-              { alertData.map((item: Array<any>, index: number): ReactElement => {
+              { alertData && alertData.length > 0 && alertData.map((item: Array<any>, index: number): ReactElement => {
 
                 return (
                   <React.Fragment key={index}>
-                    { item.map((itemDown: { initiator: string, message: string }, indexDown: number): ReactElement => {
+                    { item && item.map((itemDown: { initiator: string, message: string }, indexDown: number): ReactElement => {
 
                       return (
                         <React.Fragment>
@@ -5220,7 +5462,7 @@ const ExecutorProfilePage: React.FC = () => {
                                 />
                               ]}
                               content={{
-                                date: '[ ошибка сервера - данные не получены ]',
+                                date: '[ Формат времени не совпадает ]',
                                 text: 'Новое уведомление. ' + itemDown.message.split('::')[1]
                               }}
                             />
@@ -5244,7 +5486,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль документов пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'documents' && <React.Fragment>
+            { profileViewStep === 'documents' && viewtype === 'docs' && <React.Fragment>
 
               <span
                 style={{
@@ -5267,7 +5509,8 @@ const ExecutorProfilePage: React.FC = () => {
                   flexDirection: 'row', 
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '24px'
+                  padding: '24px',
+                  opacity: 0.6
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -5275,7 +5518,7 @@ const ExecutorProfilePage: React.FC = () => {
                     alt={""}
                     src={pen}
                   />
-                  <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Электронная подпись</span>
+                  <span style={{ fontWeight: 'bold', marginLeft: '20px' }}>Электронная подпись [ неактуальный элемент ]</span>
                 </div>
                 <ButtonComponent
                   inner={"Загрузить"} 
@@ -5425,7 +5668,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль портфолио пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'portfolio' && <React.Fragment>
+            { profileViewStep === 'portfolio' && viewtype === 'cases' && <React.Fragment>
 
               { USER_ROLE === 'CUSTOMER' && CUSTOMER[0].portfolio?.length === 0 && 
 
@@ -5588,7 +5831,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль опыта и образования пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'education' && <React.Fragment>
+            { profileViewStep === 'education' && viewtype === 'education' && <React.Fragment>
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Образование"}</span>
@@ -5619,6 +5862,39 @@ const ExecutorProfilePage: React.FC = () => {
               
               }    
 
+              <div
+                onClick={editEducationCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                <span 
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    position: 'relative',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: blueColor3,
+                    marginRight: '10px',
+                  }}
+                >
+                  <img
+                    alt={""}
+                    src={plus}
+                    style={{ display: 'block', width: '14px' }}
+                  />
+                </span>
+                <span>Добавить новое место учебы</span>
+              </div>
+
               { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
@@ -5634,7 +5910,7 @@ const ExecutorProfilePage: React.FC = () => {
                 </div>
               </ReviewsContent> }
 
-              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '14px', justifyContent: 'space-between' }}>
+              <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '50px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
                 <span
                   onClick={editEducationCases} 
@@ -5662,6 +5938,39 @@ const ExecutorProfilePage: React.FC = () => {
               
               }    
 
+              <div
+                onClick={editEducationCases} 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginTop: '14px',
+                  cursor: 'pointer'
+                }}
+              >
+                <span 
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    position: 'relative',
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: blueColor3,
+                    marginRight: '10px',
+                  }}
+                >
+                  <img
+                    alt={""}
+                    src={plus}
+                    style={{ display: 'block', width: '14px' }}
+                  />
+                </span>
+                <span>Добавить новое место работы</span>
+              </div>
+
               { false && <ReviewsContent 
                 style={{ 
                   marginTop: '0px', 
@@ -5683,7 +5992,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль команды пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'team' && <React.Fragment>
+            { profileViewStep === 'team' && viewtype === 'team' && <React.Fragment>
 
               { false && <ReviewsContentLine style={{ marginTop: '16px', marginBottom: '24px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '18px' }}>Вас пригласили</span>
@@ -5740,14 +6049,28 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
 
-              { CUSTOMER.map((item: { 
-                id: string,
+              { CUSTOMER.map((item: {
+                docs: any | Array<any>,
+                spec?: Array<string>,
+                reviews?: Array<any>,
+                aboutText?: string,
+                faceType?: string,
+                mail?: string | number | boolean | undefined,
+                number?: string | number | boolean | undefined,
+                bio?: any,
+                clientId: string,
                 name: string,
                 rate: number,
                 stat: Array<number>,
                 tags: Array<string>,
                 jobType: string,
-                role: string }, index: number): ReactElement => {
+                role: string,
+                avatar?: string,
+                personalAvatar?: string,
+                alertData?: Array<any>,
+                portfolio?: Array<any>,
+                educationAndSkills?: Array<any>
+              }, index: number): ReactElement => {
                 return (
                   <CustomerExecutorCardPreview
                     key={index}
@@ -5777,14 +6100,28 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContentLine>
 
-              { CUSTOMER.map((item: { 
-                id: string,
+              { CUSTOMER.map((item: {
+                docs: any | Array<any>,
+                spec?: Array<string>,
+                reviews?: Array<any>,
+                aboutText?: string,
+                faceType?: string,
+                mail?: string | number | boolean | undefined,
+                number?: string | number | boolean | undefined,
+                bio?: any,
+                clientId: string,
                 name: string,
                 rate: number,
                 stat: Array<number>,
                 tags: Array<string>,
                 jobType: string,
-                role: string }, index: number): ReactElement => {
+                role: string,
+                avatar?: string,
+                personalAvatar?: string,
+                alertData?: Array<any>,
+                portfolio?: Array<any>,
+                educationAndSkills?: Array<any>
+              }, index: number): ReactElement => {
                 if ( index < 2 ) { return (
                   <CustomerExecutorCardPreview
                     key={index}
@@ -5815,7 +6152,7 @@ const ExecutorProfilePage: React.FC = () => {
             {/* модуль команды пользователя */}
             {/* ---------------------------------------- */}
 
-            { profileViewStep === 'settings' && <React.Fragment>
+            { profileViewStep === 'settings' && viewtype === 'settings' && <React.Fragment>
 
               <ReviewsContent 
                 style={{ 

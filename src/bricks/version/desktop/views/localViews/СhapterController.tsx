@@ -22,6 +22,8 @@ const ChapterController:
 
   const { isBottomButton = true, marginBott = null, actions } = props
 
+  const TASK_EXPERT_COAST = useAppSelector(state => state.createTaskReducer.expertiseCoast)
+
   const chaptersLineBackground = useAppSelector(state => state.theme.grey3)
   const roundBackground = useAppSelector(state => state.theme.grey2)
   const blueColorButton = useAppSelector(state => state.theme.blue3)
@@ -79,6 +81,30 @@ const ChapterController:
             Добавить раздел
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRoundPlus>
+        <ChapterContainerStepRound backgroundColor={roundBackground}>
+          <ChapterContainerStepRoundInner/>
+          <ChapterContainerStepRoundLabelText textAlign={"center"}>
+            Экспертиза
+          </ChapterContainerStepRoundLabelText>
+          <ChapterContainerStepRoundLabelText 
+            textAlign={"center"}
+            style={{ 
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start', 
+              position: 'absolute',
+              boxSizing: 'border-box',
+              marginTop: '-100px',
+              width: '120px',
+              backgroundColor: '#EBEBEC',
+              borderRadius: '4px',
+              padding: '12px 14px 11px',
+            }} 
+          >
+            <span>Оплата: { TASK_EXPERT_COAST ? TASK_EXPERT_COAST : '----' }</span>
+            <span>Срок до: ----</span>
+          </ChapterContainerStepRoundLabelText>
+        </ChapterContainerStepRound>
         <ChapterContainerStepRound 
           backgroundColor={chaptersLineBackground}
           style={{ marginRight: '-15px' }}

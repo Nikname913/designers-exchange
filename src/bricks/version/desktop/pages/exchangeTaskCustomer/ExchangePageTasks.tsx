@@ -117,7 +117,7 @@ const ExchangePage: React.FC = () => {
     let userName = ''
 
     USERS_LIST.listExecutors.forEach(user => {
-      if ( user.id === param ) {
+      if ( user.clientId === param ) {
         userName = user.name
       }
     })
@@ -133,10 +133,12 @@ const ExchangePage: React.FC = () => {
     let userRate = 0
 
     USERS_LIST.listExecutors.forEach(user => {
-      if ( user.id === param ) {
+      if ( user.clientId === param ) {
         userRate = user.rate
       }
     })
+
+    userRate = 0
 
     return userRate
 
@@ -147,7 +149,7 @@ const ExchangePage: React.FC = () => {
     let userTags: Array<string> = []
 
     USERS_LIST.listExecutors.forEach(user => {
-      if ( user.id === param ) {
+      if ( user.clientId === param ) {
         userTags = user.tags
       } else userTags = [ 'download', 'download', 'download' ]
     })
@@ -161,7 +163,7 @@ const ExchangePage: React.FC = () => {
     let userStat: Array<number> = []
 
     USERS_LIST.listExecutors.forEach(user => {
-      if ( user.id === param ) {
+      if ( user.clientId === param ) {
         userStat = user.stat
       } else userStat = [ 0, 0, 0 ]
     })
@@ -191,6 +193,11 @@ const ExchangePage: React.FC = () => {
       if ( item.customer === ROLE_USER_ID ) setContentPlug(false)
 
     })
+    TASKS_LIST.list.filter(task => task.status === 'backside').map((item, index: number) => {
+
+      if ( item.customer === ROLE_USER_ID ) setContentPlug(false)
+
+    })
 
   }, [ ROLE_USER_ID, TASKS_LIST.list ])
 
@@ -198,6 +205,8 @@ const ExchangePage: React.FC = () => {
   useEffect(() => { dispatch(setUpdating(false)) }, [])
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { console.log(TASKS_LIST.showOne) }, [ TASKS_LIST.showOne ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { console.log(TASKS_LIST.list) }, [])
 
   useEffect(() => {
 
@@ -361,6 +370,7 @@ const ExchangePage: React.FC = () => {
         <TextFieldTitle 
           onClick={() => {
             setTypeShowTasks('noactive')
+            setContentPlug(false)
             dispatch(selectShowTask(''))
             setPageTitle('Отмененные задания')
           }}
@@ -371,7 +381,9 @@ const ExchangePage: React.FC = () => {
             color: typeShowTasks === 'active' ? greyColor2 : 'inherit',
             cursor: 'pointer'
           }}
-        >Неактивные задания ({ TASKS_LIST.listDeactive.filter(task => task.status === 'searching').length })</TextFieldTitle>
+        >Неактивные задания ({ 
+          TASKS_LIST.listDeactive.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length 
+        })</TextFieldTitle>
         <React.Fragment>
           { typeShowTasks === 'noactive' && <React.Fragment>
             <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ fontWeight: 'bold' }}>Отмененные</ExchangePageTaskCSS.TaskSpan>
@@ -461,6 +473,7 @@ const ExchangePage: React.FC = () => {
 
             return (
               <TaskTable key={item.id}
+                taskId={item.id}
                 taskInitDate={item.date}
                 taskTitle={item.name}
                 taskDeadline={item.deadline}
@@ -540,8 +553,6 @@ const ExchangePage: React.FC = () => {
                       <React.Fragment>
                         { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
 
-                          false && console.log(itemm)
-
                           return (<RespondTable 
                             containerCSS={{
                               w: '100%',
@@ -551,7 +562,7 @@ const ExchangePage: React.FC = () => {
                             }}
                             userName={itemm.executorID}
                             userJob={"Загрузка данных..."}
-                            userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : 4.88}
+                            userRate={returnUserRate(itemm.executorID) !== 0 ? itemm.executorID : '5.0'}
                             userStat={{
                               completed: false ? returnUserStat(itemm.executorID)[0] : 0, 
                               failed: false ? returnUserStat(itemm.executorID)[2] : 0, 

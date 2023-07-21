@@ -95,7 +95,7 @@ const ExchangePage: React.FC = () => {
 
   useEffect(() => {
     
-    false && console.log(TASKS_LIST.list)
+    !false && console.log(TASKS_LIST.list)
   
   }, [ TASKS_LIST ])
   

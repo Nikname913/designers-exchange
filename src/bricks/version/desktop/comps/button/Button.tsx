@@ -34,7 +34,7 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
 
   }
 
-  useEffect(() => { false && console.log(sendFile) }, [ sendFile ])
+  useEffect(() => { console.log(sendFile) }, [ sendFile ])
 
   return (
     <React.Fragment>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setTitle, 
@@ -49,7 +49,7 @@ const { MenuContainer,
   StepsContainerVerticalStepRoundLabel } = cssAsideMenu
 const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 
-const CreateTaskPage: React.FC = () => {
+const CreateTaskPageEdit: React.FC = () => {
 
   const inputBackground = useAppSelector(state => state.theme.white)
   const uploadButtonBackground = useAppSelector(state => state.theme.blue3)
@@ -77,6 +77,7 @@ const CreateTaskPage: React.FC = () => {
   const TASK_TECH_FILE = useAppSelector(state => state.createTaskReducer.techTaskFile)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listDeactive)
   const [ CREATE_TASK_REQUEST, SET_CREATE_TASK_REQUEST ] = useState(false)
   const [ CREATE_TASK_TTDF_REQUEST, SET_CREATE_TASK_TTDF_REQUEST ] = useState(false)
   const [ showNewChapter, setShowNewChapter ] = useState(false)
@@ -96,6 +97,7 @@ const CreateTaskPage: React.FC = () => {
   const [ line3Color, ] = useState(stepContainerRoundLabelColor)
   const [ line4Color, ] = useState(stepContainerRoundLabelColor)
 
+  const { taskId } = useParams()
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const date = new Date()
@@ -138,9 +140,7 @@ const CreateTaskPage: React.FC = () => {
     false && console.log(TASK_DATE_FINISH)
 
     SET_CREATE_TASK_REQUEST(true)
-
-    setTimeout(() => { SET_CREATE_TASK_TTDF_REQUEST(true) }, 1300)
-
+    SET_CREATE_TASK_TTDF_REQUEST(true)
     dispatch(setShow(true))
     dispatch(setType('success'))
     dispatch(setMessage('Вы успешно разместили новое задание'))
@@ -173,7 +173,7 @@ const CreateTaskPage: React.FC = () => {
 
       let chapter = { 
         title: TASK_CHAPTER_NAME, 
-        tags: [ 'options_download' ], 
+        tags: [ 'optiions_download' ], 
         description: TASK_CHAPTER_DESCR
       }
 
@@ -316,11 +316,25 @@ const CreateTaskPage: React.FC = () => {
   useEffect(() => { console.log(TASK_TECH_FILE) }, [ TASK_TECH_FILE ])
   useEffect(() => {
 
-    // agreeCoast === true && dispatch(setCoast('contract'))
-    // agreeCoast === false && dispatch(setCoast(''))
+    const task = TASKS_LIST.filter(item => item.id === taskId)
+    console.log(task)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ agreeCoast ])
+    if ( task.length > 0 ) {
+
+      !false && dispatch(setTitle(task[0].name))
+      !false && dispatch(setCoast(task[0].coast.value))
+      !false && dispatch(setPrepay(task[0].coast.prepay))
+      !false && dispatch(setPrepayDays(''))
+      !false && dispatch(setExpertiseCoast(task[0].coast.exper))
+      !false && dispatch(setDescription(task[0].description))
+      !false && dispatch(setObjectParamsSquare(task[0].objectParams ? task[0].objectParams?.square : ''))
+      !false && dispatch(setObjectParamsStoreys(task[0].objectParams ? task[0].objectParams?.storeys : ''))
+      !false && dispatch(setObjectParamsHeight(task[0].objectParams ? task[0].objectParams?.height : ''))
+      !false && dispatch(setFocusedTask(''))
+
+    }
+
+  }, [ TASKS_LIST, dispatch, taskId ])
 
   return (
     <ContentArea
@@ -364,7 +378,7 @@ const CreateTaskPage: React.FC = () => {
         requestData={{
           type: 'POSTFILE_TTDF',
           urlstring: '/add-file-techtask',
-          body: [ USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15), TASK_TECH_FILE[0] ]
+          body: [ USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15), TASK_TECH_FILE ]
         }}
       
       /> }
@@ -385,10 +399,10 @@ const CreateTaskPage: React.FC = () => {
         <BackwardButton color={backwardButtonColor} onClick={() => navigate('/task-list-all')}>Ко всем заданиям</BackwardButton>
       </div>
       <div style={headBlockCSS}>
-        <PageTitle style={{ marginTop: '20px' }}>Создание задания</PageTitle>
+        <PageTitle style={{ marginTop: '20px', lineHeight: '44px' }}>Редактирование задания { taskId }</PageTitle>
       </div>
       <MenuContainer>
-        <StepsContainer>
+        { false && <StepsContainer>
           <StepsContainerVertical backgroundColor={stepsContainerColor}>
             <StepsContainerVerticalStep style={{ marginTop: '8px' }} backgroundColor={line1Color}/>
             <StepsContainerVerticalStep backgroundColor={line2Color}/>
@@ -422,9 +436,9 @@ const CreateTaskPage: React.FC = () => {
               </StepsContainerVerticalStepRound>
             </StepsContainerVerticalForRound>
           </StepsContainerVertical>
-        </StepsContainer>
+        </StepsContainer> }
         <ButtonComponent
-          inner={'Сохранить'} 
+          inner={'Удалить задание'} 
           type='OUTLINED_DISABLED' 
           action={() => console.log('this is button')}
           actionData={null}
@@ -444,15 +458,15 @@ const CreateTaskPage: React.FC = () => {
             borderRadius: '6px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginTop: '46px'
+            marginTop: '14px'
           }}
         />
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '40px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '24px' }}>
           <Checkbox {...label} disabled />
           <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
         </div>
         <ButtonComponent
-          inner={'Опубликовать'} 
+          inner={'Обновить задание'} 
           type='OUTLINED' 
           action={addTaskData}
           actionData={null}
@@ -472,7 +486,7 @@ const CreateTaskPage: React.FC = () => {
             borderRadius: '6px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginTop: '20px'
+            marginTop: '26px'
           }}
         />
       </MenuContainer>
@@ -1238,4 +1252,4 @@ const CreateTaskPage: React.FC = () => {
 
 }
 
-export default CreateTaskPage
+export default CreateTaskPageEdit

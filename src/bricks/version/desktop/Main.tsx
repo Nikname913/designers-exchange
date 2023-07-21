@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setScrollTop } from '../../store/slices/right-content-slice'
 import { setScrollTop as setScrollFos } from '../../store/slices/fos-slice'
+import { setActiveRole, setRoleData } from '../../store/slices/role-type-slice'
 import { CSSProperties } from 'styled-components'
 import Header from './views/globalViews/Header'
 import DeskRoutes from './routes/DeskRoutes'
@@ -18,6 +19,8 @@ import RightContentContainer from './services/rightContentContainer.service'
 import Updater from './views/globalViews/Updater'
 import Fab from '@mui/material/Fab'
 import SmartphoneIcon from '@mui/icons-material/Smartphone'
+import LogoutIcon from '@mui/icons-material/Logout'
+import FeedbackIcon from '@mui/icons-material/Feedback'
 
 const DeskRoutesMemo = React.memo(DeskRoutes)
 
@@ -100,7 +103,7 @@ const Main: React.FC = () => {
     USER_ROLE === 'UNDEFINED' && console.log('нет авторизации')
 
   },[ dispatch, showRightContent, showFos, USER_ROLE ])
-  useEffect(() => navigate('/customers'),[])
+  useEffect(() => navigate('/'),[])
   useEffect(() => {}, [ requestReduceValue ])
   useEffect(() => { false && console.log(alertData) }, [ alertData ])
   useEffect(() => { getDataIP() }, [])
@@ -141,6 +144,46 @@ const Main: React.FC = () => {
         <Header userCity={addressIP?.city}></Header>
         <DeskRoutesMemo></DeskRoutesMemo>
         <Footer></Footer>
+        <Fab 
+          color="primary" 
+          aria-label="add"
+          style={{
+            display: 'block',
+            position: 'fixed',
+            width: '70px',
+            height: '70px',
+            top: '100vh',
+            left: '0%',
+            marginTop: '-268px',
+            marginLeft: '30px'
+          }}
+        >
+          <FeedbackIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />
+        </Fab>
+        <Fab 
+          color="primary" 
+          aria-label="add"
+          style={{
+            display: 'block',
+            position: 'fixed',
+            width: '70px',
+            height: '70px',
+            top: '100vh',
+            left: '0%',
+            marginTop: '-184px',
+            marginLeft: '30px'
+          }}
+          onClick={() => {
+            navigate('/task-list-all')
+            dispatch(setActiveRole('UNDEFINED'))
+            dispatch(setRoleData({
+              uid: '',
+              una: ''
+            }))
+          }}
+        >
+          <LogoutIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />
+        </Fab>
         <Fab 
           color="primary" 
           aria-label="add"

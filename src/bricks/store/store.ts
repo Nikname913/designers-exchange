@@ -18,6 +18,9 @@ import dataUpdateReducer from './slices/data-update-slice'
 import filterReducer from './slices/filter-slice'
 import bussDataReducer from './slices/bussData-slice'
 import aboutTextReducer from './slices/about-text-slice'
+import inviteFromReducer from './slices/invite-form-slice'
+import avatarReducer from './slices/avatar-slice'
+import portfolioNewReducer from './slices/portfolio-new-slice'
 
 export const store = configureStore({
   reducer: {
@@ -39,7 +42,10 @@ export const store = configureStore({
     dataUpdateReducer: dataUpdateReducer,
     filterReducer: filterReducer,
     bussDataReducer: bussDataReducer,
-    aboutTextReducer: aboutTextReducer
+    aboutTextReducer: aboutTextReducer,
+    inviteFromReducer : inviteFromReducer,
+    avatarReducer: avatarReducer,
+    portfolioNewReducer: portfolioNewReducer
   },
 })
 
