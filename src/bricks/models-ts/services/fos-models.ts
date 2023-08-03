@@ -10,7 +10,8 @@ export interface IFos {
   'authRestore'               |
   'authSupport'               |
   'changeAvatar'              |
-  'showFile'
+  'showFile'                  |
+  'showFileContract'
   showShadow: boolean,
   scroll: number
 }

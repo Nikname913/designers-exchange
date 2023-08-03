@@ -144,20 +144,6 @@ const ExchangePage: React.FC = () => {
 
   }
 
-  const returnUserTags = (param: string) => {
-
-    let userTags: Array<string> = []
-
-    USERS_LIST.listExecutors.forEach(user => {
-      if ( user.clientId === param ) {
-        userTags = user.tags
-      } else userTags = [ 'download', 'download', 'download' ]
-    })
-
-    return userTags
-
-  }
-
   const returnUserStat = (param: string) => {
 
     let userStat: Array<number> = []
@@ -205,7 +191,9 @@ const ExchangePage: React.FC = () => {
   useEffect(() => { dispatch(setUpdating(false)) }, [])
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { console.log(TASKS_LIST.showOne) }, [ TASKS_LIST.showOne ])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { console.log(TASKS_LIST.actualOne) }, [ TASKS_LIST.actualOne ])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { console.log(TASKS_LIST.list) }, [])
 
   useEffect(() => {
@@ -553,6 +541,8 @@ const ExchangePage: React.FC = () => {
                       <React.Fragment>
                         { TASKS_LIST.showOne === item.id && item.responds.map((itemm: any, indexx: number): ReactElement => {
 
+                          console.log(item)
+
                           return (<RespondTable 
                             containerCSS={{
                               w: '100%',
@@ -571,9 +561,9 @@ const ExchangePage: React.FC = () => {
                             userPrice={itemm.coast}
                             userDeadline={itemm.deadline.slice(0, 10)}
                             userLocation={"Екатеринбург"}
-                            userTags={returnUserTags(itemm.executorID)}
+                            userTags={itemm.execSpec}
                             userMorePrice={[": " + itemm.prePay, itemm.preSolution, ": " + itemm.expertCoast, itemm.expert]}
-                            respondDate={"Загрузка данных...&&Загрузка данных..."}
+                            respondDate={"undefined&&undefined"}
                             discription={itemm.comment}
                           ></RespondTable>)
 

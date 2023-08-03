@@ -26,7 +26,8 @@ const FOSReducer = createSlice({
      'authRestore'     |
      'authSupport'     |
      'changeAvatar'    |
-     'showFile'>) => {
+     'showFile'        |
+     'showFileContract'>) => {
       state.showType = action.payload
     },
     setScrollTop: (state, action: PayloadAction<number>) => {

@@ -17,7 +17,8 @@ import { setTitle,
   setChapterLD,
   setTechTaskFile,
   removeTechTaskFile,
-  resetTechTaskFile
+  resetTechTaskFile,
+  setTags
  } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -75,9 +76,12 @@ const CreateTaskPage: React.FC = () => {
   const TASK_CHAPTER_NAME = useAppSelector(state => state.createTaskReducer.chapterLocalName)
   const TASK_CHAPTER_DESCR = useAppSelector(state => state.createTaskReducer.chapterLocalDescription)
   const TASK_TECH_FILE = useAppSelector(state => state.createTaskReducer.techTaskFile)
+  const TASK_CHAPTER_EDIT_FORM = useAppSelector(state => state.createTaskReducer.showChaptersEditForms)
+  const TASK_TAGS = useAppSelector(state => state.createTaskReducer.tags)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const [ CREATE_TASK_REQUEST, SET_CREATE_TASK_REQUEST ] = useState(false)
+  const [ CREATE_DRAFT_REQUEST, SET_CREATE_DRAFT_REQUEST ] = useState(false)
   const [ CREATE_TASK_TTDF_REQUEST, SET_CREATE_TASK_TTDF_REQUEST ] = useState(false)
   const [ showNewChapter, setShowNewChapter ] = useState(false)
 
@@ -88,13 +92,13 @@ const CreateTaskPage: React.FC = () => {
   const [ step1Color, setStep1Color ] = useState('rgb(58, 75, 86)')  
   const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
   const [ step3Color, setStep3Color ] = useState('rgb(58, 75, 86)')  
-  const [ step4Color, ] = useState('rgb(58, 75, 86)')  
+  const [ step4Color, setStep4Color ] = useState('rgb(58, 75, 86)')  
   const [ step5Color, setStep5Color ] = useState('rgb(58, 75, 86)')  
 
   const [ line1Color, setLine1Color ] = useState(stepContainerRoundLabelColor) 
   const [ line2Color, setLine2Color ] = useState(stepContainerRoundLabelColor)
-  const [ line3Color, ] = useState(stepContainerRoundLabelColor)
-  const [ line4Color, ] = useState(stepContainerRoundLabelColor)
+  const [ line3Color, setLine3Color ] = useState(stepContainerRoundLabelColor)
+  const [ line4Color, setLine4Color ] = useState(stepContainerRoundLabelColor)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -145,7 +149,28 @@ const CreateTaskPage: React.FC = () => {
     dispatch(setType('success'))
     dispatch(setMessage('Вы успешно разместили новое задание'))
 
-    console.log(TASK_CHAPTERS)
+    false && dispatch(setTitle(''))
+    false && dispatch(setCoast(''))
+    false && dispatch(setPrepay(''))
+    false && dispatch(setPrepayDays(''))
+    false && dispatch(setExpertiseCoast(''))
+    false && dispatch(setDescription(''))
+    false && dispatch(setObjectParamsSquare(''))
+    false && dispatch(setObjectParamsStoreys(''))
+    false && dispatch(setObjectParamsHeight(''))
+    false && dispatch(setFocusedTask(''))
+
+  }
+
+  const addDraftData = () => {
+
+    SET_CREATE_DRAFT_REQUEST(true)
+
+    setTimeout(() => { SET_CREATE_TASK_TTDF_REQUEST(true) }, 1300)
+
+    dispatch(setShow(true))
+    dispatch(setType('success'))
+    dispatch(setMessage('Вы успешно сохранили черновик задания. Он будет доступен вам из раздела ваших заказов - черновики'))
 
     false && dispatch(setTitle(''))
     false && dispatch(setCoast(''))
@@ -185,13 +210,19 @@ const CreateTaskPage: React.FC = () => {
       false && console.log(chapterArr)
 
       dispatch(setChapters(chapterArr))
-      false && console.log(TASK_CHAPTERS)
+      console.log(TASK_CHAPTERS)
 
     }
 
   }
 
   const removeFile = (param: string) => dispatch(removeTechTaskFile(param))
+
+  const changeTaskTags = (param: string) => {
+
+    dispatch(setTags([ param ]))
+
+  }
 
   useEffect(() => {
 
@@ -237,15 +268,25 @@ const CreateTaskPage: React.FC = () => {
 
   useEffect(() => {
 
-    if ( TASK_CHAPTER_NAME !== '' && 
-         TASK_CHAPTER_DESCR !== '' ) {
+    if ( TASK_TECH_FILE.length > 0 ) {
+
+          setStep4Color(stepContainerRoundColor)
+
+         } else setStep4Color('rgb(58, 75, 86)')
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ TASK_TECH_FILE ])
+
+  useEffect(() => {
+
+    if ( TASK_CHAPTERS.length > 0 ) {
 
           setStep5Color(stepContainerRoundColor)
 
          } else setStep5Color('rgb(58, 75, 86)')
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ TASK_CHAPTER_NAME, TASK_CHAPTER_DESCR ])
+  }, [ TASK_CHAPTERS ])
 
   useEffect(() => {
 
@@ -313,14 +354,104 @@ const CreateTaskPage: React.FC = () => {
   
   ])
 
-  useEffect(() => { console.log(TASK_TECH_FILE) }, [ TASK_TECH_FILE ])
   useEffect(() => {
 
-    // agreeCoast === true && dispatch(setCoast('contract'))
-    // agreeCoast === false && dispatch(setCoast(''))
+    if ( TASK_TITLE !== '' && 
+         TASK_DATE_START !== '' &&
+         TASK_DATE_FINISH !== '' && 
+         TASK_COAST !== '' &&
+         TASK_PREPAY !== '' && 
+         TASK_PREPAY_DAYS !== '' &&
+         TASK_EXPERT_DAYS !== '' && 
+         TASK_EXPERT_COAST !== '' &&
+         TASK_DESCRIPTION !== '' && 
+         TASK_OP_SQUARE !== '' &&
+         TASK_OP_STOREYS !== '' && 
+         TASK_OP_HEIGHT !== '' &&
+         TASK_TECH_FILE.length > 0 ) {
+
+          setLine3Color(stepContainerRoundColor)
+
+         } else setLine3Color(stepContainerRoundLabelColor)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ 
+    
+    TASK_COAST, 
+    TASK_DATE_FINISH, 
+    TASK_DATE_START, 
+    TASK_DESCRIPTION, 
+    TASK_EXPERT_COAST, 
+    TASK_EXPERT_DAYS, 
+    TASK_OP_HEIGHT, 
+    TASK_OP_SQUARE, 
+    TASK_OP_STOREYS, 
+    TASK_PREPAY, 
+    TASK_PREPAY_DAYS, 
+    TASK_TITLE,
+    TASK_TECH_FILE
+  
+  ])
+
+  useEffect(() => {
+
+    if ( TASK_TITLE !== '' && 
+         TASK_DATE_START !== '' &&
+         TASK_DATE_FINISH !== '' && 
+         TASK_COAST !== '' &&
+         TASK_PREPAY !== '' && 
+         TASK_PREPAY_DAYS !== '' &&
+         TASK_EXPERT_DAYS !== '' && 
+         TASK_EXPERT_COAST !== '' &&
+         TASK_DESCRIPTION !== '' && 
+         TASK_OP_SQUARE !== '' &&
+         TASK_OP_STOREYS !== '' && 
+         TASK_OP_HEIGHT !== '' &&
+         TASK_TECH_FILE.length > 0 &&
+         TASK_CHAPTERS.length > 0 ) {
+
+          setLine4Color(stepContainerRoundColor)
+
+         } else setLine4Color(stepContainerRoundLabelColor)
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ 
+    
+    TASK_COAST, 
+    TASK_DATE_FINISH, 
+    TASK_DATE_START, 
+    TASK_DESCRIPTION, 
+    TASK_EXPERT_COAST, 
+    TASK_EXPERT_DAYS, 
+    TASK_OP_HEIGHT, 
+    TASK_OP_SQUARE, 
+    TASK_OP_STOREYS, 
+    TASK_PREPAY, 
+    TASK_PREPAY_DAYS, 
+    TASK_TITLE,
+    TASK_TECH_FILE,
+    TASK_CHAPTERS
+  
+  ])
+
+  useEffect(() => { false && console.log(TASK_TECH_FILE) }, [ TASK_TECH_FILE ])
+  useEffect(() => {
+
+    agreeCoast === true && false && dispatch(setCoast('contract'))
+    agreeCoast === false && false && dispatch(setCoast(''))
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ agreeCoast ])
+  useEffect(() => {
+
+    console.log(TASK_CHAPTER_EDIT_FORM)
+
+  }, [ TASK_CHAPTER_EDIT_FORM ])
+  useEffect(() => {
+
+    console.log(TASK_TAGS)
+
+  }, [ TASK_TAGS ])
 
   return (
     <ContentArea
@@ -352,7 +483,38 @@ const CreateTaskPage: React.FC = () => {
             status: 'TASK-ACTIVE',
             date: dateString,
             taskId: USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15),
-            chapters: TASK_CHAPTERS
+            chapters: TASK_CHAPTERS,
+            tags: TASK_TAGS
+          }
+        }}
+      
+      /> }
+
+      { CREATE_DRAFT_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-task',
+          body: {
+            title: TASK_TITLE, 
+            coast: agreeCoast === false ? TASK_COAST : 'Договорная', 
+            prepay: agreeCoast === false ? TASK_PREPAY : 'Договорной', 
+            prepayDays: TASK_PREPAY_DAYS,
+            expertDays: TASK_EXPERT_DAYS ? TASK_EXPERT_DAYS.$D + '-' + ( TASK_EXPERT_DAYS.$M + 1 ) + '-' + TASK_EXPERT_DAYS.$y : '01-1-2023',
+            expertCoast: agreeCoast === false ? TASK_EXPERT_COAST : 'Договорная', 
+            dateStart: TASK_DATE_START ? TASK_DATE_START.$D + '-' + ( TASK_DATE_START.$M + 1 ) + '-' + TASK_DATE_START.$y : '01-1-2023',
+            dateFinish: TASK_DATE_FINISH ? TASK_DATE_FINISH.$D + '-' + ( TASK_DATE_FINISH.$M + 1 ) + '-' + TASK_DATE_FINISH.$y : '01-1-2023',
+            square: TASK_OP_SQUARE, 
+            storeys: TASK_OP_STOREYS, 
+            height: TASK_OP_HEIGHT,
+            description: TASK_DESCRIPTION,
+            customer: USER_ID,
+            status: 'TASK-DRAFT',
+            date: dateString,
+            taskId: USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15),
+            chapters: TASK_CHAPTERS,
+            tags: TASK_TAGS
           }
         }}
       
@@ -425,8 +587,8 @@ const CreateTaskPage: React.FC = () => {
         </StepsContainer>
         <ButtonComponent
           inner={'Сохранить'} 
-          type='OUTLINED_DISABLED' 
-          action={() => console.log('this is button')}
+          type='OUTLINED' 
+          action={addDraftData}
           actionData={null}
           widthType={'%'}
           widthValue={100}
@@ -439,15 +601,17 @@ const CreateTaskPage: React.FC = () => {
           css={{
             backgroundColor: uploadButtonBackground,
             color: blackColor,
+            border: 'none',
             fontSize: '12px',
             height: '46px',
             borderRadius: '6px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginTop: '46px'
+            marginTop: '46px',
+            boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
           }}
         />
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '40px' }}>
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '24px' }}>
           <Checkbox {...label} disabled />
           <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
         </div>
@@ -472,7 +636,8 @@ const CreateTaskPage: React.FC = () => {
             borderRadius: '6px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginTop: '20px'
+            marginTop: '26px',
+            boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
           }}
         />
       </MenuContainer>
@@ -510,7 +675,7 @@ const CreateTaskPage: React.FC = () => {
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Дата начала работ"}
+            label={"Дата начала заказа"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
@@ -533,7 +698,7 @@ const CreateTaskPage: React.FC = () => {
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Дата сдачи задания"}
+            label={"Дата сдачи заказа"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
@@ -554,11 +719,43 @@ const CreateTaskPage: React.FC = () => {
             placeholder={"Необходимые навыки"}
             params={{ width: 50, mb: '18px', height: 50 }}
             data={[
-              { value: '1', label: 'Загрузка данных...' },
+              { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+              { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+              { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+              { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+              { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+              { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+              { value: 'Генеральный план', label: 'Генеральный план' },
+              { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+              { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+              { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+              { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+              { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+              { value: 'Электроснабжение', label: 'Электроснабжение' },
+              { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+              { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+              { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+              { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+              { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+              { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+              { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+              { value: 'Сети связи', label: 'Сети связи' },
+              { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+              { value: 'Газоснабжение', label: 'Газоснабжение' },
+              { value: 'Технология производства', label: 'Технология производства' },
+              { value: 'Автоматизация', label: 'Автоматизация' },
+              { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+              { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+              { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+              { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+              { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+              { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+              { value: 'Сметная документация', label: 'Сметная документация' },
+              { value: 'Иная документация', label: 'Иная документация' }
             ]}
             multy={false}
-            action={() => {}}
-            actionType={""}
+            action={changeTaskTags}
+            actionType={"TASK_TAGS"}
             actionParams={[]}
             showIcon={true}
             icon={null}
@@ -626,7 +823,7 @@ const CreateTaskPage: React.FC = () => {
             </FormGroup>
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '30px' }}>Заказ условия</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Заказ условия</TextFieldTitle>
         <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
           { agreeCoast === false && <InputComponent
@@ -694,13 +891,13 @@ const CreateTaskPage: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
+        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Вид экспертизы</TextFieldSubTitle>
         <TextFieldContainerLine>
           <SelectField 
             placeholder={"Государственная"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Загрузка данных...' },
+              { value: '1', label: 'Государственная' },
             ]}
             multy={false}
             action={() => {}}
@@ -764,7 +961,7 @@ const CreateTaskPage: React.FC = () => {
             /> }
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '30px' }}>Данные об объекте</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Данные об объекте</TextFieldTitle>
         <TextFieldContainerLine style={{ marginTop: '8px' }}>
           <SelectField 
             placeholder={"Вид строительства"}
@@ -913,7 +1110,7 @@ const CreateTaskPage: React.FC = () => {
           <span style={spanDelimiterCSS} />
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '30px' }}>Описание задачи</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Описание задачи</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
@@ -938,13 +1135,13 @@ const CreateTaskPage: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '28px' }}>
+        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '22px' }}>
           <div style={{ ...divHalfWidthCSS }}>
             <TextFieldTitle>Техническое задание</TextFieldTitle>
           </div>
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
-            <TextFieldTitle>Вложения</TextFieldTitle>
+            <TextFieldTitle>Дополнительные вложения</TextFieldTitle>
           </div>
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginBottom: '2px' }}>
@@ -997,7 +1194,8 @@ const CreateTaskPage: React.FC = () => {
                 borderRadius: '6px',
                 position: 'relative',
                 boxSizing: 'border-box',
-                marginBottom: '12px'
+                marginBottom: '12px',
+                boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
               }}
             />
           </div>
@@ -1071,19 +1269,19 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine> }
         <TextFieldTitle 
           style={{ 
-            marginTop: '28px', 
-            marginBottom: '42px',
+            marginTop: '22px', 
+            marginBottom: '106px',
             cursor: 'pointer'
           }}
           onDoubleClick={() => dispatch(setChapters([]))}
         >
-          Разделы [ двойной клик для сброса всех разделов ]
+          Разделы в проекте
         </TextFieldTitle>
         <TextFieldContainerLine style={{ flexWrap: 'wrap', marginBottom: showNewChapter ? '' : '28px' }}>
           <ChapterController actions={[ newChapterSelector ]}></ChapterController>
         </TextFieldContainerLine>
         { showNewChapter && <React.Fragment>
-          <TextFieldTitle style={{ marginTop: '18px' }}>Новый раздел</TextFieldTitle>
+          <TextFieldTitle style={{ marginTop: '18px' }}>Добавить новый раздел</TextFieldTitle>
           <TextFieldContainerLine style={{ marginTop: '8px' }}>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
@@ -1111,9 +1309,41 @@ const CreateTaskPage: React.FC = () => {
               placeholder={"Выберите необходимые навыки"}
               params={{ width: 50, mb: '16px', height: 50 }}
               data={[
-                { value: '1', label: 'Загрузка данных...' },
+                { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+                { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+                { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+                { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+                { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+                { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+                { value: 'Генеральный план', label: 'Генеральный план' },
+                { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+                { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+                { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+                { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+                { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+                { value: 'Электроснабжение', label: 'Электроснабжение' },
+                { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+                { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+                { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+                { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+                { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+                { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+                { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+                { value: 'Сети связи', label: 'Сети связи' },
+                { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+                { value: 'Газоснабжение', label: 'Газоснабжение' },
+                { value: 'Технология производства', label: 'Технология производства' },
+                { value: 'Автоматизация', label: 'Автоматизация' },
+                { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+                { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+                { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+                { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+                { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+                { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+                { value: 'Сметная документация', label: 'Сметная документация' },
+                { value: 'Иная документация', label: 'Иная документация' }
               ]}
-              multy={true}
+              multy={false}
               action={() => {}}
               actionType={""}
               actionParams={[]}
@@ -1152,7 +1382,7 @@ const CreateTaskPage: React.FC = () => {
           </TextFieldContainerLine>
           <TextFieldContainerLine>
             <ButtonComponent
-              inner={'Загрузка данных...'} 
+              inner={'Добавить вложения'} 
               type='CONTAINED_DISABLED' 
               action={() => console.log('this is button')}
               actionData={null}
@@ -1227,7 +1457,162 @@ const CreateTaskPage: React.FC = () => {
                 borderRadius: '6px',
                 position: 'relative',
                 boxSizing: 'border-box',
-                marginBottom: '46px'
+                marginBottom: '40px'
+              }}
+            />
+          </TextFieldContainerLine>
+        </React.Fragment> }
+        { TASK_CHAPTER_EDIT_FORM?.show === true && TASK_CHAPTERS.length > 0 && <React.Fragment>
+          <TextFieldTitle style={{ marginTop: '-10px' }}>
+            Редактировать раздел - { TASK_CHAPTERS.length > 0 && TASK_CHAPTERS[TASK_CHAPTER_EDIT_FORM.num].title && TASK_CHAPTERS[TASK_CHAPTER_EDIT_FORM.num].title }
+          </TextFieldTitle>
+          <TextFieldContainerLine style={{ marginTop: '8px' }}>
+            <InputComponent
+              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+              valueType='text'
+              required={false}
+              widthType={'%'}
+              widthValue={50}
+              heightValue={'50px'}
+              label={"Название раздела"}
+              isError={newChapterNameValidateError}
+              isDisabled={false}
+              labelShrinkLeft={"0px"}
+              innerLabel={null}
+              store={[ "TASK_CHAPTER_NAME", () => null ]}
+              css={{
+                fontSize: '12px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px',
+                backgroundColor: inputBackground
+              }}
+            />
+            <span style={spanDelimiterCSS} />
+            <SelectField 
+              placeholder={"Выберите необходимые навыки"}
+              params={{ width: 50, mb: '16px', height: 50 }}
+              data={[
+                { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+                { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+                { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+                { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+                { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+                { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+                { value: 'Генеральный план', label: 'Генеральный план' },
+                { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+                { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+                { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+                { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+                { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+                { value: 'Электроснабжение', label: 'Электроснабжение' },
+                { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+                { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+                { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+                { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+                { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+                { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+                { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+                { value: 'Сети связи', label: 'Сети связи' },
+                { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+                { value: 'Газоснабжение', label: 'Газоснабжение' },
+                { value: 'Технология производства', label: 'Технология производства' },
+                { value: 'Автоматизация', label: 'Автоматизация' },
+                { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+                { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+                { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+                { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+                { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+                { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+                { value: 'Сметная документация', label: 'Сметная документация' },
+                { value: 'Иная документация', label: 'Иная документация' }
+              ]}
+              multy={false}
+              action={() => {}}
+              actionType={""}
+              actionParams={[]}
+              showIcon={true}
+              icon={null}
+              iconStyles={{
+                marginTop: '-12px',
+                marginLeft: '6px',
+                width: '34px',
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <InputComponent
+              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
+              valueType='text'
+              required={false}
+              widthType={'%'}
+              widthValue={100}
+              heightValue={'50px'}
+              label={"Описание выбранного раздела"}
+              isError={newChapterDescrValidateError}
+              isDisabled={false}
+              labelShrinkLeft={"0px"}
+              innerLabel={null}
+              store={[ "TASK_CHAPTER_DESCR", () => null ]}
+              css={{
+                fontSize: '12px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px',
+                marginTop: '0px',
+                backgroundColor: inputBackground
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <ButtonComponent
+              inner={'Отмена редактирования'} 
+              type='CONTAINED_DEFAULT' 
+              action={() => {}}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: uploadButtonBackground,
+                color: blackColor,
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '16px'
+              }}
+            />
+          </TextFieldContainerLine>
+          <TextFieldContainerLine>
+            <ButtonComponent
+              inner={'Сохранить изменения'} 
+              type='CONTAINED_DEFAULT' 
+              action={() => {}}
+              actionData={null}
+              widthType={'px'}
+              widthValue={280}
+              children={''}
+              childrenCss={undefined}
+              iconSrc={null}
+              iconCss={undefined}
+              muiIconSize={null}
+              MuiIconChildren={EmailIcon}
+              css={{
+                backgroundColor: stepContainerRoundColor,
+                color: 'white',
+                fontSize: '12px',
+                height: '46px',
+                borderRadius: '6px',
+                position: 'relative',
+                boxSizing: 'border-box',
+                marginBottom: '40px'
               }}
             />
           </TextFieldContainerLine>

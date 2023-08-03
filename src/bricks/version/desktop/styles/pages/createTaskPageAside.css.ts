@@ -45,7 +45,7 @@ const css = {
     justify-content: flex-start;
     position: relative;
     width: 100%;
-    padding-top: 50px;
+    padding-top: 18px;
     padding-left: 8px;
   `,
   StepsContainerVertical: styled.div<{ backgroundColor: string }>`

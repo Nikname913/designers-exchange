@@ -205,7 +205,7 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
 
   }, [ selectedUsersType ])
 
-  useEffect(() => { false && console.log(alertData) }, [ alertData ])
+  useEffect(() => { console.log(alertData) }, [ alertData ])
   useEffect(() => {
 
     if ( USER_ROLE === 'EXECUTOR' ) { console.log(EXECUTOR[0]) }

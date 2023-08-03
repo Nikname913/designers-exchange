@@ -301,6 +301,20 @@ const ExchangePage: React.FC = () => {
           )
         })}
 
+        <React.Fragment>
+          { TASKS_LIST.list.filter(item => item.id === TASKS_LIST.showOne).length === 0 && 
+            <span 
+              style={{
+                display: 'block',
+                textAlign: 'center',
+                width: '100%',
+                color: 'gray',
+                marginTop: '100px',
+                marginBottom: '80px'
+              }}
+            >У вас пока нет активных откликов на задания</span> }
+        </React.Fragment>
+
         <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
           <Pagintation count={

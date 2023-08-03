@@ -411,7 +411,7 @@ const ExecutorProfilePage: React.FC = () => {
 
   useEffect(() => {
 
-    console.log(passportInn)
+    false && console.log(passportInn)
 
     return () => {
       clearTimeout(timer.current)
@@ -476,6 +476,13 @@ const ExecutorProfilePage: React.FC = () => {
     viewtype === 'settings' && setProfileViewStep('settings')
 
   }, [ viewtype ])
+
+  useEffect(() => {
+
+    console.log(profileViewStep)
+    console.log(viewtype)
+
+  }, [ profileViewStep, viewtype ])
 
   return (
     <React.Fragment>
@@ -577,7 +584,7 @@ const ExecutorProfilePage: React.FC = () => {
                   overflow: 'hidden'
                 }}
               >
-                <img
+                { avatarFile === 404 && <img
                   alt={""}
                   src={
                     EXECUTOR[0].avatar === '1' ? bearAvatar :
@@ -589,14 +596,19 @@ const ExecutorProfilePage: React.FC = () => {
                   }
                   style={
                     EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
-                    EXECUTOR[0].avatar === '2' ? { width: '100px',  } :
+                    EXECUTOR[0].avatar === '2' ? { width: '100px' } :
                     EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
                     EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
                     EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
                     EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
                     { width: '100px', marginTop: '6px' }
                   }
-                />
+                /> }
+                { avatarFile === 200 && <img
+                  alt={""}
+                  src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                  style={{ height: '100%' }}
+                /> }
               </div>
             </BootstrapTooltip>
             <AvatarIndicator ref={indicatorElement} background={true ? greenColor : yelloColor}/>
@@ -1956,6 +1968,7 @@ const ExecutorProfilePage: React.FC = () => {
                         style={{ marginTop: '-6px' }} 
                         control={
                           <Checkbox
+                            disabled
                             checked={bossTypeTwo} 
                             onChange={() => {
                               setBossTypeTwo(!bossTypeTwo)
@@ -2653,7 +2666,15 @@ const ExecutorProfilePage: React.FC = () => {
 
               })}
 
-              <ReviewsContentLine style={{ justifyContent: 'space-around', color: greyColor, marginTop: '30px' }}>
+              <ReviewsContentLine 
+                style={{ 
+                  justifyContent: 'space-around', 
+                  color: greyColor, 
+                  marginTop: '30px', 
+                  marginBottom: '44px',
+                  cursor: 'pointer' 
+                }}
+              >
                 <span>{"Показать все"}</span>
               </ReviewsContentLine>
 
@@ -3495,7 +3516,7 @@ const ExecutorProfilePage: React.FC = () => {
                   }
                   style={
                     CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
-                    CUSTOMER[0].avatar === '2' ? { width: '100px',  } :
+                    CUSTOMER[0].avatar === '2' ? { width: '100px' } :
                     CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
                     CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
                     CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
@@ -4821,7 +4842,7 @@ const ExecutorProfilePage: React.FC = () => {
                     <span style={{ display: 'block', width: '20px' }} />
                     <FormGroup style={{ width: '50%' }}>
                       <FormControlLabel control={<Checkbox />} label="Действует на основании устава"/>
-                      <FormControlLabel style={{ marginTop: '-6px' }} control={<Checkbox />} label="Действует на основании приказа"/>
+                      <FormControlLabel style={{ marginTop: '-6px' }} control={<Checkbox disabled/>} label="Действует на основании приказа"/>
                     </FormGroup>
                   </ReviewsContentLine>
                 </React.Fragment> }
@@ -5476,7 +5497,15 @@ const ExecutorProfilePage: React.FC = () => {
 
               }) }
 
-              <ReviewsContentLine style={{ justifyContent: 'space-around', color: greyColor, marginTop: '30px', marginBottom: '42px' }}>
+              <ReviewsContentLine 
+                style={{ 
+                  justifyContent: 'space-around', 
+                  color: greyColor, 
+                  marginTop: '30px', 
+                  marginBottom: '44px',
+                  cursor: 'pointer' 
+                }}
+              >
                 <span style={{ cursor: 'pointer' }}>{"Показать все"}</span>
               </ReviewsContentLine>
 

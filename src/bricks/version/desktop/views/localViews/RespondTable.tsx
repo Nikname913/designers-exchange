@@ -256,7 +256,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           </div>
         </ContentLine>
         <ContentLine>
-          <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Специализация: </span>
+          <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Специализация исполнителя: </span>
           <TagsContainer>
             { userTags.map((item: string, index: number): ReactElement => {
 
@@ -282,7 +282,7 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           </div>
         </ContentLine>
         <ContentLine>
-          { respondDate.split('&&')[0] !== 'Загрузка данных...' && <span 
+          { respondDate.split('&&')[0] !== 'undefined' && <span 
             style={{ 
               letterSpacing: '1px', 
               color: greyColor2 
@@ -290,13 +290,13 @@ const RespondTable: React.FC<IRespondeTableProps> = (props: IRespondeTableProps)
           >
             { `${respondDate.split('&&')[0]} в ${respondDate.split('&&')[1]}` }
           </span> }
-          { respondDate.split('&&')[0] === 'Загрузка данных...' && <span 
+          { respondDate.split('&&')[0] === 'undefined' && <span 
             style={{ 
               letterSpacing: '1px', 
               color: greyColor2 
             }}
           >
-            { `${respondDate.split('&&')[0].split('...')[0]} о времени отклика...` }
+            { `${respondDate.split('&&')[0]} о времени отклика...` }
           </span> }
         </ContentLine>
         <ContentLine style={{ marginTop: '10px' }}>

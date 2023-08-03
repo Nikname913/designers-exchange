@@ -26,6 +26,7 @@ export interface ITaskContent {
         value: any,
         issafe: boolean,
         prepay: any,
+        prepayDays: string
         exper: any,
       },
       responds: Array<{
@@ -75,6 +76,7 @@ export interface ITaskContent {
         value: any,
         issafe: boolean,
         prepay: any,
+        prepayDays: string
         exper: any,
       },
       responds: Array<{
@@ -124,6 +126,7 @@ export interface ITaskContent {
         value: any,
         issafe: boolean,
         prepay: any,
+        prepayDays: string
         exper: any,
       },
       responds: Array<{

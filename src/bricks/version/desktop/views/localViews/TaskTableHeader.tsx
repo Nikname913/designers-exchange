@@ -139,8 +139,8 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   useEffect(() => {
 
-    false && console.log(TASK_ACTUAL_ONE)
-    false && console.log(TASK_SHOW_ONE) 
+    !false && console.log(TASK_ACTUAL_ONE)
+    !false && console.log(TASK_SHOW_ONE) 
 
   }, [ TASK_ACTUAL_ONE, TASK_SHOW_ONE ])
   useEffect(() => {
@@ -177,7 +177,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           type: 'POST',
           urlstring: '/change-task-status',
           body: {
-            taskId: TASK_ACTUAL_ONE ? TASK_ACTUAL_ONE : TASK_SHOW_ONE,
+            taskId: TASK_ACTUAL_ONE ? TASK_SHOW_ONE : TASK_SHOW_ONE,
             status: 'TASK-DEACTIVE'
           }
         }}
@@ -204,9 +204,9 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 return (
                   <TACC.SpecializationTag 
                     backgroundColor={tagColor}
-                    style={{ width: '140px' }}
+                    style={{ width: '', fontSize: '13px' }}
                   >
-                    { item !== 'undefined' ? item : 'Загрузка тега' + tagsSpredLine }
+                    { item !== 'undefined' ? item : 'Специализация' + tagsSpredLine }
                   </TACC.SpecializationTag>
                 )
 

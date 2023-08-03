@@ -21,6 +21,10 @@ import aboutTextReducer from './slices/about-text-slice'
 import inviteFromReducer from './slices/invite-form-slice'
 import avatarReducer from './slices/avatar-slice'
 import portfolioNewReducer from './slices/portfolio-new-slice'
+import deviceTypeReducer from './slices/device-type-slice'
+import supportFormReducer from './slices/support-form-slice'
+import changeAgreeReducer from './slices/change-agree-slice'
+import newCaseReducer from './slices/new-case-slice'
 
 export const store = configureStore({
   reducer: {
@@ -45,7 +49,11 @@ export const store = configureStore({
     aboutTextReducer: aboutTextReducer,
     inviteFromReducer : inviteFromReducer,
     avatarReducer: avatarReducer,
-    portfolioNewReducer: portfolioNewReducer
+    portfolioNewReducer: portfolioNewReducer,
+    deviceTypeReducer: deviceTypeReducer,
+    supportFormReducer: supportFormReducer,
+    changeAgreeReducer: changeAgreeReducer,
+    newCaseReducer: newCaseReducer
   },
 })
 

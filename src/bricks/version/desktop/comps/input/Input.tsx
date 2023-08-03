@@ -57,6 +57,28 @@ import { setEmail as setEmailEnter, setPassword as setPasswordEnter } from '../.
 import { setFromCoast, setToCoast, setFocused as setFocusedFilter } from '../../../../store/slices/filter-slice'
 import { setAboutText, setFocused as setFocusedAboutText } from '../../../../store/slices/about-text-slice'
 import { setFee, setComment as setCommentInvite, setFocused as setFocusedInvite } from '../../../../store/slices/invite-form-slice' 
+import { setName as setNameSupport, 
+  setEmail as setEmailSupport,
+  setMessage as setMessageSupport,
+  setFocused as setFocusedSupport } from '../../../../store/slices/support-form-slice'
+import { setNewCoast, 
+  setNewPrepay, 
+  setNewExpert, 
+  setNewText, 
+  setFocused as setFocusedChangeAgree } from '../../../../store/slices/change-agree-slice'
+import { setCaseName,
+  setCaseSY,
+  setCaseSM,
+  setCaseFY,
+  setCaseFM,
+  setCasePay,
+  setCaseParams1,
+  setCaseParams2,
+  setCaseParams3,
+  setCaseParams4,
+  setCaseText,
+  setCaseTags,
+  setFocused as setFocusedCase } from '../../../../store/slices/new-case-slice'
 
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import TextField from '@mui/material/TextField'
@@ -193,6 +215,44 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const INVITE_FEE = useAppSelector(state => state.inviteFromReducer.fee)
   const INVITE_COMMENT = useAppSelector(state => state.inviteFromReducer.comment)
   const INVITE_FOCUS = useAppSelector(state => state.inviteFromReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для формы заявки в техподдержку
+  // ----------------------------------------------------------------
+
+  const SUPPORT_NAME = useAppSelector(state => state.supportFormReducer.name)
+  const SUPPORT_EMAIL = useAppSelector(state => state.supportFormReducer.email)
+  const SUPPORT_CATEGORY = useAppSelector(state => state.supportFormReducer.category)
+  const SUPPORT_MESSAGE = useAppSelector(state => state.supportFormReducer.message)
+  const SUPPORT_FOCUS = useAppSelector(state => state.supportFormReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для формы дополнительного соглашения
+  // ----------------------------------------------------------------
+
+  const NEW_AGREE_COAST = useAppSelector(state => state.changeAgreeReducer.newCoast)
+  const NEW_AGREE_PREPAY = useAppSelector(state => state.changeAgreeReducer.newPrepay)
+  const NEW_AGREE_EXPERT = useAppSelector(state => state.changeAgreeReducer.newExpert)
+  const NEW_AGREE_TEXT = useAppSelector(state => state.changeAgreeReducer.newText)
+  const NEW_AGREE_FOCUS = useAppSelector(state => state.changeAgreeReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для формы сохранения нового кейса
+  // ----------------------------------------------------------------
+
+  const CASE_NAME = useAppSelector(state => state.newCaseReducer.caseName)
+  const CASE_SY = useAppSelector(state => state.newCaseReducer.caseStartYear)
+  const CASE_SM = useAppSelector(state => state.newCaseReducer.caseStartMonth)
+  const CASE_FY = useAppSelector(state => state.newCaseReducer.caseFinishYear)
+  const CASE_FM = useAppSelector(state => state.newCaseReducer.caseFinishMonth)
+  const CASE_PAY = useAppSelector(state => state.newCaseReducer.casePay)
+  const CASE_P1 = useAppSelector(state => state.newCaseReducer.caseParams.one)
+  const CASE_P2 = useAppSelector(state => state.newCaseReducer.caseParams.two)
+  const CASE_P3 = useAppSelector(state => state.newCaseReducer.caseParams.three)
+  const CASE_P4 = useAppSelector(state => state.newCaseReducer.caseParams.four)
+  const CASE_TEXT = useAppSelector(state => state.newCaseReducer.caseText)
+  const CASE_TAGS = useAppSelector(state => state.newCaseReducer.caseTags)
+  const CASE_FOCUS = useAppSelector(state => state.newCaseReducer.focused)
 
   interface IState {
     showPassword: boolean,
@@ -714,6 +774,159 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   // ----------------------------------------------------------------
   // ----------------------------------------------------------------
 
+  const reduceSupportForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'SUPPORT_NAME' && dispatch(setNameSupport(event.target.value))
+      store[0] === 'SUPPORT_MAIL' && dispatch(setEmailSupport(event.target.value))
+      store[0] === 'SUPPORT_MESSAGE' && dispatch(setMessageSupport(event.target.value))
+
+      store[0] === 'SUPPORT_NAME' && dispatch(setFocusedSupport('SUPPORT_NAME'))
+      store[0] === 'SUPPORT_MAIL' && dispatch(setFocusedSupport('SUPPORT_MAIL'))
+      store[0] === 'SUPPORT_MESSAGE' && dispatch(setFocusedSupport('SUPPORT_MESSAGE'))
+
+    }
+
+  }
+
+  const reduceSupportFormFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'SUPPORT_NAME' && dispatch(setFocusedSupport('SUPPORT_NAME'))
+      store[0] === 'SUPPORT_MAIL' && dispatch(setFocusedSupport('SUPPORT_MAIL'))
+      store[0] === 'SUPPORT_MESSAGE' && dispatch(setFocusedSupport('SUPPORT_MESSAGE'))
+
+    }
+
+  }
+
+  const reduceSupportFormBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedSupport(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceChangeAgreeForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'NEW_COAST' && dispatch(setNewCoast(event.target.value))
+      store[0] === 'NEW_PREPAY' && dispatch(setNewPrepay(event.target.value))
+      store[0] === 'NEW_EXPERT' && dispatch(setNewExpert(event.target.value))
+      store[0] === 'NEW_TEXT' && dispatch(setNewText(event.target.value))
+
+      store[0] === 'NEW_COAST' && dispatch(setFocusedChangeAgree('NEW_COAST'))
+      store[0] === 'NEW_PREPAY' && dispatch(setFocusedChangeAgree('NEW_PREPAY'))
+      store[0] === 'NEW_EXPERT' && dispatch(setFocusedChangeAgree('NEW_EXPERT'))
+      store[0] === 'NEW_TEXT' && dispatch(setFocusedChangeAgree('NEW_TEXT'))
+
+    }
+
+  }
+
+  const reduceChangeAgreeFormFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'NEW_COAST' && dispatch(setFocusedChangeAgree('NEW_COAST'))
+      store[0] === 'NEW_PREPAY' && dispatch(setFocusedChangeAgree('NEW_PREPAY'))
+      store[0] === 'NEW_EXPERT' && dispatch(setFocusedChangeAgree('NEW_EXPERT'))
+      store[0] === 'NEW_TEXT' && dispatch(setFocusedChangeAgree('NEW_TEXT'))
+
+    }
+
+  }
+
+  const reduceChangeAgreeFormBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedChangeAgree(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
+  const reduceNewCaseForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    if ( store ) {
+
+      store[0] === 'CASE_NAME' && dispatch(setCaseName(event.target.value))
+      store[0] === 'CASE_SY' && dispatch(setCaseSY(event.target.value))
+      store[0] === 'CASE_SM' && dispatch(setCaseSM(event.target.value))
+      store[0] === 'CASE_FY' && dispatch(setCaseFY(event.target.value))
+      store[0] === 'CASE_FM' && dispatch(setCaseFM(event.target.value))
+      store[0] === 'CASE_PAY' && dispatch(setCasePay(event.target.value))
+      store[0] === 'CASE_P1' && dispatch(setCaseParams1(event.target.value))
+      store[0] === 'CASE_P2' && dispatch(setCaseParams2(event.target.value))
+      store[0] === 'CASE_P3' && dispatch(setCaseParams3(event.target.value))
+      store[0] === 'CASE_P4' && dispatch(setCaseParams4(event.target.value))
+      store[0] === 'CASE_TEXT' && dispatch(setCaseText(event.target.value))
+      store[0] === 'CASE_TAGS' && dispatch(setCaseTags(event.target.value))
+
+      store[0] === 'CASE_NAME' && dispatch(setFocusedCase('CASE_NAME'))
+      store[0] === 'CASE_SY' && dispatch(setFocusedCase('CASE_SY'))
+      store[0] === 'CASE_SM' && dispatch(setFocusedCase('CASE_SM'))
+      store[0] === 'CASE_FY' && dispatch(setFocusedCase('CASE_FY'))
+      store[0] === 'CASE_FM' && dispatch(setFocusedCase('CASE_FM'))
+      store[0] === 'CASE_PAY' && dispatch(setFocusedCase('CASE_PAY'))
+      store[0] === 'CASE_P1' && dispatch(setFocusedCase('CASE_P1'))
+      store[0] === 'CASE_P2' && dispatch(setFocusedCase('CASE_P2'))
+      store[0] === 'CASE_P3' && dispatch(setFocusedCase('CASE_P3'))
+      store[0] === 'CASE_P4' && dispatch(setFocusedCase('CASE_P4'))
+      store[0] === 'CASE_TEXT' && dispatch(setFocusedCase('CASE_TEXT'))
+      store[0] === 'CASE_TAGS' && dispatch(setFocusedCase('CASE_TAGS'))
+
+    }
+
+  }
+
+  const reduceNewCaseFormFocus = (event: any) => {
+
+    if ( store ) {
+
+      store[0] === 'CASE_NAME' && dispatch(setFocusedCase('CASE_NAME'))
+      store[0] === 'CASE_SY' && dispatch(setFocusedCase('CASE_SY'))
+      store[0] === 'CASE_SM' && dispatch(setFocusedCase('CASE_SM'))
+      store[0] === 'CASE_FY' && dispatch(setFocusedCase('CASE_FY'))
+      store[0] === 'CASE_FM' && dispatch(setFocusedCase('CASE_FM'))
+      store[0] === 'CASE_PAY' && dispatch(setFocusedCase('CASE_PAY'))
+      store[0] === 'CASE_P1' && dispatch(setFocusedCase('CASE_P1'))
+      store[0] === 'CASE_P2' && dispatch(setFocusedCase('CASE_P2'))
+      store[0] === 'CASE_P3' && dispatch(setFocusedCase('CASE_P3'))
+      store[0] === 'CASE_P4' && dispatch(setFocusedCase('CASE_P4'))
+      store[0] === 'CASE_TEXT' && dispatch(setFocusedCase('CASE_TEXT'))
+      store[0] === 'CASE_TAGS' && dispatch(setFocusedCase('CASE_TAGS'))
+
+    }
+
+  }
+
+  const reduceNewCaseFormBlur = (event: any) => {
+
+    if ( store ) {
+
+      dispatch(setFocusedCase(''))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
   const clickShowPassword = () => {
     setValues({
       ...values,
@@ -930,6 +1143,45 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // на типа просто TEXT_INPUT_OUTLINE 
           // ---------------------------------------------------------------- !!!
 
+          : type === 'TEXT_INPUT_OUTLINE_NEW_CASE'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'CASE_NAME' ? CASE_NAME :
+                  store[0] === 'CASE_SY' ? CASE_SY :
+                  store[0] === 'CASE_SM' ? CASE_SM :
+                  store[0] === 'CASE_FY' ? CASE_FY :
+                  store[0] === 'CASE_FM' ? CASE_FM : 
+                  store[0] === 'CASE_PAY' ? CASE_PAY :
+                  store[0] === 'CASE_P1' ? CASE_P1 :
+                  store[0] === 'CASE_P2' ? CASE_P2 :
+                  store[0] === 'CASE_P3' ? CASE_P3 :
+                  store[0] === 'CASE_P4' ? CASE_P4 :
+                  store[0] === 'CASE_TEXT' ? CASE_TEXT :
+                  store[0] === 'CASE_TAGS' ? CASE_TAGS : ''
+              }
+              onChange={reduceNewCaseForm}
+              onFocus={reduceNewCaseFormFocus}
+              onBlur={reduceNewCaseFormBlur}
+              autoFocus={store && CASE_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            /> 
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_ABOUT_TEXT'
           ? <CustomTextField 
               ref={inputRef}
@@ -987,6 +1239,37 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
           // на типа просто TEXT_INPUT_OUTLINE 
           // ---------------------------------------------------------------- !!!
 
+          : type === 'TEXT_INPUT_OUTLINE_SUPPORT'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'SUPPORT_NAME' ? SUPPORT_NAME :
+                  store[0] === 'SUPPORT_MAIL' ? SUPPORT_EMAIL :
+                  store[0] === 'SUPPORT_CATEGORY' ? SUPPORT_CATEGORY :
+                  store[0] === 'SUPPORT_MESSAGE' ? SUPPORT_MESSAGE : ''
+              }
+              onChange={reduceSupportForm}
+              onFocus={reduceSupportFormFocus}
+              onBlur={reduceSupportFormBlur}
+              autoFocus={store && SUPPORT_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />  
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
           : type === 'TEXT_INPUT_OUTLINE_INLABEL_TASK'
           ? <CustomTextField 
               required={required}
@@ -1002,6 +1285,44 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               onFocus={reduceNewTaskStateFocus}
               onBlur={reduceNewTaskStateBlur}
               autoFocus={store && TASK_FOCUS === store[0] && true}
+              id="standard-basic-params" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              InputProps={{
+                endAdornment: 
+                  <InputAdornment 
+                    position="end"
+                    style={{ marginRight: '6px' }}
+                  >{ innerLabel }</InputAdornment>
+              }}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            />
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_CHANGE_AGREE'
+          ? <CustomTextField 
+              required={required}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'NEW_COAST' ? NEW_AGREE_COAST :
+                  store[0] === 'NEW_PREPAY' ? NEW_AGREE_PREPAY :
+                  store[0] === 'NEW_EXPERT' ? NEW_AGREE_EXPERT : 
+                  store[0] === 'NEW_TEXT' ? NEW_AGREE_TEXT : ''
+              }
+              onChange={reduceChangeAgreeForm}
+              onFocus={reduceChangeAgreeFormFocus}
+              onBlur={reduceChangeAgreeFormBlur}
+              autoFocus={store && NEW_AGREE_FOCUS === store[0] && true}
               id="standard-basic-params" 
               label={label}
               error={isError}

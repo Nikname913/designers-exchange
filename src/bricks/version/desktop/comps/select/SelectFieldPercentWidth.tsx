@@ -113,6 +113,12 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       case 'TASK_ACTIONS':
         action(param)
         break
+      case 'NEW_CASE':
+        action(param)
+        break
+      case 'TASK_TAGS':
+        action(param)
+        break
 
       default:
         break

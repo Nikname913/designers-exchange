@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/fos-slice'
-import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
+import { setShow as setShowRCC, setShowType as setShowTypeRCC } from '../../../store/slices/right-content-slice'
 import { setShow as setShowFOS, setShowType as setShowTypeFOS  } from '../../../store/slices/fos-slice'
 import ButtonComponent from '../comps/button/Button'
 import TaskTableHeader from '../views/localViews/TaskTableHeader'
@@ -79,6 +79,16 @@ const ShowTaskPage: React.FC = () => {
   const yellowColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
+
+  const [ ,setOrderViewStep ] = useState<
+    'details'       | 
+    'communication' | 
+    'documents'     |
+    'expert'        |
+    'chapter'       |
+    'agreement'     |
+    'lawyer'        |
+    'arguement'>('details')
 
   const [ progress, setProgress ] = useState<number>(10)
   const [ counter, setCounter ] = useState<number>(0)
@@ -182,6 +192,12 @@ const ShowTaskPage: React.FC = () => {
     dispatch(setShowRCC('undefined'))
     dispatch(setShow(true))
     dispatch(setShowType("respondFromTask"))
+  }
+
+  const showChapters = (): void => {
+    setOrderViewStep('chapter')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ChapterCC'))
   }
 
   useEffect(() => console.log(selectTask), [ selectTask ])
@@ -371,24 +387,44 @@ const ShowTaskPage: React.FC = () => {
                     { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
 
                       return <React.Fragment>
-                        { item.chapters && item.chapters.map(chapter => {
+                        { item.chapters && item.chapters.map((chapter, index: number) => {
 
                           return (
                             <React.Fragment>
-                              <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                              <LeftMenuIconButton 
+                                backgroundColor={"transparent"} 
+                                style={{ 
+                                  minHeight: '64px', 
+                                  height: 'auto', 
+                                  marginBottom: '0px', 
+                                  padding: '18px 0px 22px',
+                                  lineHeight: '20px',
+                                }}
+                                onClick={showChapters}
+                              >
                                 <img
                                   alt={""}
                                   src={checkMark}
                                 />
-                                <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
+                                <span 
+                                  style={{ 
+                                    ...buttonLabelDeactiveCSS, 
+                                    fontWeight: 500,
+                                    display: 'block',
+                                    width: '88%',
+                                    overflow: 'hidden'
+                                  }}
+                                >
+                                  { chapter.title }
+                                </span>
                               </LeftMenuIconButton>
-                              <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                              { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
                             </React.Fragment>
                           )
 
                         })}
 
-                        { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                        { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
                           <img
                             alt={""}
                             src={timeIcon}

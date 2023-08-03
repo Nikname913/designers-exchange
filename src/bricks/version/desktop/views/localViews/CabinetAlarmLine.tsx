@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '../../../../store/hooks'
 import { ICabinetAlarmLineProps } from '../../../../models-ts/views/cabinet-alarm-line-models'
 import RequestActionsComponent from '../../services/request.service'
@@ -9,11 +9,14 @@ const { AlarmContainer } = css
 
 const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarmLineProps) => {
   
-  const { background, buttons, content: { date, text, order, actions }, isNew } = props
+  const { background, buttons, content: { date, text, order, actions }, isNew = false } = props
 
   const textData = text.split('||')
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  
   const [ REMOVE_ALARM, ] = useState<boolean>(false)
+  const [ newDemoIndicator, setNewDemoIndicator ] = useState<boolean>(true)
+  const [ newDemoIndicatorOpaity, setNewDemoIndicatorOpacity ] = useState<number>(1)
 
   const greyColor = useAppSelector(state => state.theme.grey)
   const blueColor2 = useAppSelector(state => state.theme.blue2)
@@ -35,6 +38,17 @@ const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarm
     backgroundColor: blueColor2
   }
 
+  const updateNewStatus = (): void => {
+  
+    setTimeout(() => { 
+      setNewDemoIndicator(false) 
+      setNewDemoIndicatorOpacity(0.8)
+    }, 400)
+
+  } 
+
+  useEffect(() => { false && console.log(isNew) }, [ isNew ])
+
   return (
     <React.Fragment>
 
@@ -53,9 +67,14 @@ const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarm
       
       /> }
 
-      <AlarmContainer background={background}>
+      <AlarmContainer 
+        background={background} 
+        onMouseOver={updateNewStatus}
+        style={{ opacity: newDemoIndicatorOpaity, cursor: 'pointer' }}
+      >
         <div style={textContainerCSS}>
           <span style={{ fontSize: '12px', color: greyColor }}>{ date }</span>
+          <span style={{ fontSize: '12px', color: greyColor, fontWeight: 'bold', marginTop: '13px' }}>{ "Системное уведомление" }</span>
           <span style={{ lineHeight: '23px', marginTop: '10px' }}>{ textData[0] }</span>
 
           { textData[1] !== '---' 
@@ -76,8 +95,8 @@ const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarm
         
         </div>
         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', marginLeft: '28px' }}>
-          { isNew === true && <span style={blueRoundCSS} /> }
-          { isNew === false && <img
+          { newDemoIndicator === true && <span style={blueRoundCSS} /> }
+          { newDemoIndicator === false && <img
             alt={""}
             src={closeIcon}
           /> }

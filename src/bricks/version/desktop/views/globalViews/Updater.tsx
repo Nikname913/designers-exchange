@@ -44,7 +44,7 @@ const Updater: React.FC = () => {
 
       return item.alertData
 
-    })
+    }).filter((item: any) => item !== undefined)
 
     dispatch(setAlertData(data))
 
@@ -58,7 +58,7 @@ const Updater: React.FC = () => {
         id: item.taskID, 
         name: item.title, 
         date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        deadline: `${item.dates.start ? item.dates.start : '01.01.2023' }-${item.dates.finish ? item.dates.finish : '01.01.2023' }`,
         exper: item.expertise,
         customer: item.customer,
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
@@ -73,6 +73,7 @@ const Updater: React.FC = () => {
           value: item.coast,
           issafe: true,
           prepay: item.prepay,
+          prepayDays: item.prepayDays,
           exper: item.expertiseCoast,
         },
         responds: item.reviews,
@@ -104,7 +105,7 @@ const Updater: React.FC = () => {
         id: item.taskID, 
         name: item.title, 
         date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        deadline: `${item.dates.start ? item.dates.start : '01.01.2023' }-${item.dates.finish ? item.dates.finish : '01.01.2023' }`,
         exper: item.expertise,
         customer: item.customer,
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
@@ -119,6 +120,7 @@ const Updater: React.FC = () => {
           value: item.coast,
           issafe: true,
           prepay: item.prepay,
+          prepayDays: item.prepayDays,
           exper: item.expertiseCoast,
         },
         responds: item.reviews,
@@ -150,7 +152,7 @@ const Updater: React.FC = () => {
         id: item.taskID, 
         name: item.title, 
         date: item.date,
-        deadline: `${item.dates.start !== '' ? item.dates.start : '01.01.2023' }-${item.dates.finish !== '' ? item.dates.finish : '01.01.2023' }`,
+        deadline: `${item.dates.start ? item.dates.start : '01.01.2023' }-${item.dates.finish ? item.dates.finish : '01.01.2023' }`,
         exper: item.expertise,
         customer: item.customer,
         executor: item.executor !== '' ? item.executor : 'Исполнитель не выбран',
@@ -165,6 +167,7 @@ const Updater: React.FC = () => {
           value: item.coast,
           issafe: true,
           prepay: item.prepay,
+          prepayDays: item.prepayDays,
           exper: item.expertiseCoast,
         },
         responds: item.reviews,
@@ -295,14 +298,18 @@ const Updater: React.FC = () => {
         headers: myHeaders,
         body: raw,
         redirect: 'follow'
-      };
+      }
 
       await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
-        .then(response => dispatch(setAvatarFile(response.status)))
+        .then(response => { 
+        
+          dispatch(setAvatarFile(response.status))
+        
+        })
 
     })()
 
-  }, [ alertsUpdate ])
+  }, [ ])
 
   return (
     <React.Fragment>

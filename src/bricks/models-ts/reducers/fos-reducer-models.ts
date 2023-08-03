@@ -12,7 +12,8 @@ export interface IFOSReducer {
     'authRestore'             |
     'authSupport'             |
     'changeAvatar'            |
-    'showFile'
+    'showFile'                |
+    'showFileContract'
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

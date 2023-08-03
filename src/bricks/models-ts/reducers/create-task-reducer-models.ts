@@ -29,6 +29,11 @@ export interface ICreateTaskReducer {
   chapterLocalDescription?: string, 
   focused: string,
   techTaskFile: Array<File>,
+  contractFile?: Array<File>,
+  showChaptersEditForms?: {
+    show: boolean,
+    num: number,
+  },
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

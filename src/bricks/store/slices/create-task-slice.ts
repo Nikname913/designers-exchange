@@ -33,6 +33,11 @@ const initialState: ICreateTaskReducer = {
   chapterLocalDescription: '',
   focused: '',
   techTaskFile: [],
+  contractFile: [],
+  showChaptersEditForms: {
+    show: false,
+    num: 0
+  },
 }
 
 const createTaskReducer = createSlice({
@@ -118,6 +123,20 @@ const createTaskReducer = createSlice({
     },
     resetTechTaskFile(state, action: PayloadAction<string>) {
       state.techTaskFile = []
+    },
+    setContractFile(state, action: PayloadAction<File>) {
+      state.contractFile && state.contractFile.push(action.payload)
+    },
+    removeContractFile(state, action: PayloadAction<string>) {
+      let filesData = state.contractFile ? state.contractFile : [] 
+      let filterFilesData = filesData.filter(file => file.name !== action.payload)
+      state.contractFile = filterFilesData
+    },
+    resetContractFile(state, action: PayloadAction<string>) {
+      state.contractFile = []
+    },
+    setShowChaptersEditForms(state, action: PayloadAction<{ show: boolean, num: number }>) {
+      state.showChaptersEditForms = action.payload
     }
   }
 })
@@ -145,5 +164,9 @@ export const {
   setFocused,
   setTechTaskFile,
   removeTechTaskFile,
-  resetTechTaskFile } = createTaskReducer.actions
+  resetTechTaskFile,
+  setContractFile,
+  removeContractFile,
+  resetContractFile,
+  setShowChaptersEditForms } = createTaskReducer.actions
 export default createTaskReducer.reducer

@@ -1,7 +1,7 @@
 export interface IRequest {
   callbackAction: Function,
   requestData: {
-    type: 'GET' | 'POST' | 'POSTFILE_TTDF',
+    type: 'GET' | 'POST' | 'POSTFILE_TTDF' | 'POSTFILE_CONTRACT',
     urlstring: string,
     body: any
   }

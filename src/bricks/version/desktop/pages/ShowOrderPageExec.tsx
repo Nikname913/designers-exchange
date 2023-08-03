@@ -5,6 +5,7 @@ import { setShow, setShowType } from '../../../store/slices/fos-slice'
 import { 
   setShow as setShowRCC, 
   setShowType as setShowTypeRCC } from '../../../store/slices/right-content-slice'
+  import { setShow as setShowFOS, setShowType as setShowTypeFOS  } from '../../../store/slices/fos-slice'
 import CommunicationTable from '../views/localViews/CommunicationTable'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
@@ -33,6 +34,7 @@ import avatarIcon from '../../../img/stock/avatar.svg'
 import clipIcon from '../../../img/icons/clip.svg'
 import alarmIcon from '../../../img/icons/alarm.svg'
 
+import txt from '../../../img/icons/files/withActionTwo/txt.svg'
 import pdf from '../../../img/icons/files/withActionTwo/pdf.svg'
 import doc from '../../../img/icons/files/withActionTwo/doc.svg'
 import xls from '../../../img/icons/files/withActionTwo/xls.svg'
@@ -91,6 +93,14 @@ const ShowTaskPage: React.FC = () => {
 
   const [ progress, setProgress ] = useState<number>(10)
   const [ counter, setCounter ] = useState<number>(0)
+
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
 
   const chatBorderColor = useAppSelector(state => state.theme.blue3)
   const chatBackground = useAppSelector(state => state.theme.white)
@@ -352,6 +362,42 @@ const ShowTaskPage: React.FC = () => {
     }
   }, [])
 
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+
+      setTechTaskFile({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+    })()
+
+  }, [ selectTask ])
+
   return (
     <React.Fragment>
       <ContentArea
@@ -452,7 +498,7 @@ const ShowTaskPage: React.FC = () => {
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
-                  <span style={countSpanCSS}>{"!!"}</span>
+                  <span style={countSpanCSS}>{"10"}</span>
                 </LeftMenuIconButton>
                 <LeftMenuIconButton 
                   backgroundColor={ 
@@ -532,7 +578,7 @@ const ShowTaskPage: React.FC = () => {
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>негосударственная</span>
-                  <span style={countSpanCSS}>{"!!"}</span>
+                  <span style={countSpanCSS}>{"10"}</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -550,31 +596,22 @@ const ShowTaskPage: React.FC = () => {
                 >
                   <span style={{ ...buttonLabelDeactiveCSS }}>Разделы</span>
                 </LeftMenuIconButton>
-                <SectionsContainer
-                  style={{
-                    paddingLeft: orderViewStep === 'chapter' ? '0px' : '',
-                    paddingRight: orderViewStep === 'chapter' ? '0px' : '',
-                  }}
-                >
+                <SectionsContainer>
                   { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
 
                     return <React.Fragment>
-                      { item.chapters && item.chapters.map(chapter => {
+                      { item.chapters && item.chapters.map((chapter, index: number) => {
 
                         return (
                           <React.Fragment>
                             <LeftMenuIconButton 
-                              backgroundColor={ 
-                                orderViewStep === 'chapter' 
-                                  ? activeLeftMenuIconColor 
-                                  : 'transparent' 
-                                }   
-                              style={{
-                                height: '64px', 
+                              backgroundColor={"transparent"} 
+                              style={{ 
+                                minHeight: '64px', 
+                                height: 'auto', 
                                 marginBottom: '0px', 
-                                padding: '0px',
-                                borderRadius: '0px',
-                                paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px'
+                                padding: '18px 0px 22px',
+                                lineHeight: '20px',
                               }}
                               onClick={showChapters}
                             >
@@ -582,15 +619,25 @@ const ShowTaskPage: React.FC = () => {
                                 alt={""}
                                 src={checkMark}
                               />
-                              <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
+                              <span 
+                                style={{ 
+                                  ...buttonLabelDeactiveCSS, 
+                                  fontWeight: 500,
+                                  display: 'block',
+                                  width: '88%',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                { chapter.title }
+                              </span>
                             </LeftMenuIconButton>
-                            <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                            { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
                           </React.Fragment>
                         )
 
                       })}
 
-                      { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px', paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px' }}>
+                      { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px', paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px' }}>
                         <img
                           alt={""}
                           src={timeIcon}
@@ -921,19 +968,24 @@ const ShowTaskPage: React.FC = () => {
                       </WhiteContainerContentLine> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '30%' }}>
-                      { false && <React.Fragment>
+                      { techTaskFile.size > 0 && <React.Fragment>
                         <WhiteContainerContentLine justify={"space-between"}>
                           <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
                         </WhiteContainerContentLine>
                         <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
-                          <FileIconContainer style={{ width: '90%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
+                          <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
                             <img
                               alt={""}
-                              src={doc}
+                              src={txt}
                               style={{ ...fileIconCSS, width: '70%' }}
+                              onClick={() => {
+                                dispatch(setShowFOS(true))
+                                dispatch(setShowTypeFOS('showFile'))
+                                dispatch(setShowRCC('undefined'))
+                              }}
                             />
-                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                            <FileIconTitle color={greyColor} style={{ lineHeight: '18px' }}>{ techTaskFile.name }</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{ techTaskFile.size + ' байт' }</FileIconSize>
                           </FileIconContainer>
                         </WhiteContainerContentLine>
                       </React.Fragment> }

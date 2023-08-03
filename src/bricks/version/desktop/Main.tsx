@@ -9,6 +9,9 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { setScrollTop } from '../../store/slices/right-content-slice'
 import { setScrollTop as setScrollFos } from '../../store/slices/fos-slice'
 import { setActiveRole, setRoleData } from '../../store/slices/role-type-slice'
+import { setShow, setShowType } from '../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../store/slices/right-content-slice'
+import { setDevice } from '../../store/slices/device-type-slice'
 import { CSSProperties } from 'styled-components'
 import Header from './views/globalViews/Header'
 import DeskRoutes from './routes/DeskRoutes'
@@ -94,6 +97,12 @@ const Main: React.FC = () => {
 
   }
 
+  const support = (): void => {
+    dispatch(setShow(true))
+    dispatch(setShowRCC('undefined'))
+    dispatch(setShowType('authSupport'))
+  }
+
   useEffect(() => {
 
     false && console.log(mainContainer.current?.scrollTop)
@@ -157,6 +166,7 @@ const Main: React.FC = () => {
             marginTop: '-268px',
             marginLeft: '30px'
           }}
+          onClick={support}
         >
           <FeedbackIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />
         </Fab>
@@ -185,6 +195,9 @@ const Main: React.FC = () => {
           <LogoutIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />
         </Fab>
         <Fab 
+          onClick={() => {
+            dispatch(setDevice('MOBILE'))
+          }}
           color="primary" 
           aria-label="add"
           style={{

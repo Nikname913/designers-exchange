@@ -13,6 +13,9 @@ import { setShow as setShowAlert , setType, setMessage } from '../../../store/sl
 import { setFocused } from '../../../store/slices/reg-slice'
 import { setFaceType } from '../../../store/slices/reg-slice'
 import { setUpdating } from '../../../store/slices/data-update-slice'
+import { setName as setNameSupport, 
+  setEmail as setEmailSupport,
+  setMessage as setMessageSupport } from '../../../store/slices/support-form-slice'
 import RequestActionsComponent from './request.service'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
@@ -45,16 +48,20 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   const { showType, scroll } = props
 
-  const [ authDataLogin, setAuthDataLogin ] = useState<string>('nik.shipov@gmail.com')
   const [ authDataLoginError, setAuthDataLoginError ] = useState<boolean>(false)
   const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
   const [ whoInvite, setWhoInvite ] = useState<string>('')
+  const [ category, setCategory ] = useState<string>('')
+  const [ supportInfoColor, setSupportInfoColor ] = useState<string>('rgb(253, 237, 237)')
+  const [ supportInfoMessage, setSupportInfoMessage ] = useState<string>('Для отправки обращения, пожалуйста, заполните все поля')
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AVATAR_REQUEST, SET_AVATAR_REQUEST ] = useState(false)
   const [ AVATAR_CUSTOM_REQUEST, SET_AVATAR_CUSTOM_REQUEST ] = useState(false)
   const [ RESPOND_REQUEST, SET_RESPOND_REQUEST ] = useState(false)
   const [ INVITE_REQUEST, SET_INVITE_REQUEST ] = useState(false)
+  const [ SUPPORT_MESSAGE_REQUEST, SET_SUPPORT_MESSAGE_REQUEST ] = useState(false)
+  const [ RESTORE_REQUEST, SET_RESTORE_REQUEST ] = useState(false)
 
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
@@ -79,11 +86,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const AUTH_EMAIL = useAppSelector(state => state.enterReducer.email)
   const AUTH_PASSWORD = useAppSelector(state => state.enterReducer.password)
 
-  const RESPOND_DEADLINE = useAppSelector(state => state.respondReducer.deadline)
   const RESPOND_COAST = useAppSelector(state => state.respondReducer.coast)
   const RESPOND_SOLUTION = useAppSelector(state => state.respondReducer.solution)
   const RESPOND_PREPAY = useAppSelector(state => state.respondReducer.prepay)
-  const RESPOND_EXPERT = useAppSelector(state => state.respondReducer.expert)
   const RESPOND_EXPERT_COAST = useAppSelector(state => state.respondReducer.expertCost)
   const RESPOND_COMMENT = useAppSelector(state => state.respondReducer.comment)
   const RESPOND_TASK = useAppSelector(state => state.respondReducer.task)
@@ -94,7 +99,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const INVITE_FEE = useAppSelector(state => state.inviteFromReducer.fee)
   const INVITE_COMMENT = useAppSelector(state => state.inviteFromReducer.comment)
 
+  const SUPPORT_NAME = useAppSelector(state => state.supportFormReducer.name)
+  const SUPPORT_MAIL = useAppSelector(state => state.supportFormReducer.email)
+  const SUPPORT_MESSAGE = useAppSelector(state => state.supportFormReducer.message)
+
   const selectTaskActual = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
+  const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
 
   const buttonColor = useAppSelector(state => state.theme.blue2)
   const delimiterBackground = useAppSelector(state => state.theme.blue3)
@@ -234,12 +244,6 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     dispatch(setShow(false))
   }
 
-  const changeLogin = (param: string): void => {
-    setAuthDataLogin(param)
-    setAuthDataLoginError(false)
-    setAuthDataPassError(false)
-  } 
-
   const restorePass = (): void => {
     dispatch(setShowType('authRestore'))
   }
@@ -291,6 +295,47 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     
   }
 
+  const supportValidate = () => {
+
+    if ( SUPPORT_NAME && SUPPORT_MAIL && SUPPORT_MESSAGE && category ) {
+
+      console.log({
+        userId: USER_ID,
+        userName: SUPPORT_NAME,
+        userMail: SUPPORT_MAIL,
+        message: SUPPORT_MESSAGE,
+        category: category
+      })
+
+      SET_SUPPORT_MESSAGE_REQUEST(true)
+      setSupportInfoColor('rgb(237, 247, 237)')
+      setSupportInfoMessage('Ваше обращение было успешно отправлено в техподдержку')
+
+      setTimeout(() => SET_SUPPORT_MESSAGE_REQUEST(false), 1300)
+
+    } else {
+
+      setSupportInfoColor('rgb(253, 237, 237)')
+      setSupportInfoMessage('Для отправки обращения, пожалуйста, заполните все поля')
+
+    }
+
+  }
+
+  const restoreValidate = (param: any) => {
+
+    if ( AUTH_EMAIL ) {
+
+      SET_RESTORE_REQUEST(true)
+      false && dispatch(setShow(false))
+      false && dispatch(setShowRCC(false))
+
+      setTimeout(() => SET_RESTORE_REQUEST(false), 1300)
+
+    }
+
+  }
+
   const success = (param: any): void => {
 
     console.log(param)
@@ -301,7 +346,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       dispatch(setRoleData({ uid: param.clientId, una: param.email }))
       dispatch(setShow(false))
       dispatch(setShowRCC(false))
-      navigate('/customers')
+      navigate('/task-list-all')
       
     } else {
 
@@ -314,21 +359,25 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   const respondSuccess = (): void => {
 
-    false && console.log(RESPOND_DEADLINE)
-    false && console.log(RESPOND_COAST)
-    false && console.log(RESPOND_SOLUTION)
-    false && console.log(RESPOND_PREPAY)
-    false && console.log(RESPOND_EXPERT)
-    false && console.log(RESPOND_EXPERT_COAST)
-    false && console.log(RESPOND_COMMENT)
-    false && console.log(RESPOND_TASK)
-    false && console.log(RESPOND_EXECUTOR)
+    !false && console.log({
+      taskID: RESPOND_TASK,
+      executorID: RESPOND_EXECUTOR,
+      executorName: RESPOND_EXECUTOR,
+      deadline: RESPOND_DATE_FINISH,
+      coast: RESPOND_COAST,
+      preSolution: RESPOND_SOLUTION,
+      prePay: RESPOND_PREPAY,
+      expert: RESPOND_DATE_EXPERT,
+      expertCoast: RESPOND_EXPERT_COAST,
+      comment: RESPOND_COMMENT,
+      execSpec: EXECUTOR[0].spec
+    })
 
-    if ( RESPOND_DEADLINE !== '' 
+    if ( RESPOND_DATE_FINISH 
       && RESPOND_COAST !== ''
       && RESPOND_SOLUTION !== ''
       && RESPOND_PREPAY !== ''
-      && RESPOND_EXPERT !== '' 
+      && RESPOND_DATE_EXPERT 
       && RESPOND_EXPERT_COAST !== '' ) {
 
         SET_RESPOND_REQUEST(true)
@@ -414,7 +463,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   useEffect(() => {
 
-    ( async () => {
+    showType === 'showFile' && ( async () => {
 
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
@@ -433,6 +482,38 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       };
 
       const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+
+      setTechTaskFile({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+    })()
+
+    showType === 'showFileContract' && ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileName: string = USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15) + '.contract.txt'
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -473,6 +554,35 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       
       /> }
 
+      { RESTORE_REQUEST && <RequestActionsComponent
+
+        callbackAction={(param: any) => { 
+
+          if ( param.respond === 'success' ) {
+
+            dispatch(setShowAlert(true))
+            dispatch(setType('success'))
+            dispatch(setMessage('Пароль был успешно отправлен вам на почту'))
+
+          } else {
+
+            dispatch(setShowAlert(true))
+            dispatch(setType('error'))
+            dispatch(setMessage('Введенная электронная почта не найдена в базе'))
+
+          }
+
+        }}
+        requestData={{
+          type: 'POST',
+          urlstring: '/restore-pass',
+          body: {
+            email: AUTH_EMAIL,
+          }
+        }}
+      
+      /> }
+
       { RESPOND_REQUEST && <RequestActionsComponent
 
         callbackAction={() => {}}
@@ -482,14 +592,15 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           body: {
             taskID: RESPOND_TASK,
             executorID: RESPOND_EXECUTOR,
-            executroName: RESPOND_EXECUTOR,
+            executorName: RESPOND_EXECUTOR,
             deadline: RESPOND_DATE_FINISH,
             coast: RESPOND_COAST,
             preSolution: RESPOND_SOLUTION,
             prePay: RESPOND_PREPAY,
             expert: RESPOND_DATE_EXPERT,
             expertCoast: RESPOND_EXPERT_COAST,
-            comment: RESPOND_COMMENT
+            comment: RESPOND_COMMENT,
+            execSpec: EXECUTOR[0].spec
         }
         }}
       
@@ -534,6 +645,28 @@ const FOS: React.FC<IFos> = (props: IFos) => {
             order: SHOW_TASK,
             type: 'success', 
             actions: 'INVITE_ON_ORDER'
+          }
+        }}
+      
+      /> }
+
+      { SUPPORT_MESSAGE_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {
+          dispatch(setNameSupport(''))
+          dispatch(setEmailSupport(''))
+          dispatch(setEmailSupport(''))
+          dispatch(setMessageSupport(''))
+        }}
+        requestData={{
+          type: 'POST',
+          urlstring: '/8000/sendSupportMessage',
+          body: {
+            userId: USER_ID, 
+            userName: SUPPORT_NAME, 
+            userMail: SUPPORT_MAIL, 
+            message: SUPPORT_MESSAGE, 
+            category: category
           }
         }}
       
@@ -664,7 +797,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 </RespondFromList.ContentLine>
                 <RespondFromList.ContentLine style={{ alignItems: 'flex-start' }}>
                   <InputComponent
-                    type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
+                    type={'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_EXPERT'}
                     valueType='text'
                     required={false}
                     widthType={'%'}
@@ -1722,11 +1855,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.CloseContainer>
               <AuthNHelp.Title>Восстановление пароля</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
-                <span style={{ textAlign: 'center', lineHeight: '20px', display: 'block', width: '100%' }}>Введите email адрес, указанный вами при регистрации<br/>Мы вышлем на него новый пароль</span>
+                <span style={{ textAlign: 'center', lineHeight: '22px', display: 'block', width: '100%' }}>Введите email адрес, указанный вами при регистрации<br/>Мы вышлем на него новый пароль</span>
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_AUTH'}
                   valueType='text'
                   defaultValue='nik.shipov@gmail.com'
                   required={false}
@@ -1738,7 +1871,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ authDataLogin, changeLogin ]}
+                  store={[ 'EMAIL_ENTER', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1750,9 +1883,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '30px' }}>
                 <ButtonComponent
-                  inner={"Отправить новый пароль"} 
+                  inner={"Отправить пароль на почту"} 
                   type='CONTAINED_DEFAULT' 
-                  action={validate}
+                  action={restoreValidate}
                   actionData={null}
                   widthType={'%'}
                   widthValue={100}
@@ -1838,11 +1971,11 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.CloseContainer>
               <AuthNHelp.Title>Обратиться в поддержку</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
-                <span style={{ lineHeight: '20px', display: 'block', width: '100%' }}>Заполните формы ниже<br/>Ответ на ваш вопрос вы получите на почту</span>
+                <span style={{ lineHeight: '22px', display: 'block', width: '100%' }}>Заполните поля формы ниже<br/>Ответ на ваш вопрос вы получите на почту</span>
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_SUPPORT'}
                   valueType='text'
                   defaultValue='николай'
                   required={false}
@@ -1854,6 +1987,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
+                  store={[ 'SUPPORT_NAME', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1864,7 +1998,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_SUPPORT'}
                   valueType='text'
                   defaultValue='nik.shipov@gmail.com'
                   required={false}
@@ -1876,7 +2010,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
-                  store={[ authDataLogin, changeLogin ]}
+                  store={[ 'SUPPORT_MAIL', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1892,10 +2026,13 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 <SelectField 
                   placeholder={"Выберите из списка"}
                   params={{ width: 600, height: 50 }}
-                  data={[]}
+                  data={[
+                    { value: '001', label: 'Общая категория вопросов' },
+                    { value: '002', label: 'Новая категория вопросов' }
+                  ]}
                   multy={false}
-                  action={() => {}}
-                  actionType={""}
+                  action={setCategory}
+                  actionType={"SUPPORT"}
                   actionParams={[]}
                   showIcon={true}
                   icon={null}
@@ -1908,7 +2045,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
                 <InputComponent
-                  type={'TEXT_INPUT_OUTLINE'}
+                  type={'TEXT_INPUT_OUTLINE_SUPPORT'}
                   valueType='text'
                   required={false}
                   widthType={'%'}
@@ -1916,9 +2053,10 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   heightValue={'50px'}
                   label={"Введите ваш вопрос"}
                   isError={false}
-                  isDisabled={true}
+                  isDisabled={false}
                   labelShrinkLeft={"0px"}
                   innerLabel={null}
+                  store={[ 'SUPPORT_MESSAGE', () => {} ]}
                   css={{
                     fontSize: '12px',
                     position: 'relative',
@@ -1927,11 +2065,27 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </AuthNHelp.ContentLine>
+              <AuthNHelp.ContentLine>
+                <span
+                  style={{
+                    display: 'block',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    width: '600px',
+                    lineHeight: '22px',
+                    backgroundColor: supportInfoColor,
+                    padding: '14px',
+                    paddingLeft: '20px',
+                    borderRadius: '4px',
+                    marginTop: '16px'
+                  }}
+                >{ supportInfoMessage }</span>
+              </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '30px', justifyContent: 'flex-end' }}>
                 <ButtonComponent
                   inner={"Отправить"} 
                   type='CONTAINED_DEFAULT' 
-                  action={validate}
+                  action={supportValidate}
                   actionData={null}
                   widthType={'px'}
                   widthValue={200}
@@ -1954,7 +2108,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
                 <ButtonComponent
-                  inner={"Вернуться назад"} 
+                  inner={"Форма восстановления пароля"} 
                   type='CONTAINED_DEFAULT' 
                   action={() => dispatch(setShowType('authRestore'))}
                   actionData={null}
@@ -2003,53 +2157,63 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       overflow: 'hidden'
                     }}
                   >
-                    { USER_ROLE === 'EXECUTOR' &&
-                      <img
-                        alt={""}
-                        src={
-                          EXECUTOR[0].avatar === '1' ? bearAvatar :
-                          EXECUTOR[0].avatar === '2' ? enotAvatar :
-                          EXECUTOR[0].avatar === '3' ? foxAvatar :
-                          EXECUTOR[0].avatar === '4' ? groupAvatar :
-                          EXECUTOR[0].avatar === '5' ? manAvatar :
-                          EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
-                        }
-                        style={
-                          EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
-                          EXECUTOR[0].avatar === '2' ? { width: '100px',  } :
-                          EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
-                          EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
-                          EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
-                          EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
-                          { width: '100px', marginTop: '6px' }
-                        }
-                      /> 
-                    }
-                    { USER_ROLE === 'CUSTOMER' &&
-                      <img
-                        alt={""}
-                        src={
-                          CUSTOMER[0].avatar === '1' ? bearAvatar :
-                          CUSTOMER[0].avatar === '2' ? enotAvatar :
-                          CUSTOMER[0].avatar === '3' ? foxAvatar :
-                          CUSTOMER[0].avatar === '4' ? groupAvatar :
-                          CUSTOMER[0].avatar === '5' ? manAvatar :
-                          CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
-                        }
-                        style={
-                          CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
-                          CUSTOMER[0].avatar === '2' ? { width: '100px',  } :
-                          CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
-                          CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
-                          CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
-                          CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
-                          { width: '100px', marginTop: '6px' }
-                        }
-                      /> 
-                    }
+                    { avatarFile === 404 && <React.Fragment>
+                      { USER_ROLE === 'EXECUTOR' &&
+                        <img
+                          alt={""}
+                          src={
+                            EXECUTOR[0].avatar === '1' ? bearAvatar :
+                            EXECUTOR[0].avatar === '2' ? enotAvatar :
+                            EXECUTOR[0].avatar === '3' ? foxAvatar :
+                            EXECUTOR[0].avatar === '4' ? groupAvatar :
+                            EXECUTOR[0].avatar === '5' ? manAvatar :
+                            EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
+                          }
+                          style={
+                            EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                            EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '3px' } :
+                            EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                            EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                            EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                            EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                            { width: '100px', marginTop: '6px' }
+                          }
+                        /> 
+                      }
+                      { USER_ROLE === 'CUSTOMER' &&
+                        <img
+                          alt={""}
+                          src={
+                            CUSTOMER[0].avatar === '1' ? bearAvatar :
+                            CUSTOMER[0].avatar === '2' ? enotAvatar :
+                            CUSTOMER[0].avatar === '3' ? foxAvatar :
+                            CUSTOMER[0].avatar === '4' ? groupAvatar :
+                            CUSTOMER[0].avatar === '5' ? manAvatar :
+                            CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
+                          }
+                          style={
+                            CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '9px' } :
+                            CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '3px' } :
+                            CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '3px' } :
+                            CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                            CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '36px' } :
+                            CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
+                            { width: '100px', marginTop: '6px' }
+                          }
+                        /> 
+                      }
+                    </React.Fragment> }
+                    { avatarFile === 200 && <img
+                      
+                      alt={""}
+                      src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                      style={{ height: '100%' }}
+                      onClick={changeAvatar}
+                      
+                    /> }
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '30px' }}>
-                    <span style={{ fontSize: '32px', marginBottom: '10px' }}>Аватар</span>
+                    <span style={{ fontSize: '28px', marginBottom: '10px' }}>Сменить аватар</span>
                     <span style={{ marginBottom: '18px' }}>Загрузите аватар или выберите из предложенных</span>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
                       <div 
@@ -2177,7 +2341,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     <img
                       alt={""}
                       src={download}
-                      style={{ marginTop: '28px', width: '95px', opacity: 0.6 }}
+                      style={{ marginTop: '28px', width: '95px', opacity: 0.44 }}
                     />
                     <span style={{ color: blueColor2, marginTop: '18px' }}>
                       <i style={{ fontStyle: 'normal', fontWeight: 600 }}>Выберите файл</i> или перетащите сюда
@@ -2212,6 +2376,81 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ChangeAvatar.FOS>
           </React.Fragment> 
           : showType === 'showFile' 
+          ? <React.Fragment>
+
+            <ShowFile.FOS>
+              <ShowFile.CloseContainer onClick={closeFos}>
+                <img
+                  alt={""}
+                  src={closeIcon}
+                />
+              </ShowFile.CloseContainer>
+              <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
+                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
+                <ButtonComponent
+                  inner={"Скачать файл"} 
+                  type="CONTAINED_DEFAULT"
+                  action={() => {}}
+                  actionData={null}
+                  widthType={"px"}
+                  widthValue={184}
+                  children={""}
+                  childrenCss={{}}
+                  iconSrc={null}
+                  iconCss={undefined}
+                  muiIconSize={null}
+                  MuiIconChildren={EmailIcon}
+                  css={{
+                    backgroundColor: '#167CBF',
+                    color: 'white',
+                    fontSize: '12px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '6px',
+                  }}
+                />
+              </ShowFile.ContentLine>
+              <ShowFile.FOSInner>
+                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
+                  { techTaskFile.text }
+                </ShowFile.FOSFile>
+              </ShowFile.FOSInner>
+              <ShowFile.ContentLine style={{ justifyContent: 'space-around' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    position: 'relative',
+                    width: '30px',
+                    height: '30px',
+                    lineHeight: '30px',
+                    textAlign: 'center',
+                    fontSize: '13px',
+                    borderRadius: '6px',
+                    backgroundColor: 'white',
+                    color: 'grey'
+                  }}
+                >
+                  1
+                </span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '14px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Сохранен</span>
+                <span>Нет данных</span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Размер</span>
+                <span>{ techTaskFile.size + ' байт' }</span>
+              </ShowFile.ContentLine>
+              <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px', marginBottom: '33px' }}>
+                <span style={{ fontWeight: 'bold', width: '120px' }}>Загружен</span>
+                <span>Нет данных</span>
+              </ShowFile.ContentLine>
+            </ShowFile.FOS>
+
+          </React.Fragment>
+          : showType === 'showFileContract' 
           ? <React.Fragment>
 
             <ShowFile.FOS>

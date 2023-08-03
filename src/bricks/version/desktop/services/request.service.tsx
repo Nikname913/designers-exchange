@@ -49,6 +49,27 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
           callbackAction('')
 
           break
+
+        case 'POSTFILE_CONTRACT':
+
+          var formdataContract = new FormData()
+          formdataContract.append("orderId", body[0])
+          formdataContract.append("orderContractFile", body[1])
+
+          var requestOptionsContract: any = {
+            method: 'POST',
+            body: formdataContract,
+            redirect: 'follow'
+          }
+
+          fetch("http://85.193.88.125:3000/add-file-contract", requestOptionsContract)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error))
+
+          callbackAction('')
+
+          break
           
         default:
           break

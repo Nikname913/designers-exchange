@@ -7,7 +7,22 @@ import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { setShow, setShowType } from '../../../store/slices/right-content-slice'
 import { setShow as setShowFOS, 
   setShowType as setShowTypeFOS } from '../../../store/slices/fos-slice'
+import { setContractFile, resetContractFile } from '../../../store/slices/create-task-slice'
 import { setAboutText } from '../../../store/slices/about-text-slice'
+import { setCaseName,
+  setCaseSY,
+  setCaseSM,
+  setCaseFY,
+  setCaseFM,
+  setCasePay,
+  setCaseFiles,
+  setCaseParams1,
+  setCaseParams2,
+  setCaseParams3,
+  setCaseParams4,
+  setCaseText,
+  setCaseTags } from '../../../store/slices/new-case-slice'
+import { setShow as setShowAlert , setType, setMessage } from '../../../store/slices/alert-content-slice'
 import DocumentLine from '../views/localViews/DocumentLine'
 import Switch from '@mui/material/Switch'
 import Radio from '@mui/material/Radio'
@@ -25,6 +40,9 @@ import ChapterController from '../views/localViews/СhapterController'
 import { IRightContentContainer } from '../../../models-ts/services/right-content-container-models'
 import RequestActionsComponent from './request.service'
 import css from '../styles/services/rightContentContainer.css'
+import Fab from '@mui/material/Fab'
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew'
+import CloseIcon from '@mui/icons-material/Clear'
 
 import bearAvatar from '../../../img/avatars/bear.svg'
 import enotAvatar from '../../../img/avatars/enot.svg'
@@ -36,6 +54,7 @@ import womanAvatar from '../../../img/avatars/woman.svg'
 import closeIcon from '../../../img/icons/close.svg'
 import defaulrAvatar from '../../../img/stock/avatar.svg'
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import EmailIcon from '@mui/icons-material/Email'
 import clipIcon from '../../../img/icons/clip.svg'
 import tillIcon from '../../../img/icons/till.svg'
 import linesIcon from '../../../img/icons/lines.svg'
@@ -64,13 +83,34 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const dispatch = useAppDispatch()
   const [ docviewFormat, setDocviewFormat ] = useState<'lines' | 'tiles'>('tiles')
   const [ spec, setSpec ] = useState<string>('')
+  const [ masterDocsShadowContent, setMasterDocsShadowContent ] = useState<boolean>(true)
 
   const [ SPEC_REQUEST, SET_SPEC_REQUEST ] = useState(false)
   const [ ABOUT_TEXT_REQUEST, SET_ABOUT_TEXT_REQUEST ] = useState(false)
+  const [ SEND_CONTRACT_REQUEST, SET_SEND_CONTRACT_REQUEST ] = useState(false)
 
   const [ educationCounter, setEducationCounter ] = useState<number>(1)
   const [ skillCounter, setSkillCounter] = useState<number>(1)
   const [ actsCounter, setActsCounter] = useState<number>(1)
+  const [ chapterStep, setChapterStep ] = useState<number>(0)
+  const [ chapters, setChapters ] = useState<Array<{ 
+    
+    title: string, 
+    tags: Array<any>, 
+    description: string 
+
+  }>>([{ title: '', tags: [], description: '' }])
+  const [ contractFileServer, setContractFileServer ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
+
+  const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
+  const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+  const ordersList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
 
   const localText = 'Nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin'
 
@@ -102,7 +142,27 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     .filter((customer: any) => customer.clientId === USER_ID)
   const ABOUT_TEXT = useAppSelector(state => state.aboutTextReducer.aboutText)
 
+  const NEW_AGREE_COAST = useAppSelector(state => state.changeAgreeReducer.newCoast)
+  const NEW_AGREE_PREPAY = useAppSelector(state => state.changeAgreeReducer.newPrepay)
+  const NEW_AGREE_EXPERT = useAppSelector(state => state.changeAgreeReducer.newExpert)
+  const NEW_AGREE_TEXT = useAppSelector(state => state.changeAgreeReducer.newText)
+
   const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
+  const CONTRACT_FILE = useAppSelector(state => state.createTaskReducer.contractFile)
+
+  const CASE_NAME = useAppSelector(state => state.newCaseReducer.caseName)
+  const CASE_SY = useAppSelector(state => state.newCaseReducer.caseStartYear)
+  const CASE_SM = useAppSelector(state => state.newCaseReducer.caseStartMonth)
+  const CASE_FY = useAppSelector(state => state.newCaseReducer.caseFinishYear)
+  const CASE_FM = useAppSelector(state => state.newCaseReducer.caseFinishMonth)
+  const CASE_PAY = useAppSelector(state => state.newCaseReducer.casePay)
+  const CASE_FILE = useAppSelector(state => state.newCaseReducer.caseFiles)
+  const CASE_P1 = useAppSelector(state => state.newCaseReducer.caseParams.one)
+  const CASE_P2 = useAppSelector(state => state.newCaseReducer.caseParams.two)
+  const CASE_P3 = useAppSelector(state => state.newCaseReducer.caseParams.three)
+  const CASE_P4 = useAppSelector(state => state.newCaseReducer.caseParams.four)
+  const CASE_TEXT = useAppSelector(state => state.newCaseReducer.caseText)
+  const CASE_TAGS = useAppSelector(state => state.newCaseReducer.caseTags)
 
   const avatarCSS: CSSProperties = {
     display: 'block',
@@ -238,13 +298,71 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     SET_ABOUT_TEXT_REQUEST(true)
     setTimeout(() => { SET_ABOUT_TEXT_REQUEST(false) }, 1300)
   }
+  function changeContract(): void {
+    SET_SEND_CONTRACT_REQUEST(true)
+    setTimeout(() => { SET_SEND_CONTRACT_REQUEST(false) }, 1300)
+  }
+  const changeTechTaskFile = (param: File) => {
+    dispatch(resetContractFile(''))
+    dispatch(setContractFile(param))
+  }
+
+  const changeSM = (param: string) => {
+    dispatch(setCaseSM(param))
+  }
+  const changeFM = (param: string) => {
+    dispatch(setCaseFM(param))
+  }
+  const changeCaseRegion = (param: string) => {
+    dispatch(setCaseParams4(param))
+  }
+  const changeCaseTags = (param: string) => {
+    dispatch(setCaseTags(param))
+  }
+
+  const newCaseFile = (param: File) => {
+
+    dispatch(setCaseFiles(param))
+
+  }
+
+  const sendCase = () => {
+
+    if ( CASE_NAME          && 
+      CASE_SY               && 
+      CASE_SM               && 
+      CASE_FY               && 
+      CASE_FM               && 
+      CASE_NAME             && 
+      CASE_PAY              && 
+      CASE_FILE.length > 0  &&
+      CASE_P1               && 
+      CASE_P2               && 
+      CASE_P3               && 
+      CASE_P4               &&
+      CASE_TEXT             &&
+      CASE_TAGS ) {
+
+        dispatch(setShowAlert(true))
+        dispatch(setType('success'))
+        dispatch(setMessage('Проект был успешно добавлен в список ваших работ'))
+
+      } else {
+
+        dispatch(setShowAlert(true))
+        dispatch(setType('error'))
+        dispatch(setMessage('Нужно заполнить все поля ввода и добавить файл вложения для того, чтобы добавить новый проект в базу портфолио'))
+
+      }
+
+  }
   
   useEffect(() => {
 
     false && console.log(USER_ROLE)
     false && console.log(USER_ID)
-    !false && console.log(EXECUTOR)
-    !false && console.log(CUSTOMER)
+    false && console.log(EXECUTOR)
+    false && console.log(CUSTOMER)
 
   }, [ CUSTOMER, EXECUTOR, USER_ID, USER_ROLE ])
 
@@ -263,6 +381,85 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
     EXECUTOR.length > 0 && EXECUTOR[0].aboutText && dispatch(setAboutText(EXECUTOR[0].aboutText))
     CUSTOMER.length > 0 && CUSTOMER[0].aboutText && dispatch(setAboutText(CUSTOMER[0].aboutText))
+
+  }, [])
+
+  useEffect(() => {
+
+    let chapterData: any = []
+
+    if ( taskList.filter(item => item.id === selectTask).length > 0 ) {
+
+      chapterData = taskList.filter(item => item.id === selectTask)[0].chapters
+
+    } 
+
+    if ( ordersList.filter(item => item.id === selectTask).length > 0 ) {
+
+      chapterData = ordersList.filter(item => item.id === selectTask)[0].chapters
+
+    }
+    
+    chapterData && setChapters(chapterData)
+
+  }, [])
+
+  useEffect(() => { console.log(CONTRACT_FILE) }, [ CONTRACT_FILE ])
+
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileName: string = USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15) + '.contract.txt'
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+
+      setContractFileServer({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+    })()
+
+  }, [ selectTask ])
+
+  useEffect(() => {
+
+    return () => {
+
+      dispatch(setCaseName(''))
+      dispatch(setCaseSY(''))
+      dispatch(setCaseSM(''))
+      dispatch(setCaseFY(''))
+      dispatch(setCaseFM(''))
+      dispatch(setCasePay(''))
+      dispatch(setCaseParams1(''))
+      dispatch(setCaseParams2(''))
+      dispatch(setCaseParams3(''))
+      dispatch(setCaseParams4(''))
+      dispatch(setCaseText(''))
+      dispatch(setCaseTags(''))
+
+    }
 
   }, [])
 
@@ -293,6 +490,19 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
             clientId: USER_ID,
             text: ABOUT_TEXT,
           }
+        }}
+      
+      /> }
+
+      { SEND_CONTRACT_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POSTFILE_CONTRACT',
+          urlstring: '/add-file-contract',
+          body: [ 
+            USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15), 
+            CONTRACT_FILE ? CONTRACT_FILE[0] : [] ]
         }}
       
       /> }
@@ -489,29 +699,136 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine>
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '38px' }}>Мастер документы</h3>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine>
+                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Основные документы</span>
+                  </MasterDocFork.ContentLine> }
+                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <ButtonComponent
+                    inner={'Добавить договор'} 
+                    type='UPLOAD' 
+                    action={() => {}}
+                    actionData={[ changeTechTaskFile ]}
+                    widthType={'px'}
+                    widthValue={200}
+                    children={''}
+                    childrenCss={undefined}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={null}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      backgroundColor: 'rgb(22, 124, 191)',
+                      fontSize: '12px',
+                      height: '46px',
+                      borderRadius: '6px',
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      marginTop: '23px',
+                    }}
+                  /> }
+
+                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <React.Fragment>
+                    { ( CONTRACT_FILE && CONTRACT_FILE?.length > 0 ) && CONTRACT_FILE.filter(
+                
+                      fileData => (
+                        fileData.name.indexOf('.txt') !== -1 || 
+                        fileData.name.indexOf('.doc') !== -1 ||
+                        fileData.name.indexOf('.docx') !== -1 )).map(fileData => {
+
+                      return (
+                        <div 
+                          style={{ 
+                            display: 'flex', 
+                            flexDirection: 'row', 
+                            alignItems: 'center', 
+                            justifyContent: 'space-between',
+                            marginTop: '14px'
+                          }}
+                        >
+                          <span 
+                            style={{ 
+                              display: 'block', 
+                              position: 'relative', 
+                              lineHeight: '28px', 
+                              fontWeight: 'bold',
+                              color: 'rgb(81, 102, 116)',
+                              cursor: 'pointer',
+                              marginRight: '8px'
+                            }}
+                          >{`Добавлен договор для заказа: ${fileData.name}`}</span>
+                          <CloseIcon 
+                            style={{ width: '16px', cursor: 'pointer' }}
+                            onClick={() => dispatch(resetContractFile(''))}
+                          />
+                        </div>
+                      )
+
+                    })}
+                    { ( CONTRACT_FILE && CONTRACT_FILE?.length > 0 ) && CONTRACT_FILE.filter(fileData => (
+
+                      fileData.name.indexOf('.txt')  !== -1 || 
+                      fileData.name.indexOf('.doc')  !== -1 ||
+                      fileData.name.indexOf('.docx') !== -1 )).length === 0 && <div 
+                        style={{ 
+                          display: 'flex', 
+                          flexDirection: 'row', 
+                          alignItems: 'center', 
+                          justifyContent: 'space-between',
+                          marginTop: '14px'
+                        }}
+                      >
+                        <span 
+                          style={{ 
+                            display: 'block', 
+                            position: 'relative', 
+                            lineHeight: '28px', 
+                            fontWeight: 'bold',
+                            color: 'rgb(81, 102, 116)',
+                            cursor: 'pointer',
+                            marginRight: '8px'
+                          }}
+                        >{`Неверный формат файла`}</span>
+                        <CloseIcon 
+                          style={{ width: '16px', cursor: 'pointer' }}
+                          onClick={() => dispatch(resetContractFile(''))}
+                        />
+                      </div> }
+                  </React.Fragment> }
+                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <MasterDocFork.ContentLine style={{ marginTop: '22px' }}>
+                    <span 
+                      onClick={changeContract}
+                      style={{ 
+                        fontWeight: 'bold', 
+                        display: 'block', 
+                        fontSize: '15px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      Загрузить договор [ нажмите, чтобы сохранить - временная кнопка ]
+                    </span>
+                  </MasterDocFork.ContentLine> }
+                  { contractFileServer.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
                     <img
                       alt={""}
                       src={correctIcon}
                       style={{ width: '24px', marginRight: '10px' }}
                     />
-                    <span style={{ fontWeight: 'bold', display: 'block' }}>Договор подписан</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '40px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Договор не подписан</span>
+                  </MasterDocFork.ContentLine> }
+                  { contractFileServer.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '38px' }}>
+                    <div style={{ display: 'none', flexDirection: 'row' }}>
                       <div style={{ display: 'block', position: 'relative', width: '100px' }}>
                         <img
                           alt={""}
                           src={doc}
-                          style={{ width: '100px' }}
+                          style={{ width: '90px', cursor: 'pointer' }}
                         />
-                        <img
+                        { false && <img
                           alt={""}
                           src={semiMenu}
                           style={semiIconsCSS}
-                        />
+                        /> }
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '32px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '16px' }}>
                         <span style={{ color: greyColor, marginBottom: '5px' }}>Договор основной</span>
                         <span style={{ color: greyColor, marginBottom: '5px', fontSize: '12px' }}>Исполнитель</span>
                         <span style={{ color: greyColor, marginBottom: '15px', fontSize: '12px' }}>29.02.2023</span>
@@ -525,23 +842,28 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         </div>
                       </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: '80px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: false ? '80px' : '0px' }}>
                       <div style={{ display: 'block', position: 'relative', width: '100px' }}>
                         <img
                           alt={""}
                           src={doc}
-                          style={{ width: '100px', filter: 'grayscale(80%)' }}
+                          style={{ width: '90px', filter: 'grayscale(80%)', cursor: 'pointer' }}
+                          onClick={() => {
+                            dispatch(setShowFOS(true))
+                            dispatch(setShowTypeFOS('showFileContract'))
+                            dispatch(setShow('undefined'))
+                          }}
                         />
-                        <img
+                        { false && <img
                           alt={""}
                           src={semiMenu}
                           style={semiIconsCSS}
-                        />
+                        /> }
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '32px' }}>
-                        <span style={{ color: greyColor, marginBottom: '5px' }}>Договор основной</span>
-                        <span style={{ color: greyColor, marginBottom: '5px', fontSize: '12px' }}>Заказчик</span>
-                        <span style={{ color: greyColor, marginBottom: '15px', fontSize: '12px' }}>29.02.2023</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '16px' }}>
+                        <span style={{ color: greyColor, marginBottom: '5px' }}>{ contractFileServer.name }</span>
+                        <span style={{ color: greyColor, marginBottom: '5px', fontSize: '12px' }}>Исполнитель</span>
+                        <span style={{ color: greyColor, marginBottom: '15px', fontSize: '12px' }}>01.01.2023</span>
                         <div style={{ ...blankButtonCSS, backgroundColor: greyColor3 }}>
                           <span>Ждет подписания</span>
                           <img
@@ -552,17 +874,718 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         </div>
                       </div>
                     </div>
+                  </MasterDocFork.ContentLine> }
+                  <span
+                    onClick={() => setMasterDocsShadowContent(prev => !prev)}
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      width: '600px',
+                      lineHeight: '22px',
+                      backgroundColor: 'rgb(253, 237, 237)',
+                      padding: '14px',
+                      paddingLeft: '20px',
+                      borderRadius: '4px',
+                      marginTop: '34px',
+                      marginBottom: '13px',
+                      cursor: 'pointer'
+                    }}
+                  >{"Дальнейший контент в настоящее время является статичным. Что-либо нажимать, что-либо ожидая особого смысла не имеет, но можно посмотреть как будет выглядеть интерфейс. Нажмите один раз на данное сообщение, чтобы скрыть или показать эту часть контента"}</span>
+                  { masterDocsShadowContent && <React.Fragment>
+                    <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '30px' }}/>
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '29px', marginBottom: '30px' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Акты выполненных работ</span>
+                      <ButtonComponent
+                        inner={"Загрузить новый акт"} 
+                        type='CONTAINED_DEFAULT' 
+                        action={() => console.log('this is button')}
+                        actionData={null}
+                        widthType={'px'}
+                        widthValue={200}
+                        children={""}
+                        childrenCss={undefined}
+                        iconSrc={null}
+                        iconCss={undefined}
+                        muiIconSize={30}
+                        MuiIconChildren={ArrowUpwardIcon}
+                        css={{
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          padding: '4px',
+                          backgroundColor: chatSubmitColor,
+                          width: '56px',
+                          height: '43px',
+                        }}
+                      />
+                    </MasterDocFork.ContentLine>
+                    <span
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        width: '600px',
+                        lineHeight: '22px',
+                        backgroundColor: 'rgb(253, 237, 237)',
+                        padding: '14px',
+                        paddingLeft: '20px',
+                        borderRadius: '4px',
+                        marginTop: '0px',
+                        marginBottom: '16px'
+                      }}
+                    >{"Статичные элементы отображаются мне для напоминания, чтоб ничего не забыть"}</span>
+
+                    { Array(2)
+                      .fill({ 
+                        status: 'GREEN', 
+                        data: { 
+                          name: 'элемент-документ-статичный.pdf', 
+                          date: '29.02.2023', 
+                          statusName: 'Подписан' 
+                        }
+                      }).map((item, index) => {
+
+                      return (
+                        <MasterDocFork.ContentLine key={index} style={{ opacity: 0.8 }}>
+                          <DocumentLine
+                            status={item.status}
+                            data={item.data}
+                          />
+                        </MasterDocFork.ContentLine>
+                      )
+
+                    })}
+
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '20px' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Мастер документы</span>
+                      <div>
+                        <img
+                          alt={""}
+                          src={tillIcon}
+                          style={{ 
+                            width: '24px', 
+                            marginRight: '16px', 
+                            cursor: 'pointer',
+                            opacity: docviewFormat === 'tiles' ? '1' : '0.5' 
+                          }}
+                          onClick={() => setDocviewFormat('tiles')}
+                        />
+                        <img
+                          alt={""}
+                          src={linesIcon}
+                          style={{ 
+                            width: '24px', 
+                            cursor: 'pointer',
+                            opacity: docviewFormat === 'lines' ? '1' : '0.5' 
+                          }}
+                          onClick={() => setDocviewFormat('lines')}
+                        />
+                      </div>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '36px' }}/>
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '33px', alignItems: 'flex-end' }}>
+                      <span style={{ fontWeight: '600', fontSize: '15px' }}>Файлы в заказе</span>
+                      <div style={fileSorterCSS}>
+                        <SelectField 
+                          placeholder={"Сортировать по дате"}
+                          params={{ width: 280, mb: '0px', height: 50 }}
+                          data={[
+                            { value: '1', label: 'Вчера' },
+                            { value: '2', label: 'Позавчера' },
+                            { value: '3', label: 'Последний месяц' },
+                          ]}
+                          multy={false}
+                          action={() => {}}
+                          actionType={""}
+                          actionParams={[]}
+                          showIcon={true}
+                          icon={null}
+                          iconStyles={{
+                            marginTop: '-12px',
+                            marginLeft: '6px',
+                            width: '34px',
+                          }}
+                        />
+                        <img
+                          alt={""}
+                          src={arraySortIcon}
+                          style={{ marginLeft: '20px', marginRight: '16px' }}
+                        />
+                      </div>
+                    </MasterDocFork.ContentLine>
+                    { docviewFormat === 'lines' && <React.Fragment>
+                      { Array(2)
+                        .fill({ 
+                          status: 'GREEN', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Подписан',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                        return (
+                          <MasterDocFork.ContentLine key={index} style={{ opacity: 0.8 }}>
+                            <DocumentLine
+                              status={item.status}
+                              data={item.data}
+                            />
+                          </MasterDocFork.ContentLine>
+                        )
+
+                      })}
+                      { Array(1)
+                        .fill({ 
+                          status: 'WHITE', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Ожидает',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                        return (
+                          <MasterDocFork.ContentLine key={index} style={{ opacity: 0.8 }}>
+                            <DocumentLine
+                              status={item.status}
+                              data={item.data}
+                            />
+                          </MasterDocFork.ContentLine>
+                        )
+
+                      })}
+                      <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '33px', marginTop: '20px', alignItems: 'flex-end' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '15px' }}>Раздел Пожарная безопасность</span>
+                      </MasterDocFork.ContentLine>
+                      { Array(2)
+                        .fill({ 
+                          status: 'GREEN', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Подписан',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                        return (
+                          <MasterDocFork.ContentLine key={index} style={{ opacity: 0.8 }}>
+                            <DocumentLine
+                              status={item.status}
+                              data={item.data}
+                            />
+                          </MasterDocFork.ContentLine>
+                        )
+
+                      })}
+                      { Array(1)
+                        .fill({ 
+                          status: 'WHITE', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Ожидает',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                        return (
+                          <MasterDocFork.ContentLine key={index} style={{ opacity: 0.8 }}>
+                            <DocumentLine
+                              status={item.status}
+                              data={item.data}
+                            />
+                          </MasterDocFork.ContentLine>
+                        )
+
+                      })}
+                    </React.Fragment> }
+                    { docviewFormat === 'tiles' && <MasterDocFork.ContentLine style={{ flexWrap: 'wrap' }}>
+                      { Array(2)
+                        .fill({ 
+                          status: 'GREEN', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Подписан',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                          return (
+                            <div style={doctileCSS} key={index}>
+                              <div style={{ position: 'relative' }}>
+                                <img
+                                  alt={""}
+                                  src={doc}
+                                />
+
+                                { item.status === 'GREEN' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={correct}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+                                { item.status === 'WHITE' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={wait}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+                              
+                              </div>
+                              <div
+                                style={{
+                                  display: 'block',
+                                  position: 'relative',
+                                  width: '100%',
+                                  height: '26px',
+                                  overflow: 'hidden',
+                                  marginTop: '-8px'
+                                }}
+                              >
+                                <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
+                              </div>
+                              <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
+                              <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
+                            </div>
+                          )
+
+                      })}
+                      { Array(8)
+                        .fill({ 
+                          status: 'WHITE', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Ожидает',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                          return (
+                            <div style={doctileCSS} key={index}>
+                              <div style={{ position: 'relative' }}>
+                                <img
+                                  alt={""}
+                                  src={doc}
+                                />
+
+                                { item.status === 'GREEN' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={correct}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+                                { item.status === 'WHITE' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={wait}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+
+                              </div>
+                              <div
+                                style={{
+                                  display: 'block',
+                                  position: 'relative',
+                                  width: '100%',
+                                  height: '26px',
+                                  overflow: 'hidden',
+                                  marginTop: '-8px'
+                                }}
+                              >
+                                <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
+                              </div>
+                              <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
+                              <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
+                            </div>
+                          )
+
+                      })}
+                      <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '33px', marginTop: '30px', alignItems: 'flex-end' }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '15px' }}>Раздел Пожарная безопасность</span>
+                      </MasterDocFork.ContentLine>
+                      { Array(2)
+                        .fill({ 
+                          status: 'GREEN', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Подписан',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                          return (
+                            <div style={doctileCSS} key={index}>
+                              <div style={{ position: 'relative' }}>
+                                <img
+                                  alt={""}
+                                  src={doc}
+                                />
+
+                                { item.status === 'GREEN' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={correct}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+                                { item.status === 'WHITE' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={wait}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+
+                              </div>
+                              <div
+                                style={{
+                                  display: 'block',
+                                  position: 'relative',
+                                  width: '100%',
+                                  height: '26px',
+                                  overflow: 'hidden',
+                                  marginTop: '-8px'
+                                }}
+                              >
+                                <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
+                              </div>
+                              <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
+                              <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
+                            </div>
+                          )
+
+                      })}
+                      { Array(1)
+                        .fill({ 
+                          status: 'WHITE', 
+                          data: { 
+                            name: 'элемент-документ-статичный.pdf', 
+                            date: '29.02.2023', 
+                            statusName: 'Ожидает',
+                            size: 220
+                          }
+                        }).map((item, index) => {
+
+                          return (
+                            <div style={doctileCSS} key={index}>
+                              <div style={{ position: 'relative' }}>
+                                <img
+                                  alt={""}
+                                  src={doc}
+                                />
+
+                                { item.status === 'GREEN' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={correct}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+                                { item.status === 'WHITE' && 
+                                  <span 
+                                    style={{ 
+                                      width: '24px',  
+                                      display: 'block', 
+                                      position: 'absolute',
+                                      borderRadius: '50%',
+                                      overflow: 'hidden',
+                                      top: '100%',
+                                      left: '100%',
+                                      marginTop: '-30px',
+                                      marginLeft: '-28px' 
+                                    }}
+                                  >
+                                    <img 
+                                      alt={""} 
+                                      src={wait}
+                                      style={{
+                                        backgroundColor: 'white',
+                                        display: 'block',
+                                        width: '24px',
+                                      }} 
+                                    /> 
+                                  </span>
+                                }
+
+                              </div>
+                              <div
+                                style={{
+                                  display: 'block',
+                                  position: 'relative',
+                                  width: '100%',
+                                  height: '26px',
+                                  overflow: 'hidden',
+                                  marginTop: '-8px'
+                                }}
+                              >
+                                <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
+                              </div>
+                              <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
+                              <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
+                            </div>
+                          )
+
+                      })}
+                    </MasterDocFork.ContentLine> }
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '33px', marginBottom: '100px' }}>
+                      
+                      { docviewFormat === 'lines' && <div/> }
+                      
+                      <ButtonComponent
+                        inner={"Скачать архивом"} 
+                        type='CONTAINED_DEFAULT' 
+                        action={() => console.log('this is button')}
+                        actionData={null}
+                        widthType={'px'}
+                        widthValue={160}
+                        children={""}
+                        childrenCss={undefined}
+                        iconSrc={null}
+                        iconCss={undefined}
+                        muiIconSize={30}
+                        MuiIconChildren={ArrowUpwardIcon}
+                        css={{
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          padding: '4px',
+                          backgroundColor: chatBorderColor,
+                          color: greyColor,
+                          width: '56px',
+                          height: '43px',
+                        }}
+                      />
+                    </MasterDocFork.ContentLine>
+                  </React.Fragment> }
+
+                </MasterDocFork.ChatContainer>
+            </React.Fragment>
+            : contentType === 'ChapterCC'
+
+            /* ---------------------------------------- */
+            /* базовое окно для раздела
+            /* ---------------------------------------- */
+
+            ? <React.Fragment>
+                <MasterDocFork.ChatContainer style={{ paddingTop: '40px', height: 'auto', minHeight: '100vh' }} backgroundColor={backgroundColor}>
+                  <MasterDocFork.CloseIconContainer style={{ zIndex: '10' }}>
+                    <MasterDocFork.CloseIcon 
+                      style={{ zIndex: '10' }} 
+                      onClick={showrightContent}
+                    >
+                      <img
+                        alt={""} 
+                        src={closeIcon}  
+                      />
+                    </MasterDocFork.CloseIcon>
+                    <div 
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        position: 'absolute',
+                        width: '100%',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <Fab 
+                        onClick={() => {
+                          chapterStep > 0 && setChapterStep(prev => prev - 1)
+                        }}
+                        aria-label="add"
+                        style={{
+                          display: 'block',
+                          position: 'relative',
+                          width: '50px',
+                          height: '50px',
+                          backgroundColor: 'rgb(217, 231, 240)',
+                          marginRight: '20px'
+                        }}
+                      >
+                        <ArrowBackIosNewIcon 
+                          sx={{ 
+                            marginBottom: '-7px', 
+                            marginLeft: '-5px', 
+                            fontSize: '28px', 
+                            color: 'grey' 
+                          }} 
+                        />
+                      </Fab>
+                      <Fab 
+                        onClick={() => {
+                          chapterStep < chapters.length - 1 && setChapterStep(prev => prev + 1)
+                        }}
+                        aria-label="add"
+                        style={{
+                          display: 'block',
+                          position: 'relative',
+                          width: '50px',
+                          height: '50px',
+                          backgroundColor: 'rgb(217, 231, 240)',
+                        }}
+                      >
+                        <ArrowBackIosNewIcon 
+                          sx={{ 
+                            marginBottom: '-7px', 
+                            marginLeft: '5px', 
+                            fontSize: '28px', 
+                            color: 'grey',
+                            transform: 'rotate(180deg)'
+                          }} 
+                        />
+                      </Fab>
+                    </div>
+                  </MasterDocFork.CloseIconContainer>
+                  <MasterDocFork.ContentLine>
+                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '22px' }}>
+                      { chapters[chapterStep].title }
+                    </h3>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '50px' }}/>
-                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '30px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block' }}>Акты выполненных работ</span>
+                  <MasterDocFork.ContentLine>
+                    <span style={{ lineHeight: '24px' }}>{ chapters[chapterStep].description }</span>
+                  </MasterDocFork.ContentLine>
+                  <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
                     <ButtonComponent
-                      inner={"Загрузить акт"} 
+                      inner={"Сдать раздел на проверку"} 
                       type='CONTAINED_DEFAULT' 
                       action={() => console.log('this is button')}
                       actionData={null}
                       widthType={'px'}
-                      widthValue={160}
+                      widthValue={238}
                       children={""}
                       childrenCss={undefined}
                       iconSrc={null}
@@ -589,618 +1612,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       padding: '14px',
                       paddingLeft: '20px',
                       borderRadius: '4px',
-                      marginTop: '0px',
-                      marginBottom: '16px'
+                      marginTop: '22px'
                     }}
-                  >{"Статичные элементы отображаются мне для напоминания, чтоб ничего не забыть"}</span>
-
-                  { Array(2)
-                    .fill({ 
-                      status: 'GREEN', 
-                      data: { 
-                        name: 'элемент-документ-статичный.pdf', 
-                        date: '29.02.2023', 
-                        statusName: 'Подписан' 
-                      }
-                    }).map((item, index) => {
-
-                    return (
-                      <MasterDocFork.ContentLine key={index}>
-                        <DocumentLine
-                          status={item.status}
-                          data={item.data}
-                        />
-                      </MasterDocFork.ContentLine>
-                    )
-
-                  })}
-
-                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '40px', marginBottom: '20px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block' }}>Мастер документы</span>
-                    <div>
-                      <img
-                        alt={""}
-                        src={tillIcon}
-                        style={{ 
-                          width: '24px', 
-                          marginRight: '16px', 
-                          cursor: 'pointer',
-                          opacity: docviewFormat === 'tiles' ? '1' : '0.5' 
-                        }}
-                        onClick={() => setDocviewFormat('tiles')}
-                      />
-                      <img
-                        alt={""}
-                        src={linesIcon}
-                        style={{ 
-                          width: '24px', 
-                          cursor: 'pointer',
-                          opacity: docviewFormat === 'lines' ? '1' : '0.5' 
-                        }}
-                        onClick={() => setDocviewFormat('lines')}
-                      />
-                    </div>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '36px' }}/>
-                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '20px', alignItems: 'flex-end' }}>
-                    <span style={{ fontWeight: '600' }}>Файлы в заказе</span>
-                    <div style={fileSorterCSS}>
-                      <SelectField 
-                        placeholder={"Сортировать по дате"}
-                        params={{ width: 280, mb: '0px', height: 50 }}
-                        data={[
-                          { value: '1', label: 'Вчера' },
-                          { value: '2', label: 'Позавчера' },
-                          { value: '3', label: 'Последний месяц' },
-                        ]}
-                        multy={false}
-                        action={() => {}}
-                        actionType={""}
-                        actionParams={[]}
-                        showIcon={true}
-                        icon={null}
-                        iconStyles={{
-                          marginTop: '-12px',
-                          marginLeft: '6px',
-                          width: '34px',
-                        }}
-                      />
-                      <img
-                        alt={""}
-                        src={arraySortIcon}
-                        style={{ marginLeft: '20px', marginRight: '16px' }}
-                      />
-                    </div>
-                  </MasterDocFork.ContentLine>
-                  { docviewFormat === 'lines' && <React.Fragment>
-                    { Array(2)
-                      .fill({ 
-                        status: 'GREEN', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Подписан',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                      return (
-                        <MasterDocFork.ContentLine key={index}>
-                          <DocumentLine
-                            status={item.status}
-                            data={item.data}
-                          />
-                        </MasterDocFork.ContentLine>
-                      )
-
-                    })}
-                    { Array(1)
-                      .fill({ 
-                        status: 'WHITE', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Ожидает',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                      return (
-                        <MasterDocFork.ContentLine key={index}>
-                          <DocumentLine
-                            status={item.status}
-                            data={item.data}
-                          />
-                        </MasterDocFork.ContentLine>
-                      )
-
-                    })}
-                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '20px', marginTop: '26px', alignItems: 'flex-end' }}>
-                      <span style={{ fontWeight: '600' }}>Раздел Пожарная безопасность</span>
-                    </MasterDocFork.ContentLine>
-                    { Array(2)
-                      .fill({ 
-                        status: 'GREEN', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Подписан',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                      return (
-                        <MasterDocFork.ContentLine key={index}>
-                          <DocumentLine
-                            status={item.status}
-                            data={item.data}
-                          />
-                        </MasterDocFork.ContentLine>
-                      )
-
-                    })}
-                    { Array(1)
-                      .fill({ 
-                        status: 'WHITE', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Ожидает',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                      return (
-                        <MasterDocFork.ContentLine key={index}>
-                          <DocumentLine
-                            status={item.status}
-                            data={item.data}
-                          />
-                        </MasterDocFork.ContentLine>
-                      )
-
-                    })}
-                  </React.Fragment> }
-                  { docviewFormat === 'tiles' && <MasterDocFork.ContentLine style={{ flexWrap: 'wrap' }}>
-                    { Array(2)
-                      .fill({ 
-                        status: 'GREEN', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Подписан',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                        return (
-                          <div style={doctileCSS} key={index}>
-                            <div style={{ position: 'relative' }}>
-                              <img
-                                alt={""}
-                                src={doc}
-                              />
-
-                              { item.status === 'GREEN' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={correct}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-                              { item.status === 'WHITE' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={wait}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-                            
-                            </div>
-                            <div
-                              style={{
-                                display: 'block',
-                                position: 'relative',
-                                width: '100%',
-                                height: '26px',
-                                overflow: 'hidden',
-                                marginTop: '-8px'
-                              }}
-                            >
-                              <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
-                            </div>
-                            <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
-                            <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
-                          </div>
-                        )
-
-                    })}
-                    { Array(8)
-                      .fill({ 
-                        status: 'WHITE', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Ожидает',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                        return (
-                          <div style={doctileCSS} key={index}>
-                            <div style={{ position: 'relative' }}>
-                              <img
-                                alt={""}
-                                src={doc}
-                              />
-
-                              { item.status === 'GREEN' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={correct}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-                              { item.status === 'WHITE' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={wait}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-
-                            </div>
-                            <div
-                              style={{
-                                display: 'block',
-                                position: 'relative',
-                                width: '100%',
-                                height: '26px',
-                                overflow: 'hidden',
-                                marginTop: '-8px'
-                              }}
-                            >
-                              <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
-                            </div>
-                            <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
-                            <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
-                          </div>
-                        )
-
-                    })}
-                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '33px', marginTop: '30px', alignItems: 'flex-end' }}>
-                      <span>Раздел Пожарная безопасность</span>
-                    </MasterDocFork.ContentLine>
-                    { Array(2)
-                      .fill({ 
-                        status: 'GREEN', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Подписан',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                        return (
-                          <div style={doctileCSS} key={index}>
-                            <div style={{ position: 'relative' }}>
-                              <img
-                                alt={""}
-                                src={doc}
-                              />
-
-                              { item.status === 'GREEN' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={correct}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-                              { item.status === 'WHITE' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={wait}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-
-                            </div>
-                            <div
-                              style={{
-                                display: 'block',
-                                position: 'relative',
-                                width: '100%',
-                                height: '26px',
-                                overflow: 'hidden',
-                                marginTop: '-8px'
-                              }}
-                            >
-                              <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
-                            </div>
-                            <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
-                            <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
-                          </div>
-                        )
-
-                    })}
-                    { Array(1)
-                      .fill({ 
-                        status: 'WHITE', 
-                        data: { 
-                          name: 'элемент-документ-статичный.pdf', 
-                          date: '29.02.2023', 
-                          statusName: 'Ожидает',
-                          size: 220
-                        }
-                      }).map((item, index) => {
-
-                        return (
-                          <div style={doctileCSS} key={index}>
-                            <div style={{ position: 'relative' }}>
-                              <img
-                                alt={""}
-                                src={doc}
-                              />
-
-                              { item.status === 'GREEN' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={correct}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-                              { item.status === 'WHITE' && 
-                                <span 
-                                  style={{ 
-                                    width: '24px',  
-                                    display: 'block', 
-                                    position: 'absolute',
-                                    borderRadius: '50%',
-                                    overflow: 'hidden',
-                                    top: '100%',
-                                    left: '100%',
-                                    marginTop: '-30px',
-                                    marginLeft: '-28px' 
-                                  }}
-                                >
-                                  <img 
-                                    alt={""} 
-                                    src={wait}
-                                    style={{
-                                      backgroundColor: 'white',
-                                      display: 'block',
-                                      width: '24px',
-                                    }} 
-                                  /> 
-                                </span>
-                              }
-
-                            </div>
-                            <div
-                              style={{
-                                display: 'block',
-                                position: 'relative',
-                                width: '100%',
-                                height: '26px',
-                                overflow: 'hidden',
-                                marginTop: '-8px'
-                              }}
-                            >
-                              <span style={{ color: greyColor, display: 'block', width: '100%', lineHeight: '26px', fontSize: '12px' }}>{ item.data.name }</span>
-                            </div>
-                            <span style={{ color: greyColor2, marginBottom: '4.4px', fontSize: '12px' }}>{ item.data.date }</span>
-                            <span style={{ color: greyColor2, fontSize: '12px' }}>{ item.data.size } Mb</span>
-                          </div>
-                        )
-
-                    })}
-                  </MasterDocFork.ContentLine> }
-                  <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '33px', marginBottom: '100px' }}>
-                    
-                    { docviewFormat === 'lines' && <div/> }
-                    
-                    <ButtonComponent
-                      inner={"Скачать архивом"} 
-                      type='CONTAINED_DEFAULT' 
-                      action={() => console.log('this is button')}
-                      actionData={null}
-                      widthType={'px'}
-                      widthValue={160}
-                      children={""}
-                      childrenCss={undefined}
-                      iconSrc={null}
-                      iconCss={undefined}
-                      muiIconSize={30}
-                      MuiIconChildren={ArrowUpwardIcon}
-                      css={{
-                        position: 'relative',
-                        boxSizing: 'border-box',
-                        padding: '4px',
-                        backgroundColor: chatBorderColor,
-                        color: greyColor,
-                        width: '56px',
-                        height: '43px',
-                      }}
-                    />
-                  </MasterDocFork.ContentLine>
-
-                </MasterDocFork.ChatContainer>
-            </React.Fragment>
-            : contentType === 'ChapterCC'
-
-            /* ---------------------------------------- */
-            /* базовое окно для раздела
-            /* ---------------------------------------- */
-
-            ? <React.Fragment>
-                <MasterDocFork.ChatContainer style={{ paddingTop: '40px', height: 'auto', minHeight: '100vh' }} backgroundColor={backgroundColor}>
-                  <MasterDocFork.CloseIconContainer>
-                    <MasterDocFork.CloseIcon onClick={showrightContent}>
-                      <img
-                        alt={""} 
-                        src={closeIcon}  
-                      />
-                    </MasterDocFork.CloseIcon>
-                  </MasterDocFork.CloseIconContainer>
-                  <MasterDocFork.ContentLine>
-                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '30px' }}>Пожарная безопасность</h3>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine>
-                    <span style={{ lineHeight: '24px' }}>{"Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin."}</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
-                    <ButtonComponent
-                      inner={"Сдать раздел на проверку"} 
-                      type='CONTAINED_DEFAULT' 
-                      action={() => console.log('this is button')}
-                      actionData={null}
-                      widthType={'px'}
-                      widthValue={238}
-                      children={""}
-                      childrenCss={undefined}
-                      iconSrc={null}
-                      iconCss={undefined}
-                      muiIconSize={30}
-                      MuiIconChildren={ArrowUpwardIcon}
-                      css={{
-                        position: 'relative',
-                        boxSizing: 'border-box',
-                        padding: '4px',
-                        backgroundColor: chatSubmitColor,
-                        width: '56px',
-                        height: '43px',
-                      }}
-                    />
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '44px', alignItems: 'flex-start' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Ответственный</span>
+                  >{"Внимание! Следующие представления на данном этапе являются статичными, нужны чтобы не забыть где лежит верстка этих компонентов"}</span>
+                  <MasterDocFork.ContentLine style={{ marginTop: '33px', alignItems: 'center' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px', fontSize: '15px' }}>Ответственный</span>
                     <div
                       style={{
                         display: 'flex',
@@ -1230,7 +1646,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           marginTop: '-6px'
                         }}
                       >
-                        <span style={{ fontSize: '16px', width: '140px', marginBottom: '6px', lineHeight: '22px', fontWeight: 'bold' }}>Петров Иван Владимирович</span>
+                        <span style={{ fontSize: '16px', width: '230px', marginBottom: '3px', lineHeight: '22px', fontWeight: 'bold' }}>Петров Иван Владимирович</span>
                         <span style={{ fontSize: '14px' }}>Самозанятый</span>
                       </div>
                     </div>
@@ -1244,12 +1660,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         justifyContent: 'flex-start'
                       }}
                     >
-                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '15px' }}>Мастер документы</span>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '15px', fontSize: '15px' }}>Мастер документы</span>
                       <img
                         alt={""}
                         src={infoGrey}
                       />
-                      <span style={{ fontWeight: 'bold', display: 'block', marginLeft: '30px', opacity: 0.5 }}>Вложения</span>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginLeft: '30px', opacity: 0.5, fontSize: '15px' }}>Дополнительные вложения</span>
                     </div>
                     <ButtonComponent
                       inner={"Скачать архивом"} 
@@ -1304,7 +1720,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '40px', marginBottom: '40px' }}/>
-                  { Array(3).fill(0).map((item, index): ReactElement => {
+                  { Array(1).fill(0).map((item, index): ReactElement => {
 
                     return (
                       <MasterDocFork.ContentLine style={{ marginBottom: '8px' }}>
@@ -1332,7 +1748,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                   })}
                   <MasterDocFork.ContentLine style={{ marginTop: '40px', marginBottom: '20px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Общение</span>
+                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px', fontSize: '15px' }}>Общение по разделу</span>
                   </MasterDocFork.ContentLine>
                   <ChatFork.ChatHeader>
                     <div style={divCSS}>
@@ -1356,7 +1772,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                     <div style={divCSS}>
                       <ChatFork.ChatHeaderEnableDocs>
-                        <span style={{ ...lastActiveSpanCSS, fontSize: '15px' }}>Документы</span>
+                        <span style={{ ...lastActiveSpanCSS, fontSize: '14px' }}>Документы разрешены</span>
                         <Switch color={"primary"} defaultChecked />
                       </ChatFork.ChatHeaderEnableDocs>
                       <InputComponent
@@ -1581,7 +1997,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </MasterDocFork.CloseIcon>
                   </MasterDocFork.CloseIconContainer>
                   <MasterDocFork.ContentLine>
-                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '30px' }}>Экспертиза</h3>
+                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '28px' }}>Экспертиза</h3>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between' }}>
                     <div 
@@ -1589,7 +2005,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
-                        justifyContent: 'flex-start'
+                        justifyContent: 'flex-start',
+                        fontSize: '15px'
                       }}
                     >
                       <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Негосударственная</span>
@@ -1650,7 +2067,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         justifyContent: 'flex-start'
                       }}
                     >
-                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '15px' }}>Мастер документы</span>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '15px', fontSize: '15px' }}>Мастер документы</span>
                       <img
                         alt={""}
                         src={infoGrey}
@@ -1710,7 +2127,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '44px', alignItems: 'flex-start' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Ответственный</span>
+                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px', fontSize: '15px' }}>Ответственный</span>
                     <div
                       style={{
                         display: 'flex',
@@ -2026,7 +2443,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '200px', lineHeight: '22px' }}>Текущая стоимость заказа</span>
-                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>200 000</span>
+                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>
+                      { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.value : 'Нет данных' }  
+                    </span>
                     <div 
                       style={{
                         display: 'flex',
@@ -2038,7 +2457,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     >
                       <InputComponent
-                        type={'TEXT_INPUT_OUTLINE'}
+                        type={'TEXT_INPUT_OUTLINE_CHANGE_AGREE'}
                         valueType='text'
                         required={false}
                         widthType={'%'}
@@ -2049,6 +2468,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         isDisabled={false}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
+                        store={[ "NEW_COAST", () => null ]}
                         css={{
                           fontSize: '12px',
                           position: 'relative',
@@ -2066,7 +2486,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         heightValue={'56px'}
                         label={"Дата окончания"}
                         isError={false}
-                        isDisabled={false}
+                        isDisabled={true}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
                         css={{
@@ -2081,7 +2501,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '200px', lineHeight: '22px' }}>Текущая стоимость аванса</span>
-                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>50 000</span>
+                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>
+                      { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.prepay : 'Нет данных' } 
+                    </span>
                     <div 
                       style={{
                         display: 'flex',
@@ -2093,7 +2515,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     >
                       <InputComponent
-                        type={'TEXT_INPUT_OUTLINE'}
+                        type={'TEXT_INPUT_OUTLINE_CHANGE_AGREE'}
                         valueType='text'
                         required={false}
                         widthType={'%'}
@@ -2104,6 +2526,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         isDisabled={false}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
+                        store={[ "NEW_PREPAY", () => null ]}
                         css={{
                           fontSize: '12px',
                           position: 'relative',
@@ -2121,7 +2544,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         heightValue={'56px'}
                         label={"Срок принятия решения"}
                         isError={false}
-                        isDisabled={false}
+                        isDisabled={true}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
                         css={{
@@ -2136,7 +2559,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '200px', lineHeight: '22px' }}>Текущая стоимость экспертизы</span>
-                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>200 000</span>
+                    <span style={{ fontWeight: '700', display: 'block', fontSize: '18px' }}>
+                      { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.exper : 'Нет данных' } 
+                    </span>
                     <div 
                       style={{
                         display: 'flex',
@@ -2148,7 +2573,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     >
                       <InputComponent
-                        type={'TEXT_INPUT_OUTLINE'}
+                        type={'TEXT_INPUT_OUTLINE_CHANGE_AGREE'}
                         valueType='text'
                         required={false}
                         widthType={'%'}
@@ -2159,6 +2584,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         isDisabled={false}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
+                        store={[ "NEW_EXPERT", () => null ]}
                         css={{
                           fontSize: '12px',
                           position: 'relative',
@@ -2176,7 +2602,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         heightValue={'56px'}
                         label={"Дата экспертизы"}
                         isError={false}
-                        isDisabled={false}
+                        isDisabled={true}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
                         css={{
@@ -2190,16 +2616,16 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '40px', marginBottom: '0px' }}/>
-                  <MasterDocFork.ContentLine style={{ marginTop: '44px' }}>
+                  <MasterDocFork.ContentLine style={{ marginTop: '43px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Добавить или удалить раздел</span>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '44px' }}>
+                  <MasterDocFork.ContentLine style={{ marginTop: '110px' }}>
                     <ChapterController 
                       isBottomButton={false}
                       marginBott={"0px"}
                     />
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '90px', marginBottom: '20px' }}>
+                  <MasterDocFork.ContentLine style={{ marginTop: '90px', marginBottom: '11px' }}>
                     <span
                       style={{
                         display: 'flex',
@@ -2229,17 +2655,18 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '20px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE'}
+                      type={'TEXT_INPUT_OUTLINE_CHANGE_AGREE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
                       widthValue={100}
                       heightValue={'50px'}
-                      label={"Lorem ipsum dolor sit amet consectetur adipisicing elit"}
+                      label={"Вы можете изменить описание задачи"}
                       isError={false}
-                      isDisabled={true}
+                      isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
+                      store={[ "NEW_TEXT", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -2295,7 +2722,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Дополнительное соглашение</h3>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
-                    <span style={{ display: 'block', marginRight: '80px' }}>Исполнитель предлагает внести следующие изменения</span>
+                    <span style={{ display: 'block', marginRight: '80px', fontSize: '15px' }}>Исполнитель предлагает внести следующие изменения</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '44px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Изменить стоимость и сроки</span>
@@ -2303,111 +2730,129 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px', boxSizing: 'border-box', paddingRight: '40px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '30%', lineHeight: '22px' }}>Текущая стоимость заказа</span>
                     <div style={{ width: '15%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>200 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>
+                        { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.value : 'Нет данных' } 
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '35%', lineHeight: '22px' }}>Новая стоимость заказа</span>
                     <div style={{ width: '10%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>230 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>
+                        { NEW_AGREE_COAST ? NEW_AGREE_COAST : 0 }
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px', boxSizing: 'border-box', paddingRight: '40px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '30%', lineHeight: '22px' }}>Текущая стоимость аванса</span>
                     <div style={{ width: '15%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>50 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>
+                        { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.prepay : 'Нет данных' }
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '35%', lineHeight: '22px' }}>Новая стоимость аванса</span>
                     <div style={{ width: '10%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>60 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>
+                        { NEW_AGREE_PREPAY ? NEW_AGREE_PREPAY : 0 }
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '34px', boxSizing: 'border-box', paddingRight: '40px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '30%', lineHeight: '22px' }}>Текущая стоимость экспертизы</span>
                     <div style={{ width: '15%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>200 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', textAlign: 'left' }}>
+                        { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].coast.exper : 'Нет данных' }
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                     <span style={{ fontWeight: 'bold', display: 'block', width: '35%', lineHeight: '22px' }}>Новая стоимость экспертизы</span>
                     <div style={{ width: '10%' }}>
-                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>220 000</span>
+                      <span style={{ fontWeight: '700', display: 'block', fontSize: '18px', color: chatSubmitColor }}>
+                        { NEW_AGREE_EXPERT ? NEW_AGREE_EXPERT : 0 }
+                      </span>
                       <span style={{ fontSize: '12px', marginTop: '5px', display: 'block' }}>{"до 10.03.2023"}</span>
                     </div>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '40px', marginBottom: '0px' }}/>
-                  <MasterDocFork.ContentLine style={{ marginTop: '44px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Добавить или удалить раздел</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
-                    <span style={{ display: 'block', marginRight: '80px' }}>{"Раздел удален"}</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '10px' }}>
-                    <span style={{ display: 'block', marginRight: '80px', fontWeight: 'bold', color: chatSubmitColor }}>{"Пожарная безопасность"}</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '34px' }}>
-                    <ChapterController 
-                      isBottomButton={false}
-                      marginBott={"0px"}
-                    />
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '110px' }}>
-                    <span style={{ display: 'block', marginRight: '80px' }}>{"Раздел добавлен"}</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '10px' }}>
-                    <span style={{ display: 'block', marginRight: '80px', fontWeight: 'bold', color: chatSubmitColor }}>{"Вентиляция"}</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '34px' }}>
-                    <ChapterController 
-                      isBottomButton={false}
-                      marginBott={"0px"}
-                    />
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '100px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Вентиляция</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
-                    <span style={{ lineHeight: '22px' }}>{ localText }</span>
-                  </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '24px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block' }}>Вложения</span>
-                  </MasterDocFork.ContentLine>
-                  { Array(2)
-                    .fill({ 
-                      status: 'WHITE', 
-                      data: { 
-                        name: 'Акт_выполненных работ.pdf', 
-                        date: '29.02.2023', 
-                        statusName: 'Предложен' 
-                      }
-                    }).map((item, index) => {
+                  { false && <React.Fragment>
+                    <MasterDocFork.ContentLine style={{ marginTop: '44px' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Добавить или удалить раздел</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '30px' }}>
+                      <span style={{ display: 'block', marginRight: '80px' }}>{"Раздел удален"}</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '10px' }}>
+                      <span style={{ display: 'block', marginRight: '80px', fontWeight: 'bold', color: chatSubmitColor }}>{"Пожарная безопасность"}</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '104px' }}>
+                      <ChapterController 
+                        isBottomButton={false}
+                        marginBott={"0px"}
+                      />
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '110px' }}>
+                      <span style={{ display: 'block', marginRight: '80px' }}>{"Раздел добавлен"}</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '10px' }}>
+                      <span style={{ display: 'block', marginRight: '80px', fontWeight: 'bold', color: chatSubmitColor }}>{"Вентиляция"}</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '104px' }}>
+                      <ChapterController 
+                        isBottomButton={false}
+                        marginBott={"0px"}
+                      />
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '100px' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Название нового раздела</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '20px' }}>
+                      <span style={{ lineHeight: '22px' }}>{ localText }</span>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '24px' }}>
+                      <span style={{ fontWeight: 'bold', display: 'block' }}>Вложения</span>
+                    </MasterDocFork.ContentLine>
+                    { Array(2)
+                      .fill({ 
+                        status: 'WHITE', 
+                        data: { 
+                          name: 'Акт_выполненных работ.pdf', 
+                          date: '29.02.2023', 
+                          statusName: 'Предложен' 
+                        }
+                      }).map((item, index) => {
 
-                    return (
-                      <MasterDocFork.ContentLine key={index}>
-                        <DocumentLine
-                          status={item.status}
-                          data={item.data}
-                        />
-                      </MasterDocFork.ContentLine>
-                    )
+                      return (
+                        <MasterDocFork.ContentLine key={index}>
+                          <DocumentLine
+                            status={item.status}
+                            data={item.data}
+                          />
+                        </MasterDocFork.ContentLine>
+                      )
 
-                  })}
-                  <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '34px', marginBottom: '35px' }}/>
-                  <MasterDocFork.ContentLine>
+                    })}
+                    <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '34px', marginBottom: '35px' }}/>
+                  </React.Fragment> }
+                  <MasterDocFork.ContentLine style={{ marginTop: !false && '42px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Описание задачи</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '14px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block' }}>Прежнее описание</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
-                    <span style={{ lineHeight: '22px' }}>{ localText }</span>
+                    <span style={{ lineHeight: '24px' }}>
+                      { ordersList.length > 0 ? ordersList.filter(item => item.id === selectTask)[0].description : '' }
+                    </span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '14px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block' }}>Предлагаемое описание</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
-                    <span style={{ lineHeight: '22px', color: chatSubmitColor }}>{ localText }</span>
+                    <span style={{ lineHeight: '24px', color: chatSubmitColor }}>
+                      { NEW_AGREE_TEXT ? NEW_AGREE_TEXT : 'Нового описания не предлагается' }
+                    </span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-around', marginTop: '60px', marginBottom: '60px' }}>
                     <ButtonComponent
@@ -2454,8 +2899,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '22px' }}>
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Консультация юриста</h3>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginBottom: '30px' }}>
-                    <span style={{ lineHeight: '22px' }}>{"Чтобы открыть спор или получить консультацию юриста, заполните форму ниже"}</span>
+                  <MasterDocFork.ContentLine style={{ marginBottom: '32px' }}>
+                    <span style={{ lineHeight: '24px' }}>{"Чтобы открыть спор или получить консультацию юриста, заполните форму ниже"}</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
                     <SelectField 
@@ -2545,7 +2990,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: 0 }}>Карточка спора</h3>
                     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start' }}>
-                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '30px' }}>Юрист</span>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginRight: '30px' }}>Ответственный юрист</span>
                       <div
                         style={{
                           display: 'flex',
@@ -2575,12 +3020,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             marginTop: '0px'
                           }}
                         >
-                          <span style={{ fontSize: '16px', width: '200px', marginBottom: '0px', lineHeight: '22px', fontWeight: '500' }}>Петров Иван Владимирович</span>
+                          <span style={{ fontSize: '15px', width: '240px', marginBottom: '0px', lineHeight: '22px', fontWeight: '500' }}>Юридическая поддержка</span>
                         </div>
                       </div>
                     </div>
                   </MasterDocFork.ContentLine>
-                  <MasterDocFork.ContentLine style={{ marginTop: '34px', marginBottom: '24px' }}>
+                  <MasterDocFork.ContentLine style={{ marginTop: '12px', marginBottom: '24px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '18px' }}>Содержание претензии</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginBottom: '0px' }}>
@@ -2675,7 +3120,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine>
                     <MasterDocFork.WhiteContainer width={"50%"} style={{ height: '150px' }}>
-                      <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '20px' }}>В чью пользу</span>
+                      <span style={{ fontWeight: 'bold', display: 'block', marginBottom: '20px' }}>Решение в пользу</span>
                       <div
                         style={{
                           display: 'flex',
@@ -2737,13 +3182,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           marginTop: '5px'
                         }}
                       >
-                        <span style={{ display: 'block', width: '50%' }}>Истец</span>
+                        <span style={{ display: 'block', width: '50%' }}>Заявитель</span>
                         <span style={{ display: 'block', width: '50%' }}>Ответчик</span>
                       </div>
                     </MasterDocFork.WhiteContainer>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginTop: '30px', marginBottom: '16px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', width: '50%' }}>Комментарий юриста</span>
+                    <span style={{ fontWeight: 'bold', display: 'block', width: '50%', fontSize: '15px' }}>Комментарий юриста</span>
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ marginBottom: '30px' }}>
                     <span style={{ lineHeight: '24px' }}>{ localText }</span>
@@ -2797,8 +3242,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     />
                   </MasterDocFork.ContentLine>
                   <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '0px', marginBottom: '10px' }}/>
-                  <MasterDocFork.ContentLine style={{ marginTop: '0px', marginBottom: '20px' }}>
-                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px' }}>Общение</span>
+                  <MasterDocFork.ContentLine style={{ marginTop: '12px', marginBottom: '20px' }}>
+                    <span style={{ fontWeight: 'bold', display: 'block', marginRight: '80px', fontSize: '15px' }}>Общение по карточке спора</span>
                   </MasterDocFork.ContentLine>
                   <ChatFork.ChatHeader>
                     <div style={divCSS}>
@@ -3075,12 +3520,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                               EXECUTOR[0].avatar === '6' ? womanAvatar : bearAvatar
                             }
                             style={
-                              EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
-                              EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
-                              EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
-                              EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
-                              EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
-                              EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                              EXECUTOR[0].avatar === '1' ? { width: '100px', marginTop: '14px' } :
+                              EXECUTOR[0].avatar === '2' ? { width: '100px', marginTop: '8px'  } :
+                              EXECUTOR[0].avatar === '3' ? { width: '90px', marginTop: '10px' } :
+                              EXECUTOR[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                              EXECUTOR[0].avatar === '5' ? { width: '100px', marginTop: '40px' } :
+                              EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '40px'  } : 
                               { width: '100px', marginTop: '6px' }
                             }
                             onClick={changeAvatar}
@@ -3098,12 +3543,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                               CUSTOMER[0].avatar === '6' ? womanAvatar : bearAvatar
                             }
                             style={
-                              CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '48px' } :
-                              CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '36px'  } :
-                              CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '40px' } :
-                              CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '84px' } :
-                              CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '66px' } :
-                              CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '66px'  } : 
+                              CUSTOMER[0].avatar === '1' ? { width: '100px', marginTop: '14px' } :
+                              CUSTOMER[0].avatar === '2' ? { width: '100px', marginTop: '8px'  } :
+                              CUSTOMER[0].avatar === '3' ? { width: '90px', marginTop: '10px' } :
+                              CUSTOMER[0].avatar === '4' ? { width: '140px', marginTop: '44px' } :
+                              CUSTOMER[0].avatar === '5' ? { width: '100px', marginTop: '40px' } :
+                              CUSTOMER[0].avatar === '6' ? { width: '100px', marginTop: '40px'  } : 
                               { width: '100px', marginTop: '6px' }
                             }
                             onClick={changeAvatar}
@@ -3578,7 +4023,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3589,7 +4034,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_NAME", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3620,8 +4065,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           { value: '1', label: 'Месяц - Январь' },
                         ]}
                         multy={false}
-                        action={setSpec}
-                        actionType={"AUTH_SPEC_TYPE"}
+                        action={changeSM}
+                        actionType={"NEW_CASE"}
                         actionParams={[]}
                         showIcon={true}
                         icon={null}
@@ -3634,7 +4079,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                     <div style={{ display: 'block', width: '23%' }}>
                       <InputComponent
-                        type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                        type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                         valueType='text'
                         required={false}
                         widthType={'%'}
@@ -3645,7 +4090,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         isDisabled={false}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
-                        store={[ "ABOUT_TEXT", () => null ]}
+                        store={[ "CASE_SY", () => null ]}
                         css={{
                           fontSize: '12px',
                           position: 'relative',
@@ -3659,14 +4104,14 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     <span style={{ display: 'block', width: '16px' }}/>
                     <div style={{ display: 'block', width: '27%', paddingRight: '16px' }}>
                       <SelectFieldPercent 
-                        placeholder={"Начало проекта"}
+                        placeholder={"Окончание проекта"}
                         params={{ width: 100, mb: '0px', height: 50 }}
                         data={[
                           { value: '1', label: 'Месяц - Январь' },
                         ]}
                         multy={false}
-                        action={setSpec}
-                        actionType={"AUTH_SPEC_TYPE"}
+                        action={changeFM}
+                        actionType={"NEW_CASE"}
                         actionParams={[]}
                         showIcon={true}
                         icon={null}
@@ -3679,7 +4124,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </div>
                     <div style={{ display: 'block', width: '23%' }}>
                       <InputComponent
-                        type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                        type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                         valueType='text'
                         required={false}
                         widthType={'%'}
@@ -3690,7 +4135,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         isDisabled={false}
                         labelShrinkLeft={"0px"}
                         innerLabel={null}
-                        store={[ "ABOUT_TEXT", () => null ]}
+                        store={[ "CASE_FY", () => null ]}
                         css={{
                           fontSize: '12px',
                           position: 'relative',
@@ -3704,7 +4149,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   { Array(actsCounter).fill(null).map((item, index) => <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3715,7 +4160,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_PAY", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3817,26 +4262,26 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
                     <ButtonComponent
-                      inner={"Добавить файлы"} 
-                      type='CONTAINED_DEFAULT' 
-                      action={changeAboutText}
-                      actionData={null}
+                      inner={'Добавить вложение'} 
+                      type='UPLOAD' 
+                      action={() => {}}
+                      actionData={[ newCaseFile ]}
                       widthType={'px'}
-                      widthValue={270}
-                      children={""}
+                      widthValue={280}
+                      children={''}
                       childrenCss={undefined}
                       iconSrc={null}
                       iconCss={undefined}
-                      muiIconSize={30}
-                      MuiIconChildren={ArrowUpwardIcon}
+                      muiIconSize={null}
+                      MuiIconChildren={EmailIcon}
                       css={{
+                        backgroundColor: 'rgb(217, 231, 240)',
+                        color: 'rgb(81, 102, 116)',
+                        fontSize: '12px',
+                        height: '46px',
+                        borderRadius: '6px',
                         position: 'relative',
                         boxSizing: 'border-box',
-                        padding: '4px',
-                        backgroundColor: 'rgb(217, 231, 240)',
-                        color: 'black',
-                        width: '56px',
-                        height: '43px',
                       }}
                     />
                   </EditProjectsEducationFork.ContentLine>
@@ -3860,7 +4305,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       action={changeAboutText}
                       actionData={null}
                       widthType={'px'}
-                      widthValue={270}
+                      widthValue={280}
                       children={""}
                       childrenCss={undefined}
                       iconSrc={null}
@@ -3874,7 +4319,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         backgroundColor: 'rgb(217, 231, 240)',
                         color: 'black',
                         width: '56px',
-                        height: '43px',
+                        height: '46px',
                       }}
                     />
                   </EditProjectsEducationFork.ContentLine>
@@ -3883,7 +4328,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3894,7 +4339,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_P1", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3906,7 +4351,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     />
                     <span style={{ display: 'block', width: '16px' }}/>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3917,7 +4362,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_P2", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3930,7 +4375,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3941,7 +4386,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_P3", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -3956,11 +4401,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       placeholder={"Регион проекта"}
                       params={{ width: 50, mb: '0px', height: 50 }}
                       data={[
-                        { value: '1', label: 'Загрузка данных...' },
+                        { value: '1', label: 'Любой произвольный город' },
                       ]}
                       multy={false}
-                      action={setSpec}
-                      actionType={"AUTH_SPEC_TYPE"}
+                      action={changeCaseRegion}
+                      actionType={"NEW_CASE"}
                       actionParams={[]}
                       showIcon={true}
                       icon={null}
@@ -3976,7 +4421,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
                     <InputComponent
-                      type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                      type={'TEXT_INPUT_OUTLINE_NEW_CASE'}
                       valueType='text'
                       required={false}
                       widthType={'%'}
@@ -3987,7 +4432,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       isDisabled={false}
                       labelShrinkLeft={"0px"}
                       innerLabel={null}
-                      store={[ "ABOUT_TEXT", () => null ]}
+                      store={[ "CASE_TEXT", () => null ]}
                       css={{
                         fontSize: '12px',
                         position: 'relative',
@@ -4038,8 +4483,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         { value: 'Иная документация', label: 'Иная документация' }
                       ]}
                       multy={false}
-                      action={setSpec}
-                      actionType={"AUTH_SPEC_TYPE"}
+                      action={changeCaseTags}
+                      actionType={"NEW_CASE"}
                       actionParams={[]}
                       showIcon={true}
                       icon={null}
@@ -4054,7 +4499,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     <ButtonComponent
                       inner={"Сохранить новый проект"} 
                       type='CONTAINED_DEFAULT' 
-                      action={() => {}}
+                      action={sendCase}
                       actionData={null}
                       widthType={'px'}
                       widthValue={240}

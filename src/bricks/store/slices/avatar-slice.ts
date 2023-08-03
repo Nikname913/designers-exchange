@@ -8,7 +8,7 @@ const avatarReducer = createSlice({
   initialState,
   reducers: {
     setAvatarFile(state, action: PayloadAction<number>) {
-      state.avatarFile= action.payload
+      state.avatarFile = action.payload
     },
   }
 })
