@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
@@ -20,6 +23,7 @@ import { setTitle,
   resetTechTaskFile,
   setTags
  } from '../../../store/slices/create-task-slice'
+import { selectActualTask } from '../../../store/slices/task-content-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
 import FormGroup from '@mui/material/FormGroup'
@@ -138,16 +142,59 @@ const CreateTaskPage: React.FC = () => {
 
   const addTaskData = () => {
 
-    false && console.log(TASK_DATE_START)
-    false && console.log(TASK_DATE_FINISH)
+    console.log(TASK_TAGS)
 
-    SET_CREATE_TASK_REQUEST(true)
+    // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
+    //   TASK_TITLE.length > 5    &&
+    //   TASK_COAST               &&
+    //   TASK_PREPAY              && 
+    //   TASK_PREPAY_DAYS         &&
+    //   TASK_EXPERT_DAYS         &&
+    //   TASK_EXPERT_COAST        &&
+    //   TASK_DATE_START          &&
+    //   TASK_DATE_FINISH         &&
+    //   TASK_OP_SQUARE           &&
+    //   TASK_OP_STOREYS          &&
+    //   TASK_OP_HEIGHT           &&
+    //   TASK_DESCRIPTION         && 
+    //   USER_ID                  &&
+    //   TASK_CHAPTERS.length > 0 &&
+    //   TASK_TAGS.length > 0
+    // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
 
-    setTimeout(() => { SET_CREATE_TASK_TTDF_REQUEST(true) }, 1300)
+    if ( 
 
-    dispatch(setShow(true))
-    dispatch(setType('success'))
-    dispatch(setMessage('Вы успешно разместили новое задание'))
+      TASK_TITLE.length > 5     &&
+      TASK_COAST                &&
+      TASK_DESCRIPTION          && 
+      TASK_DATE_START           &&
+      TASK_DATE_FINISH          &&
+      USER_ID                   &&
+      TASK_TECH_FILE.length > 0 &&
+      ( TASK_TECH_FILE[0].name.indexOf('.txt') !== -1  || 
+      TASK_TECH_FILE[0].name.indexOf('.doc') !== -1  ||
+      TASK_TECH_FILE[0].name.indexOf('.docx') !== -1 ||
+      TASK_TECH_FILE[0].name.indexOf('.pdf') !== -1 )
+
+     ) {
+
+      SET_CREATE_TASK_REQUEST(true)
+
+      setTimeout(() => { SET_CREATE_TASK_TTDF_REQUEST(true) }, 1300)
+
+      dispatch(setShow(true))
+      dispatch(setType('success'))
+      dispatch(setMessage('Вы успешно разместили новое задание'))
+
+    } else {
+
+      dispatch(setShow(true))
+      dispatch(setType('error'))
+      dispatch(setMessage('Заполните, пожалуйста, все необходимые данные'))
+
+    }
 
     false && dispatch(setTitle(''))
     false && dispatch(setCoast(''))
@@ -453,6 +500,29 @@ const CreateTaskPage: React.FC = () => {
 
   }, [ TASK_TAGS ])
 
+  useEffect(() => { dispatch(selectActualTask('')) }, [])
+  useEffect(() => {
+
+    return () => {
+
+      dispatch(setTitle(''))
+      dispatch(setCoast(''))
+      dispatch(setPrepay(''))
+      dispatch(setPrepayDays(''))
+      dispatch(setExpertiseCoast(''))
+      dispatch(setDescription(''))
+      dispatch(setObjectParamsSquare(''))
+      dispatch(setObjectParamsStoreys(''))
+      dispatch(setObjectParamsHeight(''))
+      dispatch(setChapters([]))
+      dispatch(setChapterLN(''))
+      dispatch(setChapterLD(''))
+      dispatch(resetTechTaskFile(''))
+      dispatch(setTags([]))
+    }
+
+  }, [])
+
   return (
     <ContentArea
       flexDirection={null}
@@ -612,7 +682,7 @@ const CreateTaskPage: React.FC = () => {
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '24px' }}>
-          <Checkbox {...label} disabled />
+          <Checkbox {...label} checked disabled />
           <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
         </div>
         <ButtonComponent
@@ -989,7 +1059,7 @@ const CreateTaskPage: React.FC = () => {
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Обшая площадь"}
+            label={"Общая площадь"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
@@ -1024,7 +1094,7 @@ const CreateTaskPage: React.FC = () => {
             }}
           />
           <span style={spanDelimiterCSS} />
-          <InputComponent
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
@@ -1044,9 +1114,7 @@ const CreateTaskPage: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
-          />
-        </TextFieldContainerLine>
-        <TextFieldContainerLine style={{ marginTop: '8px' }}>
+          /> }
           <SelectField 
             placeholder={"Тип постройки"}
             params={{ width: 50, mb: '16px', height: 50 }}
@@ -1065,8 +1133,47 @@ const CreateTaskPage: React.FC = () => {
               width: '34px',
             }}
           />
+        </TextFieldContainerLine>
+        <TextFieldContainerLine style={{ marginTop: '8px' }}>
+          { false && <SelectField 
+            placeholder={"Тип постройки"}
+            params={{ width: 50, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Промышленные здания' },
+            ]}
+            multy={false}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          /> }
+          <SelectField 
+            placeholder={"Назначение"}
+            params={{ width: 50, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Складские помещения' },
+            ]}
+            multy={false}
+            action={() => {}}
+            actionType={""}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
+          />
           <span style={spanDelimiterCSS} />
-          <InputComponent
+          <span style={{ ...spanDelimiterCSS, width: '50%' }} />
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
@@ -1086,10 +1193,10 @@ const CreateTaskPage: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
-          />
+          /> }
         </TextFieldContainerLine>
-        <TextFieldContainerLine style={{ marginTop: '8px' }}>
-          <SelectField 
+        <TextFieldContainerLine style={{ marginTop: '0px' }}>
+          { false && <SelectField 
             placeholder={"Назначение"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
@@ -1106,7 +1213,8 @@ const CreateTaskPage: React.FC = () => {
               marginLeft: '6px',
               width: '34px',
             }}
-          />
+          /> }
+          <span style={{ ...spanDelimiterCSS, width: '50%' }} />
           <span style={spanDelimiterCSS} />
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
@@ -1135,7 +1243,7 @@ const CreateTaskPage: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '22px' }}>
+        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '10px' }}>
           <div style={{ ...divHalfWidthCSS }}>
             <TextFieldTitle>Техническое задание</TextFieldTitle>
           </div>
@@ -1201,13 +1309,14 @@ const CreateTaskPage: React.FC = () => {
           </div>
         </TextFieldContainerLine>
         { TASK_TECH_FILE.length > 0 && <TextFieldContainerLine style={{ marginBottom: '0px' }}>
-          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '12px' }}>
+          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '15px' }}>
             { TASK_TECH_FILE.filter(
               
               fileData => (
-                fileData.name.indexOf('.txt') !== -1 || 
-                fileData.name.indexOf('.doc') !== -1 ||
-                fileData.name.indexOf('.docx') !== -1 )).map(fileData => {
+                fileData.name.indexOf('.txt') !== -1  || 
+                fileData.name.indexOf('.doc') !== -1  ||
+                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.pdf') !== -1 )).map(fileData => {
 
               return (
                 <div 
@@ -1222,13 +1331,13 @@ const CreateTaskPage: React.FC = () => {
                     style={{ 
                       display: 'block', 
                       position: 'relative', 
-                      lineHeight: '28px', 
+                      lineHeight: '23px', 
                       fontWeight: 'bold',
                       color: 'rgb(81, 102, 116)',
                       cursor: 'pointer',
                       marginRight: '8px'
                     }}
-                  >{`Приложение тех. задание: ${fileData.name}`}</span>
+                  >{`Вложение тех. задание: ${fileData.name}`}</span>
                   <CloseIcon 
                     style={{ width: '16px', cursor: 'pointer' }}
                     onClick={() => removeFile(fileData.name)}
@@ -1241,7 +1350,8 @@ const CreateTaskPage: React.FC = () => {
             { TASK_TECH_FILE.filter(fileData => (
                 fileData.name.indexOf('.txt')  !== -1 || 
                 fileData.name.indexOf('.doc')  !== -1 ||
-                fileData.name.indexOf('.docx') !== -1 )).length === 0 && <div 
+                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.pdf') !== -1 )).length === 0 && <div 
                   style={{ 
                     display: 'flex', 
                     flexDirection: 'row', 
@@ -1269,7 +1379,7 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine> }
         <TextFieldTitle 
           style={{ 
-            marginTop: '22px', 
+            marginTop: '12px', 
             marginBottom: '106px',
             cursor: 'pointer'
           }}
@@ -1617,6 +1727,62 @@ const CreateTaskPage: React.FC = () => {
             />
           </TextFieldContainerLine>
         </React.Fragment> }
+        <TextFieldContainerLine>
+          <ButtonComponent
+            inner={'Сохранить'} 
+            type='OUTLINED' 
+            action={addDraftData}
+            actionData={null}
+            widthType={'%'}
+            widthValue={100}
+            children={''}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={null}
+            MuiIconChildren={EmailIcon}
+            css={{
+              backgroundColor: uploadButtonBackground,
+              color: blackColor,
+              border: 'none',
+              fontSize: '12px',
+              height: '55px',
+              borderRadius: '6px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginTop: '0px',
+              boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
+            }}
+          />
+        </TextFieldContainerLine>
+        <TextFieldContainerLine>
+          <ButtonComponent
+            inner={'Опубликовать'} 
+            type='OUTLINED' 
+            action={addTaskData}
+            actionData={null}
+            widthType={'%'}
+            widthValue={100}
+            children={''}
+            childrenCss={undefined}
+            iconSrc={null}
+            iconCss={undefined}
+            muiIconSize={null}
+            MuiIconChildren={EmailIcon}
+            css={{
+              backgroundColor: stepContainerRoundColor,
+              color: 'white',
+              fontSize: '12px',
+              height: '55px',
+              borderRadius: '6px',
+              position: 'relative',
+              boxSizing: 'border-box',
+              marginTop: '16px',
+              marginBottom: '37px',
+              boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
+            }}
+          />
+        </TextFieldContainerLine>
       </CustExecContentInnerArea>
     </ContentArea>
   )

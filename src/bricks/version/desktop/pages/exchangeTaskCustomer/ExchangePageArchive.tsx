@@ -15,7 +15,9 @@ const ExchangePage: React.FC = () => {
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
   const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID) 
   const greyColor = useAppSelector(state => state.theme.grey)
 
   const divCSS: React.CSSProperties = {
@@ -53,6 +55,7 @@ const ExchangePage: React.FC = () => {
 
   const orders = (): void => {
     TASKS_LIST.list.filter(item => item.status === 'work').length > 0 && navigate('/active-orders-cust')
+    TASKS_LIST.list.filter(item => item.status === 'work').length === 0 && navigate('/active-orders-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
@@ -73,9 +76,21 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Архивные заказы</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания ( Null {/*TASKS_LIST.list.filter(item => item.status === 'searching').length*/} )</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ( Null {/*TASKS_LIST.list.filter(item => item.status === 'work').length*/} )</span>
-          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>
+            Задания ({ 
+              TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => item.customer === USER_ID).length 
+            })
+          </span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>
+            В работе ({
+              TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.customer === USER_ID).length
+            })
+          </span>
+          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>
+            Архивные ({ 
+              TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.customer === USER_ID).length 
+            })
+          </span>
         </div>
       </div>
       <MenuContainer>
@@ -101,30 +116,33 @@ const ExchangePage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        { TASKS_LIST.list.filter(item => item.status === 'backside').map((item, index) => {
-          return (
-            <TaskTable key={index}
-              viewType={"complete"}
-              taskInitDate={item.date}
-              taskTitle={item.name}
-              taskDeadline={item.deadline}
-              taskExpertType={item.exper}
-              taskCustomer={item.customer}
-              taskExecutor={item.executor}
-              taskLocation={item.region}
-              taskSpecializationTags={item.tags}
-              taskDescription={item.description}
-              dealStatus={item.status}
-              cardWidth={'100%'}
-              marbo={"16px"}
-              deal={{
-                type: item.coast.issafe === true ? 'safe' : 'simple',
-                coast: item.coast.value,
-                prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
-                expert: item.coast.issafe === true ? item.coast.exper : 0,
-              }}
-            />
-          )
+        { TASKS_LIST.listOrdersComplete
+          .filter(item => item.status === 'backside')
+          .filter(item => item.customer === USER_ID)
+          .map((item, index) => {
+            return (
+              <TaskTable key={index}
+                viewType={"complete"}
+                taskInitDate={item.date}
+                taskTitle={item.name}
+                taskDeadline={item.deadline}
+                taskExpertType={item.exper}
+                taskCustomer={item.customer}
+                taskExecutor={item.executor}
+                taskLocation={item.region}
+                taskSpecializationTags={item.tags}
+                taskDescription={item.description}
+                dealStatus={item.status}
+                cardWidth={'100%'}
+                marbo={"16px"}
+                deal={{
+                  type: item.coast.issafe === true ? 'safe' : 'simple',
+                  coast: item.coast.value,
+                  prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                  expert: item.coast.issafe === true ? item.coast.exper : 0,
+                }}
+              />
+            )
         })}
 
         <PagintationContainer>

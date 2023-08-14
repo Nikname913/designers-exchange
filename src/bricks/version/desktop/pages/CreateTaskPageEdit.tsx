@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
@@ -145,14 +148,36 @@ const CreateTaskPageEdit: React.FC = () => {
 
   const addTaskData = () => {
 
-    false && console.log(TASK_DATE_START)
-    false && console.log(TASK_DATE_FINISH)
+    false && SET_CREATE_TASK_REQUEST(true)
+    
+    setTimeout(() => { 
+      
+      if ( 
+        
+        TASK_TECH_FILE.length > 0 &&
+        ( TASK_TECH_FILE[0].name.indexOf('.txt') !== -1  || 
+        TASK_TECH_FILE[0].name.indexOf('.doc') !== -1    ||
+        TASK_TECH_FILE[0].name.indexOf('.docx') !== -1   ||
+        TASK_TECH_FILE[0].name.indexOf('.pdf') !== -1 )
 
-    SET_CREATE_TASK_REQUEST(true)
-    SET_CREATE_TASK_TTDF_REQUEST(true)
+      ) 
+      
+        { SET_CREATE_TASK_TTDF_REQUEST(true) } 
+
+      else {
+
+        false && dispatch(setShow(true))
+        false && dispatch(setType('error'))
+        false && dispatch(setMessage('Вложение Технического задания может быть в формате doc, txt или pdf. Приложите новый корректный файл'))
+        dispatch(resetTechTaskFile(''))
+
+      }
+    
+    }, 1300)
+
     dispatch(setShow(true))
     dispatch(setType('success'))
-    dispatch(setMessage('Вы успешно изменили ваше задание'))
+    dispatch(setMessage('Новые значения были добавлены в основное задание'))
 
     false && dispatch(setTitle(''))
     false && dispatch(setCoast(''))
@@ -366,9 +391,30 @@ const CreateTaskPageEdit: React.FC = () => {
   }, [ ])
   useEffect(() => {
 
-    console.log(TASK_TAGS)
+    console.log(TASK_TECH_FILE)
 
-  }, [ TASK_TAGS ])
+  }, [ TASK_TECH_FILE ])
+  useEffect(() => {
+
+    return () => {
+      
+      dispatch(setTitle(''))
+      dispatch(setCoast(''))
+      dispatch(setPrepay(''))
+      dispatch(setPrepayDays(''))
+      dispatch(setExpertiseCoast(''))
+      dispatch(setDescription(''))
+      dispatch(setObjectParamsSquare(''))
+      dispatch(setObjectParamsStoreys(''))
+      dispatch(setObjectParamsHeight(''))
+      dispatch(setChapters([]))
+      dispatch(setChapterLN(''))
+      dispatch(setChapterLD(''))
+      dispatch(resetTechTaskFile(''))
+      dispatch(setTags([]))
+    }
+
+  }, [])
 
   return (
     <ContentArea
@@ -497,7 +543,7 @@ const CreateTaskPageEdit: React.FC = () => {
           }}
         />
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '24px' }}>
-          <Checkbox {...label} disabled />
+          <Checkbox {...label} checked disabled />
           <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
         </div>
         <ButtonComponent
@@ -527,6 +573,19 @@ const CreateTaskPageEdit: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
+      <TextFieldContainerLine>
+          <span
+            style={{
+              color: 'gray',
+              lineHeight: '24px',
+              width: '80%',
+              margin: '24.4px auto 22px',
+              textAlign: 'center'
+            }}
+          >
+            Вы можете отредактировать те поля и данные, которые необходимо. Система не будет переписывать те значения, которые не будут отличаться от прошлой версии задания
+          </span>
+        </TextFieldContainerLine>
         <TextFieldTitle>Данные о заказе</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
@@ -1020,20 +1079,7 @@ const CreateTaskPageEdit: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <span
-          style={{
-            display: 'block',
-            position: 'relative',
-            width: '600px',
-            lineHeight: '22px',
-            backgroundColor: 'rgb(253, 237, 237)',
-            padding: '14px',
-            paddingLeft: '20px',
-            borderRadius: '4px',
-            marginTop: '22px'
-          }}
-        >{"В настоящий момент обновление технического задания ограничено. Можно прикрепить разные варианты документов, но на сервер они отправляться не будут"}</span>
-        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '9px' }}>
+        <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '10px' }}>
           <div style={{ ...divHalfWidthCSS }}>
             <TextFieldTitle>Техническое задание</TextFieldTitle>
           </div>
@@ -1099,13 +1145,14 @@ const CreateTaskPageEdit: React.FC = () => {
           </div>
         </TextFieldContainerLine>
         { TASK_TECH_FILE.length > 0 && <TextFieldContainerLine style={{ marginBottom: '0px' }}>
-          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '12px' }}>
+          <div style={{ ...divHalfWidthCSS, flexDirection: 'column', alignItems: 'flex-start', marginTop: '10px' }}>
             { TASK_TECH_FILE.filter(
               
               fileData => (
-                fileData.name.indexOf('.txt') !== -1 || 
-                fileData.name.indexOf('.doc') !== -1 ||
-                fileData.name.indexOf('.docx') !== -1 )).map(fileData => {
+                fileData.name.indexOf('.txt') !== -1  || 
+                fileData.name.indexOf('.doc') !== -1  ||
+                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.pdf') !== -1 )).map(fileData => {
 
               return (
                 <div 
@@ -1120,13 +1167,13 @@ const CreateTaskPageEdit: React.FC = () => {
                     style={{ 
                       display: 'block', 
                       position: 'relative', 
-                      lineHeight: '28px', 
+                      lineHeight: '23px', 
                       fontWeight: 'bold',
                       color: 'rgb(81, 102, 116)',
                       cursor: 'pointer',
                       marginRight: '8px'
                     }}
-                  >{`Приложение тех. задание: ${fileData.name}`}</span>
+                  >{`Вложение тех. задание: ${fileData.name}`}</span>
                   <CloseIcon 
                     style={{ width: '16px', cursor: 'pointer' }}
                     onClick={() => removeFile(fileData.name)}
@@ -1139,7 +1186,8 @@ const CreateTaskPageEdit: React.FC = () => {
             { TASK_TECH_FILE.filter(fileData => (
                 fileData.name.indexOf('.txt')  !== -1 || 
                 fileData.name.indexOf('.doc')  !== -1 ||
-                fileData.name.indexOf('.docx') !== -1 )).length === 0 && <div 
+                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.pdf') !== -1 )).length === 0 && <div 
                   style={{ 
                     display: 'flex', 
                     flexDirection: 'row', 
@@ -1180,7 +1228,7 @@ const CreateTaskPageEdit: React.FC = () => {
         >{"Функция отображения уже созданных разделов пока, к сожалению, вызывает краш приложения. В режиме редактирования задания разделы нужно создать заново. Важно - если не добавить ни одного раздела, старые разделы останутся нетронутыми, перезаписи не будет"}</span>
         <TextFieldTitle 
           style={{ 
-            marginTop: '28px', 
+            marginTop: '26px', 
             marginBottom: '106px',
             cursor: 'pointer'
           }}

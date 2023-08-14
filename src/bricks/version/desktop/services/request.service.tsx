@@ -70,6 +70,49 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
           callbackAction('')
 
           break
+
+        case 'POSTFILE_COMPLETE':
+
+          var formdataComplect = new FormData()
+          formdataComplect.append("orderID", body[0])
+          formdataComplect.append("orderId", body[1])
+          formdataComplect.append("orderCompleteFile", body[2])
+
+          var requestOptionsComplect: any = {
+            method: 'POST',
+            body: formdataComplect,
+            redirect: 'follow'
+          }
+
+          fetch("http://85.193.88.125:3000/add-file-complete", requestOptionsComplect)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error))
+
+          callbackAction('')
+
+          break
+
+        case 'POSTFILE_CASE':
+
+          var formdataCase = new FormData()
+          formdataCase.append("userId", body[0])
+          formdataCase.append("orderCaseFile", body[1])
+
+          var requestOptionsCase: any = {
+            method: 'POST',
+            body: formdataCase,
+            redirect: 'follow'
+          }
+
+          fetch("http://85.193.88.125:3000/add-file-case", requestOptionsCase)
+            .then(response => response.text())
+            .then(result => console.log(result))
+            .catch(error => console.log('error', error))
+
+          callbackAction('')
+
+          break
           
         default:
           break

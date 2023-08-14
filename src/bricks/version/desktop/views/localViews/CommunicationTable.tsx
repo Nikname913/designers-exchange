@@ -1,8 +1,12 @@
-import React from 'react'
+// ----------------------------------------------------------------
+/* eslint-disable react/jsx-no-target-blank */
+// ----------------------------------------------------------------
+import React, { useEffect, useState } from 'react'
 import { useAppSelector } from '../../../../store/hooks'
 import { CSSProperties } from 'styled-components'
 import { ICommunicationTableProps } from '../../../../models-ts/views/commun-table-models'
 import ButtonComponent from '../../comps/button/Button'
+import RequestActionsComponent from '../../services/request.service'
 import css from '../../styles/views/communicationTable.css'
 import EmailIcon from '@mui/icons-material/Email'
 
@@ -33,7 +37,20 @@ const { Container,
 
 const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunicationTableProps) => {
   
-  const { status, oneButtonParams, twoButtonParams, image, imageMt, mb } = props
+  const { content, status, oneButtonParams, twoButtonParams, threeButtonParams, image, imageMt, mb } = props
+
+  const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
+  const ordersList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+
+  const [ ACCEPT_REQUEST, SET_ACCEPT_REQUEST ] = useState(false)
+
+  const [ completeFileServer, setCompleteFileServer ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
 
   const background = useAppSelector(state => state.theme.blue4)
   const dateColor = useAppSelector(state => state.theme.grey)
@@ -66,7 +83,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
   const buttonsLineCSS: CSSProperties = {
     display: 'flex',
     flexDirection: 'row',
-    alignContent: 'center',
+    alignItems: 'center',
     justifyContent: 'flex-start',
     position: 'relative',
     width: '100%',
@@ -105,8 +122,67 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
 
   }
 
+  const acceptRespond = () => {
+
+    SET_ACCEPT_REQUEST(true)
+
+  }
+
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileNameExecutor: string = 
+        ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
+        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
+        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15) + '.complete.txt'
+
+      const raw = JSON.stringify({
+        "fileName": fileNameExecutor
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-complete", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+
+      setCompleteFileServer({
+        name: fileNameExecutor,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+    })()
+
+  }, [ ordersList, selectTask ])
+
   return (
     <React.Fragment>
+
+      { ACCEPT_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-file-complete',
+          body: {
+            taskID: selectTask,
+          }
+        }}
+      
+      /> }
+
       <Container background={background} style={ mb ? { marginBottom: mb } : {} }>
         <RoundContainer>
           <RoundContainerInner>
@@ -133,18 +209,22 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
             src={semiMenuIcon}
             style={semiMenuCSS}
           />
-          <span style={dateSpanCSS}>25 января в 12:40</span>
-          <Message>
-            <i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Виолетта </i> 
-            предлагает 
-            <i style={{ fontStyle: 'normal', fontWeight: 'bold' }}> ПланСклада.pdf </i> 
-            перенести в мастер документы
+          <span style={dateSpanCSS}>Данные о времени не получены</span>
+          <Message style={{ marginTop: '0px' }}>
+
+            { content 
+              
+              ? <span style={{ width: '100%', display: 'block' }}>{ content }</span> 
+              : <span>{"Контентная заглушка для блока уведомления в общении"}</span>  
+              
+            }
+
           </Message>
           <div style={buttonsLineCSS}>
             { oneButtonParams?.isset && <ButtonComponent
               inner={oneButtonParams?.inner} 
               type="CONTAINED_DEFAULT"
-              action={() => {}}
+              action={ oneButtonParams.inner === 'Принять' ? acceptRespond : () => {} }
               actionData={null}
               widthType={"px"}
               widthValue={oneButtonParams?.width}
@@ -165,7 +245,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
                 position: 'relative',
                 boxSizing: 'border-box',
                 marginBottom: '0px',
-                marginRight: '20px'
+                marginRight: '16px'
               }}
             /> }
             { twoButtonParams?.isset && <ButtonComponent
@@ -189,9 +269,24 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
                 borderRadius: '6px',
                 position: 'relative',
                 boxSizing: 'border-box',
-                marginBottom: '0px'
+                marginBottom: '0px',
+                marginRight: '16px'
               }}
             /> }
+            { threeButtonParams?.isset && threeButtonParams.inner === 'SAVE_COMPLETE' && <a 
+            
+                href={`http://85.193.88.125:3000/techComplete/${completeFileServer.name}`}
+                target='_blank'
+                style={{
+                  display: 'block',
+                  position: 'relative',
+                  marginLeft: '10px',
+                  color: 'rgb(22, 124, 191)',
+                  textDecoration: 'none'
+                }}
+              >Сохранить файл</a> 
+              
+            } 
           </div>
         </ContentArea>
       </Container>

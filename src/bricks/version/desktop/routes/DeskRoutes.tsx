@@ -21,10 +21,13 @@ import ExchangePageTasksCust from '../pages/exchangeTaskCustomer/ExchangePageTas
 import ExchangePageArchiveCust from '../pages/exchangeTaskCustomer/ExchangePageArchive'
 import ExchangePageTasksExec from '../pages/exchangeTaskExecutor/ExchangePageTasks'
 import ExchangePageOrdersExec from '../pages/exchangeTaskExecutor/ExchangePageOrders'
+import ExchangePageArchiveExec from '../pages/exchangeTaskExecutor/ExchangePageArchive'
 import ShowTaskPageExec from '../pages/ShowTaskPageExec'
 import ShowTaskPageCust from '../pages/ShowTaskPageCust'
 import ShowOrderPageExec from '../pages/ShowOrderPageExec'
 import ShowOrderPageCust from '../pages/ShowOrderPageCust'
+import ShowBacksideExec from '../pages/ShowCompletePageExec'
+import ShowBacksideCust from '../pages/ShowCompletePageCust'
 import ShowTasksPageExchange from '../pages/ShowTaskPageExchange'
 
 import MainPage from '../pages/MainPage'
@@ -90,7 +93,7 @@ const DeskRoutes: React.FC = () => {
           />
           <Route 
             path='tasks-archive-exec' 
-            element={<ExchangePageArchive/>} 
+            element={<ExchangePageArchiveExec/>} 
           />
           <Route
             path='task-list-exec'
@@ -226,6 +229,16 @@ const DeskRoutes: React.FC = () => {
           <Route
             path='cu'
             element={<ShowOrderPageCust/>}
+          />
+        </Route>
+        <Route path='backside-view'>
+          <Route
+            path='ex'
+            element={<ShowBacksideExec/>}
+          />
+          <Route
+            path='cu'
+            element={<ShowBacksideCust/>}
           />
         </Route>
         <Route

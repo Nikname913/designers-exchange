@@ -5,7 +5,7 @@ import { setShow, setShowType } from '../../../store/slices/fos-slice'
 import { 
   setShow as setShowRCC, 
   setShowType as setShowTypeRCC } from '../../../store/slices/right-content-slice'
-  import { setShow as setShowFOS, setShowType as setShowTypeFOS  } from '../../../store/slices/fos-slice'
+import { setShow as setShowFOS, setShowType as setShowTypeFOS  } from '../../../store/slices/fos-slice'
 import CommunicationTable from '../views/localViews/CommunicationTable'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
@@ -436,6 +436,7 @@ const ShowTaskPage: React.FC = () => {
               taskTitle={item.name}
               taskDeadline={item.deadline}
               taskExpertType={item.exper}
+              taskExpertDate={item.experDate}
               taskCustomer={item.customer}
               taskExecutor={item.executor}
               taskLocation={item.region}
@@ -498,7 +499,9 @@ const ShowTaskPage: React.FC = () => {
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
-                  <span style={countSpanCSS}>{"10"}</span>
+                  <span style={countSpanCSS}>
+                    { taskList.filter(item => item.id === selectTask)[0].progress > 50 ? '1' : '0' }
+                  </span>
                 </LeftMenuIconButton>
                 <LeftMenuIconButton 
                   backgroundColor={ 
@@ -577,8 +580,8 @@ const ShowTaskPage: React.FC = () => {
                   onClick={showExpert}
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
-                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>негосударственная</span>
-                  <span style={countSpanCSS}>{"10"}</span>
+                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Государственная</span>
+                  <span style={countSpanCSS}>{"0"}</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -845,7 +848,7 @@ const ShowTaskPage: React.FC = () => {
                           { taskList.length > 0 ? 
                               taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
                         </span>
-                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Общая площадь, кв.м</span>
+                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Площадь, кв.м</span>
                       </div>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -865,7 +868,7 @@ const ShowTaskPage: React.FC = () => {
                       <WhiteContainerTitle>Описание</WhiteContainerTitle>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"space-between"}>
-                      <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px' }}>
+                      <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px', lineHeight: '22px' }}>
                         { taskList.length > 0 ? 
                           taskList.filter(item => item.id === selectTask)[0].description : '' }
                       </span>
@@ -1058,6 +1061,34 @@ const ShowTaskPage: React.FC = () => {
                       />
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '20px', marginBottom: '10px' }}>
+                      { taskList.filter(item => item.id === selectTask)[0].progress > 50 && <CommunicationTable
+                        content={"Исполнитель сдает проект на экспертизу"}
+                        status={"wait"}
+                        oneButtonParams={{
+                          isset: false,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'Принять',
+                          width: 180,
+                        }}
+                        twoButtonParams={{
+                          isset: false,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Доработка',
+                          width: 180,
+                        }}
+                        threeButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'SAVE_COMPLETE',
+                          width: 180,
+                        }}
+                        image={"subs"}
+                      /> }
+                    </WhiteContainerContentLine>
+                    { taskList.filter(item => item.id === selectTask)[0].progress < 50 && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"wait"}
                         oneButtonParams={{
@@ -1076,8 +1107,8 @@ const ShowTaskPage: React.FC = () => {
                         }}
                         image={"pdf"}
                       />
-                    </WhiteContainerContentLine>
-                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"correct"}
                         oneButtonParams={{
@@ -1096,8 +1127,8 @@ const ShowTaskPage: React.FC = () => {
                         }}
                         image={"pdf"}
                       />
-                    </WhiteContainerContentLine>
-                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"wait"}
                         oneButtonParams={{
@@ -1117,8 +1148,8 @@ const ShowTaskPage: React.FC = () => {
                         image={"subs"}
                         imageMt={3}
                       />
-                    </WhiteContainerContentLine>
-                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"correct"}
                         oneButtonParams={{
@@ -1138,8 +1169,8 @@ const ShowTaskPage: React.FC = () => {
                         image={"subs"}
                         imageMt={3}
                       />
-                    </WhiteContainerContentLine>
-                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"alarm"}
                         oneButtonParams={{
@@ -1159,7 +1190,7 @@ const ShowTaskPage: React.FC = () => {
                         image={"humm"}
                         imageMt={-4}
                       />
-                    </WhiteContainerContentLine>
+                    </WhiteContainerContentLine> }
                   </WhiteContainer>
                 </div>
                 <div style={{ ...contentContainerLineCSS, marginTop: '20px', marginBottom: '20px' }}>

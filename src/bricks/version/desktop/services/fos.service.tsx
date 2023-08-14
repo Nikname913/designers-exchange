@@ -1,4 +1,6 @@
 // ----------------------------------------------------------------
+/* eslint-disable jsx-a11y/anchor-has-content */
+// ----------------------------------------------------------------
 /* eslint-disable react-hooks/exhaustive-deps */
 // ----------------------------------------------------------------
 import React, { ReactElement, useState, useEffect } from 'react'
@@ -675,7 +677,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       <ShadowContainer 
         marginTop={scroll} 
         background={"rgba(0, 0, 0, 0.4)"}
-        style={{ zIndex: 40 }}
+        style={{ zIndex: 105 }}
       >
         { showType === 'respondFromList' 
           ? <React.Fragment>
@@ -2387,7 +2389,27 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ShowFile.CloseContainer>
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
-                <ButtonComponent
+                <a 
+                  href={`http://85.193.88.125:3000/techDocs/${techTaskFile.name}`} 
+                  target='_blank' 
+                  rel="noreferrer"
+                  style={{
+                    display: 'block',
+                    position: 'relative',
+                    width: '180px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    backgroundColor: 'rgb(22, 124, 191)',
+                    color: 'white',
+                    textDecoration: 'none',
+                    lineHeight: '37px',
+                    textAlign: 'center',
+                    boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
+                  }}
+                >
+                  Скачать файл
+                </a>
+                { false && <ButtonComponent
                   inner={"Скачать файл"} 
                   type="CONTAINED_DEFAULT"
                   action={() => {}}
@@ -2410,7 +2432,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     boxSizing: 'border-box',
                     marginBottom: '6px',
                   }}
-                />
+                /> }
               </ShowFile.ContentLine>
               <ShowFile.FOSInner>
                 <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
@@ -2441,7 +2463,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Размер</span>
-                <span>{ techTaskFile.size + ' байт' }</span>
+                <span>{ ( techTaskFile.size / 1024 ).toFixed(3) + ' МБ' }</span>
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px', marginBottom: '33px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Загружен</span>
@@ -2462,7 +2484,27 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ShowFile.CloseContainer>
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
-                <ButtonComponent
+                <a 
+                  href={`http://85.193.88.125:3000/techContracts/${techTaskFile.name}`} 
+                  target='_blank' 
+                  rel="noreferrer"
+                  style={{
+                    display: 'block',
+                    position: 'relative',
+                    width: '180px',
+                    height: '40px',
+                    borderRadius: '6px',
+                    backgroundColor: 'rgb(22, 124, 191)',
+                    color: 'white',
+                    textDecoration: 'none',
+                    lineHeight: '37px',
+                    textAlign: 'center',
+                    boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
+                  }}
+                >
+                  Скачать файл
+                </a>
+                { false && <ButtonComponent
                   inner={"Скачать файл"} 
                   type="CONTAINED_DEFAULT"
                   action={() => {}}
@@ -2485,7 +2527,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     boxSizing: 'border-box',
                     marginBottom: '6px',
                   }}
-                />
+                /> }
               </ShowFile.ContentLine>
               <ShowFile.FOSInner>
                 <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
@@ -2516,7 +2558,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Размер</span>
-                <span>{ techTaskFile.size + ' байт' }</span>
+                <span>{ ( techTaskFile.size / 1024 ).toFixed(3) + ' МБ' }</span>
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px', marginBottom: '33px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Загружен</span>

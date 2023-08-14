@@ -150,7 +150,11 @@ const Main: React.FC = () => {
           showShadow={true} 
           scroll={scrollFosContent} 
         /> }
-        <Header userCity={addressIP?.city}></Header>
+        <Header 
+          mainScroll={mainContainer.current?.scrollTop} 
+          userCity={addressIP?.city}
+        />
+        <div style={{ height: '105px' }}/>
         <DeskRoutesMemo></DeskRoutesMemo>
         <Footer></Footer>
         <Fab 

@@ -39,7 +39,11 @@ const { HeadWrapper,
   HeadControllersIcon,
   HeadControllersAvatar } = css
 
-const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) => {
+const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> = (
+  props: { 
+    userCity?: string,
+    mainScroll?: number | undefined 
+  }) => {
 
   const { userCity } = props
 
@@ -52,6 +56,7 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
   const ORDER_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
   const selectedUsersType = useAppSelector(state => state.headerReducer.selectedUsersType)
   const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
+  const showRCC = useAppSelector(state => state.rightContentReducer.isShow)
 
   const EXECUTOR = useAppSelector(state => state.userContentReducer.USERS_DATA.listExecutors)
     .filter((executor: any) => executor.clientId === USER_ID)
@@ -214,7 +219,7 @@ const Header: React.FC<{ userCity?: string }> = (props: { userCity?: string }) =
 
   return (
     <React.Fragment>
-      <HeadWrapper backgroundColor={"transparent"}>
+      <HeadWrapper style={{ position: 'fixed', zIndex: 100, opacity: showRCC ? 1 : 1 }} backgroundColor={"transparent"}>
       <HeadWrapperShadow></HeadWrapperShadow>
       <HeadWrapperInner backgroundColor={whiteColor}>
         <div style={logoContainerStyle} onClick={() => navigate('/task-list-all')}>

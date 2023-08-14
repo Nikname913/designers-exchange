@@ -59,24 +59,13 @@ const LinearProgressWithPercent = (props: LinearProgressProps & { value: number 
   );
 }
 
-const ShowTaskPage: React.FC = () => {
+const ShowCompletePage: React.FC = () => {
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
-  
-  const [ progress, setProgress ] = useState<number>(10)
-  const [ counter, setCounter ] = useState<number>(0)
-  
-  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string, type?: string }>({
-
-    name: '',
-    size: 0,
-    text: ''
-
-  })
 
   const backwardButtonColor = useAppSelector(state => state.theme.grey)
   const activeLeftMenuIconColor = useAppSelector(state => state.theme.blue3)
@@ -86,7 +75,6 @@ const ShowTaskPage: React.FC = () => {
   const attachColor = useAppSelector(state => state.theme.blue3)
   const downloadButtonColor = useAppSelector(state => state.theme.blue3)
 
-  const greenColor = useAppSelector(state => state.theme.green)
   const yellowColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
@@ -100,6 +88,17 @@ const ShowTaskPage: React.FC = () => {
     'agreement'     |
     'lawyer'        |
     'arguement'>('details')
+
+  const [ progress, setProgress ] = useState<number>(10)
+  const [ counter, setCounter ] = useState<number>(0)
+
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -218,7 +217,7 @@ const ShowTaskPage: React.FC = () => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.pdf'
+      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.txt'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -236,45 +235,11 @@ const ShowTaskPage: React.FC = () => {
 
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const downloadFileType: string = await downloadFile.type
-      
-      downloadFileText.indexOf('no such file or directory') === -1 && setTechTaskFile({
+
+      setTechTaskFile({
         name: fileName,
         size: downloadFileSize,
-        text: downloadFileText,
-        type: 'pdf'
-      })
-
-      // ----------------------------------------------------------------
-      // ----------------------------------------------------------------
-
-      const fileNameTxt: string = selectTask.split('NTID-')[1] + '.techtask.txt'
-
-      const rawTxt = JSON.stringify({
-        "fileName": fileNameTxt
-      });
-
-      var requestOptionsTxt: any = {
-        method: 'POST',
-        headers: myHeaders,
-        body: rawTxt,
-        redirect: 'follow'
-      };
-
-      const downloadFileTxt = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsTxt)
-        .then(response => response.blob())
-
-      const downloadFileTextTxt: string = await downloadFileTxt.text()
-      const downloadFileSizeTxt: number = await downloadFileTxt.size
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const downloadFileTypeTxt: string = await downloadFileTxt.type
-      
-      downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
-        name: fileNameTxt,
-        size: downloadFileSizeTxt,
-        text: downloadFileTextTxt,
-        type: 'txt'
+        text: downloadFileText
       })
 
     })()
@@ -303,13 +268,8 @@ const ShowTaskPage: React.FC = () => {
           />
           <BackwardButton 
             color={backwardButtonColor} 
-            onClick={() => navigate('/task-list-exec')}
-          >Ко всем заданиям с откликом</BackwardButton>
-          { false && <BackwardButton 
-            color={backwardButtonColor} 
-            onClick={() => navigate('/create-new-task')}
-            style={{ marginLeft: '20px' }}
-          >Новое задание [ техническая ссылка ]</BackwardButton> }
+            onClick={() => navigate('/task-list-all')}
+          >Вернуться к списку заданий</BackwardButton>
         </div>
         { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => { return ( 
           <React.Fragment key={index}>
@@ -353,27 +313,37 @@ const ShowTaskPage: React.FC = () => {
             </WhiteContainer>
             <Content>
               <div style={leftMenuContainerCSS}>
-                <LeftMenuIconButton backgroundColor={activeLeftMenuIconColor}>
+                <LeftMenuIconButton style={{ marginBottom: '20px' }} backgroundColor={activeLeftMenuIconColor}>
                   <img
                     alt={""}
                     src={infoIcon}
                   />
                   <span style={buttonLabelCSS}>Детали заказа</span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ filter: 'grayscale(0.8)' }}>
+                { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
-                </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px', filter: 'grayscale(0.8)' }}>
+                </LeftMenuIconButton> }
+                { false && <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px', filter: 'grayscale(0.8)' }}>
                   <img
                     alt={""}
                     src={docsIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Мастер документы</span>
-                </LeftMenuIconButton>
+                </LeftMenuIconButton> }
+                { false && <React.Fragment>
+                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
+                  </LeftMenuIconButton>
+                  <LeftMenuLine backgroundColor={leftMenuLineColor}/>
+                  <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                    <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
+                  </LeftMenuIconButton>
+                </React.Fragment> }
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
                   backgroundColor={"transparent"} 
@@ -410,54 +380,54 @@ const ShowTaskPage: React.FC = () => {
                 <SectionsContainer>
                   { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
 
-                      return <React.Fragment>
-                        { item.chapters && item.chapters.map((chapter, index: number) => {
+                    return <React.Fragment>
+                      { item.chapters && item.chapters.map((chapter, index: number) => {
 
-                          return (
-                            <React.Fragment>
-                              <LeftMenuIconButton 
-                                backgroundColor={"transparent"} 
+                        return (
+                          <React.Fragment>
+                            <LeftMenuIconButton 
+                              backgroundColor={"transparent"} 
+                              style={{ 
+                                minHeight: '64px', 
+                                height: 'auto', 
+                                marginBottom: '0px', 
+                                padding: '18px 0px 22px',
+                                lineHeight: '20px',
+                              }}
+                              onClick={showChapters}
+                            >
+                              <img
+                                alt={""}
+                                src={checkMark}
+                              />
+                              <span 
                                 style={{ 
-                                  minHeight: '64px', 
-                                  height: 'auto', 
-                                  marginBottom: '0px', 
-                                  padding: '18px 0px 22px',
-                                  lineHeight: '20px',
+                                  ...buttonLabelDeactiveCSS, 
+                                  fontWeight: 500,
+                                  display: 'block',
+                                  width: '88%',
+                                  overflow: 'hidden'
                                 }}
-                                onClick={showChapters}
                               >
-                                <img
-                                  alt={""}
-                                  src={checkMark}
-                                />
-                                <span 
-                                  style={{ 
-                                    ...buttonLabelDeactiveCSS, 
-                                    fontWeight: 500,
-                                    display: 'block',
-                                    width: '88%',
-                                    overflow: 'hidden'
-                                  }}
-                                >
-                                  { chapter.title }
-                                </span>
-                              </LeftMenuIconButton>
-                              { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
-                            </React.Fragment>
-                          )
+                                { chapter.title }
+                              </span>
+                            </LeftMenuIconButton>
+                            { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
+                          </React.Fragment>
+                        )
 
-                        })}
+                      })}
 
-                        { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                          <img
-                            alt={""}
-                            src={timeIcon}
-                          />
-                          <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
-                        </LeftMenuIconButton> }
-                      </React.Fragment>
+                      { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
+                        <img
+                          alt={""}
+                          src={timeIcon}
+                        />
+                        <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
+                      </LeftMenuIconButton> }
+                    </React.Fragment>
 
-                    }) : <React.Fragment></React.Fragment> }
+                  }) : <React.Fragment></React.Fragment> }
                 </SectionsContainer>
               </div>
               <div style={contentContainerCSS}>
@@ -489,19 +459,19 @@ const ShowTaskPage: React.FC = () => {
                           src={avatarIcon}
                           style={avatarCSS}
                         />
-                        <AvatarStatusIndicator background={greenColor}/>
+                        <AvatarStatusIndicator background={yellowColor}/>
                       </AvatarContainer>
                       <div>
                         <NameContainer>
 
                           { taskList.length > 0 ? taskList.filter(item => item.id === selectTask)[0].customer.slice(0, 20) + '...' : '' }
-                        
+
                         </NameContainer>
                         <NameContainer style={{ fontSize: '12px', color: nameGreyColor, marginTop: '5px' }}>
 
                           { taskList.length > 0 ? taskList.filter(item => item.id === selectTask)[0].customer.slice(0, 20) + '...' : '' }
-                        
-                        </NameContainer>  
+
+                        </NameContainer>
                       </div>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -524,8 +494,8 @@ const ShowTaskPage: React.FC = () => {
                       <span style={searchStatusCSS}>Поиск исполнителей</span>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '30px' }}>
-                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>
-                        { `Откликнулось ${ taskList.length > 0 ? taskList.filter(item => item.id === selectTask)[0].responds.length.toString() : '0'} исполнителей` }
+                      <span style={{ ...searchStatusCSS, color: 'inherit' }}>Откликнулось { taskList.length > 0 ? 
+                        taskList.filter(item => item.id === selectTask)[0].responds.length.toString() : '0' } исполнителей
                       </span>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -632,7 +602,7 @@ const ShowTaskPage: React.FC = () => {
                       }}>
                         <span style={{ ...searchStatusCSS, color: 'inherit', fontSize: '40px', paddingLeft: '20px' }}>
                           { taskList.length > 0 ? 
-                            taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
+                              taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
                         </span>
                         <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Площадь, кв.м</span>
                       </div>
@@ -647,8 +617,8 @@ const ShowTaskPage: React.FC = () => {
                       justify:'flex-start',
                     }}
                     width={"100%"}
-                    height={"250px"}
-                    style={{ paddingLeft: '36px', paddingRight: '36px', paddingTop: '30px' }}
+                    height={""}
+                    style={{ minHeight: '160px', paddingLeft: '36px', paddingRight: '36px', paddingTop: '30px' }}
                   >
                     <WhiteContainerContentLine justify={"space-between"}>
                       <WhiteContainerTitle>Описание</WhiteContainerTitle>
@@ -681,7 +651,7 @@ const ShowTaskPage: React.FC = () => {
                       {/* заглушка на время нестабильной работы апи */}
                       {/* ---------------------------------------------------- */}
 
-                        <Box sx={{ width: '100%', marginTop: '30px' }}>
+                        <Box sx={{ width: '90%', marginTop: '30px' }}>
                           <LinearProgressWithPercent style={{ borderRadius: '4px' }} value={progress}/>
                         </Box>
                         { counter > 4 && <span 
@@ -702,87 +672,87 @@ const ShowTaskPage: React.FC = () => {
                       {/* ---------------------------------------------------- */}
 
                       { false && <WhiteContainerContentLine 
-                        justify={"space-between"} 
-                        style={{ 
-                          marginTop: '30px', 
-                          borderRight: `1px solid ${attachColor}`,
-                          paddingRight: '30px' 
-                        }}
-                      >
-                        <FileIconContainer>
-                          <img
-                            alt={""}
-                            src={pdf}
-                            style={fileIconCSS}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                        <FileIconContainer>
-                          <img
-                            alt={""}
-                            src={pdf}
-                            style={fileIconCSS}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                        <FileIconContainer>
-                          <img
-                            alt={""}
-                            src={doc}
-                            style={fileIconCSS}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                        <FileIconContainer>
-                          <img
-                            alt={""}
-                            src={xls}
-                            style={fileIconCSS}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                        <FileIconContainer>
-                          <img
-                            alt={""}
-                            src={xls}
-                            style={fileIconCSS}
-                          />
-                          <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                          <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
-                        </FileIconContainer>
-                      </WhiteContainerContentLine> }
+                          justify={"space-between"} 
+                          style={{ 
+                            marginTop: '30px', 
+                            borderRight: `1px solid ${attachColor}`,
+                            paddingRight: '30px' 
+                          }}
+                        >
+                          <FileIconContainer>
+                            <img
+                              alt={""}
+                              src={pdf}
+                              style={fileIconCSS}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                          <FileIconContainer>
+                            <img
+                              alt={""}
+                              src={pdf}
+                              style={fileIconCSS}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                          <FileIconContainer>
+                            <img
+                              alt={""}
+                              src={doc}
+                              style={fileIconCSS}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                          <FileIconContainer>
+                            <img
+                              alt={""}
+                              src={xls}
+                              style={fileIconCSS}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                          <FileIconContainer>
+                            <img
+                              alt={""}
+                              src={xls}
+                              style={fileIconCSS}
+                            />
+                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                          </FileIconContainer>
+                        </WhiteContainerContentLine> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '30%' }}>
                       { techTaskFile.size > 0 && <React.Fragment>
-                        <WhiteContainerContentLine justify={"space-between"}>
-                          <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
-                        </WhiteContainerContentLine>
-                        <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
-                          <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
-                            <img
-                              alt={""}
-                              src={ techTaskFile.type === 'txt' ? txt : pdf }
-                              style={{ ...fileIconCSS, width: '70%' }}
-                              onClick={() => {
-                                dispatch(setShowFOS(true))
-                                dispatch(setShowTypeFOS('showFile'))
-                                dispatch(setShowRCC('undefined'))
-                              }}
-                            />
-                            <FileIconTitle color={greyColor} style={{ lineHeight: '18px' }}>{ techTaskFile.name }</FileIconTitle>
-                            <FileIconSize color={greyColor2}>{ techTaskFile.size + ' байт' }</FileIconSize>
-                          </FileIconContainer>
-                        </WhiteContainerContentLine>
-                      </React.Fragment> }
+                          <WhiteContainerContentLine justify={"space-between"}>
+                            <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
+                          </WhiteContainerContentLine>
+                          <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
+                            <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
+                              <img
+                                alt={""}
+                                src={txt}
+                                style={{ ...fileIconCSS, width: '70%' }}
+                                onClick={() => {
+                                  dispatch(setShowFOS(true))
+                                  dispatch(setShowTypeFOS('showFile'))
+                                  dispatch(setShowRCC('undefined'))
+                                }}
+                              />
+                              <FileIconTitle color={greyColor} style={{ lineHeight: '18px' }}>{ techTaskFile.name }</FileIconTitle>
+                              <FileIconSize color={greyColor2}>{ techTaskFile.size + ' байт' }</FileIconSize>
+                            </FileIconContainer>
+                          </WhiteContainerContentLine>
+                        </React.Fragment> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '100%' }}>
                     <ButtonComponent
                       inner={"Скачать архивом"} 
-                      type="CONTAINED_DEFAULT"
+                      type="CONTAINED_DISABLED"
                       action={() => {}}
                       actionData={null}
                       widthType={"px"}
@@ -818,4 +788,4 @@ const ShowTaskPage: React.FC = () => {
 
 }
 
-export default ShowTaskPage
+export default ShowCompletePage

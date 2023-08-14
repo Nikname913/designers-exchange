@@ -30,6 +30,7 @@ export interface ICreateTaskReducer {
   focused: string,
   techTaskFile: Array<File>,
   contractFile?: Array<File>,
+  completeFile?: Array<File>,
   showChaptersEditForms?: {
     show: boolean,
     num: number,

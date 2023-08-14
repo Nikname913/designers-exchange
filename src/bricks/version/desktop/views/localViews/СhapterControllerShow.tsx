@@ -43,21 +43,25 @@ const ChapterController:
     isBottomButton?: boolean,
     marginBott?: string | null,
     chapters?: Array<any>,
-    forPageType?: 'order' | 'task'
+    forPageType?: 'order' | 'task',
+    progress?: string
   }> = ( props: { 
     
     isBottomButton?: boolean, 
     marginBott?: string | null, 
     chapters?: Array<any>, 
-    forPageType?: 'order' | 'task' 
+    forPageType?: 'order' | 'task',
+    progress?: string 
   
   }) => {
-
-  const { isBottomButton = true, marginBott = null, forPageType = 'task' } = props
 
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
   const orderList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
+
+  const { isBottomButton = true, 
+    marginBott = null, 
+    forPageType = 'task' } = props
 
   const chaptersLineBackground = useAppSelector(state => state.theme.grey3)
   const roundBackground = useAppSelector(state => state.theme.grey2)
@@ -67,6 +71,18 @@ const ChapterController:
   return (
     <React.Fragment>
       <ChapterContainerLine style={ marginBott ? { marginBottom: marginBott } : {}} backgroundColor={chaptersLineBackground}>
+
+        <span
+          style={{
+            display: 'block',
+            position: 'absolute',
+            width: forPageType === 'task' ? '66px' : orderList.filter(item => item.id === selectTask)[0].progress + '%',
+            height: '100%',
+            backgroundColor: 'rgb(22, 124, 191)',
+            borderRadius: '6px'
+          }}
+        />
+
         <ChapterContainerStepRound 
           backgroundColor={yellowColor} 
           style={{ marginLeft: '-15px' }}
@@ -97,7 +113,10 @@ const ChapterController:
                     followCursor 
                     arrow
                   >
-                    <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
+                    <ChapterContainerStepRound 
+                      key={chapterIndex} 
+                      backgroundColor={chaptersLineBackground}
+                    >
                       <ChapterContainerStepRoundLabelText textAlign={"center"}>
                         { chapter.title }
                       </ChapterContainerStepRoundLabelText>
@@ -117,7 +136,14 @@ const ChapterController:
               { item.chapters && item.chapters.map((chapter, chapterIndex) => {
 
                 return (
-                  <ChapterContainerStepRound key={chapterIndex} backgroundColor={chaptersLineBackground}>
+                  <ChapterContainerStepRound 
+                    key={chapterIndex} 
+                    backgroundColor={
+                      orderList.filter(item => item.id === selectTask)[0].progress > 50
+                      ? yellowColor
+                      : chaptersLineBackground
+                    }
+                  >
                     <ChapterContainerStepRoundLabelText textAlign={"center"}>
                       { chapter.title }
                     </ChapterContainerStepRoundLabelText>

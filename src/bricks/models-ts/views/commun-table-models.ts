@@ -1,4 +1,5 @@
 export interface ICommunicationTableProps {
+  content? : string,
   status: "wait" | "correct" | "alarm",
   oneButtonParams: {
     isset: boolean,
@@ -8,6 +9,13 @@ export interface ICommunicationTableProps {
     width: number,
   },
   twoButtonParams: {
+    isset: boolean,
+    color: string,
+    background: string,
+    inner: string,
+    width: number,
+  },
+  threeButtonParams?: {
     isset: boolean,
     color: string,
     background: string,

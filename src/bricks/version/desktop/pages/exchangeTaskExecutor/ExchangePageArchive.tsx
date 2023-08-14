@@ -4,7 +4,8 @@ import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../../comps/input/Input'
-import { useAppSelector } from '../../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
+import { setShow, setType, setMessage } from '../../../../store/slices/alert-content-slice' 
 import SelectField from '../../comps/select/SelectField'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
@@ -23,8 +24,12 @@ const { MenuContainer,
 const ExchangePage: React.FC = () => {
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const ROLE_TYPE = useAppSelector(state => state.roleTypeReducer.activeRole)
+  const TASKS_LIST = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
+  const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID) 
+
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
   const whiteColor = useAppSelector(state => state.theme.white)
@@ -63,8 +68,19 @@ const ExchangePage: React.FC = () => {
     cursor: 'pointer',
   }
 
-  const tasks = (): void => navigate('/task-list-all')
-  const zakazy = (): void => navigate('/active-orders-all')
+  const orders = (): void => {
+    !false && TASKS_LIST.listOrders
+      .filter(item => item.status === 'work')
+      .filter(item => item.executor === USER_ID).length > 0 && navigate('/active-orders-exec')
+    !false && dispatch(setShow(true))
+    !false && dispatch(setType("info"))
+    !false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
+  }
+  const tasks = (): void => {
+
+    TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-exec')
+
+  }
 
   return (
     <ContentArea
@@ -75,9 +91,30 @@ const ExchangePage: React.FC = () => {
       <div style={headBlockCSS}>
         <PageTitle>Завершенные заказы</PageTitle>
         <div style={divCSS}>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>Задания (166)</span>
-          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={zakazy}>В работе (26)</span>
-          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>Архивные (233)</span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={tasks}>
+            Задания ({
+              TASKS_LIST.list.filter(item => item.status === 'searching').filter(item => {
+
+                let check = 0
+                item.responds.forEach(respond => {
+                  if ( respond.executorID === USER_ID ) check = 1
+                })
+
+                if ( check === 1 ) return item
+
+              }).length
+            })
+          </span>
+          <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>
+            В работе ({
+              TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.executor === USER_ID).length
+            })
+          </span>
+          <span style={{ ...spanActiveCSS, marginRight: '0px' }}>
+            Архивные ({ 
+              TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.executor === USER_ID).length 
+            })
+          </span>
         </div>
       </div>
       <MenuContainer>
@@ -249,29 +286,33 @@ const ExchangePage: React.FC = () => {
         </React.Fragment> : <React.Fragment></React.Fragment> }
       </MenuContainer>
       <CustExecContentInnerArea>
-        { Array(6).fill(0).map((item, index) => {
-          return (
-            <TaskTable key={index}
-              viewType={"orderType"}
-              taskInitDate={"Позавчера в 18:33"}
-              taskTitle={"Конструктивные решения"}
-              taskDeadline={"18.11.2022-28.11.2022"}
-              taskExpertType={"государственная"}
-              taskCustomer={"ООО \"Технические Системы\""}
-              taskExecutor={"ИП Макаров А.Ю."}
-              taskLocation={"Екатеринбург"}
-              taskSpecializationTags={["Сигнализация","Вентиляция","Пожарная безопасность"]}
-              taskDescription={"lorem ipsum dolor sit amet, consectetur adipiscing"}
-              dealStatus={"complete"}
-              cardWidth={'100%'}
-              marbo={"16px"}
-              deal={{
-                type: 'safe',
-                prepaid: 30000,
-                expert: 74000
-              }}
-            />
-          )
+        { TASKS_LIST.listOrdersComplete
+          .filter(item => item.status === 'backside')
+          .filter(item => item.executor === USER_ID)
+          .map((item, index) => {
+            return (
+              <TaskTable key={index}
+                viewType={"complete"}
+                taskInitDate={item.date}
+                taskTitle={item.name}
+                taskDeadline={item.deadline}
+                taskExpertType={item.exper}
+                taskCustomer={item.customer}
+                taskExecutor={item.executor}
+                taskLocation={item.region}
+                taskSpecializationTags={item.tags}
+                taskDescription={item.description}
+                dealStatus={item.status}
+                cardWidth={'100%'}
+                marbo={"16px"}
+                deal={{
+                  type: item.coast.issafe === true ? 'safe' : 'simple',
+                  coast: item.coast.value,
+                  prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                  expert: item.coast.issafe === true ? item.coast.exper : 0,
+                }}
+              />
+            )
         })}
 
         <PagintationContainer>

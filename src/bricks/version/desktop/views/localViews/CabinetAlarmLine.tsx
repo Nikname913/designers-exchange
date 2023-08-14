@@ -79,7 +79,7 @@ const CabinetAlarmLine: React.FC<ICabinetAlarmLineProps> = (props: ICabinetAlarm
 
           { textData[1] !== '---' 
             
-            && <div style={{ lineHeight: '23px' }}><span style={{ fontWeight: 'bold' }}>Гонорар за работу: </span><span>{ textData[1] } руб.</span></div> 
+            && <div style={{ lineHeight: '23px', marginTop: '10px' }}><span style={{ fontWeight: 'bold' }}>Гонорар за работу: </span><span>{ textData[1] } руб.</span></div> 
             
           }
           { textData[2] !== '---' 

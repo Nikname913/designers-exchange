@@ -132,12 +132,10 @@ const ExchangePage: React.FC = () => {
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
-    if ( TASKS_LIST.list.filter(item => item.status === 'backside').length === 0 ) {
-      false && dispatch(setShow(true))
-      false && dispatch(setType("info"))
-      false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
-    }
+    TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
+    false && dispatch(setShow(true))
+    false && dispatch(setType("info"))
+    false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
 
   const actualTask = (param: string) => {
@@ -172,7 +170,11 @@ const ExchangePage: React.FC = () => {
               TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.customer === ROLE_USER_ID).length
             })
           </span>
-          <span style={spanNoActiveCSS} onClick={arkhiv}>Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )</span>
+          <span style={spanNoActiveCSS} onClick={arkhiv}>
+            Архивные ({ 
+              TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.customer === ROLE_USER_ID).length 
+            })
+          </span>
         </div>
       </div>
       <MenuContainer>

@@ -4,14 +4,14 @@ import { ICreateTaskReducer } from "../../models-ts/reducers/create-task-reducer
 
 const initialState: ICreateTaskReducer = {
   title: '',
-  dateStart: '',
-  dateFinish: '',
+  dateStart: 'Дата не указана',
+  dateFinish: 'Дата не указана',
   tags: [],
   coast: '',
   prepay: '',
   prepayDays: '',
   expertise: '',
-  expertiseDays: '',
+  expertiseDays: 'Дата не указана',
   expertiseCoast: '',
   objectData: {
     constructionType: '',
@@ -21,8 +21,8 @@ const initialState: ICreateTaskReducer = {
   },
   objectParams: {
     square: '',
-    storeys: '',
-    height: '',
+    storeys: 'deprecated',
+    height: 'deprecated',
   },
   objectParamsSquare: '',
   objectParamsStoreys: '',
@@ -34,6 +34,7 @@ const initialState: ICreateTaskReducer = {
   focused: '',
   techTaskFile: [],
   contractFile: [],
+  completeFile: [],
   showChaptersEditForms: {
     show: false,
     num: 0
@@ -135,6 +136,17 @@ const createTaskReducer = createSlice({
     resetContractFile(state, action: PayloadAction<string>) {
       state.contractFile = []
     },
+    setCompleteFile(state, action: PayloadAction<File>) {
+      state.completeFile && state.completeFile.push(action.payload)
+    },
+    removeCompleteFile(state, action: PayloadAction<string>) {
+      let filesData = state.completeFile ? state.completeFile : [] 
+      let filterFilesData = filesData.filter(file => file.name !== action.payload)
+      state.completeFile = filterFilesData
+    },
+    resetCompleteFile(state, action: PayloadAction<string>) {
+      state.completeFile = []
+    },
     setShowChaptersEditForms(state, action: PayloadAction<{ show: boolean, num: number }>) {
       state.showChaptersEditForms = action.payload
     }
@@ -162,11 +174,17 @@ export const {
   setChapterLN,
   setChapterLD,
   setFocused,
+
   setTechTaskFile,
   removeTechTaskFile,
   resetTechTaskFile,
+
   setContractFile,
   removeContractFile,
   resetContractFile,
+
+  setCompleteFile,
+  removeCompleteFile,
+  resetCompleteFile,
   setShowChaptersEditForms } = createTaskReducer.actions
 export default createTaskReducer.reducer

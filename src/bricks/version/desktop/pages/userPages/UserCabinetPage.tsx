@@ -2538,31 +2538,24 @@ const ExecutorProfilePage: React.FC = () => {
                             }}
                           />
                         ] : [
-                          <ButtonComponent
-                            inner={"Подтверждение"} 
-                            type='CONTAINED_DISABLED' 
-                            action={() => {}}
-                            actionData={null}
-                            widthType={'%'}
-                            widthValue={40}
-                            children={""}
-                            childrenCss={undefined}
-                            iconSrc={null}
-                            iconCss={undefined}
-                            muiIconSize={30}
-                            MuiIconChildren={ArrowUpwardIcon}
-                            css={{
+                          <span
+                            style={{
                               position: 'relative',
                               boxSizing: 'border-box',
-                              padding: '4px',
+                              padding: '10px 16px 12px',
                               backgroundColor: 'transparent',
                               color: 'black',
-                              width: '56px',
-                              height: '43px',
+                              width: '200px',
+                              lineHeight: '18px',
                               border: '1px dashed grey',
-                              opacity: 0.6
+                              opacity: 0.6,
+                              fontSize: '13px',
+                              textAlign: 'center',
+                              borderRadius: '6px'
                             }}
-                          />
+                          >
+                            Область под кнопки - но не кнопка
+                          </span>
                         ]}
                         content={{
                           date: '[ Формат времени не совпадает ]',
@@ -2917,66 +2910,59 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
                 <span>Добавить новый проект</span>
               </div>
+              { ( EXECUTOR[0].portfolio && EXECUTOR[0].portfolio?.length > 0 ) && EXECUTOR[0].portfolio.map(item => {
 
-              { EXECUTOR[0].reviews && EXECUTOR[0].reviews.map(() => {
+                return <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px' }}>
+                  <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{ item.title }</span>
+                  <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки выполнения</span>
+                      <span>{ item.startMonth } { item.startYear } - { item.finishMonth } { item.finishYear }</span>
+                    </div>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold' }}>Акты и оплата</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ fontWeight: 'bold', marginRight: '24px' }}>{ item.coast }₽</span>
+                        <span>Вложение с актом отсутствует</span>
+                      </div>
+                    </div>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Площадь, кв.м</span>
+                        <span>{ item.param1 }</span>
+                      </div>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
+                        <span>{ item.param2 }</span>
+                      </div>
+                    </div>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
+                        <span>{ item.param3 }</span>
+                      </div>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
+                        <span>{ item.param4 }</span>
+                      </div>
+                    </div>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine>
+                    <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '24px' }}>Описание проекта</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '16px' }}>
+                    <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '20px' }}>{ item.text }</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '26px' }}>
+                    { item.tags.map((spec: string) => <TagElement background={tagBackground}>{ spec }</TagElement>)}
+                  </ReviewsContentLine>
+                </ReviewsContent>
 
-                return (
-                  <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start' }}>
-                    <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Проектирование вентиляции малоэтажного дома в Москве</span>
-                    <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
-                      <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки</span>
-                        <span>{"февраль 2021 - март 2023"}</span>
-                      </div>
-                      <div style={{ width: '50%' }}>
-                        <span style={{ fontWeight: 'bold' }}>Акты</span>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
-                          <span>Акт_выполненные.doc</span>
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ fontWeight: 'bold', marginRight: '24px' }}>60 000₽</span>
-                          <span>Акт_выполненные.doc</span>
-                        </div>
-                      </div>
-                    </ReviewsContentLine>
-                    <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
-                      <div style={{ width: '50%' }}>
-                        <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Общая площадь, кв.м</span>
-                          <span>360</span>
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
-                          <span>13</span>
-                        </div>
-                      </div>
-                      <div style={{ width: '50%' }}>
-                        <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
-                          <span>4</span>
-                        </div>
-                        <div style={{ marginTop: '10px' }}>
-                          <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
-                          <span>Москва, Россия</span>
-                        </div>
-                      </div>
-                    </ReviewsContentLine>
-                    <ReviewsContentLine>
-                      <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '30px' }}>Описание проекта</span>
-                    </ReviewsContentLine>
-                    <ReviewsContentLine style={{ marginTop: '16px' }}>
-                      <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '22px' }}>{"Consectetur pharetra elit rhoncus convallis molestie sit auctor. Eget enim convallis nisl iaculis donec. Nulla porttitor orci tristique mattis mi faucibus phasellus. Quisque sagittis risus id orci at proin faucibus sodales leo. Arcu integer sed senectus et lacinia diam. Urna a vulputate bibendum in nulla malesuada lectus. Neque vestibulum imperdiet elit maecenas mattis sagittis"}</span>
-                    </ReviewsContentLine>
-                    <ReviewsContentLine style={{ marginTop: '26px' }}>
-                      { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
-                    </ReviewsContentLine>
-                  </ReviewsContent>
-                )
-
-              }) }
+              })}
 
             </React.Fragment> }
 
@@ -5456,31 +5442,24 @@ const ExecutorProfilePage: React.FC = () => {
                               background={'#D9E7F0'}
                               isNew={true}
                               buttons={[
-                                <ButtonComponent
-                                  inner={"Подтверждение"} 
-                                  type='CONTAINED_DISABLED' 
-                                  action={() => {}}
-                                  actionData={null}
-                                  widthType={'%'}
-                                  widthValue={40}
-                                  children={""}
-                                  childrenCss={undefined}
-                                  iconSrc={null}
-                                  iconCss={undefined}
-                                  muiIconSize={30}
-                                  MuiIconChildren={ArrowUpwardIcon}
-                                  css={{
+                                <span
+                                  style={{
                                     position: 'relative',
                                     boxSizing: 'border-box',
-                                    padding: '4px',
+                                    padding: '10px 16px 12px',
                                     backgroundColor: 'transparent',
                                     color: 'black',
-                                    width: '56px',
-                                    height: '43px',
+                                    width: '200px',
+                                    lineHeight: '18px',
                                     border: '1px dashed grey',
-                                    opacity: 0.6
+                                    opacity: 0.6,
+                                    fontSize: '13px',
+                                    textAlign: 'center',
+                                    borderRadius: '6px'
                                   }}
-                                />
+                                >
+                                  Область под кнопки - но не кнопка
+                                </span>
                               ]}
                               content={{
                                 date: '[ Формат времени не совпадает ]',
@@ -5722,6 +5701,7 @@ const ExecutorProfilePage: React.FC = () => {
                   flexDirection: 'row', 
                   alignItems: 'center', 
                   marginTop: '14px',
+                  marginBottom: '22px',
                   cursor: 'pointer'
                 }}
               >
@@ -5747,112 +5727,71 @@ const ExecutorProfilePage: React.FC = () => {
                 </span>
                 <span>Добавить новый проект</span>
               </div>
-              { false && <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Проектирование вентиляции малоэтажного дома в Москве</span>
-                <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки</span>
-                    <span>{"февраль 2021 - март 2023"}</span>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Акты</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
-                      <span>Акт_выполненные.doc</span>
+              { ( CUSTOMER[0].portfolio && CUSTOMER[0].portfolio?.length > 0 ) && CUSTOMER[0].portfolio.map(item => {
+
+                return <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px' }}>
+                  <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{ item.title }</span>
+                  <img
+                    alt={"Изображение для проекта"}
+                    src={`http://85.193.88.125:3000/techPortfolio/${USER_ID}.case.jpg`}
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      width: '80%',
+                      marginBottom: '8px',
+                      marginTop: '28px',
+                      borderRadius: '4px'
+                    }}
+                  />
+                  <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки выполнения</span>
+                      <span>{ item.startMonth } { item.startYear } - { item.finishMonth } { item.finishYear }</span>
                     </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
-                      <span>Акт_выполненные.doc</span>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold' }}>Акты и оплата</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ fontWeight: 'bold', marginRight: '24px' }}>{ item.coast }₽</span>
+                        <span>Вложение с актом отсутствует</span>
+                      </div>
                     </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Общая площадь, кв.м</span>
-                      <span>360</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Площадь, кв.м</span>
+                        <span>{ item.param1 }</span>
+                      </div>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
+                        <span>{ item.param2 }</span>
+                      </div>
                     </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
-                      <span>13</span>
+                    <div style={{ width: '50%' }}>
+                      <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
+                        <span>{ item.param3 }</span>
+                      </div>
+                      <div style={{ marginTop: '10px' }}>
+                        <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
+                        <span>{ item.param4 }</span>
+                      </div>
                     </div>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
-                      <span>4</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
-                      <span>Москва, Россия</span>
-                    </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine>
-                  <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '30px' }}>Описание проекта</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '16px' }}>
-                  <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '20px' }}>{"Consectetur pharetra elit rhoncus convallis molestie sit auctor. Eget enim convallis nisl iaculis donec. Nulla porttitor orci tristique mattis mi faucibus phasellus. Quisque sagittis risus id orci at proin faucibus sodales leo. Arcu integer sed senectus et lacinia diam. Urna a vulputate bibendum in nulla malesuada lectus. Neque vestibulum imperdiet elit maecenas mattis sagittis"}</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '26px' }}>
-                  { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
-                </ReviewsContentLine>
-              </ReviewsContent> }
-              { false && <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px', marginBottom: '36px' }}>
-                <span style={{ fontWeight: 'bold', fontSize: '18px' }}>Проектирование вентиляции малоэтажного дома в Москве</span>
-                <ReviewsContentLine style={{ marginTop: '34px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки</span>
-                    <span>{"февраль 2021 - март 2023"}</span>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Акты</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
-                      <span>Акт_выполненные.doc</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ fontWeight: 'bold', marginRight: '24px' }}>220 000₽</span>
-                      <span>Акт_выполненные.doc</span>
-                    </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold' }}>Параметры объекта</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Общая площадь, кв.м</span>
-                      <span>360</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Высота объекта, м</span>
-                      <span>13</span>
-                    </div>
-                  </div>
-                  <div style={{ width: '50%' }}>
-                    <span style={{ fontWeight: 'bold', color: 'transparent' }}>---</span>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Этажность наземная</span>
-                      <span>4</span>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      <span style={{ marginRight: '24px', color: '#8E9DA7' }}>Регион</span>
-                      <span>Москва, Россия</span>
-                    </div>
-                  </div>
-                </ReviewsContentLine>
-                <ReviewsContentLine>
-                  <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '30px' }}>Описание проекта</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '16px' }}>
-                  <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '20px' }}>{"Consectetur pharetra elit rhoncus convallis molestie sit auctor. Eget enim convallis nisl iaculis donec. Nulla porttitor orci tristique mattis mi faucibus phasellus. Quisque sagittis risus id orci at proin faucibus sodales leo. Arcu integer sed senectus et lacinia diam. Urna a vulputate bibendum in nulla malesuada lectus. Neque vestibulum imperdiet elit maecenas mattis sagittis"}</span>
-                </ReviewsContentLine>
-                <ReviewsContentLine style={{ marginTop: '26px' }}>
-                  { Array(4).fill('Сигнализация').map((item, index) => <TagElement background={tagBackground}>{ item }</TagElement>)}
-                </ReviewsContentLine>
-              </ReviewsContent> }
+                  </ReviewsContentLine>
+                  <ReviewsContentLine>
+                    <span style={{ fontWeight: 'bold', marginBottom: '0px', marginTop: '24px' }}>Описание проекта</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '16px' }}>
+                    <span style={{ marginBottom: '0px', marginTop: '0px', lineHeight: '20px' }}>{ item.text }</span>
+                  </ReviewsContentLine>
+                  <ReviewsContentLine style={{ marginTop: '26px' }}>
+                    { item.tags.map((spec: string) => <TagElement background={tagBackground}>{ spec }</TagElement>)}
+                  </ReviewsContentLine>
+                </ReviewsContent>
+
+              })}
 
             </React.Fragment> }
 

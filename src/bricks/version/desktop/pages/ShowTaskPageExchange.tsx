@@ -92,7 +92,7 @@ const ShowTaskPage: React.FC = () => {
   const [ progress, setProgress ] = useState<number>(10)
   const [ counter, setCounter ] = useState<number>(0)
 
-  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string, type?: string }>({
 
     name: '',
     size: 0,
@@ -217,7 +217,7 @@ const ShowTaskPage: React.FC = () => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.pdf'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -235,11 +235,59 @@ const ShowTaskPage: React.FC = () => {
 
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
-
-      setTechTaskFile({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileType: string = await downloadFile.type
+      
+      downloadFileText.indexOf('no such file or directory') === -1 && setTechTaskFile({
         name: fileName,
         size: downloadFileSize,
-        text: downloadFileText
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      downloadFileText.indexOf('no such file or directory') === -1 && console.log({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNameTxt: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+
+      const rawTxt = JSON.stringify({
+        "fileName": fileNameTxt
+      });
+
+      var requestOptionsTxt: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawTxt,
+        redirect: 'follow'
+      };
+
+      const downloadFileTxt = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsTxt)
+        .then(response => response.blob())
+
+      const downloadFileTextTxt: string = await downloadFileTxt.text()
+      const downloadFileSizeTxt: number = await downloadFileTxt.size
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileTypeTxt: string = await downloadFileTxt.type
+      
+      downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
+        name: fileNameTxt,
+        size: downloadFileSizeTxt,
+        text: downloadFileTextTxt,
+        type: 'txt'
+      })
+
+      downloadFileTextTxt.indexOf('no such file or directory') === -1 && console.log({
+        name: fileNameTxt,
+        size: downloadFileSizeTxt,
+        text: downloadFileTextTxt,
+        type: 'txt'
       })
 
     })()
@@ -278,6 +326,7 @@ const ShowTaskPage: React.FC = () => {
               taskTitle={item.name}
               taskDeadline={item.deadline}
               taskExpertType={item.exper}
+              taskExpertDate={item.experDate}
               taskCustomer={item.customer}
               taskExecutor={item.executor}
               taskLocation={item.region}
@@ -358,7 +407,7 @@ const ShowTaskPage: React.FC = () => {
                   }}
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
-                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>негосударственная</span>
+                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Государственная</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -603,7 +652,7 @@ const ShowTaskPage: React.FC = () => {
                           { taskList.length > 0 ? 
                               taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
                         </span>
-                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Общая площадь, кв.м</span>
+                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Площадь, кв.м</span>
                       </div>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -734,7 +783,7 @@ const ShowTaskPage: React.FC = () => {
                             <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
                               <img
                                 alt={""}
-                                src={txt}
+                                src={ techTaskFile.type === 'txt' ? txt : pdf }
                                 style={{ ...fileIconCSS, width: '70%' }}
                                 onClick={() => {
                                   dispatch(setShowFOS(true))

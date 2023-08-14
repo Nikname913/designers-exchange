@@ -211,6 +211,12 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 )
 
               })}
+              { taskSpecializationTags.length === 0 && <TACC.SpecializationTag 
+                    backgroundColor={tagColor}
+                    style={{ width: '', fontSize: '13px' }}
+                  >
+                    {"Конкретные специализации не указаны"}
+                  </TACC.SpecializationTag> }
 
               <span style={bimTagCSS}>BIM</span>
 
@@ -228,12 +234,12 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 }</span>
               </div>
               <div style={divCSS}>
-                <span style={titleSpanCSS}>Аванс:</span>
-                <span>через 10 дней</span>
+                <span style={titleSpanCSS}>Дата аванса:</span>
+                <span>{"Временно скрыто"}</span>
               </div>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>{ taskExpertDate ? taskExpertDate : 'Дата экспертизы' + tagsSpredLine }</span>
+                <span>{ taskExpertDate ? 'Дата экспертизы: ' + taskExpertDate : 'Дата экспертизы' + tagsSpredLine }</span>
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>
@@ -242,9 +248,15 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   { deal.prepaid?.toString() === 'Договорной' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.prepaid }</TACC.CoastSpan> }
                 </div>
                 <div style={divRowCSS}>
-                  <span style={titleSpan2CSS}>Экспертиза</span> 
-                  { deal.expert?.toString() !== 'Договорная' && <TACC.CoastSpan>{ coastDelimeter(deal.expert?.toString()) }₽</TACC.CoastSpan> }
-                  { deal.expert?.toString() === 'Договорная' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.expert }</TACC.CoastSpan> }
+                  { deal.expert && <span style={titleSpan2CSS}>Экспертиза</span> } 
+                  { !deal.expert && <span style={titleSpan2CSS}>Расчет</span> }
+                  { deal.expert && deal.expert?.toString() !== 'Договорная' && <TACC.CoastSpan>{ coastDelimeter(deal.expert?.toString()) }₽</TACC.CoastSpan> }
+                  { deal.expert && deal.expert?.toString() === 'Договорная' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.expert }</TACC.CoastSpan> }
+                  { ( !deal.expert && deal.coast && deal.prepaid ) && <TACC.CoastSpan style={{ fontSize: '20px' }}>
+                    
+                    { coastDelimeter(( deal.coast - deal.prepaid ).toString()) }₽
+                    
+                  </TACC.CoastSpan> }
                 </div>
               </div>
             </TACC.TextContentLine>
@@ -346,7 +358,6 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 placeholder={"Действие"}
                 params={{ width: 100, height: 50 }}
                 data={[
-                  { value: '1', label: 'Редактировать' },
                   { value: '1', label: 'Снять задание' },
                 ]}
                 multy={false}

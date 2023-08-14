@@ -322,6 +322,13 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
                 })}
 
+                { taskSpecializationTags.length === 0 && <TACC.SpecializationTag 
+                  style={{ marginTop: '0px', marginBottom: '10px' }} 
+                  backgroundColor={specializationTagBackground}>
+                    { "Все специализации" }
+                  </TACC.SpecializationTag> 
+                }
+
               </div>
             </TACC.TextContentLine>
             <TACC.TextContentLine>
@@ -406,6 +413,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }</TACA.TaskCoastString>
                     
                   }
+                  { !deal.expert && <span style={{ display: 'block', height: '22px', width: '100px' }}/> }
                 </React.Fragment> : <React.Fragment>
                   <TACA.TaskSafeDeal color={indicatorLabelColor}>Безопасная сделка</TACA.TaskSafeDeal>
                   <TACA.SafeDealParameters backgroundColor={grey3}>
@@ -413,8 +421,27 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.SafeDealParametersComplete backgroundColor={blue2}/>
 
                   </TACA.SafeDealParameters>
-                  <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }₽</TACA.TaskCoastString>
-                  <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }₽</TACA.TaskCoastString>
+                  {  deal.prepaid && deal.prepaid.toString() !== 'Договорной' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { coastDelimeter(deal.prepaid.toString()) }₽</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.prepaid && deal.prepaid.toString() === 'Договорной' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { deal.prepaid }</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.expert && deal.expert.toString() !== 'Договорная' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { coastDelimeter(deal.expert.toString()) }₽</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.expert && deal.expert.toString() === 'Договорная' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"28px"}>Экспертиза: { deal.expert }</TACA.TaskCoastString>
+                    
+                  }
+                  { !deal.expert && <span style={{ display: 'block', height: '22px', width: '100px' }}/> }
                 </React.Fragment> }
               </React.Fragment> : <React.Fragment>
                 <TACA.TaskSafeDeal color={indicatorLabelColor}>Простая сделка</TACA.TaskSafeDeal>
@@ -478,7 +505,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 }}
               /> }
 
-              {(viewType === 'work' || viewType === 'complete') && <ButtonComponent
+              { viewType === 'work' && <ButtonComponent
                 inner={"Открыть заказ"} 
                 type="CONTAINED_DEFAULT" 
                 action={() => {
@@ -486,6 +513,30 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                   ROLE_TYPE === 'EXECUTOR' && navigate('/order-view/ex')
                   actions && actions[0](actionsParams && actionsParams[0])
                 }}
+                actionData={null}
+                widthType={"%"}
+                widthValue={100}
+                children={""}
+                childrenCss={{}}
+                iconSrc={null}
+                iconCss={undefined}
+                muiIconSize={null}
+                MuiIconChildren={EmailIcon}
+                css={{
+                  backgroundColor: blue2,
+                  fontSize: '12px',
+                  height: '40px',
+                  borderRadius: '6px',
+                  position: 'relative',
+                  boxSizing: 'border-box',
+                  marginBottom: '12px'
+                }}
+              /> }
+
+              { viewType === 'complete' && <ButtonComponent
+                inner={"Открыть заказ"} 
+                type="CONTAINED_DEFAULT" 
+                action={() => {}}
                 actionData={null}
                 widthType={"%"}
                 widthValue={100}

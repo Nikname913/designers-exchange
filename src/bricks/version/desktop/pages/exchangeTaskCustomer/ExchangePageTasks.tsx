@@ -106,7 +106,7 @@ const ExchangePage: React.FC = () => {
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const arkhiv = (): void => {
-    TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
+    TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').length > 0 && navigate('/tasks-archive-cust')
     false && dispatch(setShow(true))
     false && dispatch(setType("info"))
     false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
@@ -229,7 +229,9 @@ const ExchangePage: React.FC = () => {
             })
           </span>
           <span style={spanNoActiveCSS} onClick={arkhiv}>
-            Архивные ( Null { /*TASKS_LIST.list.filter(item => item.status === 'backside').length*/ } )
+            Архивные ({ 
+              TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.customer === ROLE_USER_ID).length 
+            })
           </span>
         </div>
       </div>
@@ -311,7 +313,7 @@ const ExchangePage: React.FC = () => {
             }}
             style={{ 
               marginTop: '0px', 
-              marginBottom: '10px', 
+              marginBottom: '4px', 
               fontWeight: 'bold', 
               color: typeShowTasks === 'noactive' ? greyColor2 : 'inherit',
               cursor: 'pointer' 
@@ -354,7 +356,7 @@ const ExchangePage: React.FC = () => {
 
           })}
         </React.Fragment>
-        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '24px' }} backgroundColor={delimiterColor}/>
+        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '33px' }} backgroundColor={delimiterColor}/>
         <TextFieldTitle 
           onClick={() => {
             setTypeShowTasks('noactive')
@@ -364,18 +366,23 @@ const ExchangePage: React.FC = () => {
           }}
           style={{ 
             marginTop: '0px', 
-            marginBottom: '29px', 
+            marginBottom: '24px', 
             fontWeight: 'bold',
             color: typeShowTasks === 'active' ? greyColor2 : 'inherit',
             cursor: 'pointer'
           }}
         >Неактивные задания ({ 
-          TASKS_LIST.listDeactive.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length 
+          TASKS_LIST.listDeactive.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length +
+          TASKS_LIST.listDraft.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length 
         })</TextFieldTitle>
         <React.Fragment>
           { typeShowTasks === 'noactive' && <React.Fragment>
-            <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ fontWeight: 'bold' }}>Отмененные</ExchangePageTaskCSS.TaskSpan>
-            <ExchangePageTaskCSS.TaskSpan color={greyColor2}>Черновики</ExchangePageTaskCSS.TaskSpan>
+            <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ fontWeight: 'bold' }}>
+              Отмененные - { TASKS_LIST.listDeactive.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length }
+            </ExchangePageTaskCSS.TaskSpan>
+            <ExchangePageTaskCSS.TaskSpan color={greyColor2} style={{ marginTop: '-16px' }}>
+              Черновики - { TASKS_LIST.listDraft.filter(task => task.status === 'searching').filter(item => item.customer === ROLE_USER_ID).length }
+            </ExchangePageTaskCSS.TaskSpan>
           </React.Fragment> }
         </React.Fragment>
       </MenuContainer>
@@ -457,7 +464,10 @@ const ExchangePage: React.FC = () => {
 
         </React.Fragment> : <React.Fragment>
           
-          { TASKS_LIST.listDeactive.filter(task => task.status === 'searching').map((item, index) => {
+          { TASKS_LIST.listDeactive
+            .filter(task => task.status === 'searching')
+            .filter(item => item.customer === ROLE_USER_ID)
+            .map((item, index) => {
 
             return (
               <TaskTable key={item.id}

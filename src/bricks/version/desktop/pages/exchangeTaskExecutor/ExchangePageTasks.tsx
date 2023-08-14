@@ -83,10 +83,9 @@ const ExchangePage: React.FC = () => {
     !false && dispatch(setMessage("В настоящий момент заданий в работе нет"))
   }
   const archive = (): void => {
-    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/active-orders-exec')
-    !false && dispatch(setShow(true))
-    !false && dispatch(setType("info"))
-    !false && dispatch(setMessage("В настоящий момент заданий в архиве нет"))
+    !false && TASKS_LIST.listOrdersComplete
+      .filter(item => item.status === 'backside')
+      .filter(item => item.executor === USER_ID).length > 0 && navigate('/tasks-archive-exec')
   }
 
   const actualTask = (param: string) => {
@@ -161,7 +160,9 @@ const ExchangePage: React.FC = () => {
             })
           </span>
           <span style={{ ...spanActiveCSS, opacity: 0.6, marginRight: '0px' }} onClick={archive}>
-            Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )
+            Архивные ({ 
+              TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.executor === USER_ID).length 
+            })
           </span>
         </div>
       </div>

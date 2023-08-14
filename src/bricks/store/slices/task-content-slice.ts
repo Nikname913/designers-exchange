@@ -7,8 +7,10 @@ const initialState: ITaskContent = {
     actualOne: '',
     showOne: '',
     list: [],
+    listDraft: [],
     listOrders: [],
-    listDeactive: []
+    listOrdersComplete: [],
+    listDeactive: [],
   }
 }
 
@@ -25,8 +27,14 @@ export const taskContentReducer = createSlice({
     setList: (state, action: PayloadAction<Array<any>>): void => {
       state.TASKS_DATA.list = action.payload
     },
+    setListDraft: (state, action: PayloadAction<Array<any>>): void => {
+      state.TASKS_DATA.listDraft = action.payload
+    },
     setListOrders: (state, action: PayloadAction<Array<any>>): void => {
       state.TASKS_DATA.listOrders = action.payload
+    },
+    setListOrdersComplete: (state, action: PayloadAction<Array<any>>): void => {
+      state.TASKS_DATA.listOrdersComplete = action.payload
     },
     setListDeactive: (state, action: PayloadAction<Array<any>>): void => {
       state.TASKS_DATA.listDeactive = action.payload
@@ -34,5 +42,11 @@ export const taskContentReducer = createSlice({
   }
 })
 
-export const { selectShowTask, selectActualTask, setList, setListOrders, setListDeactive } = taskContentReducer.actions
+export const { selectShowTask, 
+  selectActualTask, 
+  setList, 
+  setListDraft,
+  setListOrders,
+  setListOrdersComplete, 
+  setListDeactive } = taskContentReducer.actions
 export default taskContentReducer.reducer

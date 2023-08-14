@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAppSelector } from '../../../store/hooks'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
+import { 
+  setShow as setShowRCC, 
+  setShowType as setShowTypeRCC } from '../../../store/slices/right-content-slice'
+import { setShow as setShowFOS, setShowType as setShowTypeFOS  } from '../../../store/slices/fos-slice'
+import Switch from '@mui/material/Switch'
+import CommunicationTable from '../views/localViews/CommunicationTable'
 import ButtonComponent from '../comps/button/Button'
+import InputComponent from '../comps/input/Input'
 import TaskTableHeader from '../views/localViews/TaskTableHeader'
 import ChapterController from '../views/localViews/СhapterControllerShow'
+import SelectField from '../comps/select/SelectField'
+import ChatMessagesContainer from '../services/chatMessagesContainer.service'
 import cssContentArea from '../styles/views/contentArea.css'
 import css from '../styles/pages/showTaskPage.css'
+import chatCss from '../styles/services/rightContentContainer.css'
 import EmailIcon from '@mui/icons-material/Email'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
@@ -19,7 +30,9 @@ import checkMark from '../../../img/icons/checkMarkColor.svg'
 import timeIcon from '../../../img/icons/timeGrey.svg'
 import starIcon from '../../../img/icons/star.svg'
 import avatarIcon from '../../../img/stock/avatar.svg'
+import clipIcon from '../../../img/icons/clip.svg'
 
+import txt from '../../../img/icons/files/withActionTwo/txt.svg'
 import pdf from '../../../img/icons/files/withActionTwo/pdf.svg'
 import doc from '../../../img/icons/files/withActionTwo/doc.svg'
 import xls from '../../../img/icons/files/withActionTwo/xls.svg'
@@ -39,6 +52,7 @@ const { WhiteContainer,
   FileIconContainer,
   FileIconTitle,
   FileIconSize } = css
+const { ChatFork } = chatCss
 
 const LinearProgressWithPercent = (props: LinearProgressProps & { value: number }) => {
   return (
@@ -58,9 +72,13 @@ const LinearProgressWithPercent = (props: LinearProgressProps & { value: number 
 const ShowTaskPage: React.FC = () => {
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const userId = useAppSelector(state => state.roleTypeReducer.roleData.userID)
+  const showRCC = useAppSelector(state => state.rightContentReducer.isShow)
 
   const backwardButtonColor = useAppSelector(state => state.theme.grey)
   const activeLeftMenuIconColor = useAppSelector(state => state.theme.blue3)
@@ -69,14 +87,36 @@ const ShowTaskPage: React.FC = () => {
   const nameGreyColor = useAppSelector(state => state.theme.grey2)
   const attachColor = useAppSelector(state => state.theme.blue3)
   const downloadButtonColor = useAppSelector(state => state.theme.blue3)
+
+  const [ orderViewStep, setOrderViewStep ] = useState<
+    'details'       | 
+    'communication' | 
+    'documents'     |
+    'expert'        |
+    'chapter'       |
+    'agreement'     |
+    'lawyer'        |
+    'arguement'>('details')
   
   const [ progress, setProgress ] = useState<number>(10)
   const [ counter, setCounter ] = useState<number>(0)
+
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string, type?: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
 
   const greenColor = useAppSelector(state => state.theme.green)
   const blueColor = useAppSelector(state => state.theme.blue2)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
+  const chatBorderColor = useAppSelector(state => state.theme.blue3)
+  const chatBackground = useAppSelector(state => state.theme.white)
+  const inputBackground = useAppSelector(state => state.theme.white)
+  const chatSubmitColor = useAppSelector(state => state.theme.blue2)
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -135,6 +175,13 @@ const ShowTaskPage: React.FC = () => {
     justifyContent: 'flex-end',
     position: 'relative',
   }
+  const divCSS: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative'
+  }
   const rateSpanCSS: React.CSSProperties = {
     display: 'block',
     position: 'relative',
@@ -159,14 +206,119 @@ const ShowTaskPage: React.FC = () => {
     justifyContent: 'flex-start',
     position: 'relative',
   }
+  const lastActiveSpanCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    color: greyColor2,
+    fontSize: '13px'
+  }
+  const bottomDivCSS: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position:'relative',
+    width: '100%',
+    height: 'auto',
+    paddingLeft: '20px',
+    paddingRight: '20px',
+    boxSizing: 'border-box'
+  }
+  const bottomDivInnerCSS: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    position:'relative',
+    width: '100%',
+    height: 'auto',
+    borderTop: '1px solid #D9E7F0',
+    boxSizing: 'border-box',
+    paddingTop: '20px',
+    paddingBottom: '22px',
+  }
+  const clipDivCSS: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    position: 'relative',
+    width: '50px',
+    height: '50px',
+    marginRight: '6px'
+  }
+  const avatarContainerCSS: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    position: 'relative',
+  }
   const fileIconCSS: React.CSSProperties = {
     display: 'block',
     position: 'relative',
     width: '100%'
   }
+  const commTitleCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'relative',
+    fontWeight: 'bold',
+    marginRight: '40px'
+  }
+  const countSpanCSS: React.CSSProperties = {
+    display: 'block',
+    position: 'absolute',
+    width: '36px',
+    height: '24px',
+    borderRadius: '10px',
+    backgroundColor: chatSubmitColor,
+    color: chatBackground,
+    left: '100%',
+    marginLeft: '-48px',
+    textAlign: 'center',
+    fontSize: '11px',
+    lineHeight: '23px'
+  }
+
+  const step1 = (): void => setOrderViewStep('details')
+  const step2 = (): void => setOrderViewStep('communication')
+  const step3 = (): void => {
+    setOrderViewStep('documents')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('MDCC'))
+  }
+
+  const showChapters = (): void => {
+    setOrderViewStep('chapter')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ChapterCC'))
+  }
+
+  const showExpert = (): void => {
+    setOrderViewStep('expert')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('ExpertCC'))
+  }
+
+  const showAgreement = (): void => {
+    setOrderViewStep('agreement')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('AgreementCC'))
+  }
+
+  const showLawyer = (): void => {
+    setOrderViewStep('lawyer')
+    dispatch(setShowRCC(true))
+    dispatch(setShowTypeRCC('LawyerCC'))
+  }
 
   useEffect(() => { !!!false && console.log(selectTask) }, [ selectTask ])
   useEffect(() => { !!!false && console.log(taskList) }, [ taskList ])
+  useEffect(() => {
+
+    showRCC === false && setOrderViewStep('details')
+
+  }, [ showRCC ])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -177,6 +329,76 @@ const ShowTaskPage: React.FC = () => {
       clearInterval(timer)
     }
   }, [])
+
+  useEffect(() => {
+
+    ( async () => {
+
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.pdf'
+
+      const raw = JSON.stringify({
+        "fileName": fileName
+      });
+
+      var requestOptions: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+      };
+
+      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+        .then(response => response.blob())
+
+      const downloadFileText: string = await downloadFile.text()
+      const downloadFileSize: number = await downloadFile.size
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileType: string = await downloadFile.type
+      
+      downloadFileText.indexOf('no such file or directory') === -1 && setTechTaskFile({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNameTxt: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+
+      const rawTxt = JSON.stringify({
+        "fileName": fileNameTxt
+      });
+
+      var requestOptionsTxt: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawTxt,
+        redirect: 'follow'
+      };
+
+      const downloadFileTxt = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsTxt)
+        .then(response => response.blob())
+
+      const downloadFileTextTxt: string = await downloadFileTxt.text()
+      const downloadFileSizeTxt: number = await downloadFileTxt.size
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileTypeTxt: string = await downloadFileTxt.type
+      
+      downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
+        name: fileNameTxt,
+        size: downloadFileSizeTxt,
+        text: downloadFileTextTxt,
+        type: 'txt'
+      })
+
+    })()
+
+  }, [ selectTask ])
 
   return (
     <React.Fragment>
@@ -215,6 +437,7 @@ const ShowTaskPage: React.FC = () => {
               taskTitle={item.name}
               taskDeadline={item.deadline}
               taskExpertType={item.exper}
+              taskExpertDate={item.experDate}
               taskCustomer={item.customer}
               taskExecutor={item.executor}
               taskLocation={item.region}
@@ -248,21 +471,46 @@ const ShowTaskPage: React.FC = () => {
             </WhiteContainer>
             <Content>
               <div style={leftMenuContainerCSS}>
-                <LeftMenuIconButton backgroundColor={activeLeftMenuIconColor}>
+                <LeftMenuIconButton
+                  backgroundColor={ 
+                    orderViewStep === 'details' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    } 
+                  onClick={step1}
+                >
                   <img
                     alt={""}
                     src={infoIcon}
                   />
                   <span style={buttonLabelCSS}>Детали заказа</span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"}>
+                <LeftMenuIconButton
+                  backgroundColor={ 
+                    orderViewStep === 'communication' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }  
+                  onClick={step2}
+                >
                   <img
                     alt={""}
                     src={chatIcon}
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
+                  <span style={countSpanCSS}>
+                    { taskList.filter(item => item.id === selectTask)[0].progress > 50 ? '1' : '0' }
+                  </span>
                 </LeftMenuIconButton>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ marginBottom: '40px' }}>
+                <LeftMenuIconButton
+                  backgroundColor={ 
+                    orderViewStep === 'documents' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    } 
+                  style={{ marginBottom: '40px' }}
+                  onClick={step3}
+                >
                   <img
                     alt={""}
                     src={docsIcon}
@@ -270,29 +518,52 @@ const ShowTaskPage: React.FC = () => {
                   <span style={buttonLabelDeactiveCSS}>Мастер документы</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                <LeftMenuIconButton
+                  backgroundColor={ 
+                    orderViewStep === 'agreement' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
+                  style={{ paddingLeft: '0px', marginBottom: '0px', borderRadius: '0px' }}
+                  onClick={showAgreement}
+                >
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Предложить доп. соглашение</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                <LeftMenuIconButton backgroundColor={"transparent"} style={{ paddingLeft: '0px', marginBottom: '0px' }}>
+                <LeftMenuIconButton
+                  backgroundColor={ 
+                    orderViewStep === 'lawyer' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
+                  style={{ paddingLeft: '0px', marginBottom: '0px', borderRadius: '0px' }}
+                  onClick={showLawyer}
+                >
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500, paddingBottom: '2px' }}>Консультация юриста</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
-                  backgroundColor={"transparent"} 
+                  backgroundColor={ 
+                    orderViewStep === 'expert' 
+                      ? activeLeftMenuIconColor 
+                      : 'transparent' 
+                    }   
                   style={{ 
                     paddingLeft: '0px', 
-                    marginBottom: '0px', 
                     flexDirection: 'column', 
                     alignItems: 'flex-start', 
                     justifyContent: 'space-around',
                     paddingTop: '40px',
                     paddingBottom: '40px',
-                    height: 'auto'
+                    height: '80px',
+                    borderRadius: 0,
+                    marginTop: '24px',
+                    marginBottom: '24px'
                   }}
+                  onClick={showExpert}
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
-                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>негосударственная</span>
+                  <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Государственная</span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -313,37 +584,57 @@ const ShowTaskPage: React.FC = () => {
                 <SectionsContainer>
                   { taskList.length > 0 ? taskList.filter(item => item.id === selectTask).map((item, index: number) => {
 
-                      return <React.Fragment>
-                        { item.chapters && item.chapters.map(chapter => {
+                    return <React.Fragment>
+                      { item.chapters && item.chapters.map((chapter, index: number) => {
 
-                          return (
-                            <React.Fragment>
-                              <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                                <img
-                                  alt={""}
-                                  src={checkMark}
-                                />
-                                <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>{ chapter.title }</span>
-                              </LeftMenuIconButton>
-                              <LeftMenuLine backgroundColor={leftMenuLineColor}/>
-                            </React.Fragment>
-                          )
+                        return (
+                          <React.Fragment>
+                            <LeftMenuIconButton 
+                              backgroundColor={"transparent"} 
+                              style={{ 
+                                minHeight: '64px', 
+                                height: 'auto', 
+                                marginBottom: '0px', 
+                                padding: '18px 0px 22px',
+                                lineHeight: '20px',
+                              }}
+                              onClick={showChapters}
+                            >
+                              <img
+                                alt={""}
+                                src={checkMark}
+                              />
+                              <span 
+                                style={{ 
+                                  ...buttonLabelDeactiveCSS, 
+                                  fontWeight: 500,
+                                  display: 'block',
+                                  width: '88%',
+                                  overflow: 'hidden'
+                                }}
+                              >
+                                { chapter.title }
+                              </span>
+                            </LeftMenuIconButton>
+                            { item.chapters && index < item.chapters?.length - 1 && <LeftMenuLine backgroundColor={leftMenuLineColor}/> }
+                          </React.Fragment>
+                        )
 
-                        })}
+                      })}
 
-                        { item.chapters && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px' }}>
-                          <img
-                            alt={""}
-                            src={timeIcon}
-                          />
-                          <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
-                        </LeftMenuIconButton> }
-                      </React.Fragment>
+                      { item.chapters && item.chapters.length === 0 && <LeftMenuIconButton backgroundColor={"transparent"} style={{ height: '64px', marginBottom: '0px', padding: '0px', paddingLeft: orderViewStep === 'chapter' ? '20px' : '0px' }}>
+                        <img
+                          alt={""}
+                          src={timeIcon}
+                        />
+                        <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Разделы не добавлены</span>
+                      </LeftMenuIconButton> }
+                    </React.Fragment>
 
-                    }) : <React.Fragment></React.Fragment> }
+                  }) : <React.Fragment></React.Fragment> }
                 </SectionsContainer>
               </div>
-              <div style={contentContainerCSS}>
+              { orderViewStep === 'details' && <div style={contentContainerCSS}>
                 <div style={contentContainerLineCSS}>
                   <WhiteContainer
                     flexParams={{
@@ -538,7 +829,7 @@ const ShowTaskPage: React.FC = () => {
                           { taskList.length > 0 ? 
                               taskList.filter(item => item.id === selectTask)[0].objectParams?.square : '' }
                         </span>
-                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Общая площадь, кв.м</span>
+                        <span style={{ ...searchStatusCSS, width: '170px', marginTop: '5px', paddingLeft: '20px', boxSizing: 'border-box' }}>Площадь, кв.м</span>
                       </div>
                     </WhiteContainerContentLine>
                   </WhiteContainer>
@@ -558,7 +849,7 @@ const ShowTaskPage: React.FC = () => {
                       <WhiteContainerTitle>Описание</WhiteContainerTitle>
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"space-between"}>
-                      <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px' }}>
+                      <span style={{ ...searchStatusCSS, color: 'inherit', marginTop: '20px', lineHeight: '22px' }}>
                         { taskList.length > 0 ? 
                           taskList.filter(item => item.id === selectTask)[0].description : '' }
                       </span>
@@ -661,19 +952,24 @@ const ShowTaskPage: React.FC = () => {
                       </WhiteContainerContentLine> }
                     </div>
                     <div style={{ ...divAttachmentsCSS, width: '30%' }}>
-                      { false && <React.Fragment>
+                      { techTaskFile.size > 0 && <React.Fragment>
                         <WhiteContainerContentLine justify={"space-between"}>
                           <WhiteContainerTitle style={{ paddingLeft: '26px' }}>Техническое задание</WhiteContainerTitle>
                         </WhiteContainerContentLine>
                         <WhiteContainerContentLine justify={"space-around"} style={{ marginTop: '20px' }}>
-                          <FileIconContainer style={{ width: '90%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
+                          <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
                             <img
                               alt={""}
-                              src={doc}
+                              src={ techTaskFile.type === 'txt' ? txt : pdf }
                               style={{ ...fileIconCSS, width: '70%' }}
+                              onClick={() => {
+                                dispatch(setShowFOS(true))
+                                dispatch(setShowTypeFOS('showFile'))
+                                dispatch(setShowRCC('undefined'))
+                              }}
                             />
-                            <FileIconTitle color={greyColor}>{"План-Склада"}</FileIconTitle>
-                            <FileIconSize color={greyColor2}>{"220 Kb"}</FileIconSize>
+                            <FileIconTitle color={greyColor} style={{ lineHeight: '18px' }}>{ techTaskFile.name }</FileIconTitle>
+                            <FileIconSize color={greyColor2}>{ techTaskFile.size + ' байт' }</FileIconSize>
                           </FileIconContainer>
                         </WhiteContainerContentLine>
                       </React.Fragment> }
@@ -708,7 +1004,398 @@ const ShowTaskPage: React.FC = () => {
                     </div>
                   </WhiteContainer>
                 </div>
-              </div>
+              </div> }
+              { orderViewStep === 'communication' && <div style={contentContainerCSS}>
+                <div style={contentContainerLineCSS}>
+                  <WhiteContainer
+                    flexParams={{
+                      direction: 'column',
+                      align: 'flex-start',
+                      justify:'flex-start',
+                    }}
+                    width={"100%"}
+                    height={""}
+                    style={{ paddingLeft: '60px', paddingRight: '60px', paddingTop: '30px' }}
+                  >
+                    <WhiteContainerContentLine justify={"flex-start"}>
+                      <span style={commTitleCSS}>Выберите действие</span>
+                      <SelectField 
+                        placeholder={"Действие"}
+                        params={{ width: 300, height: 50 }}
+                        data={[
+                          { value: '1', label: 'Прервать заказ' },
+                          { value: '2', label: 'Пожаловаться' },
+                          { value: '3', label: 'Покинуть заказ' },
+                          { value: '4', label: 'Покинуть раздел' },
+                        ]}
+                        multy={false}
+                        action={() => {}}
+                        actionType={""}
+                        actionParams={[]}
+                        showIcon={true}
+                        icon={null}
+                        iconStyles={{
+                          marginTop: '-12px',
+                          marginLeft: '6px',
+                          width: '34px',
+                        }}
+                      />
+                    </WhiteContainerContentLine>
+                    <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '20px', marginBottom: '10px' }}>
+                      { taskList.filter(item => item.id === selectTask)[0].progress > 50 && <CommunicationTable
+                        content={"Исполнитель сдает проект на экспертизу"}
+                        status={"wait"}
+                        oneButtonParams={{
+                          isset: true,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'Принять',
+                          width: 180,
+                        }}
+                        twoButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Доработка',
+                          width: 180,
+                        }}
+                        threeButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'SAVE_COMPLETE',
+                          width: 180,
+                        }}
+                        image={"subs"}
+                      /> }
+                    </WhiteContainerContentLine>
+                    { taskList.filter(item => item.id === selectTask)[0].progress < 50 && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                      <CommunicationTable
+                        status={"wait"}
+                        oneButtonParams={{
+                          isset: true,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'В мастер-документы',
+                          width: 220,
+                        }}
+                        twoButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Отказать',
+                          width: 120,
+                        }}
+                        image={"pdf"}
+                      />
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                      <CommunicationTable
+                        status={"wait"}
+                        oneButtonParams={{
+                          isset: true,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'Принять и продолжить',
+                          width: 230,
+                        }}
+                        twoButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Отправить в доработку',
+                          width: 230,
+                        }}
+                        image={"subs"}
+                        imageMt={3}
+                      />
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                      <CommunicationTable
+                        status={"correct"}
+                        oneButtonParams={{
+                          isset: false,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'В мастер-документы',
+                          width: 220,
+                        }}
+                        twoButtonParams={{
+                          isset: true,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Понятно',
+                          width: 120,
+                        }}
+                        image={"subs"}
+                        imageMt={3}
+                      />
+                    </WhiteContainerContentLine> }
+                    { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
+                      <CommunicationTable
+                        status={"alarm"}
+                        oneButtonParams={{
+                          isset: true,
+                          color: 'white',
+                          background: 'blue2',
+                          inner: 'Открыть карточку спора',
+                          width: 244,
+                        }}
+                        twoButtonParams={{
+                          isset: false,
+                          color: 'grey',
+                          background: 'white',
+                          inner: 'Отправить в доработку',
+                          width: 230,
+                        }}
+                        image={"humm"}
+                        imageMt={-4}
+                      />
+                    </WhiteContainerContentLine> }
+                  </WhiteContainer>
+                </div>
+                <div style={{ ...contentContainerLineCSS, marginTop: '20px', marginBottom: '20px' }}>
+                  <WhiteContainer
+                    flexParams={{
+                      direction: 'column',
+                      align: 'flex-start',
+                      justify:'flex-start',
+                    }}
+                    width={"100%"}
+                    height={""}
+                    style={{ paddingLeft: '40px', paddingRight: '40px', paddingTop: '20px' }}
+                  >
+                    <ChatFork.ChatHeader>
+                      <div style={divCSS}>
+                        <ChatFork.ChatHeaderAvatar style={avatarContainerCSS}>
+                          <img
+                            alt={""}
+                            src={avatarIcon}
+                            style={avatarCSS}
+                          />
+                          <img
+                            alt={""}
+                            src={avatarIcon}
+                            style={{ ...avatarCSS, marginLeft: '-14px' }}
+                          />
+                          <img
+                            alt={""}
+                            src={avatarIcon}
+                            style={{ ...avatarCSS, marginLeft: '-14px' }}
+                          />
+                        </ChatFork.ChatHeaderAvatar>
+                      </div>
+                      <div style={divCSS}>
+                        <ChatFork.ChatHeaderEnableDocs>
+                          <span style={{ ...lastActiveSpanCSS, fontSize: '15px' }}>Документы</span>
+                          <Switch color={"primary"} defaultChecked />
+                        </ChatFork.ChatHeaderEnableDocs>
+                        <InputComponent
+                          type={'TEXT_INPUT_OUTLINE_SEARCH'}
+                          valueType='text'
+                          required={false}
+                          widthType={'px'}
+                          widthValue={300}
+                          heightValue={'56px'}
+                          label={"Поиск по сообщениям"}
+                          isError={false}
+                          isDisabled={false}
+                          labelShrinkLeft={"0px"}
+                          innerLabel={null}
+                          css={{
+                            fontSize: '12px',
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            marginBottom: '8px',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                      </div>
+                    </ChatFork.ChatHeader>
+                    <ChatFork.ChatBody
+                      border={`1px solid ${chatBorderColor}`}
+                      backgroundColor={chatBackground}
+                      style={{ marginTop: '12px', height: 'auto' }}
+                    >
+                      <ChatFork.ChatBodyInner
+                        border={`1px solid transparent`}
+                        backgroundColor={chatBackground}
+                      >
+                        <ChatMessagesContainer
+                          data={[
+                            { 
+                              date: '05.01.2022', 
+                              messages: [
+                                { 
+                                  type: 'me', 
+                                  content: [
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:05',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:05',
+                                      likes: 0  }
+                                  ]
+                                },
+                                { 
+                                  type: 'you', 
+                                  content: [
+                                    { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                      time: '20:06',
+                                      name: 'Виолетта',
+                                      likes: 0,
+                                      files: {
+                                        id: 'undefined',
+                                        ext: 'doc',
+                                        name: 'План_Склада.doc'
+                                      }},
+                                  ]
+                                },
+                                { 
+                                  type: 'me', 
+                                  content: [
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:08',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'you', 
+                                  content: [
+                                    { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'me', 
+                                  content: [
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:08',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'you', 
+                                  content: [
+                                    { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'action', 
+                                  content: [
+                                    { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:10',
+                                      name: 'Виолетта',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'me', 
+                                  content: [
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:08',
+                                      likes: 0 },
+                                  ]
+                                },
+                                { 
+                                  type: 'me', 
+                                  content: [
+                                    { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', 
+                                      time: '20:08',
+                                      likes: 0 },
+                                  ]
+                                },
+                              ]
+                            }
+                          ]}
+                        />
+                      </ChatFork.ChatBodyInner>
+                      <div style={bottomDivCSS}>
+                        <div style={bottomDivInnerCSS}>
+                          <div style={clipDivCSS}>
+                            <img
+                              alt={""}
+                              src={clipIcon}
+                            />
+                          </div>
+                          <InputComponent
+                            type={'TEXT_INPUT_OUTLINE'}
+                            valueType='text'
+                            required={false}
+                            widthType={'%'}
+                            widthValue={100}
+                            heightValue={'50px'}
+                            label={"Lorem ipsum dolor sit amet consectetur adipisicing elit"}
+                            isError={false}
+                            isDisabled={true}
+                            labelShrinkLeft={"0px"}
+                            innerLabel={null}
+                            css={{
+                              fontSize: '12px',
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              marginTop: '0px',
+                              backgroundColor: inputBackground,
+                              marginRight: '12px'
+                            }}
+                          />
+                          <ButtonComponent
+                            inner={""} 
+                            type='ICON_BUTTON_CHAT_SUBMIT' 
+                            action={() => console.log('this is button')}
+                            actionData={null}
+                            widthType={'px'}
+                            widthValue={56}
+                            children={""}
+                            childrenCss={undefined}
+                            iconSrc={null}
+                            iconCss={undefined}
+                            muiIconSize={30}
+                            MuiIconChildren={ArrowUpwardIcon}
+                            css={{
+                              position: 'relative',
+                              boxSizing: 'border-box',
+                              padding: '4px',
+                              backgroundColor: chatSubmitColor,
+                              width: '56px',
+                              height: '56px',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </ChatFork.ChatBody>
+                  </WhiteContainer>
+                </div>
+              </div> }
             </Content>
           </React.Fragment> )}) : <React.Fragment></React.Fragment> }
       </ContentArea> 

@@ -78,11 +78,10 @@ const ExchangePage: React.FC = () => {
   const tasks = (): void => {
     TASKS_LIST.list.filter(item => item.status === 'searching').length > 0 && navigate('/task-list-exec')
   }
-  const arkhiv = (): void => {
-    false && TASKS_LIST.list.filter(item => item.status === 'backside').length > 0 && navigate('/active-orders-exec')
-    !false && dispatch(setShow(true))
-    !false && dispatch(setType("info"))
-    !false && dispatch(setMessage("В настоящий момент заданий в архиве нет"))
+  const archive = (): void => {
+    !false && TASKS_LIST.listOrdersComplete
+      .filter(item => item.status === 'backside')
+      .filter(item => item.executor === USER_ID).length > 0 && navigate('/tasks-archive-exec')
   }
 
   const openOrder = (param: string): void => {
@@ -119,8 +118,10 @@ const ExchangePage: React.FC = () => {
                 TASKS_LIST.listOrders.filter(item => item.status === 'work').filter(item => item.executor === USER_ID).length
               })
             </span>
-            <span style={spanNoActiveCSS} onClick={arkhiv}>
-              Архивные ( Null {/*TASKS_LIST.list.filter(item => item.status === 'backside').length*/} )
+            <span style={spanNoActiveCSS} onClick={archive}>
+              Архивные ({ 
+                TASKS_LIST.listOrdersComplete.filter(item => item.status === 'backside').filter(item => item.executor === USER_ID).length 
+              })
             </span>
           </div>
         </div>
