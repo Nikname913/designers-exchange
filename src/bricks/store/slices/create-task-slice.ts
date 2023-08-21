@@ -10,7 +10,7 @@ const initialState: ICreateTaskReducer = {
   coast: '',
   prepay: '',
   prepayDays: '',
-  expertise: '',
+  expertise: 'Экспертизы не будет',
   expertiseDays: 'Дата не указана',
   expertiseCoast: '',
   objectData: {

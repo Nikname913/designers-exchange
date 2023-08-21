@@ -8,7 +8,7 @@ export interface ICustExecCardPrevProps {
   userReviews: number,
   userRate: number,
   userProjects: Array<number>,
-  userTags: Array<string>,
+  userTags: Array<string | Array<string>>,
   isDisabledMessage: boolean,
   cardWidth: string | null,
   marginBottom: string | null,

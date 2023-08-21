@@ -94,7 +94,7 @@ const ShowTaskPage: React.FC = () => {
   const [ progress, setProgress ] = useState<number>(10)
   const [ counter, setCounter ] = useState<number>(0)
 
-  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string, type?: string }>({
 
     name: '',
     size: 0,
@@ -369,7 +369,7 @@ const ShowTaskPage: React.FC = () => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+      const fileName: string = selectTask + '.techtask.pdf'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -387,11 +387,63 @@ const ShowTaskPage: React.FC = () => {
 
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
-
-      setTechTaskFile({
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileType: string = await downloadFile.type
+      
+      downloadFileText.indexOf('no such file or directory') === -1 && setTechTaskFile({
         name: fileName,
         size: downloadFileSize,
-        text: downloadFileText
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      downloadFileText.indexOf('no such file or directory') === -1 && console.log({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNameTxt: string = selectTask + '.techtask.txt'
+
+      const rawTxt = JSON.stringify({
+        "fileName": fileNameTxt
+      });
+
+      var requestOptionsTxt: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawTxt,
+        redirect: 'follow'
+      };
+
+      const downloadFileTxt = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsTxt)
+        .then(response => response.blob())
+
+      const downloadFileTextTxt: string = await downloadFileTxt.text()
+      const downloadFileSizeTxt: number = await downloadFileTxt.size
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const downloadFileTypeTxt: string = await downloadFileTxt.type
+      
+      if ( downloadFileText.indexOf('no such file or directory') !== -1 ) {
+
+        downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
+          name: fileNameTxt,
+          size: downloadFileSizeTxt,
+          text: downloadFileTextTxt,
+          type: 'txt'
+        })
+
+      }
+
+      downloadFileTextTxt.indexOf('no such file or directory') === -1 && console.log({
+        name: fileNameTxt,
+        size: downloadFileSizeTxt,
+        text: downloadFileTextTxt,
+        type: 'txt'
       })
 
     })()
@@ -500,7 +552,10 @@ const ShowTaskPage: React.FC = () => {
                   />
                   <span style={buttonLabelDeactiveCSS}>Общение</span>
                   <span style={countSpanCSS}>
-                    { taskList.filter(item => item.id === selectTask)[0].progress > 50 ? '1' : '0' }
+                    { taskList.filter(item => item.id === selectTask)[0].progress > 50 
+                      ? 1 + taskList.filter(item => item.id === selectTask)[0].communication.length 
+                      : 0 + taskList.filter(item => item.id === selectTask)[0].communication.length 
+                    }
                   </span>
                 </LeftMenuIconButton>
                 <LeftMenuIconButton 
@@ -581,7 +636,9 @@ const ShowTaskPage: React.FC = () => {
                 >
                   <span style={{ ...buttonLabelDeactiveCSS, marginBottom: '10px' }}>Экспертиза</span>
                   <span style={{ ...buttonLabelDeactiveCSS, fontWeight: 500 }}>Государственная</span>
-                  <span style={countSpanCSS}>{"0"}</span>
+                  <span style={countSpanCSS}>
+                    { taskList.filter(item => item.id === selectTask)[0].progress > 50 ? '1' : '0' }
+                  </span>
                 </LeftMenuIconButton>
                 <LeftMenuLine backgroundColor={leftMenuLineColor}/>
                 <LeftMenuIconButton 
@@ -979,7 +1036,7 @@ const ShowTaskPage: React.FC = () => {
                           <FileIconContainer style={{ width: '80%', alignItems: 'flex-start', paddingLeft: '60px', boxSizing: 'border-box' }}>
                             <img
                               alt={""}
-                              src={txt}
+                              src={ techTaskFile.type === 'txt' ? txt : pdf }
                               style={{ ...fileIconCSS, width: '70%' }}
                               onClick={() => {
                                 dispatch(setShowFOS(true))
@@ -1047,6 +1104,7 @@ const ShowTaskPage: React.FC = () => {
                           { value: '3', label: 'Покинуть заказ' },
                           { value: '4', label: 'Покинуть раздел' },
                         ]}
+                        isDisabled
                         multy={false}
                         action={() => {}}
                         actionType={""}
@@ -1062,7 +1120,7 @@ const ShowTaskPage: React.FC = () => {
                     </WhiteContainerContentLine>
                     <WhiteContainerContentLine justify={"flex-start"} style={{ marginTop: '20px', marginBottom: '10px' }}>
                       { taskList.filter(item => item.id === selectTask)[0].progress > 50 && <CommunicationTable
-                        content={"Исполнитель сдает проект на экспертизу"}
+                        content={"Исполнитель сдает проект на проверку"}
                         status={"wait"}
                         oneButtonParams={{
                           isset: false,
@@ -1086,6 +1144,7 @@ const ShowTaskPage: React.FC = () => {
                           width: 180,
                         }}
                         image={"subs"}
+                        imageMt={4}
                       /> }
                     </WhiteContainerContentLine>
                     { taskList.filter(item => item.id === selectTask)[0].progress < 50 && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
@@ -1108,6 +1167,35 @@ const ShowTaskPage: React.FC = () => {
                         image={"pdf"}
                       />
                     </WhiteContainerContentLine> }
+                    { taskList.filter(item => item.id === selectTask)[0].communication.map(item => {
+
+                      return (
+                        <React.Fragment>
+                          <CommunicationTable
+                          content={item.message}
+                            status={"correct"}
+                            oneButtonParams={{
+                              isset: true,
+                              color: 'white',
+                              background: 'blue2',
+                              inner: 'Попозже кнопка',
+                              width: 220,
+                            }}
+                            twoButtonParams={{
+                              isset: true,
+                              color: 'grey',
+                              background: 'white',
+                              inner: 'Попозже кнопка',
+                              width: 220,
+                            }}
+                            image={"pror"}
+                            mb={"10px"}
+                            imageMt={1}
+                          />
+                        </React.Fragment>
+                      )
+
+                    })}
                     { false && <WhiteContainerContentLine justify={"flex-start"} style={{ marginBottom: '10px' }}>
                       <CommunicationTable
                         status={"correct"}

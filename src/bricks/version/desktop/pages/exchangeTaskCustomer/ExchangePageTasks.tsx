@@ -198,6 +198,8 @@ const ExchangePage: React.FC = () => {
 
   useEffect(() => {
 
+    dispatch(selectShowTask(''))
+
     return () => {
       false && dispatch(selectShowTask(''))
     }

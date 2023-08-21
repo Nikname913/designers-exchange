@@ -173,7 +173,6 @@ const ChapterController:
             }} 
           >
             <span>Оплата : { TASK_EXPERT_COAST && TASK_EXPERT_COAST !== 'Договорная' ? TASK_EXPERT_COAST : '***' }</span>
-            <span>Срок до : ***</span>
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound>
         <ChapterContainerStepRound 

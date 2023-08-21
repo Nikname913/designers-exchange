@@ -6,6 +6,7 @@ import { setActiveRole } from '../../../store/slices/role-type-slice'
 import { setCode, setFaceType } from '../../../store/slices/reg-slice'
 import { setUpdating } from '../../../store/slices/data-update-slice'
 import SelectField from '../comps/select/SelectField'
+import SelectFieldMulti from '../comps/select/SelectFieldPWMulti'
 import InputComponent from '../comps/input/Input'
 import ButtonComponent from '../comps/button/Button'
 import Checkbox from '@mui/material/Checkbox'
@@ -23,7 +24,7 @@ const AuthPage: React.FC = () => {
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AGREE, SET_AGREE ] = useState(false)
   const [ preloader, setPreloader ] = useState(false)
-  const [ spec, setSpec ] = useState<string>('')
+  const [ spec, setSpec ] = useState<Array<string>>([''])
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -168,7 +169,7 @@ const AuthPage: React.FC = () => {
         dispatch(setMessage('Нужно заполнить поле "Статус" указав там форму занятости'))
       }
 
-      if ( spec === '' ) {
+      if ( spec.length === 0 ) {
         dispatch(setShow(true))
         dispatch(setType('error'))
         dispatch(setMessage('Нужно заполнить выбрать основную специализацию'))
@@ -431,8 +432,8 @@ const AuthPage: React.FC = () => {
           <span style={{ fontWeight: 'bold' }}>Специализация</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '16px' }}>
-          <div style={{ display: 'block', position: 'relative', width: '50%' }}>
-            <SelectField 
+          <div style={{ display: 'block', position: 'relative', width: '100%' }}>
+            <SelectFieldMulti 
               placeholder={"Выберите специализацию [ список временно сокращен ]"}
               params={{ height: 50 }}
               data={[
@@ -483,8 +484,6 @@ const AuthPage: React.FC = () => {
               }}
             />
           </div>
-          <span style={{ display: 'block', width: '20px' }}/>
-          <div style={{ display: 'block', width: '50%' }}/>
         </ContentLine>
         <ContentLine style={{ marginTop: '20px' }}>
           <span style={{ fontWeight: 'bold' }}>Пароль</span>

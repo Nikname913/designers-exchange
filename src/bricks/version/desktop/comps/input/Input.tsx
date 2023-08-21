@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ----------------------------------------------------------------
 import React, { useState, useRef, useEffect } from 'react'
 import { styled } from '@mui/material/styles'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
@@ -79,6 +82,83 @@ import { setCaseName,
   setCaseText,
   setCaseTags,
   setFocused as setFocusedCase } from '../../../../store/slices/new-case-slice'
+import {
+  addInEducation1Title, 
+  addInEducation1Finish,
+  addInEducation1Special,
+
+  addInEducation2Title, 
+  addInEducation2Finish,
+  addInEducation2Special,
+
+  addInEducation3Title, 
+  addInEducation3Finish,
+  addInEducation3Special,
+
+  addInSkills1Title,
+  addInSkills1Site,
+  addInSkills1Sm,
+  addInSkills1Sy,
+  addInSkills1Fm,
+  addInSkills1Fy,
+  addInSkills1NowTime,
+  addInSkills1Job,
+  addInSkills1JobTasks,
+
+  addInSkills2Title,
+  addInSkills2Site,
+  addInSkills2Sm,
+  addInSkills2Sy,
+  addInSkills2Fm,
+  addInSkills2Fy,
+  addInSkills2NowTime,
+  addInSkills2Job,
+  addInSkills2JobTasks,
+
+  addInSkills3Title,
+  addInSkills3Site,
+  addInSkills3Sm,
+  addInSkills3Sy,
+  addInSkills3Fm,
+  addInSkills3Fy,
+  addInSkills3NowTime,
+  addInSkills3Job,
+  addInSkills3JobTasks,
+
+  addInSkills4Title,
+  addInSkills4Site,
+  addInSkills4Sm,
+  addInSkills4Sy,
+  addInSkills4Fm,
+  addInSkills4Fy,
+  addInSkills4NowTime,
+  addInSkills4Job,
+  addInSkills4JobTasks,
+
+  addInSkills5Title,
+  addInSkills5Site,
+  addInSkills5Sm,
+  addInSkills5Sy,
+  addInSkills5Fm,
+  addInSkills5Fy,
+  addInSkills5NowTime,
+  addInSkills5Job,
+  addInSkills5JobTasks,
+
+  addInSkills6Title,
+  addInSkills6Site,
+  addInSkills6Sm,
+  addInSkills6Sy,
+  addInSkills6Fm,
+  addInSkills6Fy,
+  addInSkills6NowTime,
+  addInSkills6Job,
+  addInSkills6JobTasks,
+
+  removeFromEducation, 
+  removeFromSkills,
+  setFocused as setFocusedSkills
+}  from '../../../../store/slices/new-skills-slice'
 
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import TextField from '@mui/material/TextField'
@@ -253,6 +333,23 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   const CASE_TEXT = useAppSelector(state => state.newCaseReducer.caseText)
   const CASE_TAGS = useAppSelector(state => state.newCaseReducer.caseTags)
   const CASE_FOCUS = useAppSelector(state => state.newCaseReducer.focused)
+
+  // ----------------------------------------------------------------
+  // данные для формы сохранения образования и опыта
+  // ----------------------------------------------------------------
+
+  const EDUCATION_BLOCK_1 = useAppSelector(state => state.newSkillsReducer.education[0])
+  const EDUCATION_BLOCK_2 = useAppSelector(state => state.newSkillsReducer.education[1])
+  const EDUCATION_BLOCK_3 = useAppSelector(state => state.newSkillsReducer.education[2])
+
+  const JOB_BLOCK_1 = useAppSelector(state => state.newSkillsReducer.skills[0])
+  const JOB_BLOCK_2 = useAppSelector(state => state.newSkillsReducer.skills[1])
+  const JOB_BLOCK_3 = useAppSelector(state => state.newSkillsReducer.skills[2])
+  const JOB_BLOCK_4 = useAppSelector(state => state.newSkillsReducer.skills[3])
+  const JOB_BLOCK_5 = useAppSelector(state => state.newSkillsReducer.skills[4])
+  const JOB_BLOCK_6 = useAppSelector(state => state.newSkillsReducer.skills[5])
+
+  const EDSKILL_FOCUS = useAppSelector(state => state.newSkillsReducer.focused)
 
   interface IState {
     showPassword: boolean,
@@ -927,6 +1024,69 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
   // ----------------------------------------------------------------
   // ----------------------------------------------------------------
 
+  const reduceNewSkillsForm = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+    // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // store[0] === 'EDUCATION_BLOCK_1_TITLE' ? EDUCATION_BLOCK_1.title :
+    // store[0] === 'EDUCATION_BLOCK_1_FINISH' ? EDUCATION_BLOCK_1.finish : 
+    // store[0] === 'EDUCATION_BLOCK_1_SPECIAL' ? EDUCATION_BLOCK_1.special :
+    // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // store[0] === 'JOB_BLOCK_1_TITLE' ? JOB_BLOCK_1.title :
+    // store[0] === 'JOB_BLOCK_1_SITE' ? JOB_BLOCK_1.site :
+    // store[0] === 'JOB_BLOCK_1_SM' ? JOB_BLOCK_1.sm :
+    // store[0] === 'JOB_BLOCK_1_SY' ? JOB_BLOCK_1.sy :
+    // store[0] === 'JOB_BLOCK_1_FM' ? JOB_BLOCK_1.fm :
+    // store[0] === 'JOB_BLOCK_1_FY' ? JOB_BLOCK_1.fy :
+    // store[0] === 'JOB_BLOCK_1_NOW_TIME' ? JOB_BLOCK_1.nowTime :
+    // store[0] === 'JOB_BLOCK_1_JOB' ? JOB_BLOCK_1.job :
+    // store[0] === 'JOB_BLOCK_1_JOB_TASKS' ? JOB_BLOCK_1.jobTasks :
+    // ----------------------------------------------------------------
+    // ----------------------------------------------------------------
+
+    if ( store ) {
+
+      store[0] === 'EDUCATION_BLOCK_1_TITLE' && dispatch(addInEducation1Title(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_1_FINISH' && dispatch(addInEducation1Finish(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_1_SPECIAL' && dispatch(addInEducation1Special(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_2_TITLE' && dispatch(addInEducation2Title(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_2_FINISH' && dispatch(addInEducation2Finish(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_2_SPECIAL' && dispatch(addInEducation2Special(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_3_TITLE' && dispatch(addInEducation3Title(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_3_FINISH' && dispatch(addInEducation3Finish(event.target.value))
+      store[0] === 'EDUCATION_BLOCK_3_SPECIAL' && dispatch(addInEducation3Special(event.target.value))
+      
+      store[0] === 'JOB_BLOCK_1_TITLE' && dispatch(addInSkills1Title(event.target.value))
+      store[0] === 'JOB_BLOCK_1_SITE' && dispatch(addInSkills1Site(event.target.value))
+      store[0] === 'JOB_BLOCK_1_SM' && dispatch(addInSkills1Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_1_SY' && dispatch(addInSkills1Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_1_FM' && dispatch(addInSkills1Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_1_FY' && dispatch(addInSkills1Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_1_NOW_TIME' && dispatch(addInSkills1NowTime(true))
+      store[0] === 'JOB_BLOCK_1_JOB' && dispatch(addInSkills1Job(event.target.value))
+      store[0] === 'JOB_BLOCK_1_JOB_TASKS' && dispatch(addInSkills1JobTasks(event.target.value))
+
+      store[0] === 'CASE_NAME' && dispatch(setFocusedCase('CASE_NAME'))
+      store[0] === 'CASE_SY' && dispatch(setFocusedCase('CASE_SY'))
+      store[0] === 'CASE_SM' && dispatch(setFocusedCase('CASE_SM'))
+      store[0] === 'CASE_FY' && dispatch(setFocusedCase('CASE_FY'))
+      store[0] === 'CASE_FM' && dispatch(setFocusedCase('CASE_FM'))
+      store[0] === 'CASE_PAY' && dispatch(setFocusedCase('CASE_PAY'))
+      store[0] === 'CASE_P1' && dispatch(setFocusedCase('CASE_P1'))
+      store[0] === 'CASE_P2' && dispatch(setFocusedCase('CASE_P2'))
+      store[0] === 'CASE_P3' && dispatch(setFocusedCase('CASE_P3'))
+      store[0] === 'CASE_P4' && dispatch(setFocusedCase('CASE_P4'))
+      store[0] === 'CASE_TEXT' && dispatch(setFocusedCase('CASE_TEXT'))
+      store[0] === 'CASE_TAGS' && dispatch(setFocusedCase('CASE_TAGS'))
+
+    }
+
+  }
+
+  // ----------------------------------------------------------------
+  // ----------------------------------------------------------------
+
   const clickShowPassword = () => {
     setValues({
       ...values,
@@ -1166,6 +1326,104 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
               onFocus={reduceNewCaseFormFocus}
               onBlur={reduceNewCaseFormBlur}
               autoFocus={store && CASE_FOCUS === store[0] && true}
+              id="standard-basic-task" 
+              label={label}
+              error={isError}
+              disabled={isDisabled}
+              autoComplete={"off"}
+              style={{
+                ...css,
+                width: '100%'
+              }} 
+            /> 
+
+          // ---------------------------------------------------------------- !!! 
+          // данный тип интпута создан временно, нужно перекинуть функционал
+          // на типа просто TEXT_INPUT_OUTLINE 
+          // ---------------------------------------------------------------- !!!
+
+          : type === 'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'
+          ? <CustomTextField 
+              ref={inputRef}
+              type={valueType}
+              value={
+                !store ? '' :
+                  store[0] === 'EDUCATION_BLOCK_1_TITLE' ? EDUCATION_BLOCK_1.title :
+                  store[0] === 'EDUCATION_BLOCK_1_FINISH' ? EDUCATION_BLOCK_1.finish : 
+                  store[0] === 'EDUCATION_BLOCK_1_SPECIAL' ? EDUCATION_BLOCK_1.special :
+
+                  store[0] === 'EDUCATION_BLOCK_2_TITLE' ? EDUCATION_BLOCK_2.title :
+                  store[0] === 'EDUCATION_BLOCK_2_FINISH' ? EDUCATION_BLOCK_2.finish : 
+                  store[0] === 'EDUCATION_BLOCK_2_SPECIAL' ? EDUCATION_BLOCK_2.special :
+                  
+                  store[0] === 'EDUCATION_BLOCK_3_TITLE' ? EDUCATION_BLOCK_3.title :
+                  store[0] === 'EDUCATION_BLOCK_3_FINISH' ? EDUCATION_BLOCK_3.finish : 
+                  store[0] === 'EDUCATION_BLOCK_3_SPECIAL' ? EDUCATION_BLOCK_3.special :
+
+                  store[0] === 'JOB_BLOCK_1_TITLE' ? JOB_BLOCK_1.title :
+                  store[0] === 'JOB_BLOCK_1_SITE' ? JOB_BLOCK_1.site :
+                  store[0] === 'JOB_BLOCK_1_SM' ? JOB_BLOCK_1.sm :
+                  store[0] === 'JOB_BLOCK_1_SY' ? JOB_BLOCK_1.sy :
+                  store[0] === 'JOB_BLOCK_1_FM' ? JOB_BLOCK_1.fm :
+                  store[0] === 'JOB_BLOCK_1_FY' ? JOB_BLOCK_1.fy :
+                  store[0] === 'JOB_BLOCK_1_NOW_TIME' ? JOB_BLOCK_1.nowTime :
+                  store[0] === 'JOB_BLOCK_1_JOB' ? JOB_BLOCK_1.job :
+                  store[0] === 'JOB_BLOCK_1_JOB_TASKS' ? JOB_BLOCK_1.jobTasks :
+
+                  store[0] === 'JOB_BLOCK_2_TITLE' ? JOB_BLOCK_2.title :
+                  store[0] === 'JOB_BLOCK_2_SITE' ? JOB_BLOCK_2.site :
+                  store[0] === 'JOB_BLOCK_2_SM' ? JOB_BLOCK_2.sm :
+                  store[0] === 'JOB_BLOCK_2_SY' ? JOB_BLOCK_2.sy :
+                  store[0] === 'JOB_BLOCK_2_FM' ? JOB_BLOCK_2.fm :
+                  store[0] === 'JOB_BLOCK_2_FY' ? JOB_BLOCK_2.fy :
+                  store[0] === 'JOB_BLOCK_2_NOW_TIME' ? JOB_BLOCK_2.nowTime :
+                  store[0] === 'JOB_BLOCK_2_JOB' ? JOB_BLOCK_2.job :
+                  store[0] === 'JOB_BLOCK_2_JOB_TASKS' ? JOB_BLOCK_2.jobTasks :
+
+                  store[0] === 'JOB_BLOCK_3_TITLE' ? JOB_BLOCK_3.title :
+                  store[0] === 'JOB_BLOCK_3_SITE' ? JOB_BLOCK_3.site :
+                  store[0] === 'JOB_BLOCK_3_SM' ? JOB_BLOCK_3.sm :
+                  store[0] === 'JOB_BLOCK_3_SY' ? JOB_BLOCK_3.sy :
+                  store[0] === 'JOB_BLOCK_3_FM' ? JOB_BLOCK_3.fm :
+                  store[0] === 'JOB_BLOCK_3_FY' ? JOB_BLOCK_3.fy :
+                  store[0] === 'JOB_BLOCK_3_NOW_TIME' ? JOB_BLOCK_3.nowTime :
+                  store[0] === 'JOB_BLOCK_3_JOB' ? JOB_BLOCK_3.job :
+                  store[0] === 'JOB_BLOCK_3_JOB_TASKS' ? JOB_BLOCK_3.jobTasks :
+
+                  store[0] === 'JOB_BLOCK_4_TITLE' ? JOB_BLOCK_4.title :
+                  store[0] === 'JOB_BLOCK_4_SITE' ? JOB_BLOCK_4.site :
+                  store[0] === 'JOB_BLOCK_4_SM' ? JOB_BLOCK_4.sm :
+                  store[0] === 'JOB_BLOCK_4_SY' ? JOB_BLOCK_4.sy :
+                  store[0] === 'JOB_BLOCK_4_FM' ? JOB_BLOCK_4.fm :
+                  store[0] === 'JOB_BLOCK_4_FY' ? JOB_BLOCK_4.fy :
+                  store[0] === 'JOB_BLOCK_4_NOW_TIME' ? JOB_BLOCK_4.nowTime :
+                  store[0] === 'JOB_BLOCK_4_JOB' ? JOB_BLOCK_4.job :
+                  store[0] === 'JOB_BLOCK_4_JOB_TASKS' ? JOB_BLOCK_4.jobTasks :
+
+                  store[0] === 'JOB_BLOCK_5_TITLE' ? JOB_BLOCK_5.title :
+                  store[0] === 'JOB_BLOCK_5_SITE' ? JOB_BLOCK_5.site :
+                  store[0] === 'JOB_BLOCK_5_SM' ? JOB_BLOCK_5.sm :
+                  store[0] === 'JOB_BLOCK_5_SY' ? JOB_BLOCK_5.sy :
+                  store[0] === 'JOB_BLOCK_5_FM' ? JOB_BLOCK_5.fm :
+                  store[0] === 'JOB_BLOCK_5_FY' ? JOB_BLOCK_5.fy :
+                  store[0] === 'JOB_BLOCK_5_NOW_TIME' ? JOB_BLOCK_5.nowTime :
+                  store[0] === 'JOB_BLOCK_5_JOB' ? JOB_BLOCK_5.job :
+                  store[0] === 'JOB_BLOCK_5_JOB_TASKS' ? JOB_BLOCK_5.jobTasks :
+
+                  store[0] === 'JOB_BLOCK_6_TITLE' ? JOB_BLOCK_6.title :
+                  store[0] === 'JOB_BLOCK_6_SITE' ? JOB_BLOCK_6.site :
+                  store[0] === 'JOB_BLOCK_6_SM' ? JOB_BLOCK_6.sm :
+                  store[0] === 'JOB_BLOCK_6_SY' ? JOB_BLOCK_6.sy :
+                  store[0] === 'JOB_BLOCK_6_FM' ? JOB_BLOCK_6.fm :
+                  store[0] === 'JOB_BLOCK_6_FY' ? JOB_BLOCK_6.fy :
+                  store[0] === 'JOB_BLOCK_6_NOW_TIME' ? JOB_BLOCK_6.nowTime :
+                  store[0] === 'JOB_BLOCK_6_JOB' ? JOB_BLOCK_6.job :
+                  store[0] === 'JOB_BLOCK_6_JOB_TASKS' ? JOB_BLOCK_6.jobTasks : ''
+              }
+              onChange={reduceNewCaseForm}
+              onFocus={reduceNewCaseFormFocus}
+              onBlur={reduceNewCaseFormBlur}
+              autoFocus={store && EDSKILL_FOCUS === store[0] && true}
               id="standard-basic-task" 
               label={label}
               error={isError}

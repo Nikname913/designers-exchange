@@ -48,8 +48,8 @@ const css = {
     align-items: center;
     justify-content: space-around;
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 33px;
+    height: 33px;
     left: 100%;
     top: 100%;
     margin-top: -36px;

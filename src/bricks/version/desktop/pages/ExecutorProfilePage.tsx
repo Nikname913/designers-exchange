@@ -84,6 +84,8 @@ const ExecutorProfilePage: React.FC = () => {
   const EXECUTOR = EXECUTORS_LIST.filter((executor: any) => executor.clientId === userId)
   const [ tagsSpredLine, setTextSpredLine ] = useState<string>('')
 
+  const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
+
   const yelloColor = useAppSelector(state => state.theme.yellow)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
@@ -174,7 +176,7 @@ const ExecutorProfilePage: React.FC = () => {
                 overflow: 'hidden'
               }}
             >
-              <img
+              { avatarFile === 404 && <img
                 alt={""}
                 src={
                   EXECUTOR[0].avatar === '1' ? bearAvatar :
@@ -193,7 +195,12 @@ const ExecutorProfilePage: React.FC = () => {
                   EXECUTOR[0].avatar === '6' ? { width: '100px', marginTop: '36px'  } : 
                   { width: '100px', marginTop: '6px' }
                 }
-              />
+              /> }
+              { avatarFile === 200 && <img
+                alt={""}
+                src={`http://85.193.88.125:3000/techDocs/${EXECUTOR[0].clientId}.avatar.jpg`}
+                style={{ height: '100%' }}
+              /> }
             </div>
           </BootstrapTooltip>
           <AvatarIndicator background={yelloColor}/>
@@ -327,7 +334,7 @@ const ExecutorProfilePage: React.FC = () => {
             />
             <span style={buttonLabelCSS}>О пользователе</span>
           </LeftMenuIconButton>
-          <LeftMenuIconButton
+          { false && <LeftMenuIconButton
             onClick={() => setProfileViewStep('orders')} 
             backgroundColor={ 
               profileViewStep === 'orders'
@@ -341,7 +348,7 @@ const ExecutorProfilePage: React.FC = () => {
               style={{ width: '40px' }}
             />
             <span style={buttonLabelCSS}>Заказы в системе</span>
-          </LeftMenuIconButton>
+          </LeftMenuIconButton> }
           <LeftMenuIconButton
             onClick={() => setProfileViewStep('portfolio')} 
             backgroundColor={ 
@@ -382,9 +389,14 @@ const ExecutorProfilePage: React.FC = () => {
           >
             <img
               alt={""}
-              src={puzzle}
+              src={bag}
               style={{ width: '40px' }}
             />
+            { false && <img
+              alt={""}
+              src={puzzle}
+              style={{ width: '40px' }}
+            /> }
             <span style={buttonLabelCSS}>Команда</span>
           </LeftMenuIconButton>
         </MenuContainer>
@@ -427,7 +439,7 @@ const ExecutorProfilePage: React.FC = () => {
             </div>
           </TagsContent> }
           
-          { profileViewStep === 'about' && <ReviewsContent>
+          { profileViewStep === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
             <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
               <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Отзывы о пользователе</span>
               <SelectField 

@@ -376,7 +376,23 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
         </CardWrapperContentLine>
         <CardWrapperContentLineTags marginTop={"34px"}>
 
-          { userTags.map((item, index) => {
+          { typeof(userTags[0]) === 'string' && userTags.map((item, index) => {
+
+            if ( index < tagsLimit ) {
+
+              return (
+                <React.Fragment key={index}>
+                  <SpecializationTag backgroundColor={tagBackground}>
+                    { item !== '' ? item : 'Загрузка специализации' + tagsSpredLine }
+                  </SpecializationTag>
+                </React.Fragment>
+              )
+
+            }
+
+          })}
+
+          { typeof(userTags[0]) !== 'string' && userTags[0].map((item, index) => {
 
             if ( index < tagsLimit ) {
 
@@ -409,7 +425,7 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
           }
 
         </CardWrapperContentLineTags>
-        <CardWrapperContentLineTags marginTop={"32px"}>
+        <CardWrapperContentLineTags marginTop={"20px"}>
           <ButtonComponent
             inner={"В профиль"} 
             type="CONTAINED_DEFAULT" 

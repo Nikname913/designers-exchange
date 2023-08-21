@@ -39,7 +39,9 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
       outline: 'none',
       boxShadow: '0px 0px 1.5px grey',
       minHeight: '50px',
-      height: '50px',
+      // ----------------------------------------------------------------
+      // height: '50px',
+      // ----------------------------------------------------------------
       fontSize: '14px',
       paddingBottom: '1px',
       paddingTop: '1px',
@@ -107,32 +109,10 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
 
     switch(actty) {
 
-      case 'DISCOUNT_REDUCER': 
-        action(param)
-        break
-      case 'TASK_ACTIONS':
-        action(param)
-        break
-      case 'NEW_CASE':
-        action(param)
-        break
       case 'TASK_TAGS':
         action(param)
         break
-      case 'TASK_EXPERT':
-        action(param)
-        break
-
-      case 'TASK_P1':
-        action(param)
-        break
-      case 'TASK_P2':
-        action(param)
-        break
-      case 'TASK_P3':
-        action(param)
-        break
-      case 'TASK_P4':
+      case 'AUTH_SPEC_TYPE':
         action(param)
         break
 
@@ -176,7 +156,17 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
           }
         })}
         onChange={inputValue => {
-          action && actionsReducer(inputValue.label)
+
+          console.log(inputValue)
+          let labelsArray: Array<string> = []
+
+          inputValue.forEach((item: any) => {
+
+            labelsArray.push(item.label)
+
+          })
+
+          action && actionsReducer(labelsArray)
         }}
       />
     

@@ -21,7 +21,9 @@ import { setTitle,
   setTechTaskFile,
   removeTechTaskFile,
   resetTechTaskFile,
-  setTags
+  setExpertise,
+  setTags,
+  setShowChaptersEditForms
  } from '../../../store/slices/create-task-slice'
 import EmailIcon from '@mui/icons-material/Email'
 import InputComponent from '../comps/input/Input'
@@ -32,6 +34,7 @@ import ChapterController from '../views/localViews/СhapterController'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
 import SelectField from '../comps/select/SelectFieldPercentWidth'
+import SelectFieldMulti from '../comps/select/SelectFieldPWMulti'
 import cssContentArea from '../styles/views/contentArea.css'
 import cssAsideMenu from '../styles/pages/createTaskPageAside.css'
 import backIcon from '../../../img/icons/back.svg'
@@ -51,7 +54,6 @@ const { MenuContainer,
   StepsContainerVerticalStep,
   StepsContainerVerticalStepRound,
   StepsContainerVerticalStepRoundLabel } = cssAsideMenu
-const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 
 const CreateTaskPageEdit: React.FC = () => {
 
@@ -67,6 +69,7 @@ const CreateTaskPageEdit: React.FC = () => {
   const TASK_COAST = useAppSelector(state => state.createTaskReducer.coast)
   const TASK_PREPAY = useAppSelector(state => state.createTaskReducer.prepay)
   const TASK_PREPAY_DAYS = useAppSelector(state => state.createTaskReducer.prepayDays)
+  const TASK_EXPERT_TYPE = useAppSelector(state => state.createTaskReducer.expertise)
   const TASK_EXPERT_DAYS = useAppSelector(state => state.createTaskReducer.expertiseDays)
   const TASK_EXPERT_COAST = useAppSelector(state => state.createTaskReducer.expertiseCoast)
   const TASK_DESCRIPTION = useAppSelector(state => state.createTaskReducer.description)
@@ -91,6 +94,11 @@ const CreateTaskPageEdit: React.FC = () => {
   const [ newChapterNameValidateError, setNewChapterNameValidateError ] = useState(false)
   const [ newChapterDescrValidateError, setNewChapterDescrValidateError ] = useState(false)
   const [ agreeCoast, setAgreeCoast ] = useState<boolean>(false)
+
+  const [ param1, setParam1 ] = useState<string>('')
+  const [ param2, setParam2 ] = useState<string>('')
+  const [ param3, setParam3 ] = useState<string>('')
+  const [ param4, setParam4 ] = useState<string>('')
 
   const [ step1Color, setStep1Color ] = useState('rgb(58, 75, 86)')  
   const [ step2Color, setStep2Color ] = useState('rgb(58, 75, 86)')  
@@ -140,24 +148,22 @@ const CreateTaskPageEdit: React.FC = () => {
     dispatch(setTechTaskFile(param))
   }
 
-  const changeTaskTags = (param: string) => {
+  const changeTaskTags = (param: Array<string>) => {
 
-    dispatch(setTags([ param ]))
+    dispatch(setTags(param))
 
   }
 
   const addTaskData = () => {
 
-    false && SET_CREATE_TASK_REQUEST(true)
-    
+    SET_CREATE_TASK_REQUEST(true)
+
     setTimeout(() => { 
       
       if ( 
         
         TASK_TECH_FILE.length > 0 &&
-        ( TASK_TECH_FILE[0].name.indexOf('.txt') !== -1  || 
-        TASK_TECH_FILE[0].name.indexOf('.doc') !== -1    ||
-        TASK_TECH_FILE[0].name.indexOf('.docx') !== -1   ||
+        ( TASK_TECH_FILE[0].name.indexOf('.txt') !== -1 || 
         TASK_TECH_FILE[0].name.indexOf('.pdf') !== -1 )
 
       ) 
@@ -239,7 +245,60 @@ const CreateTaskPageEdit: React.FC = () => {
 
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const editChapter = () => {
+
+    TASK_CHAPTER_NAME === '' ? setNewChapterNameValidateError(true) : setNewChapterNameValidateError(false)
+    TASK_CHAPTER_DESCR === '' ? setNewChapterDescrValidateError(true) : setNewChapterDescrValidateError(false)
+
+    if ( TASK_CHAPTER_NAME !== '' && TASK_CHAPTER_DESCR !== '' ) {
+
+      let chapter = { 
+        title: TASK_CHAPTER_NAME, 
+        tags: [ 'options_download' ], 
+        description: TASK_CHAPTER_DESCR
+      }
+
+      let chapterArr = TASK_CHAPTERS.filter((item, index) => index !== TASK_CHAPTER_EDIT_FORM?.num )
+      chapterArr.push(chapter)
+
+      false && console.log(chapter)
+      !false && console.log(chapterArr)
+
+      dispatch(setChapters(chapterArr))
+      console.log(TASK_CHAPTERS)
+
+    }
+
+  }
+
   const removeFile = (param: string) => dispatch(removeTechTaskFile(param))
+
+  const changeExpertType = (param: string) => {
+
+    dispatch(setExpertise(param))
+
+  }
+  const changeParam1 = (param: string) => {
+
+    setParam1(param)
+
+  }
+  const changeParam2 = (param: string) => {
+
+    setParam2(param)
+
+  }
+  const changeParam3 = (param: string) => {
+
+    setParam3(param)
+
+  }
+  const changeParam4 = (param: string) => {
+
+    setParam4(param)
+
+  }
 
   useEffect(() => {
 
@@ -441,11 +500,15 @@ const CreateTaskPageEdit: React.FC = () => {
             square: TASK_OP_SQUARE, 
             storeys: TASK_OP_STOREYS, 
             height: TASK_OP_HEIGHT,
+            p1: param1,
+            p2: param2,
+            p3: param3,
+            p4: param4,
             description: TASK_DESCRIPTION,
             customer: USER_ID,
             status: 'TASK-ACTIVE',
             date: dateString,
-            taskId: taskId,
+            taskId: USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15),
             chapters: TASK_CHAPTERS,
             tags: TASK_TAGS
           }
@@ -453,13 +516,13 @@ const CreateTaskPageEdit: React.FC = () => {
       
       /> }
 
-      { CREATE_TASK_TTDF_REQUEST && false && <RequestActionsComponent
+      { CREATE_TASK_TTDF_REQUEST && <RequestActionsComponent
 
         callbackAction={() => {}}
         requestData={{
           type: 'POSTFILE_TTDF',
           urlstring: '/add-file-techtask',
-          body: [ USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15), TASK_TECH_FILE ]
+          body: [ taskId, TASK_TECH_FILE[0] ]
         }}
       
       /> }
@@ -480,7 +543,9 @@ const CreateTaskPageEdit: React.FC = () => {
         <BackwardButton color={backwardButtonColor} onClick={() => navigate('/task-list-all')}>Ко всем заданиям</BackwardButton>
       </div>
       <div style={headBlockCSS}>
-        <PageTitle style={{ width: '80%', marginTop: '20px', lineHeight: '44px' }}>Редактирование задания { taskId }</PageTitle>
+        <PageTitle style={{ width: '80%', marginTop: '20px', lineHeight: '44px' }}>
+          Редактирование задания "{ TASKS_LIST.filter(item => item.id === taskId)[0].name }"
+        </PageTitle>
       </div>
       <MenuContainer>
         { false && <StepsContainer>
@@ -519,7 +584,7 @@ const CreateTaskPageEdit: React.FC = () => {
           </StepsContainerVertical>
         </StepsContainer> }
         <ButtonComponent
-          inner={'Удалить задание'} 
+          inner={'Заглушка кнопки 1'} 
           type='OUTLINED_DISABLED' 
           action={() => console.log('this is button')}
           actionData={null}
@@ -542,10 +607,30 @@ const CreateTaskPageEdit: React.FC = () => {
             marginTop: '14px',
           }}
         />
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '24px' }}>
-          <Checkbox {...label} checked disabled />
-          <span style={{ lineHeight: '20px' }}>Принимаю предложения<br/> с большей стоимостью</span>
-        </div>
+        <ButtonComponent
+          inner={'Заглушка кнопки 2'} 
+          type='OUTLINED_DISABLED' 
+          action={() => console.log('this is button')}
+          actionData={null}
+          widthType={'%'}
+          widthValue={100}
+          children={''}
+          childrenCss={undefined}
+          iconSrc={null}
+          iconCss={undefined}
+          muiIconSize={null}
+          MuiIconChildren={EmailIcon}
+          css={{
+            backgroundColor: uploadButtonBackground,
+            color: blackColor,
+            fontSize: '12px',
+            height: '46px',
+            borderRadius: '6px',
+            position: 'relative',
+            boxSizing: 'border-box',
+            marginTop: '14px',
+          }}
+        />
         <ButtonComponent
           inner={'Обновить задание'} 
           type='OUTLINED' 
@@ -567,7 +652,7 @@ const CreateTaskPageEdit: React.FC = () => {
             borderRadius: '6px',
             position: 'relative',
             boxSizing: 'border-box',
-            marginTop: '26px',
+            marginTop: '14px',
             boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
           }}
         />
@@ -659,9 +744,9 @@ const CreateTaskPageEdit: React.FC = () => {
           />
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginTop: '18px' }}>
-          <SelectField 
+          <SelectFieldMulti 
             placeholder={"Необходимые навыки"}
-            params={{ width: 50, mb: '18px', height: 50 }}
+            params={{ width: 100, mb: '18px'}}
             data={[
               { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
               { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
@@ -697,7 +782,7 @@ const CreateTaskPageEdit: React.FC = () => {
               { value: 'Сметная документация', label: 'Сметная документация' },
               { value: 'Иная документация', label: 'Иная документация' }
             ]}
-            multy={false}
+            multy={true}
             action={changeTaskTags}
             actionType={"TASK_TAGS"}
             actionParams={[]}
@@ -709,8 +794,6 @@ const CreateTaskPageEdit: React.FC = () => {
               width: '34px',
             }}
           />
-          <span style={spanDelimiterCSS} />
-          <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
         <TextFieldContainerLine>
           { agreeCoast === false && <InputComponent
@@ -835,17 +918,18 @@ const CreateTaskPageEdit: React.FC = () => {
             }}
           />
         </TextFieldContainerLine>
-        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
+        <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Вид экспертизы</TextFieldSubTitle>
         <TextFieldContainerLine>
           <SelectField 
-            placeholder={"Государственная"}
-            params={{ width: 50, mb: '16px', height: 50 }}
+            placeholder={"Планируется ли экспертиза в проекте"}
+            params={{ width: TASK_EXPERT_TYPE !== 'Экспертизы не будет' ? 50 : 100, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Государственная' },
+              { value: '1', label: 'Экспертизы не будет' },
+              { value: '2', label: 'Государственная экспертиза' },
             ]}
             multy={false}
-            action={() => {}}
-            actionType={""}
+            action={changeExpertType}
+            actionType={"TASK_EXPERT"}
             actionParams={[]}
             showIcon={true}
             icon={null}
@@ -855,55 +939,57 @@ const CreateTaskPageEdit: React.FC = () => {
               width: '34px',
             }}
           />
-          <span style={spanDelimiterCSS}></span>
-          <div style={{ ...divHalfWidthCSS }}>
-            <div style={{ display: 'block', width: agreeCoast === false ? '50%' : '100%', marginTop: '-23px' }}>
-              <InputComponent
-                type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
+          { TASK_EXPERT_TYPE !== 'Экспертизы не будет' && <React.Fragment>
+            <span style={spanDelimiterCSS}></span>
+            <div style={{ ...divHalfWidthCSS }}>
+              <div style={{ display: 'block', width: agreeCoast === false ? '50%' : '100%', marginTop: '-23px' }}>
+                <InputComponent
+                  type={'TEXT_INPUT_OUTLINE_DATEPICK_TASK_DATE_EXPERT'}
+                  valueType='text'
+                  required={false}
+                  widthType={'%'}
+                  widthValue={100}
+                  heightValue={'50px'}
+                  label={"Дата экспертизы"}
+                  isError={false}
+                  isDisabled={false}
+                  labelShrinkLeft={"0px"}
+                  innerLabel={null}
+                  store={[ "TASK_DATE_TO", () => null ]}
+                  css={{
+                    fontSize: '12px',
+                    position: 'relative',
+                    boxSizing: 'border-box',
+                    marginBottom: '30px',
+                    marginTop: '0px',
+                    backgroundColor: 'white'
+                  }}
+                />
+              </div>
+              { agreeCoast === false && <span style={spanDelimiterCSS} /> }
+              { agreeCoast === false && <InputComponent
+                type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
                 valueType='text'
                 required={false}
                 widthType={'%'}
-                widthValue={100}
+                widthValue={50}
                 heightValue={'50px'}
-                label={"Дата экспертизы"}
+                label={"Сумма экспертизы"}
                 isError={false}
                 isDisabled={false}
                 labelShrinkLeft={"0px"}
                 innerLabel={null}
-                store={[ "TASK_DATE_TO", () => null ]}
+                store={[ "TASK_EXPERT_COAST", () => null ]}
                 css={{
                   fontSize: '12px',
                   position: 'relative',
                   boxSizing: 'border-box',
-                  marginBottom: '30px',
-                  marginTop: '0px',
-                  backgroundColor: 'white'
+                  marginBottom: '16px',
+                  backgroundColor: inputBackground
                 }}
-              />
+              /> }
             </div>
-            { agreeCoast === false && <span style={spanDelimiterCSS} /> }
-            { agreeCoast === false && <InputComponent
-              type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
-              valueType='text'
-              required={false}
-              widthType={'%'}
-              widthValue={50}
-              heightValue={'50px'}
-              label={"Сумма экспертизы"}
-              isError={false}
-              isDisabled={false}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              store={[ "TASK_EXPERT_COAST", () => null ]}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '16px',
-                backgroundColor: inputBackground
-              }}
-            /> }
-          </div>
+          </React.Fragment> }
         </TextFieldContainerLine>
         <TextFieldTitle style={{ marginTop: '22px' }}>Данные об объекте</TextFieldTitle>
         <TextFieldContainerLine style={{ marginTop: '8px' }}>
@@ -911,11 +997,14 @@ const CreateTaskPageEdit: React.FC = () => {
             placeholder={"Вид строительства"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Новое здание' },
+              { value: '1', label: 'Новое строительство' },
+              { value: '2', label: 'Капитальный ремонт' },
+              { value: '3', label: 'Техническое перевооружение' },
+              { value: '4', label: 'Ликвидация' },
             ]}
             multy={false}
-            action={() => {}}
-            actionType={""}
+            action={changeParam1}
+            actionType={"TASK_P1"}
             actionParams={[]}
             showIcon={true}
             icon={null}
@@ -933,7 +1022,7 @@ const CreateTaskPageEdit: React.FC = () => {
             widthType={'%'}
             widthValue={50}
             heightValue={'50px'}
-            label={"Обшая площадь"}
+            label={"Общая площадь"}
             isError={false}
             isDisabled={false}
             labelShrinkLeft={"0px"}
@@ -956,8 +1045,8 @@ const CreateTaskPageEdit: React.FC = () => {
               { value: '1', label: 'Свердловская область' },
             ]}
             multy={false}
-            action={() => {}}
-            actionType={""}
+            action={changeParam2}
+            actionType={"TASK_P2"}
             actionParams={[]}
             showIcon={true}
             icon={null}
@@ -968,7 +1057,7 @@ const CreateTaskPageEdit: React.FC = () => {
             }}
           />
           <span style={spanDelimiterCSS} />
-          <InputComponent
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
@@ -988,10 +1077,29 @@ const CreateTaskPageEdit: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
+          /> }
+          <SelectField 
+            placeholder={"Тип постройки"}
+            params={{ width: 50, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Промышленные здания' },
+              { value: '2', label: 'Гражданские здания' },
+            ]}
+            multy={false}
+            action={changeParam3}
+            actionType={"TASK_P3"}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
           />
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginTop: '8px' }}>
-          <SelectField 
+          { false && <SelectField 
             placeholder={"Тип постройки"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
@@ -1008,9 +1116,38 @@ const CreateTaskPageEdit: React.FC = () => {
               marginLeft: '6px',
               width: '34px',
             }}
+          /> }
+          <SelectField 
+            placeholder={"Назначение"}
+            params={{ width: 50, mb: '16px', height: 50 }}
+            data={[
+              { value: '1', label: 'Промышленный' },
+              { value: '2', label: 'Жилой' },
+              { value: '3', label: 'Общественные и административные здания' },
+              { value: '4', label: 'Социально-культурные' },
+              { value: '5', label: 'Сельскохозяйственные здания' },
+              { value: '6', label: 'Здания коммунального назначения' },
+              { value: '7', label: 'Здания специального назначения' },
+              { value: '8', label: 'Площадочные сооружения' },
+              { value: '9', label: 'Гидротехнические сооружения' },
+              { value: '10', label: 'Временные сооружения' },
+              { value: '11', label: 'Линейный объект' },
+            ]}
+            multy={false}
+            action={changeParam4}
+            actionType={"TASK_P4"}
+            actionParams={[]}
+            showIcon={true}
+            icon={null}
+            iconStyles={{
+              marginTop: '-12px',
+              marginLeft: '6px',
+              width: '34px',
+            }}
           />
           <span style={spanDelimiterCSS} />
-          <InputComponent
+          <span style={{ ...spanDelimiterCSS, width: '50%' }} />
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_INLABEL_TASK'}
             valueType='text'
             required={false}
@@ -1030,10 +1167,10 @@ const CreateTaskPageEdit: React.FC = () => {
               marginBottom: '16px',
               backgroundColor: inputBackground
             }}
-          />
+          /> }
         </TextFieldContainerLine>
-        <TextFieldContainerLine style={{ marginTop: '8px' }}>
-          <SelectField 
+        <TextFieldContainerLine style={{ marginTop: '0px' }}>
+          { false && <SelectField 
             placeholder={"Назначение"}
             params={{ width: 50, mb: '16px', height: 50 }}
             data={[
@@ -1050,7 +1187,8 @@ const CreateTaskPageEdit: React.FC = () => {
               marginLeft: '6px',
               width: '34px',
             }}
-          />
+          /> }
+          <span style={{ ...spanDelimiterCSS, width: '50%' }} />
           <span style={spanDelimiterCSS} />
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
@@ -1081,7 +1219,7 @@ const CreateTaskPageEdit: React.FC = () => {
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '10px' }}>
           <div style={{ ...divHalfWidthCSS }}>
-            <TextFieldTitle>Техническое задание</TextFieldTitle>
+            <TextFieldTitle>Техническое задание ( txt или pdf )</TextFieldTitle>
           </div>
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
@@ -1149,9 +1287,7 @@ const CreateTaskPageEdit: React.FC = () => {
             { TASK_TECH_FILE.filter(
               
               fileData => (
-                fileData.name.indexOf('.txt') !== -1  || 
-                fileData.name.indexOf('.doc') !== -1  ||
-                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.txt') !== -1 || 
                 fileData.name.indexOf('.pdf') !== -1 )).map(fileData => {
 
               return (
@@ -1184,9 +1320,7 @@ const CreateTaskPageEdit: React.FC = () => {
             })}
 
             { TASK_TECH_FILE.filter(fileData => (
-                fileData.name.indexOf('.txt')  !== -1 || 
-                fileData.name.indexOf('.doc')  !== -1 ||
-                fileData.name.indexOf('.docx') !== -1 ||
+                fileData.name.indexOf('.txt') !== -1 || 
                 fileData.name.indexOf('.pdf') !== -1 )).length === 0 && <div 
                   style={{ 
                     display: 'flex', 
@@ -1527,7 +1661,9 @@ const CreateTaskPageEdit: React.FC = () => {
             <ButtonComponent
               inner={'Отмена редактирования'} 
               type='CONTAINED_DEFAULT' 
-              action={() => {}}
+              action={() => {
+                dispatch(setShowChaptersEditForms({ show: false, num: 0 }))
+              }}
               actionData={null}
               widthType={'px'}
               widthValue={280}
@@ -1553,7 +1689,7 @@ const CreateTaskPageEdit: React.FC = () => {
             <ButtonComponent
               inner={'Сохранить изменения'} 
               type='CONTAINED_DEFAULT' 
-              action={() => {}}
+              action={editChapter}
               actionData={null}
               widthType={'px'}
               widthValue={280}

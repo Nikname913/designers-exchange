@@ -218,7 +218,7 @@ const ShowTaskPage: React.FC = () => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = selectTask.split('NTID-')[1] + '.techtask.pdf'
+      const fileName: string = selectTask + '.techtask.pdf'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -246,10 +246,17 @@ const ShowTaskPage: React.FC = () => {
         type: 'pdf'
       })
 
+      downloadFileText.indexOf('no such file or directory') === -1 && console.log({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
       // ----------------------------------------------------------------
       // ----------------------------------------------------------------
 
-      const fileNameTxt: string = selectTask.split('NTID-')[1] + '.techtask.txt'
+      const fileNameTxt: string = selectTask + '.techtask.txt'
 
       const rawTxt = JSON.stringify({
         "fileName": fileNameTxt
@@ -270,7 +277,18 @@ const ShowTaskPage: React.FC = () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const downloadFileTypeTxt: string = await downloadFileTxt.type
       
-      downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
+      if ( downloadFileText.indexOf('no such file or directory') !== -1 ) {
+
+        downloadFileTextTxt.indexOf('no such file or directory') === -1 && setTechTaskFile({
+          name: fileNameTxt,
+          size: downloadFileSizeTxt,
+          text: downloadFileTextTxt,
+          type: 'txt'
+        })
+
+      }
+
+      downloadFileTextTxt.indexOf('no such file or directory') === -1 && console.log({
         name: fileNameTxt,
         size: downloadFileSizeTxt,
         text: downloadFileTextTxt,

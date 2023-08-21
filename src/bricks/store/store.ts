@@ -25,6 +25,7 @@ import deviceTypeReducer from './slices/device-type-slice'
 import supportFormReducer from './slices/support-form-slice'
 import changeAgreeReducer from './slices/change-agree-slice'
 import newCaseReducer from './slices/new-case-slice'
+import newSkillsReducer from './slices/new-skills-slice'
 
 export const store = configureStore({
   reducer: {
@@ -53,7 +54,8 @@ export const store = configureStore({
     deviceTypeReducer: deviceTypeReducer,
     supportFormReducer: supportFormReducer,
     changeAgreeReducer: changeAgreeReducer,
-    newCaseReducer: newCaseReducer
+    newCaseReducer: newCaseReducer,
+    newSkillsReducer: newSkillsReducer
   },
 })
 

@@ -151,6 +151,7 @@ export interface ITaskContent {
         height: string,
       },
       progress: number,
+      communication: Array<any>,
       focused?: string,
     }>,
     listOrdersComplete: Array<{

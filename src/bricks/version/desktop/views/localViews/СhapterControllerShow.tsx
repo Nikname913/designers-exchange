@@ -163,7 +163,7 @@ const ChapterController:
         <ChapterContainerStepRound backgroundColor={roundBackground}>
           <ChapterContainerStepRoundInner/>
           <ChapterContainerStepRoundLabelText textAlign={"center"}>
-            Экспертиза
+            Экспертиза ( проверка заказа )
           </ChapterContainerStepRoundLabelText>
         </ChapterContainerStepRound>
         <ChapterContainerStepRound 

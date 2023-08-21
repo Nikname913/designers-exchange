@@ -67,6 +67,7 @@ import docCorrect from '../../../img/icons/docCorrect.svg'
 import docWait from '../../../img/icons/docTime.svg'
 import doc from '../../../img/icons/files/withActionTwo/doc.svg'
 import txt from '../../../img/icons/files/withActionTwo/txt.svg'
+import pdf from '../../../img/icons/files/withActionTwo/pdf.svg'
 import correct from '../../../img/icons/correct.svg'
 import wait from '../../../img/icons/wait.svg'
 import plus from '../../../img/icons/plus.svg'
@@ -84,7 +85,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const dispatch = useAppDispatch()
   const [ docviewFormat, setDocviewFormat ] = useState<'lines' | 'tiles'>('tiles')
   const [ spec, setSpec ] = useState<string>('')
-  const [ masterDocsShadowContent, setMasterDocsShadowContent ] = useState<boolean>(true)
+  const [ masterDocsShadowContent, setMasterDocsShadowContent ] = useState<boolean>(false)
   const [ localImage, setLocalImage ] = useState<any>()
 
   const [ SPEC_REQUEST, SET_SPEC_REQUEST ] = useState(false)
@@ -106,6 +107,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
   }>>([{ title: '', tags: [], description: '' }])
   const [ contractFileServer, setContractFileServer ] = useState<{ name: string, size: number, text: string }>({
+
+    name: '',
+    size: 0,
+    text: ''
+
+  })
+  const [ contractFileServerPDF, setContractFileServerPDF ] = useState<{ name: string, size: number, text: string }>({
 
     name: '',
     size: 0,
@@ -315,6 +323,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     SET_SEND_CONTRACT_REQUEST(true)
     setTimeout(() => {
       dispatch(setShow(false)) 
+      dispatch(resetContractFile(''))
       SET_SEND_CONTRACT_REQUEST(false) 
     }, 1300)
   }
@@ -372,42 +381,95 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
       CASE_FILE
     })
 
-    SET_SEND_CASE_REQUEST(true)
+    if ( USER_ROLE === 'CUSTOMER' && CUSTOMER[0].portfolio && CUSTOMER[0].portfolio?.length < 1 ) {
 
-    if ( CASE_NAME          && 
-      CASE_SY               && 
-      CASE_SM               && 
-      CASE_FY               && 
-      CASE_FM               && 
-      CASE_PAY              && 
-      CASE_FILE.length > 0  &&
-      CASE_P1               && 
-      CASE_P2               && 
-      CASE_P3               && 
-      CASE_P4               &&
-      CASE_TEXT             &&
-      CASE_TAGS ) {
+      SET_SEND_CASE_REQUEST(true)
 
-        SET_ADD_CASE_REQUEST(true)
-        setTimeout(() => { SET_ADD_CASE_REQUEST(false) }, 1300)
+      if ( CASE_NAME          && 
+        CASE_SY               && 
+        CASE_SM               && 
+        CASE_FY               && 
+        CASE_FM               && 
+        CASE_PAY              && 
+        CASE_FILE.length > 0  &&
+        CASE_P1               && 
+        CASE_P2               && 
+        CASE_P3               && 
+        CASE_P4               &&
+        CASE_TEXT             &&
+        CASE_TAGS ) {
 
-        setTimeout(() => {
+          SET_ADD_CASE_REQUEST(true)
+          setTimeout(() => { SET_ADD_CASE_REQUEST(false) }, 1300)
 
-          SET_SEND_CASE_REQUEST(true)
+          setTimeout(() => {
 
-        }, 1300)
+            SET_SEND_CASE_REQUEST(true)
 
-        dispatch(setShowAlert(true))
-        dispatch(setType('success'))
-        dispatch(setMessage('Проект был успешно добавлен в список ваших работ'))
+          }, 1300)
 
-      } else {
+          dispatch(setShowAlert(true))
+          dispatch(setType('success'))
+          dispatch(setMessage('Проект был успешно добавлен в список ваших работ'))
 
-        dispatch(setShowAlert(true))
-        dispatch(setType('error'))
-        dispatch(setMessage('Нужно заполнить все поля ввода и добавить файл вложения для того, чтобы добавить новый проект в базу портфолио'))
+        } else {
 
-      }
+          dispatch(setShowAlert(true))
+          dispatch(setType('error'))
+          dispatch(setMessage('Нужно заполнить все поля ввода и добавить файл вложения для того, чтобы добавить новый проект в базу портфолио'))
+
+        }} else {
+
+          dispatch(setShowAlert(true))
+          dispatch(setType('warning'))
+          dispatch(setMessage('В настоящее время количество проектов, которые вы можете добавить в систему, ограничено 1 штукой'))
+
+        }
+
+    if ( USER_ROLE === 'EXECUTOR' && EXECUTOR[0].portfolio && EXECUTOR[0].portfolio?.length < 1 ) {
+
+      SET_SEND_CASE_REQUEST(true)
+
+      if ( CASE_NAME          && 
+        CASE_SY               && 
+        CASE_SM               && 
+        CASE_FY               && 
+        CASE_FM               && 
+        CASE_PAY              && 
+        CASE_FILE.length > 0  &&
+        CASE_P1               && 
+        CASE_P2               && 
+        CASE_P3               && 
+        CASE_P4               &&
+        CASE_TEXT             &&
+        CASE_TAGS ) {
+
+          SET_ADD_CASE_REQUEST(true)
+          setTimeout(() => { SET_ADD_CASE_REQUEST(false) }, 1300)
+
+          setTimeout(() => {
+
+            SET_SEND_CASE_REQUEST(true)
+
+          }, 1300)
+
+          dispatch(setShowAlert(true))
+          dispatch(setType('success'))
+          dispatch(setMessage('Проект был успешно добавлен в список ваших работ'))
+
+        } else {
+
+          dispatch(setShowAlert(true))
+          dispatch(setType('error'))
+          dispatch(setMessage('Нужно заполнить все поля ввода и добавить файл вложения для того, чтобы добавить новый проект в базу портфолио'))
+
+        }} else {
+
+          dispatch(setShowAlert(true))
+          dispatch(setType('warning'))
+          dispatch(setMessage('В настоящее время количество проектов, которые вы можете добавить в систему, ограничено 1 штукой'))
+
+        }
 
   }
 
@@ -486,11 +548,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
       myHeaders.append("Content-Type", "application/json");
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const fileName: string = USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15) + '.contract.txt'
-      const fileNameExecutor: string = 
-        ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15) + '.contract.txt'
+      const fileName: string = selectTask + '.contract.txt'
+      const fileNameExecutor: string = selectTask + '.contract.txt'
 
       const raw = JSON.stringify({
         "fileName": fileNameExecutor
@@ -521,6 +580,40 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
         text: downloadFileText
       })
 
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNameExecutorPDF: string = selectTask + '.contract.pdf'
+
+      const rawPDF = JSON.stringify({
+        "fileName": fileNameExecutorPDF
+      });
+
+      var requestOptionsPDF: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawPDF,
+        redirect: 'follow'
+      };
+
+      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptionsPDF)
+        .then(response => response.blob())
+
+      const downloadFileTextPDF: string = await downloadFilePDF.text()
+      const downloadFileSizePDF: number = await downloadFilePDF.size
+
+      setContractFileServerPDF({
+        name: fileNameExecutorPDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF
+      })
+
+      console.log({
+        name: fileNameExecutorPDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF
+      })
+
     })()
 
   }, [ selectTask ])
@@ -533,11 +626,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
       myHeaders.append("Content-Type", "application/json");
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const fileName: string = USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15) + '.complete.txt'
-      const fileNameExecutor: string = 
-        ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15) + '.complete.txt'
+      const fileName: string = selectTask + '.complete.pdf'
+      const fileNameExecutor: string = selectTask + '.complete.pdf'
 
       const raw = JSON.stringify({
         "fileName": fileNameExecutor
@@ -555,6 +645,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
+
+      console.log({
+        name: fileNameExecutor,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
 
       setCompleteFileServer({
         name: fileNameExecutor,
@@ -582,6 +678,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
       false && dispatch(setCaseParams4(''))
       false && dispatch(setCaseText(''))
       false && dispatch(setCaseTags(''))
+
+      dispatch(resetCompleteFile(''))
+      dispatch(resetContractFile(''))
 
     }
 
@@ -625,9 +724,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
           type: 'POSTFILE_CONTRACT',
           urlstring: '/add-file-contract',
           body: [ 
-            ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
-            + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
-            + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15), 
+            selectTask, 
             CONTRACT_FILE ? CONTRACT_FILE[0] : [] ]
         }}
       
@@ -641,9 +738,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
           urlstring: '/add-file-complete',
           body: [ 
             selectTask,
-            ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
-            + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
-            + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15), 
+            selectTask, 
             COMPLETE_FILE ? COMPLETE_FILE[0] : [] ]
         }}
       
@@ -880,10 +975,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <MasterDocFork.ContentLine>
                     <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '38px' }}>Мастер документы</h3>
                   </MasterDocFork.ContentLine>
-                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
+                  { contractFileServer.text && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
                     <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Основные документы проекта</span>
                   </MasterDocFork.ContentLine> }
-                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <ButtonComponent
+                  { contractFileServer.text && <ButtonComponent
                     inner={'Добавить договор'} 
                     type='UPLOAD' 
                     action={() => {}}
@@ -907,13 +1002,12 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     }}
                   /> }
 
-                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <React.Fragment>
+                  { contractFileServer.text && <React.Fragment>
                     { ( CONTRACT_FILE && CONTRACT_FILE?.length > 0 ) && CONTRACT_FILE.filter(
                 
                       fileData => (
-                        fileData.name.indexOf('.txt') !== -1 || 
-                        fileData.name.indexOf('.doc') !== -1 ||
-                        fileData.name.indexOf('.docx') !== -1 )).map(fileData => {
+                        fileData.name.indexOf('.txt') !== -1 ||
+                        fileData.name.indexOf('.pdf') !== -1 )).map(fileData => {
 
                       return (
                         <div 
@@ -947,9 +1041,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     })}
                     { ( CONTRACT_FILE && CONTRACT_FILE?.length > 0 ) && CONTRACT_FILE.filter(fileData => (
 
-                      fileData.name.indexOf('.txt')  !== -1 || 
-                      fileData.name.indexOf('.doc')  !== -1 ||
-                      fileData.name.indexOf('.docx') !== -1 )).length === 0 && <div 
+                      fileData.name.indexOf('.txt') !== -1 ||
+                      fileData.name.indexOf('.pdf') !== -1 )).length === 0 && <div 
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'row', 
@@ -975,7 +1068,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         />
                       </div> }
                   </React.Fragment> }
-                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <span
+                  { contractFileServer.text && <span
                     onClick={() => setMasterDocsShadowContent(prev => !prev)}
                     style={{
                       display: 'block',
@@ -990,8 +1083,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       marginBottom: '2px',
                       cursor: 'pointer'
                     }}
-                  >{"Важное сообщение для тестировщиков! Пожалуйста, на период пока висит это сообщение, загружайте договора в формате txt. Все работает в техническом плане, можно загрузить в doc и pdf, все сохранится в базе, но есть сложности с отображением данных форматов на стороне клиента"}</span> }
-                  { contractFileServer.text.indexOf('no such file or directory') >= 0 && <MasterDocFork.ContentLine style={{ marginTop: '22px' }}>
+                  >{"Допустимые форматы файлов - текстовый (txt) или pdf"}</span> }
+                  { contractFileServer.text && <MasterDocFork.ContentLine style={{ marginTop: '22px' }}>
                     <span 
                       onClick={changeContract}
                       style={{ 
@@ -1001,21 +1094,22 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         cursor: 'pointer',
                         border: '1px dashed grey',
                         padding: '14px 18px 16px',
+                        marginBottom: '24.4px',
                         borderRadius: '6px'
                       }}
                     >
                       Загрузить договор [ нажмите, чтобы сохранить - временная кнопка ]
                     </span>
                   </MasterDocFork.ContentLine> }
-                  { contractFileServer.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
+                  { ( contractFileServer.text.indexOf('no such file or directory') < 0 || contractFileServerPDF.text.indexOf('no such file or directory') < 0 ) && <MasterDocFork.ContentLine style={{ marginTop: '-6px' }}>
                     <img
                       alt={""}
                       src={correctIcon}
                       style={{ width: '24px', marginRight: '10px' }}
                     />
-                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Договор не подписан</span>
+                    <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Договор загружен в проект</span>
                   </MasterDocFork.ContentLine> }
-                  { contractFileServer.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '38px' }}>
+                  { contractFileServer.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '24px', marginBottom: '20px' }}>
                     <div style={{ display: 'none', flexDirection: 'row' }}>
                       <div style={{ display: 'block', position: 'relative', width: '100px' }}>
                         <img
@@ -1073,11 +1167,114 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             style={{ marginLeft: '6px', marginTop: '2px', width: '16px' }}
                           />
                         </div>
+                        <div 
+                          style={{ 
+                            ...blankButtonCSS, 
+                            marginTop: '13px', 
+                            paddingLeft: '0px',
+                            width: '180px'
+                          }}
+                        >
+                          <a 
+                            href={`http://85.193.88.125:3000/techContracts/${contractFileServer.name}`}
+                            target="_blank"
+                            style={{ 
+                              textAlign: 'center', 
+                              width: '100%',
+                              color: 'inherit',
+                              textDecoration: 'none'
+                            }} rel="noreferrer"
+                          >
+                            Сохранить договор
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </MasterDocFork.ContentLine> }
+                  { contractFileServerPDF.text.indexOf('no such file or directory') < 0 && <MasterDocFork.ContentLine style={{ marginTop: '24px', marginBottom: '20px' }}>
+                    <div style={{ display: 'none', flexDirection: 'row' }}>
+                      <div style={{ display: 'block', position: 'relative', width: '100px' }}>
+                        <img
+                          alt={""}
+                          src={txt}
+                          style={{ width: '90px', cursor: 'pointer' }}
+                        />
+                        { false && <img
+                          alt={""}
+                          src={semiMenu}
+                          style={semiIconsCSS}
+                        /> }
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '16px' }}>
+                        <span style={{ color: greyColor, marginBottom: '5px' }}>Договор основной</span>
+                        <span style={{ color: greyColor, marginBottom: '5px', fontSize: '12px' }}>Договор загружен</span>
+                        <span style={{ color: greyColor, marginBottom: '15px', fontSize: '12px' }}>Время загрузки не получено</span>
+                        <div style={blankButtonCSS}>
+                          <span>Договор подписан</span>
+                          <img
+                            alt={""}
+                            src={docCorrect}
+                            style={{ marginLeft: '6px', marginTop: '2px', width: '16px' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', marginLeft: false ? '80px' : '0px' }}>
+                      <div style={{ display: 'block', position: 'relative', width: '100px' }}>
+                        <img
+                          alt={""}
+                          src={pdf}
+                          style={{ width: '90px', filter: 'grayscale(80%)', cursor: 'pointer' }}
+                          onClick={() => {
+                            dispatch(setShowFOS(true))
+                            dispatch(setShowTypeFOS('showFileContract'))
+                            dispatch(setShow('undefined'))
+                          }}
+                        />
+                        { false && <img
+                          alt={""}
+                          src={semiMenu}
+                          style={semiIconsCSS}
+                        /> }
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', position: 'relative', marginLeft: '16px' }}>
+                        <span style={{ color: greyColor, marginBottom: '5px' }}>{ contractFileServerPDF.name }</span>
+                        <span style={{ color: greyColor, marginBottom: '5px', fontSize: '12px' }}>Договор загружен</span>
+                        <span style={{ color: greyColor, marginBottom: '15px', fontSize: '12px' }}>Время загрузки не получено</span>
+                        <div style={{ ...blankButtonCSS, backgroundColor: greyColor3 }}>
+                          <span>Ждет подписания</span>
+                          <img
+                            alt={""}
+                            src={docWait}
+                            style={{ marginLeft: '6px', marginTop: '2px', width: '16px' }}
+                          />
+                        </div>
+                        <div 
+                          style={{ 
+                            ...blankButtonCSS, 
+                            marginTop: '13px', 
+                            paddingLeft: '0px',
+                            width: '180px'
+                          }}
+                        >
+                          <a 
+                            href={`http://85.193.88.125:3000/techContracts/${contractFileServerPDF.name}`}
+                            target="_blank"
+                            style={{ 
+                              textAlign: 'center', 
+                              width: '100%',
+                              color: 'inherit',
+                              textDecoration: 'none'
+                            }} rel="noreferrer"
+                          >
+                            Сохранить договор
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </MasterDocFork.ContentLine> }
                   <span
-                    onClick={() => setMasterDocsShadowContent(prev => !prev)}
+                    onDoubleClick={() => setMasterDocsShadowContent(prev => !prev)}
                     style={{
                       display: 'block',
                       position: 'relative',
@@ -1087,13 +1284,13 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       padding: '14px',
                       paddingLeft: '20px',
                       borderRadius: '4px',
-                      marginTop: '24px',
-                      marginBottom: '13px',
+                      marginTop: '0px',
+                      marginBottom: '29px',
                       cursor: 'pointer'
                     }}
-                  >{"Дальнейший контент в настоящее время является статичным. Что-либо нажимать, что-либо ожидая особого смысла не имеет, но можно посмотреть как будет выглядеть интерфейс. Нажмите один раз на данное сообщение, чтобы скрыть или показать эту часть контента"}</span>
+                  >{"Дальнейший контент в настоящее время является статичным. Нажмите один раз на данное сообщение, чтобы скрыть или показать эту часть контента"}</span>
                   { masterDocsShadowContent && <React.Fragment>
-                    <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '30px' }}/>
+                    <MasterDocFork.Delimiter background={chatBorderColor} style={{ marginTop: '18px' }}/>
                     <MasterDocFork.ContentLine style={{ justifyContent: 'space-between', marginTop: '27px', marginBottom: '30px' }}>
                       <span style={{ fontWeight: 'bold', display: 'block', fontSize: '15px' }}>Акты выполненных работ</span>
                       <ButtonComponent
@@ -2269,8 +2466,21 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </MasterDocFork.CloseIcon>
                   </MasterDocFork.CloseIconContainer>
                   <MasterDocFork.ContentLine>
-                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '28px' }}>Экспертиза</h3>
+                    <h3 style={{ fontSize: '28px', margin: 0, marginBottom: '28px' }}>Экспертиза - завершение проекта</h3>
                   </MasterDocFork.ContentLine>
+                  <MasterDocFork.ContentLine>
+                      <span 
+                        style={{ 
+                          color: 'gray',
+                          lineHeight: '24px',
+                          width: '77%',
+                          marginBottom: '22px',
+                          marginTop: '3px'
+                        }}
+                      >
+                        В этом окне вы можете отправить выполненный проект на проверку заказчику. Проекты принимаются в формате PDF, позже будет добавлена возможность прикладывать специализованные проектные файлы и тд
+                      </span>
+                    </MasterDocFork.ContentLine>
                   <MasterDocFork.ContentLine style={{ justifyContent: 'space-between' }}>
                     <div 
                       style={{
@@ -2286,7 +2496,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         Период сдачи : { ordersList.filter(item => item.id === selectTask)[0].experDate }
                       </span>
                     </div>
-                    { completeFileServer.text.indexOf('no such file or directory') >= 0 && <ButtonComponent
+                    { ( completeFileServer.text.indexOf('no such file or directory') >= 0 && USER_ROLE === 'EXECUTOR' ) && <ButtonComponent
                       inner={'Завершить проект'} 
                       type='UPLOAD' 
                       action={() => {}}
@@ -2308,7 +2518,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         boxSizing: 'border-box',
                       }}
                     /> }
-                    { completeFileServer.size !== 128 && <ButtonComponent
+                    { completeFileServer.text.indexOf('no such file or directory') < 0 && <ButtonComponent
                       inner={'Проект на проверке'} 
                       type='CONTAINED_DISABLED' 
                       action={() => {}}
@@ -2331,7 +2541,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     /> }
                   </MasterDocFork.ContentLine>
-                  { ( COMPLETE_FILE && COMPLETE_FILE?.length > 0 ) && <React.Fragment>
+                  { ( COMPLETE_FILE && COMPLETE_FILE?.length > 0 && COMPLETE_FILE[0].type === 'application/pdf' ) && <React.Fragment>
                     <MasterDocFork.ContentLine style={{ justifyContent: 'space-around' }}>
                       <h3 style={{ marginTop: '46px', marginBottom: '33px' }}>Отправить работу на проверку заказчику?</h3>
                     </MasterDocFork.ContentLine>
@@ -2366,6 +2576,67 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           type='CONTAINED_DEFAULT' 
                           action={() => {
                             dispatch(resetCompleteFile(''))
+                            dispatch(setShow(false))
+                          }}
+                          actionData={null}
+                          widthType={'px'}
+                          widthValue={160}
+                          children={""}
+                          childrenCss={undefined}
+                          iconSrc={null}
+                          iconCss={undefined}
+                          muiIconSize={30}
+                          MuiIconChildren={ArrowUpwardIcon}
+                          css={{
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            padding: '4px',
+                            backgroundColor: chatBorderColor,
+                            color: greyColor,
+                            width: '56px',
+                            height: '43px',
+                          }}
+                        />
+                      </div>
+                    </MasterDocFork.ContentLine>
+                  </React.Fragment> }
+                  { ( COMPLETE_FILE && COMPLETE_FILE?.length > 0 && COMPLETE_FILE[0].type !== 'application/pdf' ) && <React.Fragment>
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-around' }}>
+                      <h3 style={{ marginTop: '46px', marginBottom: '33px' }}>Приложен неверный формат проектного документа</h3>
+                    </MasterDocFork.ContentLine>
+                    <MasterDocFork.ContentLine style={{ justifyContent: 'space-around' }}>
+                      <div style={{ display: 'flex', flexDirection: 'row' }}>
+                        <ButtonComponent
+                          inner={"Подтвердить"} 
+                          type='CONTAINED_DISABLED' 
+                          action={changeComplete}
+                          actionData={null}
+                          widthType={'px'}
+                          widthValue={160}
+                          children={""}
+                          childrenCss={undefined}
+                          iconSrc={null}
+                          iconCss={undefined}
+                          muiIconSize={30}
+                          MuiIconChildren={ArrowUpwardIcon}
+                          css={{
+                            position: 'relative',
+                            boxSizing: 'border-box',
+                            padding: '4px',
+                            backgroundColor: '#4caf50',
+                            color: 'white',
+                            width: '56px',
+                            height: '43px',
+                            boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
+                          }}
+                        />
+                        <span style={{ width: '22px' }}/>
+                        <ButtonComponent
+                          inner={"Отменить"} 
+                          type='CONTAINED_DEFAULT' 
+                          action={() => {
+                            dispatch(resetCompleteFile(''))
+                            dispatch(setShow(false))
                           }}
                           actionData={null}
                           widthType={'px'}
@@ -5114,7 +5385,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </div>
                     </EditProjectsEducationFork.ContentLine>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px', marginTop: '8px' }}>
-                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Опыт работы</h3>
+                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Опыт работы пользователя</h3>
                     </EditProjectsEducationFork.ContentLine>
 
                     { Array(skillCounter).fill(null).map((item, index) => <React.Fragment>

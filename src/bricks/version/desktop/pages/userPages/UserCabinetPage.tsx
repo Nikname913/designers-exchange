@@ -124,6 +124,7 @@ const ExecutorProfilePage: React.FC = () => {
     .filter((executor: any) => executor.clientId === USER_ID)
   const CUSTOMER = useAppSelector(state => state.userContentReducer.USERS_DATA.listCustomers)
     .filter((customer: any) => customer.clientId === USER_ID)
+  const TASK_DATA = useAppSelector(state => state.taskContentReducer.TASKS_DATA)
 
   const alertData = useAppSelector(state => state.headerReducer.alertData)
   const avatarFile = useAppSelector(state => state.avatarReducer.avatarFile)
@@ -656,14 +657,18 @@ const ExecutorProfilePage: React.FC = () => {
                     fontSize: '12px', 
                     marginRight: '20px' 
                   }}
-                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>выполнено</span>
+                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>
+                  { TASK_DATA.listOrdersComplete.filter(order => order.executor === USER_ID).length }  
+                </i>выполнено</span>
                 <span 
                   style={{ 
                     color: greyColor2, 
                     fontSize: '12px', 
                     marginRight: '20px' 
                   }}
-                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>в работе</span>
+                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>
+                  { TASK_DATA.listOrders.filter(order => order.executor === USER_ID).length }
+                </i>в работе</span>
                 <span 
                   style={{ 
                     color: greyColor2, 
@@ -869,9 +874,14 @@ const ExecutorProfilePage: React.FC = () => {
             >
               <img
                 alt={""}
-                src={puzzle}
+                src={bag}
                 style={{ width: '40px' }}
               />
+              { false && <img
+                alt={""}
+                src={puzzle}
+                style={{ width: '40px' }}
+              /> }
               <span style={buttonLabelCSS}>Команда</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton
@@ -3553,14 +3563,18 @@ const ExecutorProfilePage: React.FC = () => {
                     fontSize: '12px', 
                     marginRight: '20px' 
                   }}
-                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>выполнено</span>
+                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>
+                  { TASK_DATA.listOrdersComplete.filter(order => order.customer === USER_ID).length }    
+                </i>выполнено</span>
                 <span 
                   style={{ 
                     color: greyColor2, 
                     fontSize: '12px', 
                     marginRight: '20px' 
                   }}
-                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>0</i>в работе</span>
+                ><i style={{ fontSize: '15px', fontStyle: 'normal', color: greyColor, fontWeight: 'bold', marginRight: '8px' }}>
+                  { TASK_DATA.listOrders.filter(order => order.customer === USER_ID).length }  
+                </i>в работе</span>
                 <span 
                   style={{ 
                     color: greyColor2, 
@@ -3766,9 +3780,14 @@ const ExecutorProfilePage: React.FC = () => {
             >
               <img
                 alt={""}
-                src={puzzle}
+                src={bag}
                 style={{ width: '40px' }}
               />
+              { false && <img
+                alt={""}
+                src={puzzle}
+                style={{ width: '40px' }}
+              /> }
               <span style={buttonLabelCSS}>Команда</span>
             </LeftMenuIconButton>
             <LeftMenuIconButton

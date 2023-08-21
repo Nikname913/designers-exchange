@@ -380,9 +380,14 @@ const ExecutorProfilePage: React.FC = () => {
                 : 'transparent' 
               }  
           >
-            <img
+            { false && <img
               alt={""}
               src={blank}
+              style={{ width: '40px' }}
+            /> }
+            <img
+              alt={""}
+              src={bag}
               style={{ width: '40px' }}
             />
             <span style={buttonLabelCSS}>Заказы в системе</span>
@@ -402,7 +407,7 @@ const ExecutorProfilePage: React.FC = () => {
             />
             <span style={buttonLabelCSS}>Портфолио</span>
           </LeftMenuIconButton>
-          <LeftMenuIconButton
+          { ( CUSTOMER[0].faceType === 'SELF_FACE' || CUSTOMER[0].faceType === 'PHIS_FACE' ) && <LeftMenuIconButton
             onClick={() => setProfileViewStep('education')} 
             backgroundColor={ 
               profileViewStep === 'education'
@@ -416,8 +421,8 @@ const ExecutorProfilePage: React.FC = () => {
               style={{ width: '40px' }}
             />
             <span style={buttonLabelCSS}>Образование и опыт</span>
-          </LeftMenuIconButton>
-          <LeftMenuIconButton
+          </LeftMenuIconButton> }
+          { false && <LeftMenuIconButton
             onClick={() => setProfileViewStep('education')} 
             backgroundColor={ 
               profileViewStep === 'team'
@@ -431,7 +436,7 @@ const ExecutorProfilePage: React.FC = () => {
               style={{ width: '40px' }}
             />
             <span style={buttonLabelCSS}>Команда</span>
-          </LeftMenuIconButton>
+          </LeftMenuIconButton> }
         </MenuContainer>
         <ContentContainerLocal style={{ justifyContent: 'space-between' }}>
           
@@ -472,7 +477,7 @@ const ExecutorProfilePage: React.FC = () => {
             </div>
           </TagsContent> }
           
-          { profileViewStep === 'about' && <ReviewsContent>
+          { profileViewStep === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
             <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
               <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Отзывы о пользователе</span>
               <SelectField 
@@ -602,7 +607,7 @@ const ExecutorProfilePage: React.FC = () => {
 
           </ReviewsContent> }
 
-          { profileViewStep === 'portfolio' && <TagsContent style={{ flexWrap: 'wrap' }}>
+          { profileViewStep === 'portfolio' && <TagsContent style={{ flexWrap: 'wrap', marginBottom: '36px' }}>
             { Array(2).fill('Загрузка специализации..').map((item, index) => {
 
               return (

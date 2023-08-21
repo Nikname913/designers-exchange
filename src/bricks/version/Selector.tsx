@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Main from './desktop/Main'
 import { useAppSelector, useAppDispatch } from '../store/hooks'
 import { setDevice } from '../store/slices/device-type-slice'
@@ -10,20 +10,48 @@ import ComputerIcon from '@mui/icons-material/Computer'
 import MobileHeader from './mobile/comps/Header'
 import MobileFooter from './mobile/comps/Footer'
 import MobileContent from './mobile/comps/Content'
+import RMNotAuth from './mobile/views/rightMenu/RM.unauth'
+
+import { ShowRM } from './mobile/Context'
 
 const Selector: React.FC = () => {
 
   const DEVICE = useAppSelector(state => state.deviceTypeReducer.device)
   const dispatch = useAppDispatch()
 
+  // ----------------------------------------------------------------
+  // данные для контекста
+  // ----------------------------------------------------------------
+
+  const [ showRM, setShowRM ] = useState<{
+    show: boolean,
+    type: string
+  }>({
+    show: false,
+    type: 'no-auth'
+  })
+
   return (
     <React.Fragment>
       { DEVICE === 'PC' && <Main></Main> }
       { DEVICE === 'MOBILE' && <React.Fragment>
 
-        <MobileHeader  />
-        <MobileContent />
-        <MobileFooter  />
+        <ShowRM.Provider value={[ showRM, setShowRM ]}>
+          <section 
+            style={{ 
+              display: 'block', 
+              position: 'relative', 
+              width: '350px',
+              marginLeft: '60px' 
+            }}
+          >
+            { ( showRM.show && showRM.type === 'no-auth' ) && <RMNotAuth /> }
+
+            <MobileHeader />
+            <MobileContent />
+            <MobileFooter />
+          </section>
+        </ShowRM.Provider>
 
         <Fab 
           color="primary" 

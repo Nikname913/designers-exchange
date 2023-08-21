@@ -117,30 +117,63 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const coastDelimeter = (param: string | undefined): string => {
 
-    let enterString: string | undefined = param
-    let enterStringLen: number = enterString ? enterString.length : 0
+    let enterString: string | undefined
     let exitString: string = ''
 
-    if ( enterString ) {
-      switch(enterStringLen) {
+    if ( param && param?.indexOf('*') < 0 ) {
 
-        case 4:
-          exitString = enterString[0] + ' ' + enterString.slice(1)
-          break
-        case 5:
-          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
-          break
-        case 6:
-          exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
-          break
-        case 7:
-          exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
-          break
-        case 8:
-          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
-          break
+      enterString = param
+      let enterStringLen: number = enterString ? enterString.length : 0
 
+      if ( enterString ) {
+        switch(enterStringLen) {
+
+          case 4:
+            exitString = enterString[0] + ' ' + enterString.slice(1)
+            break
+          case 5:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
+            break
+          case 6:
+            exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
+            break
+          case 7:
+            exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
+            break
+          case 8:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
+            break
+
+        }
       }
+
+    } else if ( param && param?.indexOf('*') >= 0 ) {
+
+      enterString = param.split('*')[0]
+      let enterStringLen: number = enterString ? enterString.length : 0
+
+      if ( enterString ) {
+        switch(enterStringLen) {
+
+          case 4:
+            exitString = enterString[0] + ' ' + enterString.slice(1) + '*'
+            break
+          case 5:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2) + '*'
+            break
+          case 6:
+            exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3) + '*'
+            break
+          case 7:
+            exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4) + '*'
+            break
+          case 8:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5) + '*'
+            break
+
+        }
+      }
+
     }
 
     return exitString
@@ -282,7 +315,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               </div>
               <div>
                 <span style={spanCSS1}>Экспертиза: </span>
-                <span>{ taskExpertType }</span>
+                <span>{ ( deal.expert && coastDelimeter(deal.expert.toString()) !== '' ) ? taskExpertType : 'Отсутствует' }</span>
               </div>
 
             </TACC.TextContentLine>
@@ -393,9 +426,14 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                     <TACA.SafeDealParametersExpert backgroundColor={yellow}/>
 
                   </TACA.SafeDealParameters>
-                  {  deal.prepaid && deal.prepaid.toString() !== 'Договорной' && 
+                  {  deal.prepaid && deal.prepaid.toString() !== 'Договорной' && coastDelimeter(deal.prepaid.toString()) !== '' && 
                   
                     <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванс: { coastDelimeter(deal.prepaid.toString()) }₽</TACA.TaskCoastString>
+                    
+                  }
+                  {  deal.prepaid && deal.prepaid.toString() !== 'Договорной' && coastDelimeter(deal.prepaid.toString()) === '' && 
+                  
+                    <TACA.TaskCoastString color={black} marginBottom={"4.4px"}>Аванса не будет</TACA.TaskCoastString>
                     
                   }
                   {  deal.prepaid && deal.prepaid.toString() === 'Договорной' && 

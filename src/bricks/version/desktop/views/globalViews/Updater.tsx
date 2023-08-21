@@ -190,7 +190,8 @@ const Updater: React.FC = () => {
           height: item.objectParams.height,
         },
         focused: item.focused ? item.focused : 'none',
-        progress: item.progress
+        progress: item.progress,
+        communication: item.communication ? item.communication : []
       }
 
     })

@@ -25,7 +25,6 @@ import rub from '../../../../img/icons/chatActions/rubble.svg'
 
 import waitIcon from '../../../../img/icons/wait.svg'
 import correctIcon from '../../../../img/icons/correct.svg'
-import alarmIcon from '../../../../img/icons/alarm.svg'
 import semiMenuIcon from '../../../../img/icons/semiMenu.svg'
 
 const { Container, 
@@ -135,10 +134,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileNameExecutor: string = 
-        ordersList.filter(item => item.id === selectTask)[0].executor.slice(0, 10) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(3, 8) + '-' 
-        + ordersList.filter(item => item.id === selectTask)[0].executor.slice(10, 15) + '.complete.txt'
+      const fileNameExecutor: string = selectTask + '.complete.txt'
 
       const raw = JSON.stringify({
         "fileName": fileNameExecutor
@@ -157,10 +153,50 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
 
-      setCompleteFileServer({
+      console.log({
         name: fileNameExecutor,
         size: downloadFileSize,
         text: downloadFileText
+      })
+
+      downloadFileText.indexOf('no such file or directory') < 0 && setCompleteFileServer({
+        name: fileNameExecutor,
+        size: downloadFileSize,
+        text: downloadFileText
+      })
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNameExecutorPDF: string = selectTask + '.complete.pdf'
+
+      const rawPDF = JSON.stringify({
+        "fileName": fileNameExecutorPDF
+      });
+
+      var requestOptionsPDF: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawPDF,
+        redirect: 'follow'
+      };
+
+      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-complete", requestOptionsPDF)
+        .then(response => response.blob())
+
+      const downloadFileTextPDF: string = await downloadFilePDF.text()
+      const downloadFileSizePDF: number = await downloadFilePDF.size
+
+      console.log({
+        name: fileNameExecutorPDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF
+      })
+
+      downloadFileTextPDF.indexOf('no such file or directory') < 0 && setCompleteFileServer({
+        name: fileNameExecutorPDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF
       })
 
     })()
@@ -175,7 +211,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
         callbackAction={() => {}}
         requestData={{
           type: 'POST',
-          urlstring: '/add-file-complete',
+          urlstring: '/order-complete',
           body: {
             taskID: selectTask,
           }
@@ -189,17 +225,17 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
             <img
               alt={""}
               src={imageSelect(image)}
-              style={mainIconCSS}
+              style={ image === 'pror' ?  { ...mainIconCSS, width: '98%' } : mainIconCSS}
             />
           </RoundContainerInner>
           <SmallRound>{
             
             status === 'wait' ?
-            <img alt={""} src={waitIcon}/> :
+            <img alt={""} src={waitIcon} style={{ width: '100%' }}/> :
             status === 'correct' ?
-            <img alt={""} src={correctIcon}/> :
+            <img alt={""} src={correctIcon} style={{ width: '100%' }}/> :
             status === 'alarm' ?
-            <img alt={""} src={alarmIcon}/> : <React.Fragment></React.Fragment>
+            <img alt={""} src={correctIcon} style={{ width: '100%' }}/> : <React.Fragment></React.Fragment>
 
           }</SmallRound>
         </RoundContainer>

@@ -92,30 +92,63 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
 
   const coastDelimeter = (param: string | undefined): string => {
 
-    let enterString: string | undefined = param
-    let enterStringLen: number = enterString ? enterString.length : 0
+    let enterString: string | undefined
     let exitString: string = ''
 
-    if ( enterString ) {
-      switch(enterStringLen) {
+    if ( param && param?.indexOf('*') < 0 ) {
 
-        case 4:
-          exitString = enterString[0] + ' ' + enterString.slice(1)
-          break
-        case 5:
-          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
-          break
-        case 6:
-          exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
-          break
-        case 7:
-          exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
-          break
-        case 8:
-          exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
-          break
+      enterString = param
+      let enterStringLen: number = enterString ? enterString.length : 0
 
+      if ( enterString ) {
+        switch(enterStringLen) {
+
+          case 4:
+            exitString = enterString[0] + ' ' + enterString.slice(1)
+            break
+          case 5:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2)
+            break
+          case 6:
+            exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3)
+            break
+          case 7:
+            exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4)
+            break
+          case 8:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5)
+            break
+
+        }
       }
+
+    } else if ( param && param?.indexOf('*') >= 0 ) {
+
+      enterString = param.split('*')[0]
+      let enterStringLen: number = enterString ? enterString.length : 0
+
+      if ( enterString ) {
+        switch(enterStringLen) {
+
+          case 4:
+            exitString = enterString[0] + ' ' + enterString.slice(1) + '*'
+            break
+          case 5:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2) + '*'
+            break
+          case 6:
+            exitString = enterString.slice(0, 3) + ' ' + enterString.slice(3) + '*'
+            break
+          case 7:
+            exitString = enterString[0] + ' ' + enterString.slice(1, 4) + ' ' + enterString.slice(4) + '*'
+            break
+          case 8:
+            exitString = enterString.slice(0, 2) + ' ' + enterString.slice(2, 5) + ' ' + enterString.slice(5) + '*'
+            break
+
+        }
+      }
+
     }
 
     return exitString
@@ -197,7 +230,7 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           height={containerHeight}
         >
           <TaskContainerContent>
-            <TACC.TaskContainerTitle>{ taskTitle }</TACC.TaskContainerTitle>
+            <TACC.TaskContainerTitle style={{ fontSize: '30px', lineHeight: '42px' }}>{ taskTitle }</TACC.TaskContainerTitle>
             <TACC.TextContentLine style={{ justifyContent: 'flex-start' }}>
               { taskSpecializationTags.map((item: string, index: number): React.ReactElement => {
 
@@ -238,14 +271,21 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
                 <span>{"Временно скрыто"}</span>
               </div>
               <div style={divCSS}>
-                <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
-                <span>{ taskExpertDate ? 'Дата экспертизы: ' + taskExpertDate : 'Дата экспертизы' + tagsSpredLine }</span>
+                { deal.expert &&<React.Fragment>
+                  <span style={titleSpanCSS}>Экспертиза: <i style={{ fontStyle: 'normal', fontWeight: 'normal' }}>{ taskExpertType }</i></span>
+                  <span>{ taskExpertDate ? 'Дата экспертизы: ' + taskExpertDate : 'Дата экспертизы' + tagsSpredLine }</span>
+                </React.Fragment> }
+                { !deal.expert &&<React.Fragment>
+                  <span style={titleSpanCSS}>Сдача проекта</span>
+                  <span>{"без экспертизы"}</span>
+                </React.Fragment> }
               </div>
               <div>
                 <div style={{ ...divRowCSS, marginBottom: '9px' }}>
                   <span style={titleSpan2CSS}>Аванс</span>
-                  { deal.prepaid?.toString() !== 'Договорной' && <TACC.CoastSpan>{ coastDelimeter(deal.prepaid?.toString()) }₽</TACC.CoastSpan> }
-                  { deal.prepaid?.toString() === 'Договорной' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.prepaid }</TACC.CoastSpan> }
+                  { ( deal.prepaid && deal.prepaid?.toString() !== 'Договорной' && coastDelimeter(deal.prepaid?.toString()) !== '' ) && <TACC.CoastSpan>{ coastDelimeter(deal.prepaid?.toString()) }₽</TACC.CoastSpan> }
+                  { deal.prepaid && deal.prepaid?.toString() === 'Договорной' && <TACC.CoastSpan style={{ fontSize: '20px' }}>{ deal.prepaid }</TACC.CoastSpan> }
+                  { coastDelimeter(deal.prepaid?.toString()) === '' && <TACC.CoastSpan style={{ fontSize: '18px' }}>{"Отсутствует"}</TACC.CoastSpan> }
                 </div>
                 <div style={divRowCSS}>
                   { deal.expert && <span style={titleSpan2CSS}>Экспертиза</span> } 

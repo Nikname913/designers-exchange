@@ -159,8 +159,8 @@ const ButtonComponent: React.FC<IButton> = ( props: IButton ) => {
               }}
             >
               <input 
-                hidden 
-                accept="image/*" 
+                hidden
+                accept="/*" 
                 multiple 
                 type="file"
                 style={{ zIndex: '2' }}

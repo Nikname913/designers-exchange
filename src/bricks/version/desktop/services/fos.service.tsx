@@ -68,6 +68,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const USER_ID = useAppSelector(state => state.roleTypeReducer.roleData.userID)
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
   const ORDERS = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  const TASKS = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
   const SHOW_TASK: string = useAppSelector(
     state => state.taskContentReducer.TASKS_DATA.actualOne 
       ? state.taskContentReducer.TASKS_DATA.actualOne 
@@ -121,7 +122,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const navigate = useNavigate()
 
   const [ customAavatar, setCustomAavatar ] = useState<File>()
-  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string }>({
+  const [ techTaskFile, setTechTaskFile ] = useState<{ name: string, size: number, text: string, type?: string  }>({
 
     name: '',
     size: 0,
@@ -375,12 +376,17 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       execSpec: EXECUTOR[0].spec
     })
 
+    // ----------------------------------------------------------------
+    // if ( RESPOND_DATE_FINISH 
+    //   && RESPOND_COAST !== ''
+    //   && RESPOND_SOLUTION !== ''
+    //   && RESPOND_PREPAY !== ''
+    //   && RESPOND_DATE_EXPERT 
+    //   && RESPOND_EXPERT_COAST !== '' ) {
+    // ----------------------------------------------------------------
+
     if ( RESPOND_DATE_FINISH 
-      && RESPOND_COAST !== ''
-      && RESPOND_SOLUTION !== ''
-      && RESPOND_PREPAY !== ''
-      && RESPOND_DATE_EXPERT 
-      && RESPOND_EXPERT_COAST !== '' ) {
+      && RESPOND_COAST !== '' ) {
 
         SET_RESPOND_REQUEST(true)
 
@@ -470,7 +476,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = selectTaskActual.split('NTID-')[1] + '.techtask.txt'
+      const fileName: string = selectTaskActual + '.techtask.txt'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -489,10 +495,55 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       const downloadFileText: string = await downloadFile.text()
       const downloadFileSize: number = await downloadFile.size
 
-      setTechTaskFile({
+      console.log(selectTaskActual)
+      console.log({
         name: fileName,
         size: downloadFileSize,
-        text: downloadFileText
+        text: downloadFileText,
+        type: 'pdf'
+      })
+
+      downloadFileText.indexOf('no such file or directory') < 0 && setTechTaskFile({
+        name: fileName,
+        size: downloadFileSize,
+        text: downloadFileText,
+        type: 'txt'
+      })
+
+      // ----------------------------------------------------------------
+      // ----------------------------------------------------------------
+
+      const fileNamePDF: string = selectTaskActual + '.techtask.pdf'
+
+      const rawPDF = JSON.stringify({
+        "fileName": fileNamePDF
+      });
+
+      var requestOptionsPDF: any = {
+        method: 'POST',
+        headers: myHeaders,
+        body: rawPDF,
+        redirect: 'follow'
+      };
+
+      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsPDF)
+        .then(response => response.blob())
+
+      const downloadFileTextPDF: string = await downloadFilePDF.text()
+      const downloadFileSizePDF: number = await downloadFilePDF.size
+
+      console.log({
+        name: fileNamePDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF,
+        type: 'pdf'
+      })
+
+      downloadFileTextPDF.indexOf('no such file or directory') < 0 && setTechTaskFile({
+        name: fileNamePDF,
+        size: downloadFileSizePDF,
+        text: downloadFileTextPDF,
+        type: 'pdf'
       })
 
     })()
@@ -502,7 +553,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       const myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
-      const fileName: string = USER_ID.slice(0, 10) + '-' + USER_ID.slice(3, 8) + '-' + USER_ID.slice(10, 15) + '.contract.txt'
+      const fileName: string = selectTaskActual + '.contract.txt'
 
       const raw = JSON.stringify({
         "fileName": fileName
@@ -792,12 +843,12 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     }}
                   />
                 </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ marginBottom: '9px', marginTop: '23px' }}>
+                { TASKS.filter(item => item.id === RESPOND_TASK)[0].coast.exper && <RespondFromList.ContentLine style={{ marginBottom: '9px', marginTop: '23px' }}>
                   <span style={spanTitleCSS}>Дата экспертизы</span>
                   <span style={spanDelimiterCSS} />
                   <span style={spanTitleCSS}>Стоимость экспертизы</span>
-                </RespondFromList.ContentLine>
-                <RespondFromList.ContentLine style={{ alignItems: 'flex-start' }}>
+                </RespondFromList.ContentLine> }
+                { TASKS.filter(item => item.id === RESPOND_TASK)[0].coast.exper && <RespondFromList.ContentLine style={{ alignItems: 'flex-start' }}>
                   <InputComponent
                     type={'TEXT_INPUT_OUTLINE_DATEPICK_RESPOND_DATE_EXPERT'}
                     valueType='text'
@@ -841,7 +892,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       marginTop: '8px',
                     }}
                   />
-                </RespondFromList.ContentLine>
+                </RespondFromList.ContentLine> }
                 <RespondFromList.ContentLine style={{ marginBottom: '18px', marginTop: '23px' }}>
                   <span style={spanTitleCSS}>Комментарий к отклику</span>
                 </RespondFromList.ContentLine>
@@ -2388,7 +2439,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 />
               </ShowFile.CloseContainer>
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
+                <span style={{ fontSize: '20px', fontWeight: 'bold', lineHeight: '30px' }}>{ techTaskFile.name }</span>
                 <a 
                   href={`http://85.193.88.125:3000/techDocs/${techTaskFile.name}`} 
                   target='_blank' 
@@ -2435,8 +2486,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 /> }
               </ShowFile.ContentLine>
               <ShowFile.FOSInner>
-                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
-                  { techTaskFile.text }
+                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '26px' }}>
+                  { techTaskFile.type === 'txt' ? techTaskFile.text : 'Для формата PDF доступно только скачивание' }
                 </ShowFile.FOSFile>
               </ShowFile.FOSInner>
               <ShowFile.ContentLine style={{ justifyContent: 'space-around' }}>
@@ -2463,7 +2514,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Размер</span>
-                <span>{ ( techTaskFile.size / 1024 ).toFixed(3) + ' МБ' }</span>
+                <span>{ ( techTaskFile.size / 1024 / 1024 ).toFixed(2) + ' MB' }</span>
               </ShowFile.ContentLine>
               <ShowFile.ContentLine style={{ justifyContent: 'flex-start', paddingLeft: '80px', marginTop: '7px', marginBottom: '33px' }}>
                 <span style={{ fontWeight: 'bold', width: '120px' }}>Загружен</span>
@@ -2483,7 +2534,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 />
               </ShowFile.CloseContainer>
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 'bold' }}>{ techTaskFile.name }</span>
+                <span style={{ fontSize: '20px', fontWeight: 'bold', lineHeight: '30px' }}>{ techTaskFile.name }</span>
                 <a 
                   href={`http://85.193.88.125:3000/techContracts/${techTaskFile.name}`} 
                   target='_blank' 
@@ -2530,7 +2581,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                 /> }
               </ShowFile.ContentLine>
               <ShowFile.FOSInner>
-                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '22px' }}>
+                <ShowFile.FOSFile style={{ padding: '18px 24px 20px', boxSizing: 'border-box', lineHeight: '26px' }}>
                   { techTaskFile.text }
                 </ShowFile.FOSFile>
               </ShowFile.FOSInner>
