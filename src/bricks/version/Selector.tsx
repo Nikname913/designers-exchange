@@ -13,6 +13,7 @@ import MobileContent from './mobile/comps/Content'
 import RMNotAuth from './mobile/views/rightMenu/RM.unauth'
 
 import { ShowRM } from './mobile/Context'
+import { MenuActive } from './mobile/Context'
 
 const Selector: React.FC = () => {
 
@@ -23,6 +24,7 @@ const Selector: React.FC = () => {
   // данные для контекста
   // ----------------------------------------------------------------
 
+  const [ selectMenu, setSelectMenu ] = useState<0 | 1 | 2 | 3 | 4 | 5>(1)
   const [ showRM, setShowRM ] = useState<{
     show: boolean,
     type: string
@@ -36,22 +38,28 @@ const Selector: React.FC = () => {
       { DEVICE === 'PC' && <Main></Main> }
       { DEVICE === 'MOBILE' && <React.Fragment>
 
+        <MenuActive.Provider value={[ selectMenu, setSelectMenu ]}>
         <ShowRM.Provider value={[ showRM, setShowRM ]}>
           <section 
             style={{ 
               display: 'block', 
               position: 'relative', 
               width: '350px',
-              marginLeft: '60px' 
+              marginLeft: '130.8px',
+              marginTop: '44px',
+              overflowX: 'hidden',
+              overflowY: 'hidden',
+              height: 'calc(100vh - 64px)'
             }}
           >
-            { ( showRM.show && showRM.type === 'no-auth' ) && <RMNotAuth /> }
+            <RMNotAuth></RMNotAuth>
 
             <MobileHeader />
             <MobileContent />
             <MobileFooter />
           </section>
         </ShowRM.Provider>
+        </MenuActive.Provider>
 
         <Fab 
           color="primary" 

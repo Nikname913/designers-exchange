@@ -1,6 +1,11 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
+
 import DE from '../pages/DefaultEmpty'
+import Customers from '../pages/Customers'
+import Executors from '../pages/Executors'
+import ExchangeMain from '../pages/ExchangeMain'
+import ShowTask from '../pages/ShowTask'
 
 const DeskRoutes: React.FC = () => {
 
@@ -30,7 +35,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route 
           path='customers' 
-          element={<DE/>} 
+          element={<Customers/>} 
         />
         <Route 
           path='cust-profile/:userId' 
@@ -102,7 +107,7 @@ const DeskRoutes: React.FC = () => {
           />
           <Route
             path='task-list-all'
-            element={<DE/>}
+            element={<ExchangeMain/>}
           />
         </React.Fragment>
 
@@ -112,7 +117,7 @@ const DeskRoutes: React.FC = () => {
 
         <Route 
           path='executors' 
-          element={<DE/>} 
+          element={<Executors/>} 
         />
         <Route 
           path='exec-profile/:userId' 
@@ -168,16 +173,16 @@ const DeskRoutes: React.FC = () => {
         />
         <Route 
           path='task-review' 
-          element={<DE/>} 
+          element={<ShowTask/>} 
         />
         <Route path='task-view'>
           <Route
             path='ex'
-            element={<DE/>}
+            element={<ShowTask/>}
           />
           <Route
             path='cu'
-            element={<DE/>}
+            element={<ShowTask/>}
           />
         </Route>
         <Route path='order-view'>
@@ -206,7 +211,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route
           path='/'
-          element={<DE/>}
+          element={<ExchangeMain/>}
         />
         <Route 
           path='*' 

@@ -23,6 +23,7 @@ import EmailIcon from '@mui/icons-material/Email'
 import Stack from '@mui/material/Stack'
 import LinearProgress from '@mui/material/LinearProgress'
 import defaultAvatar from '../../../img/stock/avatar.svg'
+import closeIcon from '../../../img/icons/close.svg'
 
 import bearAvatar from '../../../img/avatars/bear.svg'
 import enotAvatar from '../../../img/avatars/enot.svg'
@@ -37,6 +38,7 @@ const { MenuContainer, TextFieldTitle, PagintationContainer } = cssAsideMenu
 const CustomerPage: React.FC = () => {
 
   const [ filterLoading, setFilterLoading ] = useState<boolean>(false)
+  const [ filterSpec, setFilterSpec ] = useState<string>('')
 
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
@@ -54,6 +56,7 @@ const CustomerPage: React.FC = () => {
       }
 
     })
+    .filter(customer => customer.spec && customer.spec?.join(' ').indexOf(filterSpec) > -1)
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -145,6 +148,10 @@ const CustomerPage: React.FC = () => {
     setTimeout(() => { setFilterLoading(false) }, 1300 )
   }
 
+  const changeFilterSpec = (param: string) => {
+    setFilterSpec(param)
+  }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setSelectedUsersType('CUST')) }, [])
   useEffect(() => { console.log('новый рендер') }, [])
@@ -228,6 +235,22 @@ const CustomerPage: React.FC = () => {
         >
           <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Поиск по словам: "}</i>
           { filterName }
+
+          <img
+            alt={""}
+            src={closeIcon}
+            onClick={() => dispatch(setCFN(''))}
+            style={{
+              display: 'block',
+              position: 'absolute',
+              width: '18px',
+              left: '100%',
+              top: '50%',
+              marginTop: '-9px',
+              marginLeft: '-30px',
+              cursor: 'pointer'
+            }}
+          />
         </span> }
 
         <TextFieldTitle>Сортировать по</TextFieldTitle>
@@ -254,19 +277,49 @@ const CustomerPage: React.FC = () => {
         />
         <TextFieldTitle>Выберите специализацию</TextFieldTitle>
         <SelectField 
-          placeholder={"Сортировать по специализации"}
+          placeholder={ filterSpec === 'helloo' ? "helloo" : "Сортировать по специализации" }
           params={{ width: 300, mb: '11px', height: 58 }}
           data={[
-            { value: '1', label: 'Вентиляция' },
-            { value: '2', label: 'Пожарная безопасность' },
-            { value: '3', label: 'Тепломеханические решения' },
+            { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
+            { value: 'Инженерно-геологические изыскания', label: 'Геологические изыскания' },
+            { value: 'Инженерно-гидрометеорологические изыскания', label: 'Гидрометеорология' },
+            { value: 'Инженерно-экологические изыскания', label: 'Экологические изыскания' },
+            { value: 'Историко-культурные изыскания', label: 'Исторические изыскания' },
+            { value: 'Обследование строительных конструкций', label: 'Обследование конструкций' },
+            { value: 'Генеральный план', label: 'Генеральный план' },
+            { value: 'Автомобильные дороги', label: 'Автомобильные дороги' },
+            { value: 'Архитектурные решения', label: 'Архитектурные решения' },
+            { value: 'Конструкции железобетонные', label: 'Конструкции железобетонные' },
+            { value: 'Конструкции металлические', label: 'Конструкции металлические' },
+            { value: 'Гидротехнические решения ', label: 'Гидротехнические решения' },
+            { value: 'Электроснабжение', label: 'Электроснабжение' },
+            { value: 'Электрическое освещение', label: 'Электрическое освещение' },
+            { value: 'Силовое электрооборудование', label: 'Силовое электрооборудование' },
+            { value: 'Водоснабжение и канализация', label: 'Водоснабжение и канализация' },
+            { value: 'Отопление, вентиляция, кондиционирование', label: 'Отопление и вентиляция' },
+            { value: 'Воздухоснабжение', label: 'Воздухоснабжение' },
+            { value: 'Холодоснабжение', label: 'Холодоснабжение' },
+            { value: 'Тепломеханические решения', label: 'Тепломеханические решения' },
+            { value: 'Сети связи', label: 'Сети связи' },
+            { value: 'Пожарная безопасность', label: 'Пожарная безопасность' },
+            { value: 'Газоснабжение', label: 'Газоснабжение' },
+            { value: 'Технология производства', label: 'Технология производства' },
+            { value: 'Автоматизация', label: 'Автоматизация' },
+            { value: 'Проект организации строительства / сносу / демонтажу', label: 'Проект строительства и сноса' },
+            { value: 'Охрана окружающей среды', label: 'Охрана окружающей среды' },
+            { value: 'Безопасная эксплуатация объекта', label: 'Безопасная эксплуатация объекта' },
+            { value: 'Энергетическая эффективность', label: 'Энергетическая эффективность' },
+            { value: 'Обеспечение доступа инвалидов', label: 'Обеспечение доступа инвалидов' },
+            { value: 'Мероприятия по гражданской обороне и предупреждению чрезвычайных ситуаций', label: 'Гражданская оборона' },
+            { value: 'Сметная документация', label: 'Сметная документация' },
+            { value: 'Иная документация', label: 'Иная документация' }
           ]}
           multy={false}
-          action={() => {}}
-          actionType={""}
+          action={changeFilterSpec}
+          actionType={"FILTER"}
           actionParams={[]}
           showIcon={true}
-          isDisabled={true}
+          isDisabled={false}
           icon={null}
           iconStyles={{
             marginTop: '-12px',
@@ -302,6 +355,7 @@ const CustomerPage: React.FC = () => {
           action={() => { 
             setFilterLoading(true)
             dispatch(setCFN(''))
+            setFilterSpec('')
             dispatch(setUpdating(true))
             
             setTimeout(() => { setFilterLoading(false) }, 1300 )

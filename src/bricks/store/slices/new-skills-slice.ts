@@ -21,12 +21,12 @@ const initialState: INewSkillsReducer = {
     }
   ],
   skills: [
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
-    { title: '', site: '', sm: '', sy: '', fm: '', fy: '', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
+    { title: '', site: 'Не указано', sm: 'Не указано', sy: 'Не указано', fm: 'Не указано', fy: 'Не указано', nowTime: false, job: '', jobTasks: '' },
   ],
   focused: ''
 }

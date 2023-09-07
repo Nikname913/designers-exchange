@@ -56,6 +56,9 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
     marginRight,
     forCabinet } = props
 
+  const orderActive = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
+  const orderComplete = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrdersComplete)
+
   const whiteColor = useAppSelector(state => state.theme.white)
   const greyColor = useAppSelector(state => state.theme.grey)
   const greyColor2 = useAppSelector(state => state.theme.grey2)
@@ -359,12 +362,22 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
           </div>
           <StatContainer>
             <StatContainerContent>
-              <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>{ userProjects[0] }</span>
+              { userType === 'EXECUTOR' && <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>
+                { orderComplete.filter(item => item.executor === userId).length }
+              </span> }
+              { userType === 'CUSTOMER' && <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>
+                { orderComplete.filter(item => item.customer === userId).length }
+              </span> }
               <span style={greySpanCSS}>выполнено</span>
             </StatContainerContent>
             <StatContainerDelimiter backgroundColor={delimiterBackground}/>
             <StatContainerContent>
-              <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>{ userProjects[1] }</span>
+              { userType === 'EXECUTOR' && <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>
+                { orderActive.filter(item => item.executor === userId).length }
+              </span> }
+              { userType === 'CUSTOMER' && <span style={{ ...greySpanCSS, fontSize: '16px', fontWeight: 'bold' }}>
+                { orderActive.filter(item => item.customer === userId).length }
+              </span> }
               <span style={greySpanCSS}>активные</span>
             </StatContainerContent>
             <StatContainerDelimiter backgroundColor={delimiterBackground}/>

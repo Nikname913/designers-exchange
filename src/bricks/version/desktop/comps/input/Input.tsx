@@ -1026,25 +1026,6 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
 
   const reduceNewSkillsForm = (event: React.ChangeEvent<HTMLInputElement>) => {
 
-    // ----------------------------------------------------------------
-    // ----------------------------------------------------------------
-    // store[0] === 'EDUCATION_BLOCK_1_TITLE' ? EDUCATION_BLOCK_1.title :
-    // store[0] === 'EDUCATION_BLOCK_1_FINISH' ? EDUCATION_BLOCK_1.finish : 
-    // store[0] === 'EDUCATION_BLOCK_1_SPECIAL' ? EDUCATION_BLOCK_1.special :
-    // ----------------------------------------------------------------
-    // ----------------------------------------------------------------
-    // store[0] === 'JOB_BLOCK_1_TITLE' ? JOB_BLOCK_1.title :
-    // store[0] === 'JOB_BLOCK_1_SITE' ? JOB_BLOCK_1.site :
-    // store[0] === 'JOB_BLOCK_1_SM' ? JOB_BLOCK_1.sm :
-    // store[0] === 'JOB_BLOCK_1_SY' ? JOB_BLOCK_1.sy :
-    // store[0] === 'JOB_BLOCK_1_FM' ? JOB_BLOCK_1.fm :
-    // store[0] === 'JOB_BLOCK_1_FY' ? JOB_BLOCK_1.fy :
-    // store[0] === 'JOB_BLOCK_1_NOW_TIME' ? JOB_BLOCK_1.nowTime :
-    // store[0] === 'JOB_BLOCK_1_JOB' ? JOB_BLOCK_1.job :
-    // store[0] === 'JOB_BLOCK_1_JOB_TASKS' ? JOB_BLOCK_1.jobTasks :
-    // ----------------------------------------------------------------
-    // ----------------------------------------------------------------
-
     if ( store ) {
 
       store[0] === 'EDUCATION_BLOCK_1_TITLE' && dispatch(addInEducation1Title(event.target.value))
@@ -1067,21 +1048,216 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
       store[0] === 'JOB_BLOCK_1_JOB' && dispatch(addInSkills1Job(event.target.value))
       store[0] === 'JOB_BLOCK_1_JOB_TASKS' && dispatch(addInSkills1JobTasks(event.target.value))
 
-      store[0] === 'CASE_NAME' && dispatch(setFocusedCase('CASE_NAME'))
-      store[0] === 'CASE_SY' && dispatch(setFocusedCase('CASE_SY'))
-      store[0] === 'CASE_SM' && dispatch(setFocusedCase('CASE_SM'))
-      store[0] === 'CASE_FY' && dispatch(setFocusedCase('CASE_FY'))
-      store[0] === 'CASE_FM' && dispatch(setFocusedCase('CASE_FM'))
-      store[0] === 'CASE_PAY' && dispatch(setFocusedCase('CASE_PAY'))
-      store[0] === 'CASE_P1' && dispatch(setFocusedCase('CASE_P1'))
-      store[0] === 'CASE_P2' && dispatch(setFocusedCase('CASE_P2'))
-      store[0] === 'CASE_P3' && dispatch(setFocusedCase('CASE_P3'))
-      store[0] === 'CASE_P4' && dispatch(setFocusedCase('CASE_P4'))
-      store[0] === 'CASE_TEXT' && dispatch(setFocusedCase('CASE_TEXT'))
-      store[0] === 'CASE_TAGS' && dispatch(setFocusedCase('CASE_TAGS'))
+      store[0] === 'JOB_BLOCK_2_TITLE' && dispatch(addInSkills2Title(event.target.value))
+      store[0] === 'JOB_BLOCK_2_SITE' && dispatch(addInSkills2Site(event.target.value))
+      store[0] === 'JOB_BLOCK_2_SM' && dispatch(addInSkills2Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_2_SY' && dispatch(addInSkills2Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_2_FM' && dispatch(addInSkills2Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_2_FY' && dispatch(addInSkills2Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_2_NOW_TIME' && dispatch(addInSkills2NowTime(true))
+      store[0] === 'JOB_BLOCK_2_JOB' && dispatch(addInSkills2Job(event.target.value))
+      store[0] === 'JOB_BLOCK_2_JOB_TASKS' && dispatch(addInSkills2JobTasks(event.target.value))
+
+      store[0] === 'JOB_BLOCK_3_TITLE' && dispatch(addInSkills3Title(event.target.value))
+      store[0] === 'JOB_BLOCK_3_SITE' && dispatch(addInSkills3Site(event.target.value))
+      store[0] === 'JOB_BLOCK_3_SM' && dispatch(addInSkills3Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_3_SY' && dispatch(addInSkills3Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_3_FM' && dispatch(addInSkills3Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_3_FY' && dispatch(addInSkills3Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_3_NOW_TIME' && dispatch(addInSkills3NowTime(true))
+      store[0] === 'JOB_BLOCK_3_JOB' && dispatch(addInSkills3Job(event.target.value))
+      store[0] === 'JOB_BLOCK_3_JOB_TASKS' && dispatch(addInSkills3JobTasks(event.target.value))
+
+      store[0] === 'JOB_BLOCK_4_TITLE' && dispatch(addInSkills4Title(event.target.value))
+      store[0] === 'JOB_BLOCK_4_SITE' && dispatch(addInSkills4Site(event.target.value))
+      store[0] === 'JOB_BLOCK_4_SM' && dispatch(addInSkills4Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_4_SY' && dispatch(addInSkills4Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_4_FM' && dispatch(addInSkills4Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_4_FY' && dispatch(addInSkills4Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_4_NOW_TIME' && dispatch(addInSkills4NowTime(true))
+      store[0] === 'JOB_BLOCK_4_JOB' && dispatch(addInSkills4Job(event.target.value))
+      store[0] === 'JOB_BLOCK_4_JOB_TASKS' && dispatch(addInSkills4JobTasks(event.target.value))
+
+      store[0] === 'JOB_BLOCK_5_TITLE' && dispatch(addInSkills5Title(event.target.value))
+      store[0] === 'JOB_BLOCK_5_SITE' && dispatch(addInSkills5Site(event.target.value))
+      store[0] === 'JOB_BLOCK_5_SM' && dispatch(addInSkills5Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_5_SY' && dispatch(addInSkills5Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_5_FM' && dispatch(addInSkills5Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_5_FY' && dispatch(addInSkills5Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_5_NOW_TIME' && dispatch(addInSkills5NowTime(true))
+      store[0] === 'JOB_BLOCK_5_JOB' && dispatch(addInSkills5Job(event.target.value))
+      store[0] === 'JOB_BLOCK_5_JOB_TASKS' && dispatch(addInSkills5JobTasks(event.target.value))
+
+      store[0] === 'JOB_BLOCK_6_TITLE' && dispatch(addInSkills6Title(event.target.value))
+      store[0] === 'JOB_BLOCK_6_SITE' && dispatch(addInSkills6Site(event.target.value))
+      store[0] === 'JOB_BLOCK_6_SM' && dispatch(addInSkills6Sm(event.target.value))
+      store[0] === 'JOB_BLOCK_6_SY' && dispatch(addInSkills6Sy(event.target.value))
+      store[0] === 'JOB_BLOCK_6_FM' && dispatch(addInSkills6Fm(event.target.value))
+      store[0] === 'JOB_BLOCK_6_FY' && dispatch(addInSkills6Fy(event.target.value))
+      store[0] === 'JOB_BLOCK_6_NOW_TIME' && dispatch(addInSkills6NowTime(true))
+      store[0] === 'JOB_BLOCK_6_JOB' && dispatch(addInSkills6Job(event.target.value))
+      store[0] === 'JOB_BLOCK_6_JOB_TASKS' && dispatch(addInSkills6JobTasks(event.target.value))
+
+      store[0] === 'EDUCATION_BLOCK_1_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_1_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_1_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_SPECIAL'))
+      store[0] === 'EDUCATION_BLOCK_2_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_2_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_2_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_SPECIAL'))
+      store[0] === 'EDUCATION_BLOCK_3_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_3_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_3_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_SPECIAL'))
+
+      store[0] === 'JOB_BLOCK_1_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_1_TITLE'))
+      store[0] === 'JOB_BLOCK_1_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_1_SITE'))
+      store[0] === 'JOB_BLOCK_1_SM' && dispatch(setFocusedSkills('JOB_BLOCK_1_SM'))
+      store[0] === 'JOB_BLOCK_1_SY' && dispatch(setFocusedSkills('JOB_BLOCK_1_SY'))
+      store[0] === 'JOB_BLOCK_1_FM' && dispatch(setFocusedSkills('JOB_BLOCK_1_FM'))
+      store[0] === 'JOB_BLOCK_1_FY' && dispatch(setFocusedSkills('JOB_BLOCK_1_FY'))
+      store[0] === 'JOB_BLOCK_1_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_1_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_1_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_1_JOB'))
+      store[0] === 'JOB_BLOCK_1_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_1_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_2_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_2_TITLE'))
+      store[0] === 'JOB_BLOCK_2_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_2_SITE'))
+      store[0] === 'JOB_BLOCK_2_SM' && dispatch(setFocusedSkills('JOB_BLOCK_2_SM'))
+      store[0] === 'JOB_BLOCK_2_SY' && dispatch(setFocusedSkills('JOB_BLOCK_2_SY'))
+      store[0] === 'JOB_BLOCK_2_FM' && dispatch(setFocusedSkills('JOB_BLOCK_2_FM'))
+      store[0] === 'JOB_BLOCK_2_FY' && dispatch(setFocusedSkills('JOB_BLOCK_2_FY'))
+      store[0] === 'JOB_BLOCK_2_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_2_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_2_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_2_JOB'))
+      store[0] === 'JOB_BLOCK_2_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_2_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_3_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_3_TITLE'))
+      store[0] === 'JOB_BLOCK_3_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_3_SITE'))
+      store[0] === 'JOB_BLOCK_3_SM' && dispatch(setFocusedSkills('JOB_BLOCK_3_SM'))
+      store[0] === 'JOB_BLOCK_3_SY' && dispatch(setFocusedSkills('JOB_BLOCK_3_SY'))
+      store[0] === 'JOB_BLOCK_3_FM' && dispatch(setFocusedSkills('JOB_BLOCK_3_FM'))
+      store[0] === 'JOB_BLOCK_3_FY' && dispatch(setFocusedSkills('JOB_BLOCK_3_FY'))
+      store[0] === 'JOB_BLOCK_3_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_3_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_3_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_3_JOB'))
+      store[0] === 'JOB_BLOCK_3_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_3_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_4_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_4_TITLE'))
+      store[0] === 'JOB_BLOCK_4_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_4_SITE'))
+      store[0] === 'JOB_BLOCK_4_SM' && dispatch(setFocusedSkills('JOB_BLOCK_4_SM'))
+      store[0] === 'JOB_BLOCK_4_SY' && dispatch(setFocusedSkills('JOB_BLOCK_4_SY'))
+      store[0] === 'JOB_BLOCK_4_FM' && dispatch(setFocusedSkills('JOB_BLOCK_4_FM'))
+      store[0] === 'JOB_BLOCK_4_FY' && dispatch(setFocusedSkills('JOB_BLOCK_4_FY'))
+      store[0] === 'JOB_BLOCK_4_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_4_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_4_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_4_JOB'))
+      store[0] === 'JOB_BLOCK_4_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_4_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_5_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_5_TITLE'))
+      store[0] === 'JOB_BLOCK_5_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_5_SITE'))
+      store[0] === 'JOB_BLOCK_5_SM' && dispatch(setFocusedSkills('JOB_BLOCK_5_SM'))
+      store[0] === 'JOB_BLOCK_5_SY' && dispatch(setFocusedSkills('JOB_BLOCK_5_SY'))
+      store[0] === 'JOB_BLOCK_5_FM' && dispatch(setFocusedSkills('JOB_BLOCK_5_FM'))
+      store[0] === 'JOB_BLOCK_5_FY' && dispatch(setFocusedSkills('JOB_BLOCK_5_FY'))
+      store[0] === 'JOB_BLOCK_5_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_5_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_5_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_5_JOB'))
+      store[0] === 'JOB_BLOCK_5_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_5_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_6_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_6_TITLE'))
+      store[0] === 'JOB_BLOCK_6_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_6_SITE'))
+      store[0] === 'JOB_BLOCK_6_SM' && dispatch(setFocusedSkills('JOB_BLOCK_6_SM'))
+      store[0] === 'JOB_BLOCK_6_SY' && dispatch(setFocusedSkills('JOB_BLOCK_6_SY'))
+      store[0] === 'JOB_BLOCK_6_FM' && dispatch(setFocusedSkills('JOB_BLOCK_6_FM'))
+      store[0] === 'JOB_BLOCK_6_FY' && dispatch(setFocusedSkills('JOB_BLOCK_6_FY'))
+      store[0] === 'JOB_BLOCK_6_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_6_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_6_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_6_JOB'))
+      store[0] === 'JOB_BLOCK_6_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_6_JOB_TASKS'))
 
     }
 
+  }
+
+  const reduceNewSkillsFormFocus = () => {
+
+    if ( store ) {
+
+      store[0] === 'EDUCATION_BLOCK_1_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_1_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_1_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_1_SPECIAL'))
+      store[0] === 'EDUCATION_BLOCK_2_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_2_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_2_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_2_SPECIAL'))
+      store[0] === 'EDUCATION_BLOCK_3_TITLE' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_TITLE'))
+      store[0] === 'EDUCATION_BLOCK_3_FINISH' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_FINISH'))
+      store[0] === 'EDUCATION_BLOCK_3_SPECIAL' && dispatch(setFocusedSkills('EDUCATION_BLOCK_3_SPECIAL'))
+
+      store[0] === 'JOB_BLOCK_1_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_1_TITLE'))
+      store[0] === 'JOB_BLOCK_1_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_1_SITE'))
+      store[0] === 'JOB_BLOCK_1_SM' && dispatch(setFocusedSkills('JOB_BLOCK_1_SM'))
+      store[0] === 'JOB_BLOCK_1_SY' && dispatch(setFocusedSkills('JOB_BLOCK_1_SY'))
+      store[0] === 'JOB_BLOCK_1_FM' && dispatch(setFocusedSkills('JOB_BLOCK_1_FM'))
+      store[0] === 'JOB_BLOCK_1_FY' && dispatch(setFocusedSkills('JOB_BLOCK_1_FY'))
+      store[0] === 'JOB_BLOCK_1_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_1_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_1_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_1_JOB'))
+      store[0] === 'JOB_BLOCK_1_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_1_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_2_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_2_TITLE'))
+      store[0] === 'JOB_BLOCK_2_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_2_SITE'))
+      store[0] === 'JOB_BLOCK_2_SM' && dispatch(setFocusedSkills('JOB_BLOCK_2_SM'))
+      store[0] === 'JOB_BLOCK_2_SY' && dispatch(setFocusedSkills('JOB_BLOCK_2_SY'))
+      store[0] === 'JOB_BLOCK_2_FM' && dispatch(setFocusedSkills('JOB_BLOCK_2_FM'))
+      store[0] === 'JOB_BLOCK_2_FY' && dispatch(setFocusedSkills('JOB_BLOCK_2_FY'))
+      store[0] === 'JOB_BLOCK_2_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_2_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_2_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_2_JOB'))
+      store[0] === 'JOB_BLOCK_2_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_2_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_3_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_3_TITLE'))
+      store[0] === 'JOB_BLOCK_3_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_3_SITE'))
+      store[0] === 'JOB_BLOCK_3_SM' && dispatch(setFocusedSkills('JOB_BLOCK_3_SM'))
+      store[0] === 'JOB_BLOCK_3_SY' && dispatch(setFocusedSkills('JOB_BLOCK_3_SY'))
+      store[0] === 'JOB_BLOCK_3_FM' && dispatch(setFocusedSkills('JOB_BLOCK_3_FM'))
+      store[0] === 'JOB_BLOCK_3_FY' && dispatch(setFocusedSkills('JOB_BLOCK_3_FY'))
+      store[0] === 'JOB_BLOCK_3_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_3_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_3_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_3_JOB'))
+      store[0] === 'JOB_BLOCK_3_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_3_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_4_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_4_TITLE'))
+      store[0] === 'JOB_BLOCK_4_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_4_SITE'))
+      store[0] === 'JOB_BLOCK_4_SM' && dispatch(setFocusedSkills('JOB_BLOCK_4_SM'))
+      store[0] === 'JOB_BLOCK_4_SY' && dispatch(setFocusedSkills('JOB_BLOCK_4_SY'))
+      store[0] === 'JOB_BLOCK_4_FM' && dispatch(setFocusedSkills('JOB_BLOCK_4_FM'))
+      store[0] === 'JOB_BLOCK_4_FY' && dispatch(setFocusedSkills('JOB_BLOCK_4_FY'))
+      store[0] === 'JOB_BLOCK_4_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_4_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_4_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_4_JOB'))
+      store[0] === 'JOB_BLOCK_4_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_4_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_5_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_5_TITLE'))
+      store[0] === 'JOB_BLOCK_5_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_5_SITE'))
+      store[0] === 'JOB_BLOCK_5_SM' && dispatch(setFocusedSkills('JOB_BLOCK_5_SM'))
+      store[0] === 'JOB_BLOCK_5_SY' && dispatch(setFocusedSkills('JOB_BLOCK_5_SY'))
+      store[0] === 'JOB_BLOCK_5_FM' && dispatch(setFocusedSkills('JOB_BLOCK_5_FM'))
+      store[0] === 'JOB_BLOCK_5_FY' && dispatch(setFocusedSkills('JOB_BLOCK_5_FY'))
+      store[0] === 'JOB_BLOCK_5_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_5_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_5_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_5_JOB'))
+      store[0] === 'JOB_BLOCK_5_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_5_JOB_TASKS'))
+
+      store[0] === 'JOB_BLOCK_6_TITLE' && dispatch(setFocusedSkills('JOB_BLOCK_6_TITLE'))
+      store[0] === 'JOB_BLOCK_6_SITE' && dispatch(setFocusedSkills('JOB_BLOCK_6_SITE'))
+      store[0] === 'JOB_BLOCK_6_SM' && dispatch(setFocusedSkills('JOB_BLOCK_6_SM'))
+      store[0] === 'JOB_BLOCK_6_SY' && dispatch(setFocusedSkills('JOB_BLOCK_6_SY'))
+      store[0] === 'JOB_BLOCK_6_FM' && dispatch(setFocusedSkills('JOB_BLOCK_6_FM'))
+      store[0] === 'JOB_BLOCK_6_FY' && dispatch(setFocusedSkills('JOB_BLOCK_6_FY'))
+      store[0] === 'JOB_BLOCK_6_NOW_TIME' && dispatch(setFocusedSkills('JOB_BLOCK_6_NOW_TIME'))
+      store[0] === 'JOB_BLOCK_6_JOB' && dispatch(setFocusedSkills('JOB_BLOCK_6_JOB'))
+      store[0] === 'JOB_BLOCK_6_JOB_TASKS' && dispatch(setFocusedSkills('JOB_BLOCK_6_JOB_TASKS'))
+
+    }
+
+  }
+
+  const reduceNewSkillsFormBlur = () => {
+
+    if ( store ) {
+
+      dispatch(setFocusedSkills(''))
+
+    }
+  
   }
 
   // ----------------------------------------------------------------
@@ -1420,9 +1596,9 @@ const InputComponent: React.FC<IInput> = (props: IInput) => {
                   store[0] === 'JOB_BLOCK_6_JOB' ? JOB_BLOCK_6.job :
                   store[0] === 'JOB_BLOCK_6_JOB_TASKS' ? JOB_BLOCK_6.jobTasks : ''
               }
-              onChange={reduceNewCaseForm}
-              onFocus={reduceNewCaseFormFocus}
-              onBlur={reduceNewCaseFormBlur}
+              onChange={reduceNewSkillsForm}
+              onFocus={reduceNewSkillsFormFocus}
+              onBlur={reduceNewSkillsFormBlur}
               autoFocus={store && EDSKILL_FOCUS === store[0] && true}
               id="standard-basic-task" 
               label={label}

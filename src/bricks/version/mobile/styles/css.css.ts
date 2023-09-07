@@ -14,8 +14,6 @@ const css = {
       background-color: white;
       box-shadow: 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
       padding: 0px 16px;
-      margin-left: 60px;
-      margin-top: 16px;
       border-top-right-radius: 4px;
       border-top-left-radius: 4px;
     `
@@ -33,7 +31,6 @@ const css = {
       background-color: white;
       box-shadow: 0px 3px 16px 2px rgba(0, 0, 0, 0.12);
       padding: 0px 16px;
-      margin-left: 60px;
       border-bottom-right-radius: 4px;
       border-bottom-left-radius: 4px;
     `,
@@ -51,14 +48,14 @@ const css = {
     Container: styled.section`
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       justify-content: flex-start;
       position: relative;
       box-sizing: border-box;
       width: 350px;
-      min-height: 500px;
+      height: calc(100% - 110px);
       padding: 0px 16px;
-      margin-left: 60px;
+      padding-right: 0px;
       border-left: 1px solid rgba(0, 0, 0, 0.04);
       border-right: 1px solid rgba(0, 0, 0, 0.04);
     `
@@ -69,8 +66,6 @@ const css = {
       position: absolute;
       height: 100%;
       width: 76.5%;
-      margin-left: 60px;
-      left: 23.5%;
       z-index: 10;
       background-color: #3A4B56;
       padding: 23px 25px;

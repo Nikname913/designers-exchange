@@ -253,7 +253,7 @@ const ExecutorProfilePage: React.FC = () => {
   const changePass = (param: string): void => {
     setAuthDataPass(param)
     setAuthDataPassError(false)
-  } 
+  }
 
   const generateFaceType = (param: string): string => {
     if ( param === 'SELF_FACE' ) return 'Самозанятый'
@@ -2895,6 +2895,7 @@ const ExecutorProfilePage: React.FC = () => {
                   flexDirection: 'row', 
                   alignItems: 'center', 
                   marginTop: '14px',
+                  marginBottom: '22px',
                   cursor: 'pointer'
                 }}
               >
@@ -2924,6 +2925,18 @@ const ExecutorProfilePage: React.FC = () => {
 
                 return <ReviewsContent style={{ padding: '24px', alignItems: 'flex-start', marginTop: '0px' }}>
                   <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{ item.title }</span>
+                  <img
+                    alt={"Изображение для проекта"}
+                    src={`http://85.193.88.125:3000/techPortfolio/${USER_ID}.case.jpg`}
+                    style={{
+                      display: 'block',
+                      position: 'relative',
+                      width: '80%',
+                      marginBottom: '8px',
+                      marginTop: '28px',
+                      borderRadius: '4px'
+                    }}
+                  />
                   <ReviewsContentLine style={{ marginTop: '24px', alignItems: 'flex-start' }}>
                     <div style={{ width: '50%', display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>Сроки выполнения</span>
@@ -3044,20 +3057,27 @@ const ExecutorProfilePage: React.FC = () => {
                 <span>Добавить новое место учебы</span>
               </div>
 
-              { false && <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ width: '15%' }}>{"2009"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Курсы повышения квалификации"}</span>
-                  <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
-                </div>
-              </ReviewsContent> }
+              { EXECUTOR[0].educationAndSkills?.filter(item => item.type === 'education')
+                .map((item: any, index: number) => {
+
+                return (
+                  <ReviewsContent 
+                    style={{ 
+                      marginTop: index === 0 ? '26px' : '14px', 
+                      flexDirection: 'row', 
+                      alignItems: 'flex-start', 
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ width: '15%' }}>{ item.finish }</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{ item.title }</span>
+                      <span>{ item.special }</span>
+                    </div>
+                  </ReviewsContent>
+                )
+
+              })}
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '50px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
@@ -3120,20 +3140,28 @@ const ExecutorProfilePage: React.FC = () => {
                 <span>Добавить новое место работы</span>
               </div>
 
-              { false && <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ lineHeight: '20px', width: '15%' }}>{"декабрь 2011 - ноябрь 2015"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ООО Технические Системы"}</span>
-                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
-                </div>
-              </ReviewsContent> }
+              { EXECUTOR[0].educationAndSkills?.filter(item => item.type === 'skill')
+                .map((item: any, index: number) => {
+
+                return (
+                  <ReviewsContent 
+                    style={{ 
+                      marginTop: index === 0 ? '26px' : '14px',  
+                      flexDirection: 'row', 
+                      alignItems: 'flex-start', 
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ lineHeight: '22px', width: '15%' }}>{ item.sy } - { item.fy }</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>{ item.title }</span>
+                      <span style={{ fontWeight: 'bold', marginBottom: '16px', color: 'gray' }}>{ item.jobName }</span>
+                      <span style={{ lineHeight: '24px' }}>{item.jobTasks}</span>
+                    </div>
+                  </ReviewsContent>
+                )
+
+              })}
 
             </React.Fragment> }
 
@@ -5882,20 +5910,27 @@ const ExecutorProfilePage: React.FC = () => {
                 <span>Добавить новое место учебы</span>
               </div>
 
-              { false && <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ width: '15%' }}>{"2009"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"Курсы повышения квалификации"}</span>
-                  <span>{"Строительство и эксплуатация зданий и сооружений"}</span>
-                </div>
-              </ReviewsContent> }
+              { CUSTOMER[0].educationAndSkills?.filter(item => item.type === 'education')
+                .map((item: any, index: number) => {
+
+                return (
+                  <ReviewsContent 
+                    style={{ 
+                      marginTop: index === 0 ? '26px' : '14px', 
+                      flexDirection: 'row', 
+                      alignItems: 'flex-start', 
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ width: '15%' }}>{ item.finish }</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{ item.title }</span>
+                      <span>{ item.special }</span>
+                    </div>
+                  </ReviewsContent>
+                )
+
+              })}
 
               <ReviewsContentLine style={{ marginBottom: '20px', marginTop: '50px', justifyContent: 'space-between' }}>
                 <span style={{ fontWeight: 'bold' }}>{"Опыт работы"}</span>
@@ -5958,20 +5993,28 @@ const ExecutorProfilePage: React.FC = () => {
                 <span>Добавить новое место работы</span>
               </div>
 
-              { false && <ReviewsContent 
-                style={{ 
-                  marginTop: '0px', 
-                  flexDirection: 'row', 
-                  alignItems: 'flex-start', 
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span style={{ lineHeight: '20px', width: '15%' }}>{"декабрь 2011 - ноябрь 2015"}</span>
-                <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
-                  <span style={{ fontWeight: 'bold', marginBottom: '16px' }}>{"ООО Технические Системы"}</span>
-                  <span style={{ lineHeight: '20px' }}>{"Viverra eu vitae quis sed in ut diam. Elit nunc pulvinar montes et morbi morbi duis leo est. Iaculis eget leo amet sit. Egestas viverra arcu et amet ut diam quis. Nisl leo in lectus eget commodo mauris sed. Et ut aliquam sed nisl nisl ultricies. Massa leo viverra massa quis. Adipiscing quam maecenas a aliquam. Nisl in facilisis sed tellus. Vulputate augue integer mauris tortor"}</span>
-                </div>
-              </ReviewsContent> }
+              { CUSTOMER[0].educationAndSkills?.filter(item => item.type === 'skill')
+                .map((item: any, index: number) => {
+
+                return (
+                  <ReviewsContent 
+                    style={{ 
+                      marginTop: index === 0 ? '26px' : '14px',  
+                      flexDirection: 'row', 
+                      alignItems: 'flex-start', 
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span style={{ lineHeight: '22px', width: '15%' }}>{ item.sy } - { item.fy }</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
+                      <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>{ item.title }</span>
+                      <span style={{ fontWeight: 'bold', marginBottom: '16px', color: 'gray' }}>{ item.jobName }</span>
+                      <span style={{ lineHeight: '24px' }}>{item.jobTasks}</span>
+                    </div>
+                  </ReviewsContent>
+                )
+
+              })}
 
             </React.Fragment> }
 

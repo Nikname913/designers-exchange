@@ -118,7 +118,7 @@ const ChapterController:
                       backgroundColor={chaptersLineBackground}
                     >
                       <ChapterContainerStepRoundLabelText textAlign={"center"}>
-                        { chapter.title }
+                        { item.chapters && item.chapters?.length < 5 ? chapter.title : chapterIndex + 1 + ' раздел' }
                       </ChapterContainerStepRoundLabelText>
                     </ChapterContainerStepRound>
                   </BootstrapTooltip>
@@ -145,7 +145,7 @@ const ChapterController:
                     }
                   >
                     <ChapterContainerStepRoundLabelText textAlign={"center"}>
-                      { chapter.title }
+                      { item.chapters && item.chapters?.length < 5 ? chapter.title : chapterIndex + 1 + ' раздел' }
                     </ChapterContainerStepRoundLabelText>
                   </ChapterContainerStepRound>
                 )

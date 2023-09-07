@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { MenuActive } from '../Context'
 import css from '../styles/css.css'
 
 import exchange from '../img/exchange.svg'
@@ -11,13 +13,20 @@ const { Foooter } = css
 
 const MobileFooter: React.FC = () => {
 
-  const [ selectMenu, setSelectMenu ] = useState<1 | 2 | 3 | 4 | 5>(1)
+  const [ selectMenu, setSelectMenu ] = useContext(MenuActive)
+
+  const navigate = useNavigate()
 
   const changeStep = (param: 1 | 2 | 3 | 4 | 5) => setSelectMenu(param)
 
   return <Foooter.Container style={{ overflow: 'hidden' }}>
 
-    <Foooter.MenuItem onClick={() => changeStep(1)}>
+    <Foooter.MenuItem 
+      onClick={() => {
+        navigate('/task-list-all')
+        changeStep(1)
+      }}
+    >
       { false && <img
         alt={""}
         src={exchange}

@@ -2387,7 +2387,8 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                         boxSizing: 'border-box',
                         boxShadow: 'none',
                         top: '0%',
-                        left: '0%'
+                        left: '0%',
+                        zIndex: 10
                       }}
                     />
 

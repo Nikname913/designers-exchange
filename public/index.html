@@ -25,6 +25,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
     <style>
       *::selection { background-color: #D9E7F0; }
       .MuiFormControlLabel-label { font-size: 15px !important; }
@@ -43,5 +44,49 @@
       }
     </style>
   </head>
-  <body><div id="root"></div></body>
+  <body><div id="root"></div>
+    <script type="text/javascript">
+
+      this.pay = function () {
+      const widget = new cp.CloudPayments()
+        widget.pay('auth',
+          {
+            publicId: 'test_api_00000000000000000000002',  // id из личного кабинета
+            description: 'Оплата товаров в example.com',   // назначение
+            amount: 100,                                   // сумма
+            currency: 'RUB',                               // валюта
+            accountId: 'user@example.com',                 // идентификатор плательщика (необязательно)
+            invoiceId: '1234567',                          // номер заказа (необязательно)
+            email: 'user@example.com',                     // email плательщика (необязательно)
+            skin: "mini",                                  // дизайн виджета (необязательно)
+            autoClose: 3,                                  // время в секундах до авто-закрытия виджета (необязательный)
+            data: {
+              myProp: 'myProp value'
+            },
+            configuration: {
+              common: {}
+            },
+            payer: { 
+              firstName: 'Тест',
+              lastName: 'Тестов',
+              middleName: 'Тестович',
+              birth: '1955-02-24',
+              address: 'тестовый проезд дом тест',
+              street: 'Lenina',
+              city: 'MO',
+              country: 'RU',
+              phone: '123',
+              postcode: '345'
+            }
+          },
+          {
+            onSuccess: function (options) { },
+            onFail: function (reason, options) { },
+            onComplete: function (paymentResult, options) { }
+          }
+        )
+      }
+
+    </script>
+  </body>
 </html>

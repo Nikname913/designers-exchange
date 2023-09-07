@@ -68,10 +68,10 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
   const bimTagCSS: React.CSSProperties = {
     display: 'block',
     position: 'relative',
-    fontSize: '40px',
+    fontSize: '30px',
     color: blue1,
     margin: 0,
-    marginBottom: '12px',
+    marginBottom: '10px',
     marginLeft: '20px'
   }
 
@@ -177,18 +177,31 @@ const TaskTableHeader: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           height={containerHeight}
         >
           <TaskContainerContent>
-            <TACC.TaskContainerTitle style={{ fontSize: '30px', lineHeight: '42px' }}>{ taskTitle }</TACC.TaskContainerTitle>
-            <TACC.TextContentLine style={{ justifyContent: 'flex-start' }}>
+            <TACC.TaskContainerTitle style={{ fontSize: '30px', lineHeight: '42px', marginBottom: '32px' }}>{ taskTitle }</TACC.TaskContainerTitle>
+            <TACC.TextContentLine style={{ justifyContent: 'flex-start', flexWrap: 'wrap' }}>
               { taskSpecializationTags.map((item: string, index: number): React.ReactElement => {
 
-                return <TACC.SpecializationTag backgroundColor={tagColor}>{ item }</TACC.SpecializationTag>
+                return (
+                  <TACC.SpecializationTag 
+                    backgroundColor={tagColor}
+                    style={{ width: '', fontSize: '13px', marginBottom: '10px', marginTop: '0px' }}
+                  >
+                    { item !== 'undefined' ? item : 'Специализация' + tagsSpredLine }
+                  </TACC.SpecializationTag>
+                )
 
               })}
-              
+              { taskSpecializationTags.length === 0 && <TACC.SpecializationTag 
+                    backgroundColor={tagColor}
+                    style={{ width: '', fontSize: '13px', marginBottom: '10px', marginTop: '0px' }}
+                  >
+                    {"Конкретные специализации не указаны"}
+                  </TACC.SpecializationTag> }
+
               <span style={bimTagCSS}>BIM</span>
 
             </TACC.TextContentLine>
-            <TACC.TextContentLine style={{ marginBottom: '0px' }}>
+            <TACC.TextContentLine style={{ marginBottom: '0px', marginTop: '13px' }}>
               <div style={divCSS}>
                 <span style={titleSpanCSS}>Сроки:</span>
                 <span>{ 

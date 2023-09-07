@@ -12,6 +12,7 @@ import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
 import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import { setAlertData } from '../../../../store/slices/header-slice'
+import RequestActionsComponent from '../../services/request.service'
 import css from '../../styles/views/header.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
@@ -49,6 +50,8 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+
+  const [ ,SET_SEND_PING_REQUEST ] = useState(false)
 
   const [ execCustButtonInner, setExecCustButtoninner ] = useState<'Исполнители' | 'Заказчики'>('Исполнители')
   const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
@@ -216,9 +219,41 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
     if ( USER_ROLE === 'EXECUTOR' ) { console.log(EXECUTOR[0]) }
 
   }, [])
+  useEffect(() => {
+
+    if ( USER_ROLE !== 'UNDEFINED' ) { SET_SEND_PING_REQUEST(false) }
+
+  }, [ USER_ROLE, USER_ID ])
+  useEffect(() => {
+
+    USER_ROLE !== 'UNDEFINED' && fetch('http://85.193.88.125:3000/8000/pingMarkOne', {
+      method: 'POST',
+      headers: { "Content-type": "application/json; charset=UTF-8" }, 
+      body: JSON.stringify({
+        userId: USER_ID,
+        time: new Date().toLocaleString()
+      })
+    }).then(res => res.json())
+
+  }, [ USER_ROLE ])
 
   return (
     <React.Fragment>
+
+      { false && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/8000/pingMarkOne',
+          body: {
+            userId: USER_ID,
+            time: new Date().toLocaleString()
+          }
+        }}
+      
+      /> }  
+
       <HeadWrapper style={{ position: 'fixed', zIndex: 100, opacity: showRCC ? 1 : 1 }} backgroundColor={"transparent"}>
       <HeadWrapperShadow></HeadWrapperShadow>
       <HeadWrapperInner backgroundColor={whiteColor}>

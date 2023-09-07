@@ -121,6 +121,10 @@ const ReactSelect: React.FC<ISelect> = (props: ISelect) => {
         action(param)
         break
 
+      case 'FILTER':  
+        action(param)
+        break
+
       case 'DISCOUNT_REDUCER': 
         action(param)
         break

@@ -471,7 +471,7 @@ const AuthPage: React.FC = () => {
                 { value: 'Сметная документация', label: 'Сметная документация' },
                 { value: 'Иная документация', label: 'Иная документация' }
               ]}
-              multy={false}
+              multy={true}
               action={setSpec}
               actionType={"AUTH_SPEC_TYPE"}
               actionParams={[]}

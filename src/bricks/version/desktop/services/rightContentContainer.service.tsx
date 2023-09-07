@@ -23,6 +23,19 @@ import { setCaseName,
   setCaseText,
   setCaseTags } from '../../../store/slices/new-case-slice'
 import { setShow as setShowAlert , setType, setMessage } from '../../../store/slices/alert-content-slice'
+import { addInEducation1Title, 
+  addInEducation1Finish,
+  addInEducation1Special,
+  addInSkills1Title,
+  addInSkills1Site,
+  addInSkills1Sm,
+  addInSkills1Sy,
+  addInSkills1Fm,
+  addInSkills1Fy,
+  addInSkills1Job,
+  addInSkills1JobTasks
+}  from '../../../store/slices/new-skills-slice'
+
 import DocumentLine from '../views/localViews/DocumentLine'
 import Switch from '@mui/material/Switch'
 import Radio from '@mui/material/Radio'
@@ -93,6 +106,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const [ SEND_CONTRACT_REQUEST, SET_SEND_CONTRACT_REQUEST ] = useState(false)
   const [ SEND_COMPLETE_REQUEST, SET_SEND_COMPLETE_REQUEST ] = useState(false)
   const [ ADD_CASE_REQUEST, SET_ADD_CASE_REQUEST ] = useState(false)
+  const [ ADD_EDUCATION_REQUEST, SET_ADD_EDUCATION_REQUEST ] = useState(false)
+  const [ ADD_JOB_REQUEST, SET_ADD_JOB_REQUEST ] = useState(false)
   const [ SEND_CASE_REQUEST, SET_SEND_CASE_REQUEST ] = useState(false)
 
   const [ educationCounter, setEducationCounter ] = useState<number>(1)
@@ -184,6 +199,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const CASE_P4 = useAppSelector(state => state.newCaseReducer.caseParams.four)
   const CASE_TEXT = useAppSelector(state => state.newCaseReducer.caseText)
   const CASE_TAGS = useAppSelector(state => state.newCaseReducer.caseTags)
+
+  const EDUCATION_BLOCK_1 = useAppSelector(state => state.newSkillsReducer.education[0])
+  const JOB_BLOCK_1 = useAppSelector(state => state.newSkillsReducer.skills[0])
 
   const avatarCSS: CSSProperties = {
     display: 'block',
@@ -363,6 +381,104 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
   }
 
+  const sendEducation = () => {
+
+    if ( EDUCATION_BLOCK_1.title !== '' && EDUCATION_BLOCK_1.finish !== '' && EDUCATION_BLOCK_1.special !== '' ) {
+
+      console.log({
+        clientId: USER_ID,
+        addInEducation1Title: EDUCATION_BLOCK_1.title,
+        addInEducation1Finish: EDUCATION_BLOCK_1.finish,
+        addInEducation1Special: EDUCATION_BLOCK_1.special
+      })
+
+      SET_ADD_EDUCATION_REQUEST(true)
+
+      dispatch(setShowAlert(true))
+      dispatch(setType('success'))
+      dispatch(setMessage('Данные об образовании успешно добавлены'))
+
+      setTimeout(() => {
+
+        SET_ADD_EDUCATION_REQUEST(false)
+
+        dispatch(addInEducation1Title(''))
+        dispatch(addInEducation1Finish(''))
+        dispatch(addInEducation1Special(''))
+
+        dispatch(setShowAlert(false))
+        dispatch(setType('success'))
+
+      }, 2000)
+
+    } else {
+
+      dispatch(setShowAlert(true))
+      dispatch(setType('error'))
+      dispatch(setMessage('Нужно заполнить все поля ввода для того, чтобы добавить новые данные об образовании'))
+
+    }
+
+  }
+
+  const sendSkill = () => {
+
+    if ( JOB_BLOCK_1.title !== '' 
+      && JOB_BLOCK_1.site !== ''
+      && JOB_BLOCK_1.sm !== ''
+      && JOB_BLOCK_1.sy !== ''
+      && JOB_BLOCK_1.fm !== '' 
+      && JOB_BLOCK_1.fy !== ''
+      && JOB_BLOCK_1.job !== ''
+      && JOB_BLOCK_1.jobTasks !== '' ) {
+
+      console.log({
+        clientId: USER_ID,
+        addInSkills1Title: JOB_BLOCK_1.title,
+        addInSkills1Site: JOB_BLOCK_1.site,
+        addInSkills1Sm: JOB_BLOCK_1.sm,
+        addInSkills1Sy: JOB_BLOCK_1.sy,
+        addInSkills1Fm: JOB_BLOCK_1.fm,
+        addInSkills1Fy: JOB_BLOCK_1.fy,
+        addInSkills1NowTime: JOB_BLOCK_1.nowTime,
+        addInSkills1Job: JOB_BLOCK_1.job,
+        addInSkills1JobTasks: JOB_BLOCK_1.jobTasks 
+      })
+
+      SET_ADD_JOB_REQUEST(true)
+
+      dispatch(setShowAlert(true))
+      dispatch(setType('success'))
+      dispatch(setMessage('Данные о месте работы успешно добавлены'))
+
+      setTimeout(() => {
+
+        SET_ADD_JOB_REQUEST(false)
+
+        dispatch(addInSkills1Title(''))
+        dispatch(addInSkills1Site('Не указано'))
+        dispatch(addInSkills1Sm('Не указано'))
+        dispatch(addInSkills1Sy('Не указано'))
+        dispatch(addInSkills1Fm('Не указано'))
+        dispatch(addInSkills1Fy('Не указано'))
+        dispatch(addInSkills1Job(''))
+        dispatch(addInSkills1JobTasks(''))
+
+        dispatch(setShowAlert(false))
+        dispatch(setType('success'))
+
+      }, 2000)
+
+    } else {
+
+      dispatch(setShowAlert(true))
+      dispatch(setType('error'))
+      dispatch(setMessage('Нужно заполнить все поля ввода для того, чтобы добавить новые данные о месте работе'))
+
+    }
+
+  }
+
   const sendCase = () => {
 
     console.log({
@@ -412,18 +528,39 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
           dispatch(setType('success'))
           dispatch(setMessage('Проект был успешно добавлен в список ваших работ'))
 
+          setTimeout(() => {
+
+            dispatch(setShowAlert(false))
+            dispatch(setType('success'))
+      
+          }, 2000)
+
         } else {
 
           dispatch(setShowAlert(true))
           dispatch(setType('error'))
           dispatch(setMessage('Нужно заполнить все поля ввода и добавить файл вложения для того, чтобы добавить новый проект в базу портфолио'))
 
+          setTimeout(() => {
+
+            dispatch(setShowAlert(false))
+            dispatch(setType('success'))
+      
+          }, 2000)
+        
         }} else {
 
           dispatch(setShowAlert(true))
           dispatch(setType('warning'))
           dispatch(setMessage('В настоящее время количество проектов, которые вы можете добавить в систему, ограничено 1 штукой'))
 
+          setTimeout(() => {
+
+            dispatch(setShowAlert(false))
+            dispatch(setType('success'))
+      
+          }, 2000)
+        
         }
 
     if ( USER_ROLE === 'EXECUTOR' && EXECUTOR[0].portfolio && EXECUTOR[0].portfolio?.length < 1 ) {
@@ -765,6 +902,44 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
             CASE_TEXT,
             CASE_TAGS,
             CASE_FILE
+          }
+        }}
+      
+      /> }
+
+      { ADD_EDUCATION_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-user-education',
+          body: {
+            clientId: USER_ID,
+            addInEducation1Title: EDUCATION_BLOCK_1.title,
+            addInEducation1Finish: EDUCATION_BLOCK_1.finish,
+            addInEducation1Special: EDUCATION_BLOCK_1.special
+          }
+        }}
+      
+      /> }
+
+      { ADD_JOB_REQUEST && <RequestActionsComponent
+
+        callbackAction={() => {}}
+        requestData={{
+          type: 'POST',
+          urlstring: '/add-user-skill',
+          body: {
+            clientId: USER_ID,
+            addInSkills1Title: JOB_BLOCK_1.title,
+            addInSkills1Site: JOB_BLOCK_1.site,
+            addInSkills1Sm: JOB_BLOCK_1.sm,
+            addInSkills1Sy: JOB_BLOCK_1.sy,
+            addInSkills1Fm: JOB_BLOCK_1.fm,
+            addInSkills1Fy: JOB_BLOCK_1.fy,
+            addInSkills1NowTime: JOB_BLOCK_1.nowTime,
+            addInSkills1Job: JOB_BLOCK_1.job,
+            addInSkills1JobTasks: JOB_BLOCK_1.jobTasks 
           }
         }}
       
@@ -5250,7 +5425,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     { Array(educationCounter).fill(null).map((item, index) => <React.Fragment>  
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5261,7 +5436,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "EDUCATION_BLOCK_1_TITLE", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5274,7 +5449,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         <span style={{ display: 'block', width: '16px' }}/>
                         <div style={{ display: 'block', width: '23%' }}>
                           <InputComponent
-                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                             valueType='text'
                             required={false}
                             widthType={'%'}
@@ -5285,7 +5460,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             isDisabled={false}
                             labelShrinkLeft={"0px"}
                             innerLabel={null}
-                            store={[ "ABOUT_TEXT", () => null ]}
+                            store={[ "EDUCATION_BLOCK_1_FINISH", () => null ]}
                             css={{
                               fontSize: '12px',
                               position: 'relative',
@@ -5323,7 +5498,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5334,7 +5509,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "EDUCATION_BLOCK_1_SPECIAL", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5349,7 +5524,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                     <EditProjectsEducationFork.ContentLine>
                       <div 
-                        onClick={() => setEducationCounter(prev => prev < 3 ? prev + 1 : prev)}
+                        onClick={() => { false && setEducationCounter(prev => prev < 3 ? prev + 1 : prev) }}
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'row', 
@@ -5381,8 +5556,33 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             style={{ display: 'block', width: '14px' }}
                           />
                         </span>
-                        <span>Добавить место обучения</span>
+                        <span>Добавить место обучения ( Временно заблокированно 20.08 )</span>
                       </div>
+                    </EditProjectsEducationFork.ContentLine>
+                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '19px 0px 30px' }}>
+                      <ButtonComponent
+                        inner={"Сохранить образование"} 
+                        type='CONTAINED_DEFAULT' 
+                        action={sendEducation}
+                        actionData={null}
+                        widthType={'px'}
+                        widthValue={240}
+                        children={""}
+                        childrenCss={undefined}
+                        iconSrc={null}
+                        iconCss={undefined}
+                        muiIconSize={30}
+                        MuiIconChildren={ArrowUpwardIcon}
+                        css={{
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          padding: '4px',
+                          backgroundColor: blueColor2,
+                          color: 'white',
+                          width: '56px',
+                          height: '43px',
+                        }}
+                      />
                     </EditProjectsEducationFork.ContentLine>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px', marginTop: '8px' }}>
                       <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Опыт работы пользователя</h3>
@@ -5409,7 +5609,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '22px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5420,7 +5620,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "JOB_BLOCK_1_TITLE", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5457,7 +5657,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5468,7 +5668,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "JOB_BLOCK_1_SITE", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5502,7 +5702,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         </div>
                         <div style={{ display: 'block', width: '23%' }}>
                           <InputComponent
-                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                             valueType='text'
                             required={false}
                             widthType={'%'}
@@ -5513,7 +5713,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             isDisabled={false}
                             labelShrinkLeft={"0px"}
                             innerLabel={null}
-                            store={[ "ABOUT_TEXT", () => null ]}
+                            store={[ "JOB_BLOCK_1_SY", () => null ]}
                             css={{
                               fontSize: '12px',
                               position: 'relative',
@@ -5547,7 +5747,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         </div>
                         <div style={{ display: 'block', width: '23%' }}>
                           <InputComponent
-                            type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                            type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                             valueType='text'
                             required={false}
                             widthType={'%'}
@@ -5558,7 +5758,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             isDisabled={false}
                             labelShrinkLeft={"0px"}
                             innerLabel={null}
-                            store={[ "ABOUT_TEXT", () => null ]}
+                            store={[ "JOB_BLOCK_1_FY", () => null ]}
                             css={{
                               fontSize: '12px',
                               position: 'relative',
@@ -5579,6 +5779,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                             <FormControlLabel 
                               control={
                                 <Checkbox 
+                                  disabled
                                   checked={false} 
                                   onChange={() => {}} 
                                 />
@@ -5591,7 +5792,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '18px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5602,7 +5803,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "JOB_BLOCK_1_JOB", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5615,7 +5816,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.ContentLine>
                       <EditProjectsEducationFork.ContentLine style={{ marginTop: '16px' }}>
                         <InputComponent
-                          type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
+                          type={'TEXT_INPUT_OUTLINE_NEW_EDUCATION_SKILLS'}
                           valueType='text'
                           required={false}
                           widthType={'%'}
@@ -5626,7 +5827,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           isDisabled={false}
                           labelShrinkLeft={"0px"}
                           innerLabel={null}
-                          store={[ "ABOUT_TEXT", () => null ]}
+                          store={[ "JOB_BLOCK_1_JOB_TASKS", () => null ]}
                           css={{
                             fontSize: '12px',
                             position: 'relative',
@@ -5641,7 +5842,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
                     <EditProjectsEducationFork.ContentLine>
                       <div 
-                        onClick={() => setSkillCounter(prev => prev < 6 ? prev + 1 : prev)}
+                        onClick={() => { false && setSkillCounter(prev => prev < 6 ? prev + 1 : prev) }}
                         style={{ 
                           display: 'flex', 
                           flexDirection: 'row', 
@@ -5673,14 +5874,14 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           style={{ display: 'block', width: '14px' }}
                         />
                       </span>
-                        <span>Добавить место работы</span>
+                        <span>Добавить место работы ( Временно заблокированно 20.08 )</span>
                       </div>
                     </EditProjectsEducationFork.ContentLine>
-                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '30px 0px 40px' }}>
+                    <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-around', margin: '19px 0px 48px' }}>
                       <ButtonComponent
-                        inner={"Сохранить изменения"} 
+                        inner={"Сохранить опыт работы"} 
                         type='CONTAINED_DEFAULT' 
-                        action={() => {}}
+                        action={sendSkill}
                         actionData={null}
                         widthType={'px'}
                         widthValue={240}

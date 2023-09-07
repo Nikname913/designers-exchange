@@ -368,7 +368,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
               <div>
                 <p style={parCSS}>
                   <i style={{ fontStyle: 'normal', fontWeight: 'bold' }}>Описание: </i>
-                  {  containerHeight === 'short' ? taskDescription.slice(0, 180) + '...' : taskDescription }
+                  {  containerHeight === 'short' ? taskDescription.slice(0, 222) + '...' : taskDescription }
                 </p>
               </div>
             </TACC.TextContentLine>
@@ -389,7 +389,7 @@ const TaskTable: React.FC<ITaskTableProps> = (props: ITaskTableProps) => {
           <TaskContainerActions>
             <div style={actionsDivContainerCSS}>
               <TACA.TaskStatus>
-                {(viewType === 'searching' || viewType === 'custSelfView' || viewType === 'execSelfView') && <TACA.TaskStatusLabel color={indicatorLabelColor}>
+                {(viewType === 'searching' || viewType === 'custSelfView' || viewType === 'execSelfView' || viewType === 'mainView') && <TACA.TaskStatusLabel color={indicatorLabelColor}>
                   <TACA.TaskStatusIndicator background={indicatorColorOrange}/> 
                     Поиск исполнителей
                 </TACA.TaskStatusLabel> }

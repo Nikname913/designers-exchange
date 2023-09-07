@@ -12,6 +12,7 @@ import { setShow, setType, setMessage } from '../../../../store/slices/alert-con
 import { selectActualTask } from '../../../../store/slices/task-content-slice'
 import { setUpdating } from '../../../../store/slices/data-update-slice'
 import { setTFN } from '../../../../store/slices/filter-slice'
+import { setFromCoast, setToCoast } from '../../../../store/slices/filter-slice'
 import SelectField from '../../comps/select/SelectField'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -20,10 +21,14 @@ import Search from '@mui/icons-material/Search'
 import { styled } from '@mui/material/styles'
 import ButtonComponent from '../../comps/button/Button'
 import TaskTable from '../../views/localViews/TaskTable'
+import TaskTableLoading from '../../views/localViews/TaskTableLoading'
+import Stack from '@mui/material/Stack'
+import LinearProgress from '@mui/material/LinearProgress'
 import Pagintation from '../../services/pagination.service'
 import cssContentArea from '../../styles/views/contentArea.css'
 import cssAsideMenu from '../../styles/pages/exchangePageAside.css'
 import EmailIcon from '@mui/icons-material/Email'
+import closeIcon from '../../../../img/icons/close.svg'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
 const { MenuContainer, 
@@ -34,7 +39,8 @@ const { MenuContainer,
 
 const ExchangePage: React.FC = () => {
 
-  const [ ,setFilterLoading ] = useState<boolean>(false)
+  const [ filterLoading, setFilterLoading ] = useState<boolean>(false)
+  const [ filterSpec, setFilterSpec ] = useState<string>('')
 
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -51,21 +57,25 @@ const ExchangePage: React.FC = () => {
 
     TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => +item.coast.value >= +filterCoastFrom)
       .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+      .filter(item => item.tags && item.tags?.join(' ').indexOf(filterSpec) > -1)
 
   if ( filterCoastTo !== '' ) 
 
     TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => +item.coast.value <= +filterCoastTo)
       .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+      .filter(item => item.tags && item.tags?.join(' ').indexOf(filterSpec) > -1)
 
   if ( filterCoastFrom !== '' && filterCoastTo !== '' )
   
     TASKS_LIST = TASKS_LIST_CLEAR.list.filter(item => (+item.coast.value >= +filterCoastFrom && +item.coast.value <= +filterCoastTo))
       .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+      .filter(item => item.tags && item.tags?.join(' ').indexOf(filterSpec) > -1)
 
   if ( filterCoastFrom === '' && filterCoastTo === '' )
 
     TASKS_LIST = TASKS_LIST_CLEAR.list
       .filter(item => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1 )
+      .filter(item => item.tags && item.tags?.join(' ').indexOf(filterSpec) > -1)
 
   const resetButtonBackground = useAppSelector(state => state.theme.blue3)
   const blackColor = useAppSelector(state => state.theme.black)
@@ -174,6 +184,10 @@ const ExchangePage: React.FC = () => {
     dispatch(setTFN(event.target.value))
 
     setTimeout(() => { setFilterLoading(false) }, 1300 )
+  }
+
+  const changeFilterSpec = (param: string) => {
+    setFilterSpec(param)
   }
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -294,10 +308,11 @@ const ExchangePage: React.FC = () => {
               position: 'relative',
               backgroundColor: 'rgb(242, 244, 252)',
               width: '100%',
-              height: '42px',
               borderRadius: '4px',
-              lineHeight: '40px',
+              lineHeight: '22px',
+              padding: '13px 16px 15px',
               paddingLeft: '16px',
+              paddingRight: '33px',
               boxSizing: 'border-box',
               marginBottom: '0px',
               marginTop: '12px',
@@ -305,8 +320,25 @@ const ExchangePage: React.FC = () => {
               fontSize: '13px',
             }}
           >
-            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Поиск по словам: "}</i>
+            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Поиск по: "}</i>
             { filterName }
+
+            <img
+              alt={""}
+              src={closeIcon}
+              onClick={() => dispatch(setTFN(''))}
+              style={{
+                display: 'block',
+                position: 'absolute',
+                width: '18px',
+                left: '100%',
+                top: '50%',
+                marginTop: '-9px',
+                marginLeft: '-30px',
+                cursor: 'pointer'
+              }}
+            />
+
           </span> }
 
           <TextFieldTitle style={{ marginTop: '33px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
@@ -354,7 +386,7 @@ const ExchangePage: React.FC = () => {
             placeholder={"Местонахождение"}
             params={{ width: 300, mb: '16px', height: 50 }}
             data={[
-              { value: '1', label: 'Данные не получены...' },
+              { value: '1', label: 'Все доступные регионы' },
             ]}
             multy={false}
             action={() => {}}
@@ -369,7 +401,7 @@ const ExchangePage: React.FC = () => {
             }}
           />
           <SelectField 
-            placeholder={"Сортировать по специализации"}
+            placeholder={ filterSpec === 'helloo' ? "helloo" : "Сортировать по специализации" }
             params={{ width: 300, mb: '33px', height: 50 }}
             data={[
               { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
@@ -407,8 +439,8 @@ const ExchangePage: React.FC = () => {
               { value: 'Иная документация', label: 'Иная документация' }
             ]}
             multy={false}
-            action={() => {}}
-            actionType={""}
+            action={changeFilterSpec}
+            actionType={"FILTER"}
             actionParams={[]}
             showIcon={true}
             icon={null}
@@ -431,12 +463,23 @@ const ExchangePage: React.FC = () => {
           </FormGroup>
           <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Вид экспертизы</TextFieldTitle>
           <FormGroup>
+            <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Государственная"/>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Без экспертизы"/>
+            <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Частная экспертиза"/>
+            <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Все варианты"/>
           </FormGroup>
           <ButtonComponent
             inner={'Сбросить все'} 
             type='CONTAINED_DEFAULT' 
-            action={() => console.log('this is button')}
+            action={() => {
+              setFilterLoading(true)
+              dispatch(setTFN(''))
+              setFilterSpec('')
+              dispatch(setFromCoast(''))
+              dispatch(setToCoast(''))
+
+              setTimeout(() => { setFilterLoading(false) }, 1300 )
+            }}
             actionData={null}
             widthType={'px'}
             widthValue={300}
@@ -461,35 +504,66 @@ const ExchangePage: React.FC = () => {
         </React.Fragment> : <React.Fragment></React.Fragment> }
       </MenuContainer>
       <CustExecContentInnerArea>
-        { TASKS_LIST.filter(item => item.status === 'searching').map((item, index) => {
 
-          return (
-            <TaskTable 
-              key={index}
-              viewType={'mainView'}
-              taskInitDate={item.date}
-              taskTitle={item.name}
-              taskDeadline={item.deadline}
-              taskExpertType={item.exper}
-              taskCustomer={item.customer}
-              taskExecutor={item.executor}
-              taskLocation={item.region}
-              taskSpecializationTags={item.tags}
-              taskDescription={item.description}
-              dealStatus={item.status}
-              cardWidth={'100%'}
-              marbo={"16px"}
-              actions={[actualTask]}
-              actionsParams={[item.id, item.responds]}
-              deal={{
-                type: item.coast.issafe === true ? 'safe' : 'simple',
-                coast: item.coast.value,
-                prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
-                expert: item.coast.issafe === true ? item.coast.exper : 0,
-              }}
-            />
-          )
-        })}
+        { filterLoading === true && <TaskTableLoading
+          viewType={'mainView'}
+          taskInitDate={"----"}
+          taskTitle={"----"}
+          taskDeadline={"----"}
+          taskExpertType={"----"}
+          taskCustomer={"----"}
+          taskExecutor={"----"}
+          taskLocation={"----"}
+          taskSpecializationTags={[]}
+          taskDescription={"----"}
+          dealStatus={"----"}
+          cardWidth={'100%'}
+          marbo={"16px"}
+          actions={[]}
+          actionsParams={[]}
+          deal={{
+            type: 'safe',
+            coast: 100000,
+            prepaid: 20000,
+            expert: 80000,
+          }}
+        /> }
+
+        { filterLoading === true && <Stack sx={{ width: '100%', color: 'rgb(22, 124, 191)', borderRadius: '4px' }} spacing={2}>
+          <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+        </Stack> }
+        
+        { filterLoading === false && <React.Fragment>
+          { TASKS_LIST.filter(item => item.status === 'searching').map((item, index) => {
+
+            return (
+              <TaskTable 
+                key={index}
+                viewType={'mainView'}
+                taskInitDate={item.date}
+                taskTitle={item.name}
+                taskDeadline={item.deadline}
+                taskExpertType={item.exper}
+                taskCustomer={item.customer}
+                taskExecutor={item.executor}
+                taskLocation={item.region}
+                taskSpecializationTags={item.tags}
+                taskDescription={item.description}
+                dealStatus={item.status}
+                cardWidth={'100%'}
+                marbo={"16px"}
+                actions={[actualTask]}
+                actionsParams={[item.id, item.responds]}
+                deal={{
+                  type: item.coast.issafe === true ? 'safe' : 'simple',
+                  coast: item.coast.value,
+                  prepaid: item.coast.issafe === true ? item.coast.prepay : 0,
+                  expert: item.coast.issafe === true ? item.coast.exper : 0,
+                }}
+              />
+            )
+          })}
+        </React.Fragment> }
 
         <React.Fragment>
           { TASKS_LIST.length === 0 && 
@@ -505,13 +579,13 @@ const ExchangePage: React.FC = () => {
             >На бирже нет активных заданий</span> }
         </React.Fragment>
 
-        <PagintationContainer>
+        { filterLoading === false && <PagintationContainer>
           <span style={showMoreButtonCSS}>Загрузить еще</span>
           <Pagintation count={
             ( TASKS_LIST.filter(item => item.status === 'searching').length / 10 ) < 1 ? 1 :
             ( TASKS_LIST.filter(item => item.status === 'searching').length / 10 ) + ( TASKS_LIST.filter(item => item.status === 'searching').length % 10 ) 
           }></Pagintation>
-        </PagintationContainer>
+        </PagintationContainer> }
 
       </CustExecContentInnerArea>
     </ContentArea>
