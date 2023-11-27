@@ -147,7 +147,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-complete", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-complete", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -181,7 +181,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
         redirect: 'follow'
       };
 
-      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-complete", requestOptionsPDF)
+      const downloadFilePDF = await fetch("http://localhost:3000/send-file-complete", requestOptionsPDF)
         .then(response => response.blob())
 
       const downloadFileTextPDF: string = await downloadFilePDF.text()
@@ -311,7 +311,7 @@ const CommunicationTable: React.FC<ICommunicationTableProps> = (props: ICommunic
             /> }
             { threeButtonParams?.isset && threeButtonParams.inner === 'SAVE_COMPLETE' && <a 
             
-                href={`http://85.193.88.125:3000/techComplete/${completeFileServer.name}`}
+                href={`http://localhost:3000/techComplete/${completeFileServer.name}`}
                 target='_blank'
                 style={{
                   display: 'block',

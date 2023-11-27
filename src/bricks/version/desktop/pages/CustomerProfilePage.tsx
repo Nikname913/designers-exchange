@@ -175,7 +175,7 @@ const ExecutorProfilePage: React.FC = () => {
         redirect: 'follow'
       };
   
-      await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+      await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => setCheckAvatarStatus(response.status))
   
     })()
@@ -231,7 +231,7 @@ const ExecutorProfilePage: React.FC = () => {
               /> }
               { checkAvatarStatus === 200 && <img
                 alt={""}
-                src={`http://85.193.88.125:3000/techDocs/${userId}.avatar.jpg`} 
+                src={`http://localhost:3000/techDocs/${userId}.avatar.jpg`} 
                 style={{ height: '100%', cursor: 'pointer' }}
               /> }
             </div>

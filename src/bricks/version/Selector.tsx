@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Main from './desktop/Main'
 import { useAppSelector, useAppDispatch } from '../store/hooks'
 import { setDevice } from '../store/slices/device-type-slice'
+import { setActiveRole, setRoleData } from '../store/slices/role-type-slice'
 import Fab from '@mui/material/Fab'
 import LogoutIcon from '@mui/icons-material/Logout'
 import FeedbackIcon from '@mui/icons-material/Feedback'
@@ -10,7 +12,10 @@ import ComputerIcon from '@mui/icons-material/Computer'
 import MobileHeader from './mobile/comps/Header'
 import MobileFooter from './mobile/comps/Footer'
 import MobileContent from './mobile/comps/Content'
+
 import RMNotAuth from './mobile/views/rightMenu/RM.unauth'
+import RMAuth from './mobile/views/rightMenu/RM.auth'
+import RMCabinet from './mobile/views/rightMenu/RM.cabinet'
 
 import { ShowRM } from './mobile/Context'
 import { MenuActive } from './mobile/Context'
@@ -19,6 +24,7 @@ const Selector: React.FC = () => {
 
   const DEVICE = useAppSelector(state => state.deviceTypeReducer.device)
   const dispatch = useAppDispatch()
+  const navigate = useNavigate()
 
   // ----------------------------------------------------------------
   // данные для контекста
@@ -53,6 +59,8 @@ const Selector: React.FC = () => {
             }}
           >
             <RMNotAuth></RMNotAuth>
+            <RMAuth></RMAuth>
+            <RMCabinet></RMCabinet>
 
             <MobileHeader />
             <MobileContent />
@@ -89,6 +97,15 @@ const Selector: React.FC = () => {
             left: '0%',
             marginTop: '-184px',
             marginLeft: '30px'
+          }}
+          onClick={() => {
+            setSelectMenu(1)
+            navigate('/task-list-all')
+            dispatch(setActiveRole('UNDEFINED'))
+            dispatch(setRoleData({
+              uid: '',
+              una: ''
+            }))
           }}
         >
           <LogoutIcon sx={{ marginBottom: '-5px', fontSize: '33px' }} />

@@ -7,6 +7,10 @@ import Executors from '../pages/Executors'
 import ExchangeMain from '../pages/ExchangeMain'
 import ShowTask from '../pages/ShowTask'
 
+import AuthPageCustomerMobile from '../pages/NewCustomer'
+import AuthPageExecutorMobile from '../pages/NewExecutor'
+import UserCabinetExecutor from '../pages/UserCabinetExecutor'
+
 const DeskRoutes: React.FC = () => {
 
   return (
@@ -23,7 +27,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route 
           path='exec-registration'  
-          element={<DE/>} 
+          element={<AuthPageExecutorMobile />} 
         />
         <Route 
           path='exec-registration-success'   
@@ -31,7 +35,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route 
           path='cust-registration'   
-          element={<DE/>} 
+          element={<AuthPageCustomerMobile />} 
         />
         <Route 
           path='customers' 
@@ -125,7 +129,7 @@ const DeskRoutes: React.FC = () => {
         />
         <Route 
           path='exec-office/:viewtype' 
-          element={<DE/>} 
+          element={<UserCabinetExecutor/>} 
         />
         <Route 
           path='main' 

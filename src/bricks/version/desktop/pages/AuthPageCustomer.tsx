@@ -97,7 +97,7 @@ const AuthPage: React.FC = () => {
 
       if ( USER_FORK === 'IP_FACE' ) {
 
-        const urlString = 'http://85.193.88.125:3000/check-face'
+        const urlString = 'http://localhost:3000/check-face'
 
         fetch(urlString, {
           method: 'POST',
@@ -378,7 +378,7 @@ const AuthPage: React.FC = () => {
 
           </React.Fragment> }
         </ContentLine>
-        <ContentLine style={{ marginTop: '26px' }}>
+        <ContentLine style={{ marginTop: '20px' }}>
           <span style={{ fontWeight: 'bold' }}>Email пользователя</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '16px' }}>
@@ -486,7 +486,7 @@ const AuthPage: React.FC = () => {
           </div>
         </ContentLine>
         <ContentLine style={{ marginTop: '20px' }}>
-          <span style={{ fontWeight: 'bold' }}>Пароль</span>
+          <span style={{ fontWeight: 'bold' }}>Пароль от аккаунта</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '16px' }}>
           <InputComponent

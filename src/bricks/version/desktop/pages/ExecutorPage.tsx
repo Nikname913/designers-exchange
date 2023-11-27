@@ -2,10 +2,7 @@
 /* eslint-disable array-callback-return */
 import React, { useEffect, useState } from 'react'
 import { ReactJSXElement } from '@emotion/react/types/jsx-namespace'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import { useNavigate } from 'react-router-dom'
-import Checkbox from '@mui/material/Checkbox'
 import InputComponent from '../comps/input/Input'
 import Pagintation from '../services/pagination.service'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
@@ -260,6 +257,29 @@ const ExecutorPage: React.FC = () => {
           />
         </span> }
 
+        <TextFieldTitle>Сортировать по</TextFieldTitle>
+        <SelectField 
+          placeholder={"Сортировать по рейтингу"}
+          params={{ width: 300, mb: '11px', height: 58 }}
+          data={[
+            { value: '1', label: 'Сортировать по рейтингу' },
+            { value: '2', label: 'Сортировать по отзывам' },
+            { value: '3', label: 'Выполненные заказы' },
+          ]}
+          multy={false}
+          action={() => {}}
+          actionType={""}
+          actionParams={[]}
+          showIcon={true}
+          isDisabled={true}
+          icon={null}
+          iconStyles={{
+            marginTop: '-12px',
+            marginLeft: '6px',
+            width: '34px',
+          }}
+        />
+
         <TextFieldTitle>Выберете специализацию</TextFieldTitle>
         <div style={specializationFilterContainerCSS}>
           <SelectField 
@@ -314,12 +334,6 @@ const ExecutorPage: React.FC = () => {
             }}
           />
         </div>
-        <TextFieldTitle style={{ marginBottom: '8px', marginTop: '20px' }}>Навыки исполнителя</TextFieldTitle>
-        <FormGroup style={{ marginBottom: '26px' }}>
-          <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="2D"/>
-          <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="3D"/>
-          <FormControlLabel control={<Checkbox disabled/>} label="BIM"/>
-        </FormGroup>
         <SelectField 
           placeholder={"Местонахождение"}
           params={{ width: 300, mb: '2px', height: 58 }}
@@ -432,20 +446,71 @@ const ExecutorPage: React.FC = () => {
 
           { executors.length === 0 && 
             
-            <span 
-              style={{
-                display: 'block',
-                textAlign: 'center',
-                width: '100%',
-                color: 'gray',
-                marginTop: '100px',
-                marginBottom: '80px'
-              }}
-            >
-              Пользователи не найдены
-            </span> 
+            <CustomerExecutorCardPreviewLoading
+              isDisabledMessage={true}
+              userName={ "" }
+              userId={ "" }
+              userAvatar={defaultAvatar}
+              userType={"CUSTOMER"}
+              userEmployment={""}
+              userLocation={ "" }
+              userReviews={0}  
+              userRate={5.00}
+              userProjects={[ 0, 0, 0 ]}
+              cardWidth={"calc(50% - 8px)"}
+              marginBottom={'16px'}
+              marginRight={'0px'}
+              userTags={[]}
+            />
             
           }
+          { executors.length === 0 && 
+            
+            <CustomerExecutorCardPreviewLoading
+              isDisabledMessage={true}
+              userName={ "" }
+              userId={ "" }
+              userAvatar={defaultAvatar}
+              userType={"CUSTOMER"}
+              userEmployment={""}
+              userLocation={ "" }
+              userReviews={0}  
+              userRate={5.00}
+              userProjects={[ 0, 0, 0 ]}
+              cardWidth={"calc(50% - 8px)"}
+              marginBottom={'16px'}
+              marginRight={'0px'}
+              userTags={[]}
+            />
+            
+          }
+          { executors.length === 0 && 
+            
+            <Stack sx={{ width: '100%', color: 'rgb(22, 124, 191)', borderRadius: '4px' }} spacing={2}>
+              <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+            </Stack>
+            
+          }
+          { executors.length === 0 && <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              backgroundColor: 'rgb(253, 237, 237)',
+              width: '100%',
+              height: '42px',
+              borderRadius: '4px',
+              lineHeight: '41.2222px',
+              paddingLeft: '16px',
+              boxSizing: 'border-box',
+              marginBottom: '33px',
+              marginTop: '15px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Внимание: "}</i>
+            {"Данные не получены, проверьте соединение с интернетом"}
+          </span> }
 
         </React.Fragment> }
         { filterLoading === true && <React.Fragment>

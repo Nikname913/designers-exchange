@@ -1,24 +1,31 @@
 // ----------------------------------------------------------------
 /* eslint-disable array-callback-return */
 // ----------------------------------------------------------------
-import React from 'react'
-import { useAppSelector } from '../../../store/hooks'
+import React, { useState } from 'react'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
+import { setShow, setShowType } from '../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
 import ButtonComponent from '../../desktop/comps/button/Button'
 import EmailIcon from '@mui/icons-material/Email'
 
 import star from '../img/star.svg'
 import avatar from '../img/enot.svg'
+import showHidden from '../img/showHiddenRow.svg'
 
 const ShowTask: React.FC = () => {
 
   const selectTask = useAppSelector(state => state.taskContentReducer.TASKS_DATA.actualOne)
   const taskList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.list)
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const blue2 = useAppSelector(state => state.theme.blue2)
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const [ progressShow, setProgressShow ] = useState<'short' | 'long'>('long')
 
   // ----------------------------------------------------------------
   // основная стилизация компонентов
@@ -44,7 +51,8 @@ const ShowTask: React.FC = () => {
     width: '100%',
     minHeight: '40px',
     marginBottom: '17px',
-    padding: '14px',
+    padding: '20px',
+    paddingBottom: '22px',
     cursor: 'pointer'
   }
   const customerWrapperContentLine: CSSProperties = {
@@ -54,6 +62,22 @@ const ShowTask: React.FC = () => {
     justifyContent: 'space-between',
     position: 'relative',
     width: '100%'
+  }
+  const progressVerticalLine: CSSProperties = {
+    display: progressShow === 'long' ? 'flex' : 'none',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    position: 'relative',
+    width: '10px',
+    height: '220px',
+    marginTop: '18px',
+  }
+
+  function authLogin(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authLogin'))
+    dispatch(setShowRCC('undefined'))
   }
 
   // ----------------------------------------------------------------
@@ -190,7 +214,11 @@ const ShowTask: React.FC = () => {
       <ButtonComponent
         inner={"Откликнуться"} 
         type={"CONTAINED_DEFAULT"}
-        action={() => {}}
+        action={() => {
+          if ( USER_ROLE === 'UNDEFINED' ) {
+            authLogin()
+          }
+        }}
         actionData={null}
         widthType={"%"}
         widthValue={100}
@@ -288,25 +316,190 @@ const ShowTask: React.FC = () => {
     </div>
     <div style={mainWrapper}>
       <div style={customerWrapperContentLine}>
-        <span style={{ fontWeight: 'bold' }}>Описание</span>
+        <span style={{ fontWeight: 'bold' }}>Описание задания</span>
       </div>
       <div style={customerWrapperContentLine}>
-        <span style={{ marginTop: '10px' }}>{ taskList.filter(item => item.id === selectTask)[0].description }</span>
-      </div>
-    </div>
-    <div style={mainWrapper}>
-      <div style={customerWrapperContentLine}>
-        <span style={{ fontWeight: 'bold' }}>Прогресс</span>
+        <span style={{ marginTop: '10px', lineHeight: '22px' }}>{ taskList.filter(item => item.id === selectTask)[0].description }</span>
       </div>
     </div>
     <div style={mainWrapper}>
       <div style={customerWrapperContentLine}>
-        <span style={{ fontWeight: 'bold' }}>Вложения</span>
+        <span style={{ fontWeight: 'bold' }}>Прогресс выполнения</span>
+      </div>
+      <img
+        alt={""}
+        src={showHidden}
+        style={{
+          display: 'block',
+          position: 'absolute',
+          left: '100%',
+          marginLeft: '-33px',
+          top: '0%',
+          marginTop: '22px',
+          width: '12px',
+          cursor: 'pointer',
+          transform: progressShow === 'long' ? 'rotate(0deg)' : 'rotate(180deg)',
+        }}
+        onClick={() => {
+          setProgressShow((prev: 'short' | 'long'): 'short' | 'long' => {
+            if ( prev === 'long' ) return 'short'
+            if ( prev === 'short' ) return 'long'
+
+            return 'long'
+          })
+        }}
+      />
+
+      <div>
+        <div style={progressVerticalLine}>
+          <span
+            style={{
+              display: 'block',
+              position: 'absolute',
+              boxSizing: 'border-box',
+              width: '3px',
+              height: '100%',
+              backgroundColor: '#D9D9D9',
+              borderRadius: '2px'
+            }}
+          />
+
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              boxSizing: 'border-box',
+              width: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              backgroundColor: '#167CBF',
+              border: '3px solid white'
+            }}
+          >
+            <span 
+              style={{ 
+                width: '200px',
+                display: 'block',
+                position: 'absolute',
+                marginLeft: '25px',
+                marginTop: '-2px'
+              }}
+            >
+              Начало заказа
+            </span>
+          </span>
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              boxSizing: 'border-box',
+              width: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              backgroundColor: '#D9D9D9',
+              border: '3px solid white'
+            }}
+          >
+            <span 
+              style={{ 
+                width: '200px',
+                display: 'block',
+                position: 'absolute',
+                marginLeft: '25px',
+                marginTop: '-2px'
+              }}
+            >
+              Предварительное решение
+            </span>
+          </span>
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              boxSizing: 'border-box',
+              width: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              backgroundColor: '#D9D9D9',
+              border: '3px solid white'
+            }}
+          >
+            <span 
+              style={{ 
+                width: '200px',
+                display: 'block',
+                position: 'absolute',
+                marginLeft: '25px',
+                marginTop: '-2px'
+              }}
+            >
+              Все разделы задания
+            </span>
+          </span>
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              boxSizing: 'border-box',
+              width: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              backgroundColor: '#D9D9D9',
+              border: '3px solid white'
+            }}
+          >
+            <span 
+              style={{ 
+                width: '200px',
+                display: 'block',
+                position: 'absolute',
+                marginLeft: '25px',
+                marginTop: '-2px'
+              }}
+            >
+              Экспертиза ( при наличии )
+            </span>
+          </span>
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              boxSizing: 'border-box',
+              width: '18px',
+              height: '18px',
+              borderRadius: '9px',
+              backgroundColor: '#D9D9D9',
+              border: '3px solid white'
+            }}
+          >
+            <span 
+              style={{ 
+                width: '200px',
+                display: 'block',
+                position: 'absolute',
+                marginLeft: '25px',
+                marginTop: '-2px'
+              }}
+            >
+              Заказ принят
+            </span>
+          </span>
+        </div>
+      </div>
+
+    </div>
+    <div style={mainWrapper}>
+      <div style={customerWrapperContentLine}>
+        <span style={{ fontWeight: 'bold' }}>
+          Вложения <i style={{ opacity: 0.4, fontStyle: 'normal', marginLeft: '0px' }}> * ограничено</i>
+        </span>
       </div>
     </div>
     <div style={mainWrapper}>
       <div style={customerWrapperContentLine}>
-        <span style={{ fontWeight: 'bold' }}>Основное техзадание</span>
+        <span style={{ fontWeight: 'bold' }}>
+          Основное техзадание <i style={{ opacity: 0.4, fontStyle: 'normal', marginLeft: '0px' }}> * ограничено</i>
+        </span>
       </div>
     </div>
   </React.Fragment>

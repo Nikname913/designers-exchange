@@ -382,7 +382,7 @@ const ShowTaskPage: React.FC = () => {
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -420,7 +420,7 @@ const ShowTaskPage: React.FC = () => {
         redirect: 'follow'
       };
 
-      const downloadFileTxt = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsTxt)
+      const downloadFileTxt = await fetch("http://localhost:3000/send-file-techtask", requestOptionsTxt)
         .then(response => response.blob())
 
       const downloadFileTextTxt: string = await downloadFileTxt.text()

@@ -198,7 +198,7 @@ const ExecutorProfilePage: React.FC = () => {
               /> }
               { avatarFile === 200 && <img
                 alt={""}
-                src={`http://85.193.88.125:3000/techDocs/${EXECUTOR[0].clientId}.avatar.jpg`}
+                src={`http://localhost:3000/techDocs/${EXECUTOR[0].clientId}.avatar.jpg`}
                 style={{ height: '100%' }}
               /> }
             </div>

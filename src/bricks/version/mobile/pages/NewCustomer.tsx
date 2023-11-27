@@ -4,13 +4,14 @@ import { useNavigate, Link } from 'react-router-dom'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setActiveRole } from '../../../store/slices/role-type-slice'
 import { setCode, setFaceType } from '../../../store/slices/reg-slice'
-import SelectField from '../comps/select/SelectField'
-import SelectFieldMulti from '../comps/select/SelectFieldPWMulti'
-import InputComponent from '../comps/input/Input'
-import ButtonComponent from '../comps/button/Button'
+import { setUpdating } from '../../../store/slices/data-update-slice'
+import SelectField from '../../../version/desktop/comps/select/SelectField'
+import SelectFieldMulti from '../../../version/desktop/comps/select/SelectFieldPWMulti'
+import InputComponent from '../../../version/desktop/comps/input/Input'
+import ButtonComponent from '../../../version/desktop/comps/button/Button'
 import Checkbox from '@mui/material/Checkbox'
-import RequestActionsComponent from '../services/request.service'
-import cssContentArea from '../styles/views/contentArea.css'
+import RequestActionsComponent from '../../../version/desktop/services/request.service'
+import cssContentArea from '../../../version/desktop/styles/views/contentArea.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import correctIcon from '../../../img/icons/correctBlue.svg'
@@ -18,7 +19,7 @@ import correctIcon from '../../../img/icons/correctBlue.svg'
 const { ContentArea, PageTitle, ContentContainer, ContentLine } = cssContentArea
 const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 
-const AuthPage: React.FC = () => {
+const AuthPageCustomerMobile: React.FC = () => {
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AGREE, SET_AGREE ] = useState(false)
@@ -28,7 +29,7 @@ const AuthPage: React.FC = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
-  const [ sunameError, setSunameError ] = useState(false)
+  const [ ,setSunameError ] = useState(false)
   const [ nameError, setNameError ] = useState(false)
   const [ mailError, setMailError ] = useState(false)
   const [ passwordError, setPasswordError ] = useState(false)
@@ -43,7 +44,7 @@ const AuthPage: React.FC = () => {
   const EMAIL = useAppSelector(state => state.regReducer.email)
   const NUMBER = useAppSelector(state => state.regReducer.number)
   const PASSWORD = useAppSelector(state => state.regReducer.password)
-  const FACE_TYPE = useAppSelector(state => state.regReducer.faceType)
+  const USER_FORK = useAppSelector(state => state.regReducer.faceType)
 
   const headBlockCSS: React.CSSProperties = {
     display: 'flex',
@@ -64,28 +65,37 @@ const AuthPage: React.FC = () => {
     false && console.log(EMAIL)
     false && console.log(NUMBER)
     false && console.log(PASSWORD)
+    false && console.log(USER_FORK)
 
     setSunameError(false)
     setNameError(false)
     setMailError(false)
     setPasswordError(false)
 
-  }, [EMAIL, NAME, NUMBER, PASSWORD, SECOND_NAME, SURNAME])
+  }, [EMAIL, NAME, NUMBER, PASSWORD, SECOND_NAME, SURNAME, USER_FORK])
 
   const validate = () => {
 
     if ( SURNAME !== '' 
       && NAME !== '' 
       && EMAIL !== '' 
-      && PASSWORD !== ''
-      && FACE_TYPE !== ''
+      && PASSWORD !== '' 
+      && USER_FORK !== ''
       && AGREE
       && spec
       && passValid1 === true
       && passValid2 === true
       && passValid3 === true ) {
 
-        if ( FACE_TYPE === 'IP_FACE' ) {
+      false && console.log(SURNAME)
+      false && console.log(NAME)
+      false && console.log(SECOND_NAME)
+      false && console.log(EMAIL)
+      false && console.log(NUMBER)
+      false && console.log(PASSWORD)
+      false && console.log(USER_FORK)
+
+      if ( USER_FORK === 'IP_FACE' ) {
 
         const urlString = 'http://localhost:3000/check-face'
 
@@ -133,6 +143,14 @@ const AuthPage: React.FC = () => {
 
     } else {
 
+      !false && console.log(SURNAME)
+      !false && console.log(NAME)
+      !false && console.log(SECOND_NAME)
+      !false && console.log(EMAIL)
+      !false && console.log(NUMBER)
+      !false && console.log(PASSWORD)
+      !false && console.log(USER_FORK)
+
       if ( SURNAME === '' ) setSunameError(true)
       if ( NAME === '' ) setNameError(true)
       if ( EMAIL === '' ) setMailError(true)
@@ -145,7 +163,7 @@ const AuthPage: React.FC = () => {
 
       if ( passValid1 !== true || passValid2 !== true || passValid3 !== true ) setPasswordError(true)
 
-      if ( FACE_TYPE === '' ) {
+      if ( USER_FORK === '' ) {
         dispatch(setShow(true))
         dispatch(setType('error'))
         dispatch(setMessage('Нужно заполнить поле "Статус" указав там форму занятости'))
@@ -154,7 +172,7 @@ const AuthPage: React.FC = () => {
       if ( spec.length === 0 ) {
         dispatch(setShow(true))
         dispatch(setType('error'))
-        dispatch(setMessage('Нужно заполнить выбрать основные специализации'))
+        dispatch(setMessage('Нужно заполнить выбрать основную специализацию'))
       }
 
     }
@@ -242,6 +260,10 @@ const AuthPage: React.FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setFaceType('')) }, [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { dispatch(setUpdating(false)) }, [])
+// eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => console.log(spec), [ spec ])
 
   const passValidateCSS: CSSProperties = {
     display: 'block',
@@ -280,12 +302,12 @@ const AuthPage: React.FC = () => {
           body: {
             email: EMAIL,
             password: PASSWORD,
-            type: 'EXECUTOR',
+            type: 'CUSTOMER',
             name: NAME,
             surname: SURNAME,
             secondName: SECOND_NAME,
             number: NUMBER,
-            faceType: FACE_TYPE,
+            faceType: USER_FORK,
             specArr: spec
           }
         }}
@@ -294,7 +316,7 @@ const AuthPage: React.FC = () => {
 
       <ContentContainer style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
         <div style={headBlockCSS}>
-          <PageTitle>Создание аккаунта исполнителя</PageTitle>
+          <PageTitle>Создание аккаунта заказчика</PageTitle>
         </div>
         <ContentLine style={{ marginTop: '14px' }}>
           <span style={{ fontWeight: 'bold' }}>Личные данные</span>
@@ -324,8 +346,7 @@ const AuthPage: React.FC = () => {
             />
           </div>
           <span style={{ display: 'block', width: '20px' }}/>
-          { FACE_TYPE !== 'IP_FACE' && <div style={{ display: 'block', width: '50%' }}/> }
-          { FACE_TYPE === 'IP_FACE' && <React.Fragment>
+          { true && <React.Fragment>
 
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_AUTH'}
@@ -334,7 +355,12 @@ const AuthPage: React.FC = () => {
               widthType={'%'}
               widthValue={50}
               heightValue={'50px'}
-              label={"Введите название организации *"}
+              label={USER_FORK === "IP_FACE" 
+                ? "Введите название организации *" 
+                : USER_FORK === "SELF_FACE"
+                ? "Введите ваше ФИО *"
+                : USER_FORK === "PHIS_FACE"
+                ? "Введите ваше ФИО *" : "Введите название организации *"}
               isError={nameError}
               isDisabled={false}
               labelShrinkLeft={"0px"}
@@ -352,82 +378,9 @@ const AuthPage: React.FC = () => {
 
           </React.Fragment> }
         </ContentLine>
-        <ContentLine style={{ marginTop: '20px' }}>
-          { FACE_TYPE !== 'IP_FACE' && <span style={{ fontWeight: 'bold' }}>Имя пользователя</span> }
-          { FACE_TYPE === 'IP_FACE' && <span style={{ fontWeight: 'bold' }}>Почта и номер телефона</span> }
+        <ContentLine style={{ marginTop: '26px' }}>
+          <span style={{ fontWeight: 'bold' }}>Email пользователя</span>
         </ContentLine>
-        { FACE_TYPE !== 'IP_FACE' && <React.Fragment>
-          <ContentLine style={{ marginTop: '16px' }}>
-            <InputComponent
-              type={'TEXT_INPUT_OUTLINE_AUTH'}
-              valueType='text'
-              required={false}
-              widthType={'%'}
-              widthValue={33.3333}
-              heightValue={'50px'}
-              label={"Фамилия *"}
-              isError={sunameError}
-              isDisabled={false}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              store={[ 'SURNAME', () => {} ]}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '0px',
-                marginTop: '0px',
-                backgroundColor: 'white'
-              }}
-            />
-            <span style={{ display: 'block', width: '20px' }}/>
-            <InputComponent
-              type={'TEXT_INPUT_OUTLINE_AUTH'}
-              valueType='text'
-              required={false}
-              widthType={'%'}
-              widthValue={33.3333}
-              heightValue={'50px'}
-              label={"Имя *"}
-              isError={nameError}
-              isDisabled={false}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              store={[ "NAME", () => null ]}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '0px',
-                marginTop: '0px',
-                backgroundColor: 'white'
-              }}
-            />
-            <span style={{ display: 'block', width: '20px' }}/>
-            <InputComponent
-              type={'TEXT_INPUT_OUTLINE_AUTH'}
-              valueType='text'
-              required={false}
-              widthType={'%'}
-              widthValue={33.3333}
-              heightValue={'50px'}
-              label={"Отчество"}
-              isError={false}
-              isDisabled={false}
-              labelShrinkLeft={"0px"}
-              innerLabel={null}
-              store={[ "SECOND_NAME", () => null ]}
-              css={{
-                fontSize: '12px',
-                position: 'relative',
-                boxSizing: 'border-box',
-                marginBottom: '0px',
-                marginTop: '0px',
-                backgroundColor: 'white'
-              }}
-            />
-          </ContentLine>
-        </React.Fragment> }
         <ContentLine style={{ marginTop: '16px' }}>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_AUTH'}
@@ -533,7 +486,7 @@ const AuthPage: React.FC = () => {
           </div>
         </ContentLine>
         <ContentLine style={{ marginTop: '20px' }}>
-          <span style={{ fontWeight: 'bold' }}>Пароль от аккаунта</span>
+          <span style={{ fontWeight: 'bold' }}>Пароль</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '16px' }}>
           <InputComponent
@@ -683,4 +636,4 @@ const AuthPage: React.FC = () => {
 
 }
 
-export default AuthPage
+export default AuthPageCustomerMobile

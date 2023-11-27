@@ -119,15 +119,14 @@ const Customers: React.FC = () => {
           />
         </div>
         <div style={customerWrapperContentLine}>
-          <span style={{ fontSize: '16px', marginTop: '14px', fontWeight: 'normal' }}>
+          <span style={{ fontSize: '16px', marginTop: '14px', fontWeight: '700' }}>
             { customer.bio.name } 
             { customer.bio.name !== customer.bio.surname && customer.bio.surname }
           </span>
         </div>
         <div style={customerWrapperContentLine}>
           <span style={{ fontSize: '13px', color: 'gray', marginTop: '3px' }}>
-            { customer.bio.name } 
-            { customer.bio.name !== customer.bio.surname && customer.bio.surname }
+            Контактное лицо не указано
           </span>
         </div>
         <div style={{ ...customerWrapperContentLine, justifyContent: 'flex-start' }}>
@@ -177,6 +176,122 @@ const Customers: React.FC = () => {
           })}
         </div>
       </div>
+
+    })}
+    { CUSTOMERS.length === 0 && Array(1).fill(null).map((executor, index: number) => {
+
+        return <React.Fragment><div style={customerWrapper}>
+          <div style={{ ...customerWrapperContentLine, filter: 'blur(2px)' }}>
+            <span style={customerWrapperAvatar}>
+              <img
+                alt={""}
+                src={enotAvatar}
+                style={{
+                  display: 'block',
+                  width: '66%',
+                  marginTop: '2px'
+                }}
+              />
+            </span>
+            <div>
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center', 
+                  marginBottom: '4px',
+                  marginRight: '33px' }}>
+                <img
+                  alt={""}
+                  src={star}
+                  style={{ marginRight: '6px' }}
+                />
+                <span style={{ fontSize: '26px' }}>5.00</span>
+              </div>
+              <span>0 отзывов</span>
+            </div>
+            <img
+              alt={""}
+              src={semiMenu}
+              style={{ 
+                display: 'block', 
+                position: 'absolute', 
+                width: '22px',
+                left: '100%',
+                top: '0%',
+                marginLeft: '-15px' 
+              }}
+            />
+          </div>
+          <div style={customerWrapperContentLine}>
+            <span style={{ fontSize: '16px', marginTop: '14px', fontWeight: '700', filter: 'blur(2.4px)' }}>
+              { "Имя или название пользователя" }
+            </span>
+          </div>
+          <div style={customerWrapperContentLine}>
+            <span style={{ fontSize: '13px', color: 'gray', marginTop: '13px', filter: 'blur(2.4px)' }}>
+              Вид занятости не загружен
+            </span>
+          </div>
+          <div style={{ ...customerWrapperContentLine, justifyContent: 'flex-start', filter: 'blur(2.4px)' }}>
+            <img
+              alt={""}
+              src={location}
+              style={{ marginTop: '8px' }}
+            />
+            <span style={{ fontSize: '13px', color: 'gray', marginTop: '13px', marginLeft: '6px' }}>
+              Не определено
+            </span>
+          </div>
+          <div style={{ ...customerWrapperContentLine, marginTop: '6px', flexWrap: 'wrap' }}>
+            <span 
+              style={{ 
+                backgroundColor: '#F7FAFC', 
+                padding: '11px 13px 14px', 
+                borderRadius: '4px',
+                fontSize: '13px',
+                marginTop: '10px',
+                filter: 'blur(2.4px)'
+              }}
+            >
+              { "Название специализации" }
+            </span>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            position: "relative",
+            margin: "0 auto",
+            marginTop: "30px"
+          }}
+        >
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            height="40px" 
+            viewBox="0 0 640 512"
+            fill="#167cbf"
+          >
+            <path 
+              d="M54.2 202.9C123.2 136.7 216.8 96 320 96s196.8 40.7 265.8 106.9c12.8 12.2 33 11.8 45.2-.9s11.8-33-.9-45.2C549.7 79.5 440.4 32 320 32S90.3 79.5 9.8 156.7C-2.9 169-3.3 189.2 8.9 202s32.5 13.2 45.2 .9zM320 256c56.8 0 108.6 21.1 148.2 56c13.3 11.7 33.5 10.4 45.2-2.8s10.4-33.5-2.8-45.2C459.8 219.2 393 192 320 192s-139.8 27.2-190.5 72c-13.3 11.7-14.5 31.9-2.8 45.2s31.9 14.5 45.2 2.8c39.5-34.9 91.3-56 148.2-56zm64 160a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"
+            />
+          </svg>
+        </div>
+        <span
+          style={{
+            display: 'block',
+            fontSize: '13px',
+            textAlign: 'center',
+            color: 'grey',
+            width: '100%',
+            marginTop: '14px'
+          }}
+        >
+          Соединение с сервером..
+        </span>
+      </React.Fragment>
 
     })}
   </React.Fragment>

@@ -430,7 +430,7 @@ const Updater: React.FC = () => {
         redirect: 'follow'
       }
 
-      await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+      await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => { 
         
           dispatch(setAvatarFile(response.status))

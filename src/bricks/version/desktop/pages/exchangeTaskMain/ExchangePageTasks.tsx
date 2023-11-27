@@ -567,16 +567,53 @@ const ExchangePage: React.FC = () => {
 
         <React.Fragment>
           { TASKS_LIST.length === 0 && 
-            <span 
-              style={{
-                display: 'block',
-                textAlign: 'center',
-                width: '100%',
-                color: 'gray',
-                marginTop: '100px',
-                marginBottom: '80px'
+            <TaskTableLoading
+              viewType={'mainView'}
+              taskInitDate={"----"}
+              taskTitle={"----"}
+              taskDeadline={"----"}
+              taskExpertType={"----"}
+              taskCustomer={"----"}
+              taskExecutor={"----"}
+              taskLocation={"----"}
+              taskSpecializationTags={[]}
+              taskDescription={"----"}
+              dealStatus={"----"}
+              cardWidth={'100%'}
+              marbo={"16px"}
+              actions={[]}
+              actionsParams={[]}
+              deal={{
+                type: 'safe',
+                coast: 100000,
+                prepaid: 20000,
+                expert: 80000,
               }}
-            >На бирже нет активных заданий</span> }
+            /> }
+          { TASKS_LIST.length === 0 &&
+            <Stack sx={{ width: '100%', color: 'rgb(22, 124, 191)', borderRadius: '4px' }} spacing={2}>
+              <LinearProgress style={{ borderRadius: '4px' }} color="inherit" />
+            </Stack> }
+          { TASKS_LIST.length === 0 && <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              backgroundColor: 'rgb(253, 237, 237)',
+              width: '100%',
+              height: '42px',
+              borderRadius: '4px',
+              lineHeight: '41.2222px',
+              paddingLeft: '16px',
+              boxSizing: 'border-box',
+              marginBottom: '33px',
+              marginTop: '15px',
+              cursor: 'pointer',
+              fontSize: '13px',
+            }}
+          >
+            <i style={{ textDecoration: 'none', fontStyle: 'normal', fontWeight: 'bold' }}>{"Внимание: "}</i>
+            {"Данные не получены, проверьте соединение с интернетом"}
+          </span> }
         </React.Fragment>
 
         { filterLoading === false && <PagintationContainer>

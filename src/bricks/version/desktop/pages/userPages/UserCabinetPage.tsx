@@ -607,7 +607,7 @@ const ExecutorProfilePage: React.FC = () => {
                 /> }
                 { avatarFile === 200 && <img
                   alt={""}
-                  src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                  src={`http://localhost:3000/techDocs/${USER_ID}.avatar.jpg`}
                   style={{ height: '100%' }}
                 /> }
               </div>
@@ -2927,7 +2927,7 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{ item.title }</span>
                   <img
                     alt={"Изображение для проекта"}
-                    src={`http://85.193.88.125:3000/techPortfolio/${USER_ID}.case.jpg`}
+                    src={`http://localhost:3000/techPortfolio/${USER_ID}.case.jpg`}
                     style={{
                       display: 'block',
                       position: 'relative',
@@ -3156,7 +3156,7 @@ const ExecutorProfilePage: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', width: '80%' }}>
                       <span style={{ fontWeight: 'bold', marginBottom: '10px' }}>{ item.title }</span>
                       <span style={{ fontWeight: 'bold', marginBottom: '16px', color: 'gray' }}>{ item.jobName }</span>
-                      <span style={{ lineHeight: '24px' }}>{item.jobTasks}</span>
+                      <span style={{ lineHeight: '22px' }}>{item.jobTasks}</span>
                     </div>
                   </ReviewsContent>
                 )
@@ -3550,7 +3550,7 @@ const ExecutorProfilePage: React.FC = () => {
                 /> }
                 { avatarFile === 200 && <img
                   alt={""}
-                  src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                  src={`http://localhost:3000/techDocs/${USER_ID}.avatar.jpg`}
                   style={{ height: '100%' }}
                 /> }
               </div>
@@ -5780,7 +5780,7 @@ const ExecutorProfilePage: React.FC = () => {
                   <span style={{ fontWeight: 'bold', fontSize: '18px' }}>{ item.title }</span>
                   <img
                     alt={"Изображение для проекта"}
-                    src={`http://85.193.88.125:3000/techPortfolio/${USER_ID}.case.jpg`}
+                    src={`http://localhost:3000/techPortfolio/${USER_ID}.case.jpg`}
                     style={{
                       display: 'block',
                       position: 'relative',

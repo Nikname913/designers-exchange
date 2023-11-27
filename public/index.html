@@ -20,6 +20,131 @@
       name="theme-color" 
       content="#000000"
     />
+    <style>
+      ul {
+        list-style: none;
+        word-wrap: break-word;
+      }
+
+      .pages {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+
+      .login_page,
+      .chat_page {
+        background-color: #D9E7F0;
+        height: 100%;
+        position: absolute;
+        width: 100%;
+      }
+
+      .login_page .form {
+        height: 100px;
+        margin-top: -100px;
+        position: absolute;
+        text-align: center;
+        top: 50%;
+        width: 100%;
+      }
+
+      .login_page .form .username_input {
+        background-color: transparent;
+        border: none;
+        border-bottom: 2px solid rgb(22, 124, 191);
+        outline: none;
+        padding-bottom: 15px;
+        text-align: center;
+        width: 400px;
+        margin-top: 30px;
+      }
+
+      .login_page .title {
+        font-size: 24px;
+        letter-spacing: 3px;
+        font-family: 'Roboto', sans-serif;
+      }
+
+      .login_page .username_input {
+        font-size: 14px;
+        letter-spacing: 3px;
+      }
+
+      .login_page .title,
+      .login_page .username_input {
+        color: rgb(81, 102, 116);
+        font-weight: 100;
+      }
+
+      .chat_page {
+        display: none;
+      }
+
+      .login_page {
+        display: block;
+      }
+
+      .messages {
+        font-size: 150%;
+      }
+
+      .message_input {
+        font-size: 14px;
+      }
+
+      .log {
+        color: rgb(81, 102, 116);
+        font-size: 70%;
+        margin: 5px;
+        text-align: center;
+      }
+
+      .chat_area {
+        height: 100%;
+        padding-bottom: 60px;
+      }
+
+      .messages {
+        height: 100%;
+        margin: 0;
+        overflow-y: scroll;
+        overflow-y: hidden;
+        padding: 10px 20px 10px 20px;
+      }
+
+      .message.typing .message_body {
+        color: rgb(81, 102, 116);
+      }
+
+      .message_body {
+        font-size: 14px;
+      }
+
+      .username {
+        font-weight: 700;
+        overflow: hidden;
+        padding-right: 15px;
+        text-align: right;
+        font-size: 16px;
+      }
+
+      .message_input {
+        border: none;
+        outline: none;
+        bottom: 0;
+        height: 60px;
+        left: 0;
+        outline: none;
+        padding-left: 10px;
+        position: absolute;
+        right: 0;
+        width: 100%;
+        box-shadow: 10px 18px 8px rgba(163,163,163,0.02), 6px 10px 7px rgba(163,163,163,0.07), 2px 4px 5px rgba(163,163,163,0.11), 1px 1px 3px rgba(163,163,163,0.13), 0px 0px 0px rgba(163,163,163,0.13);
+        z-index: 10;
+      }
+    </style>
 
     <title>Designers Exchange</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">

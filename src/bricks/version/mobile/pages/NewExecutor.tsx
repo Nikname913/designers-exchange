@@ -1,16 +1,20 @@
-import React, { useState, useEffect, CSSProperties } from 'react'
+// ----------------------------------------------------------------
+/* eslint-disable react-hooks/exhaustive-deps */
+// ----------------------------------------------------------------
+import React, { useState, useEffect, CSSProperties, useContext } from 'react'
 import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate, Link } from 'react-router-dom'
 import { setShow, setType, setMessage } from '../../../store/slices/alert-content-slice'
 import { setActiveRole } from '../../../store/slices/role-type-slice'
 import { setCode, setFaceType } from '../../../store/slices/reg-slice'
-import SelectField from '../comps/select/SelectField'
-import SelectFieldMulti from '../comps/select/SelectFieldPWMulti'
-import InputComponent from '../comps/input/Input'
-import ButtonComponent from '../comps/button/Button'
+import { MenuActive, ShowRM } from '../Context'
+import SelectField from '../../../version/desktop/comps/select/SelectField'
+import SelectFieldMulti from '../../../version/desktop/comps/select/SelectFieldPWMulti'
+import InputComponent from '../../../version/desktop/comps/input/Input'
+import ButtonComponent from '../../../version/desktop/comps/button/Button'
 import Checkbox from '@mui/material/Checkbox'
-import RequestActionsComponent from '../services/request.service'
-import cssContentArea from '../styles/views/contentArea.css'
+import RequestActionsComponent from '../../../version/desktop/services/request.service'
+import cssContentArea from '../../../version/desktop/styles/views/contentArea.css'
 
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
 import correctIcon from '../../../img/icons/correctBlue.svg'
@@ -18,12 +22,15 @@ import correctIcon from '../../../img/icons/correctBlue.svg'
 const { ContentArea, PageTitle, ContentContainer, ContentLine } = cssContentArea
 const label = { inputProps: { 'aria-label': 'Checkbox demo' }}
 
-const AuthPage: React.FC = () => {
+const AuthPageExecutorMobile: React.FC = () => {
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AGREE, SET_AGREE ] = useState(false)
   const [ preloader, setPreloader ] = useState(false)
   const [ spec, setSpec ] = useState<Array<string>>([''])
+
+  const [ ,setSelectMenu ] = useContext(MenuActive)
+  const [ ,setShowRM ] = useContext(ShowRM)
 
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -53,7 +60,6 @@ const AuthPage: React.FC = () => {
     position: 'relative',
     width: '100%',
     boxSizing: 'border-box',
-    paddingRight: '120px'
   }
 
   useEffect(() => {
@@ -240,13 +246,22 @@ const AuthPage: React.FC = () => {
 
   },[ PASSWORD ])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { dispatch(setFaceType('')) }, [])
+
+  useEffect(() => {
+
+    setSelectMenu(0)
+    setShowRM({
+      show: false,
+      type: 'no-auth'
+    })
+
+  }, [])
 
   const passValidateCSS: CSSProperties = {
     display: 'block',
     position: 'relative',
-    width: '50%',
+    width: '100%',
     height: 'auto',
     minHeight: '60px',
     backgroundColor: 'white',
@@ -269,6 +284,10 @@ const AuthPage: React.FC = () => {
       flexDirection={null}
       alignItems={null}
       justify={null}
+      style={{
+        paddingRight: '0px',
+        paddingLeft: '0px', 
+      }}
     >
 
       { AUTH_REQUEST && <RequestActionsComponent
@@ -292,15 +311,33 @@ const AuthPage: React.FC = () => {
       
       /> }
 
-      <ContentContainer style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start' }}>
+      <ContentContainer 
+        style={{ 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'flex-start',
+          width: '100%'
+        }}
+      >
         <div style={headBlockCSS}>
-          <PageTitle>Создание аккаунта исполнителя</PageTitle>
+          <PageTitle 
+            style={{ 
+              fontSize: '22px', 
+              width: '100%', 
+              padding: '0px', 
+              lineHeight: '28px',
+              marginTop: '18px',
+              marginBottom: '2px'
+            }}
+          >
+            Создание аккаунта исполнителя
+          </PageTitle>
         </div>
         <ContentLine style={{ marginTop: '14px' }}>
           <span style={{ fontWeight: 'bold' }}>Личные данные</span>
         </ContentLine>
-        <ContentLine style={{ marginTop: '20px' }}>
-          <div style={{ display: 'block', position: 'relative', width: '50%' }}>
+        <ContentLine style={{ marginTop: '20px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'block', position: 'relative', width: '100%', paddingLeft: '1px' }}>
             <SelectField 
               placeholder={"Статус"}
               params={{ height: 50 }}
@@ -323,8 +360,7 @@ const AuthPage: React.FC = () => {
               }}
             />
           </div>
-          <span style={{ display: 'block', width: '20px' }}/>
-          { FACE_TYPE !== 'IP_FACE' && <div style={{ display: 'block', width: '50%' }}/> }
+          { FACE_TYPE !== 'IP_FACE' && <div style={{ display: 'block', width: '100%' }}/> }
           { FACE_TYPE === 'IP_FACE' && <React.Fragment>
 
             <InputComponent
@@ -357,13 +393,13 @@ const AuthPage: React.FC = () => {
           { FACE_TYPE === 'IP_FACE' && <span style={{ fontWeight: 'bold' }}>Почта и номер телефона</span> }
         </ContentLine>
         { FACE_TYPE !== 'IP_FACE' && <React.Fragment>
-          <ContentLine style={{ marginTop: '16px' }}>
+          <ContentLine style={{ marginTop: '16px', flexWrap: 'wrap' }}>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_AUTH'}
               valueType='text'
               required={false}
               widthType={'%'}
-              widthValue={33.3333}
+              widthValue={100}
               heightValue={'50px'}
               label={"Фамилия *"}
               isError={sunameError}
@@ -380,13 +416,12 @@ const AuthPage: React.FC = () => {
                 backgroundColor: 'white'
               }}
             />
-            <span style={{ display: 'block', width: '20px' }}/>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_AUTH'}
               valueType='text'
               required={false}
               widthType={'%'}
-              widthValue={33.3333}
+              widthValue={100}
               heightValue={'50px'}
               label={"Имя *"}
               isError={nameError}
@@ -399,17 +434,16 @@ const AuthPage: React.FC = () => {
                 position: 'relative',
                 boxSizing: 'border-box',
                 marginBottom: '0px',
-                marginTop: '0px',
+                marginTop: '16px',
                 backgroundColor: 'white'
               }}
             />
-            <span style={{ display: 'block', width: '20px' }}/>
             <InputComponent
               type={'TEXT_INPUT_OUTLINE_AUTH'}
               valueType='text'
               required={false}
               widthType={'%'}
-              widthValue={33.3333}
+              widthValue={100}
               heightValue={'50px'}
               label={"Отчество"}
               isError={false}
@@ -422,19 +456,19 @@ const AuthPage: React.FC = () => {
                 position: 'relative',
                 boxSizing: 'border-box',
                 marginBottom: '0px',
-                marginTop: '0px',
+                marginTop: '16px',
                 backgroundColor: 'white'
               }}
             />
           </ContentLine>
         </React.Fragment> }
-        <ContentLine style={{ marginTop: '16px' }}>
+        <ContentLine style={{ marginTop: '16px', flexWrap: 'wrap' }}>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_AUTH'}
             valueType='text'
             required={false}
             widthType={'%'}
-            widthValue={50}
+            widthValue={100}
             heightValue={'50px'}
             label={"Email *"}
             isError={mailError}
@@ -451,13 +485,12 @@ const AuthPage: React.FC = () => {
               backgroundColor: 'white'
             }}
           />
-          <span style={{ display: 'block', width: '20px' }}/>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_AUTH'}
             valueType='text'
             required={false}
             widthType={'%'}
-            widthValue={50}
+            widthValue={100}
             heightValue={'50px'}
             label={"Номер телефона"}
             isError={false}
@@ -470,7 +503,7 @@ const AuthPage: React.FC = () => {
               position: 'relative',
               boxSizing: 'border-box',
               marginBottom: '0px',
-              marginTop: '0px',
+              marginTop: '16px',
               backgroundColor: 'white'
             }}
           />
@@ -479,9 +512,9 @@ const AuthPage: React.FC = () => {
           <span style={{ fontWeight: 'bold' }}>Специализация</span>
         </ContentLine>
         <ContentLine style={{ marginTop: '16px' }}>
-          <div style={{ display: 'block', position: 'relative', width: '100%' }}>
+          <div style={{ display: 'block', position: 'relative', width: '100%', paddingLeft: '1px' }}>
             <SelectFieldMulti 
-              placeholder={"Выберите специализацию [ список временно сокращен ]"}
+              placeholder={"Выберите специализацию"}
               params={{ height: 50 }}
               data={[
                 { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
@@ -535,13 +568,13 @@ const AuthPage: React.FC = () => {
         <ContentLine style={{ marginTop: '20px' }}>
           <span style={{ fontWeight: 'bold' }}>Пароль от аккаунта</span>
         </ContentLine>
-        <ContentLine style={{ marginTop: '16px' }}>
+        <ContentLine style={{ marginTop: '16px', flexWrap: 'wrap' }}>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_PASSWORD_VISIBILITY'}
             valueType='text'
             required={false}
             widthType={'%'}
-            widthValue={50}
+            widthValue={100}
             heightValue={'50px'}
             label={"Придумайте пароль *"}
             isError={passwordError}
@@ -558,13 +591,12 @@ const AuthPage: React.FC = () => {
               backgroundColor: 'white'
             }}
           />
-          <span style={{ display: 'block', width: '20px' }}/>
-          <InputComponent
+          { false && <InputComponent
             type={'TEXT_INPUT_OUTLINE_PASSWORD_VISIBILITY'}
             valueType='text'
             required={false}
             widthType={'%'}
-            widthValue={50}
+            widthValue={100}
             heightValue={'50px'}
             label={">> !!WARNING!! << на этапе разработки вводить второй раз не надо"}
             isError={false}
@@ -580,7 +612,7 @@ const AuthPage: React.FC = () => {
               marginTop: '0px',
               backgroundColor: 'white'
             }}
-          />
+          /> }
         </ContentLine>
         <ContentLine style={{ marginTop: '26px' }}>
           <div style={passValidateCSS}>
@@ -622,12 +654,12 @@ const AuthPage: React.FC = () => {
               <span>Хотя бы одна цифра</span>
             </div>
           </div>
-          <span style={{ display: 'block', width: '20px' }}/>
-          <div style={{ display: 'block', width: '50%' }}/>
         </ContentLine>
-        <ContentLine style={{ alignItems: 'center', marginTop: '14px', marginBottom: '14px' }}>
+        <ContentLine style={{ alignItems: 'center', marginTop: '22px', marginBottom: '22px', lineHeight: '20px' }}>
           <Checkbox checked={AGREE} {...label} onChange={() => SET_AGREE(!AGREE)} />
-          <span>Согласен на обработку персональных данных и согласен с <Link to="/terms-of-use">пользовательским соглашением</Link></span>
+          <span style={{ marginLeft: '4px' }}>
+            Согласен на обработку персональных данных и согласен с <Link to="/terms-of-use">пользовательским соглашением</Link>
+          </span>
         </ContentLine>
         <ContentLine style={{ marginBottom: '35px' }}>
           { preloader === false && <ButtonComponent
@@ -683,4 +715,4 @@ const AuthPage: React.FC = () => {
 
 }
 
-export default AuthPage
+export default AuthPageExecutorMobile

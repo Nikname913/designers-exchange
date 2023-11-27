@@ -1,4 +1,6 @@
 // ----------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ----------------------------------------------------------------
 /* eslint-disable jsx-a11y/anchor-has-content */
 // ----------------------------------------------------------------
 /* eslint-disable react-hooks/exhaustive-deps */
@@ -48,14 +50,14 @@ const { ShadowContainer, RespondFromList, Command, AuthNHelp, ChangeAvatar, Show
 
 const FOS: React.FC<IFos> = (props: IFos) => {
 
-  const { showType, scroll } = props
+  const { showType, scroll, css = [] } = props
 
   const [ authDataLoginError, setAuthDataLoginError ] = useState<boolean>(false)
   const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
   const [ whoInvite, setWhoInvite ] = useState<string>('')
   const [ category, setCategory ] = useState<string>('')
   const [ supportInfoColor, setSupportInfoColor ] = useState<string>('rgb(253, 237, 237)')
-  const [ supportInfoMessage, setSupportInfoMessage ] = useState<string>('Для отправки обращения, пожалуйста, заполните все поля')
+  const [ supportInfoMessage, setSupportInfoMessage ] = useState<string>('Для отправки обращения, пожалуйста, заполните все поля на форме')
 
   const [ AUTH_REQUEST, SET_AUTH_REQUEST ] = useState(false)
   const [ AVATAR_REQUEST, SET_AVATAR_REQUEST ] = useState(false)
@@ -300,7 +302,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
 
   const supportValidate = () => {
 
-    if ( SUPPORT_NAME && SUPPORT_MAIL && SUPPORT_MESSAGE && category ) {
+    if ( SUPPORT_NAME && SUPPORT_MAIL && SUPPORT_MESSAGE ) {
 
       console.log({
         userId: USER_ID,
@@ -319,7 +321,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     } else {
 
       setSupportInfoColor('rgb(253, 237, 237)')
-      setSupportInfoMessage('Для отправки обращения, пожалуйста, заполните все поля')
+      setSupportInfoMessage('Для отправки обращения, пожалуйста, заполните все поля на форме')
 
     }
 
@@ -489,7 +491,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -526,7 +528,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
         redirect: 'follow'
       };
 
-      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-techtask", requestOptionsPDF)
+      const downloadFilePDF = await fetch("http://localhost:3000/send-file-techtask", requestOptionsPDF)
         .then(response => response.blob())
 
       const downloadFileTextPDF: string = await downloadFilePDF.text()
@@ -566,7 +568,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-contract", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -719,7 +721,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
             userName: SUPPORT_NAME, 
             userMail: SUPPORT_MAIL, 
             message: SUPPORT_MESSAGE, 
-            category: category
+            category: 'Общая категория вопросов'
           }
         }}
       
@@ -728,7 +730,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
       <ShadowContainer 
         marginTop={scroll} 
         background={"rgba(0, 0, 0, 0.4)"}
-        style={{ zIndex: 105 }}
+        style={ css[0] ? css[0] : { zIndex: 105 }}
       >
         { showType === 'respondFromList' 
           ? <React.Fragment>
@@ -1724,7 +1726,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   src={closeIcon}
                 />
               </AuthNHelp.CloseContainer>
-              <AuthNHelp.Title>Войти</AuthNHelp.Title>
+              <AuthNHelp.Title style={{ fontSize: '22px' }}>Войти в систему</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
                 <InputComponent
                   type={'TEXT_INPUT_OUTLINE_AUTH'}
@@ -1773,7 +1775,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '30px' }}>
                 <ButtonComponent
-                  inner={"Войти"} 
+                  inner={"Войти в систему"} 
                   type='CONTAINED_DEFAULT' 
                   action={validate}
                   actionData={null}
@@ -1826,18 +1828,23 @@ const FOS: React.FC<IFos> = (props: IFos) => {
           </React.Fragment> 
           : showType === 'authCreate' 
           ? <React.Fragment>
-            <AuthNHelp.FOS width={"600px"} style={{ padding: '44px 64px' }}>
+            <AuthNHelp.FOS 
+              width={"600px"} 
+              style={ !css[0] ? { padding: '44px 64px' } : { padding: '34px 34px' }}
+            >
             <AuthNHelp.CloseContainer onClick={closeFos}>
                 <img
                   alt={""}
                   src={closeIcon}
                 />
               </AuthNHelp.CloseContainer>
-              <AuthNHelp.Title>Регистрация аккаунта</AuthNHelp.Title>
+              { !css[0] && <AuthNHelp.Title style={{ fontSize: '22px' }}>Регистрация аккаунта</AuthNHelp.Title> }
+              { css[0] && <AuthNHelp.Title style={{ fontSize: '22px' }}>Новый аккаунт</AuthNHelp.Title> }
               <AuthNHelp.ContentLine style={{ justifyContent: 'space-around' }}>
-                <span>Выберите подходящий тип аккаунта</span>
+                { !css[0] && <span>Выберите подходящий тип аккаунта</span> }
+                { css[0] && <span style={{ textAlign: 'center', lineHeight: '22px' }}>Выберите подходящий тип для вашего аккаунта</span> }
               </AuthNHelp.ContentLine>
-              <AuthNHelp.ContentLine style={{ marginTop: '40px' }}>
+              { !css[0] && <AuthNHelp.ContentLine style={{ marginTop: '40px' }}>
                 <div 
                   style={userTypeCSS}
                   onClick={() => {
@@ -1894,7 +1901,76 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   </span>
                   <span style={{ fontWeight: 'bold', marginTop: '10px' }}>Исполнитель</span>
                 </div>
-              </AuthNHelp.ContentLine>
+              </AuthNHelp.ContentLine> }
+              { css[0] && <AuthNHelp.ContentLine style={{ marginTop: '40px' }}>
+                <div 
+                  style={{
+                    ...userTypeCSS,
+                    width: '50%',
+                    height: '140px',
+                    marginRight: '8px',
+                    filter: 'grayscale(1)',
+                  }}
+                  onClick={() => {
+                    closeFos()
+                    false && dispatch(setFaceType('PHIS_FACE'))
+                    false && navigate('/cust-registration')
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'block', 
+                      position: 'relative', 
+                      backgroundColor: 'white', 
+                      borderRadius: '50%',
+                      width: '54px',
+                      height: '54px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <img
+                      alt={""}
+                      src={avatar4}
+                      style={{ width: '54px', marginTop: '15px' }}
+                    />
+                  </span>
+                  <span style={{ fontWeight: 'bold', marginTop: '10px' }}>Заказчик</span>
+                </div>
+                <div 
+                  style={{
+                    ...userTypeCSS,
+                    width: '50%',
+                    height: '140px',
+                    marginLeft: '8px'
+                  }}
+                  onClick={() => {
+                    closeFos()
+                    false && dispatch(setFaceType('PHIS_FACE'))
+                    navigate('/exec-registration')
+                  }}
+                >
+                  <span 
+                    style={{ 
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-around', 
+                      position: 'relative', 
+                      backgroundColor: 'white', 
+                      borderRadius: '50%',
+                      width: '54px',
+                      height: '54px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <img
+                      alt={""}
+                      src={avatar5}
+                      style={{ width: '44px', marginTop: '15px' }}
+                    />
+                  </span>
+                  <span style={{ fontWeight: 'bold', marginTop: '10px' }}>Исполнитель</span>
+                </div>
+              </AuthNHelp.ContentLine> }
             </AuthNHelp.FOS>
           </React.Fragment>
           : showType === 'authRestore' 
@@ -1906,7 +1982,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   src={closeIcon}
                 />
               </AuthNHelp.CloseContainer>
-              <AuthNHelp.Title>Восстановление пароля</AuthNHelp.Title>
+              <AuthNHelp.Title style={{ fontSize: '20px' }}>Восстановить пароль</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
                 <span style={{ textAlign: 'center', lineHeight: '22px', display: 'block', width: '100%' }}>Введите email адрес, указанный вами при регистрации<br/>Мы вышлем на него новый пароль</span>
               </AuthNHelp.ContentLine>
@@ -2022,9 +2098,9 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   src={closeIcon}
                 />
               </AuthNHelp.CloseContainer>
-              <AuthNHelp.Title>Обратиться в поддержку</AuthNHelp.Title>
+              <AuthNHelp.Title style={{ fontSize: '20px' }}>Написать вопрос</AuthNHelp.Title>
               <AuthNHelp.ContentLine>
-                <span style={{ lineHeight: '22px', display: 'block', width: '100%' }}>Заполните поля формы ниже<br/>Ответ на ваш вопрос вы получите на почту</span>
+                <span style={{ lineHeight: '22px', display: 'block', width: '100%' }}>Заполните поля формы ниже<br/>Ответ на ваш вопрос вы получите на указанную почту</span>
               </AuthNHelp.ContentLine>
               <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
                 <InputComponent
@@ -2072,10 +2148,10 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   }}
                 />
               </AuthNHelp.ContentLine>
-              <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
+              { !css[0] && <AuthNHelp.ContentLine style={{ marginTop: '26px' }}>
                 <span style={{ display: 'block', fontWeight: 'bold' }}>Категория вопроса</span>
-              </AuthNHelp.ContentLine>
-              <AuthNHelp.ContentLine style={{ marginTop: '20px' }}>
+              </AuthNHelp.ContentLine> }
+              { !css[0] && <AuthNHelp.ContentLine style={{ marginTop: '20px' }}>
                 <SelectField 
                   placeholder={"Выберите из списка"}
                   params={{ width: 600, height: 50 }}
@@ -2095,7 +2171,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     width: '34px',
                   }}
                 />
-              </AuthNHelp.ContentLine>
+              </AuthNHelp.ContentLine> }
               <AuthNHelp.ContentLine style={{ marginTop: '18px' }}>
                 <InputComponent
                   type={'TEXT_INPUT_OUTLINE_SUPPORT'}
@@ -2259,7 +2335,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     { avatarFile === 200 && <img
                       
                       alt={""}
-                      src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                      src={`http://localhost:3000/techDocs/${USER_ID}.avatar.jpg`}
                       style={{ height: '100%' }}
                       onClick={changeAvatar}
                       
@@ -2442,7 +2518,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', lineHeight: '30px' }}>{ techTaskFile.name }</span>
                 <a 
-                  href={`http://85.193.88.125:3000/techDocs/${techTaskFile.name}`} 
+                  href={`http://localhost:3000/techDocs/${techTaskFile.name}`} 
                   target='_blank' 
                   rel="noreferrer"
                   style={{
@@ -2537,7 +2613,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
               <ShowFile.ContentLine style={{ padding: '0 80px', boxSizing: 'border-box', marginTop: '66px' }}>
                 <span style={{ fontSize: '20px', fontWeight: 'bold', lineHeight: '30px' }}>{ techTaskFile.name }</span>
                 <a 
-                  href={`http://85.193.88.125:3000/techContracts/${techTaskFile.name}`} 
+                  href={`http://localhost:3000/techContracts/${techTaskFile.name}`} 
                   target='_blank' 
                   rel="noreferrer"
                   style={{

@@ -1,3 +1,5 @@
+import { CSSProperties } from "styled-components"
+
 export interface IFos {
   showType: 'respondFromList' | 
   'respondFromTask'           | 
@@ -13,7 +15,8 @@ export interface IFos {
   'showFile'                  |
   'showFileContract'
   showShadow: boolean,
-  scroll: number
+  scroll: number,
+  css?: Array<CSSProperties>
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

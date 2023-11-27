@@ -18,7 +18,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
           break
   
         case 'POST':
-          const response = await fetch('http://85.193.88.125:3000' + urlstring, {
+          const response = await fetch('http://localhost:3000' + urlstring, {
             method: 'POST',
             headers: { "Content-type": "application/json; charset=UTF-8" }, 
             body: JSON.stringify(body)
@@ -41,7 +41,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
             redirect: 'follow'
           }
 
-          fetch("http://85.193.88.125:3000/add-file-techtask", requestOptions)
+          fetch("http://localhost:3000/add-file-techtask", requestOptions)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error))
@@ -62,7 +62,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
             redirect: 'follow'
           }
 
-          fetch("http://85.193.88.125:3000/add-file-contract", requestOptionsContract)
+          fetch("http://localhost:3000/add-file-contract", requestOptionsContract)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error))
@@ -84,7 +84,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
             redirect: 'follow'
           }
 
-          fetch("http://85.193.88.125:3000/add-file-complete", requestOptionsComplect)
+          fetch("http://localhost:3000/add-file-complete", requestOptionsComplect)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error))
@@ -105,7 +105,7 @@ const RequestActionsComponent: React.FC<IRequest> = (props: IRequest) => {
             redirect: 'follow'
           }
 
-          fetch("http://85.193.88.125:3000/add-file-case", requestOptionsCase)
+          fetch("http://localhost:3000/add-file-case", requestOptionsCase)
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error))

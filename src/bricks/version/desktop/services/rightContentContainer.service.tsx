@@ -699,7 +699,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-contract", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -733,7 +733,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
         redirect: 'follow'
       };
 
-      const downloadFilePDF = await fetch("http://85.193.88.125:3000/send-file-contract", requestOptionsPDF)
+      const downloadFilePDF = await fetch("http://localhost:3000/send-file-contract", requestOptionsPDF)
         .then(response => response.blob())
 
       const downloadFileTextPDF: string = await downloadFilePDF.text()
@@ -777,7 +777,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
         redirect: 'follow'
       };
 
-      const downloadFile = await fetch("http://85.193.88.125:3000/send-file-complete", requestOptions)
+      const downloadFile = await fetch("http://localhost:3000/send-file-complete", requestOptions)
         .then(response => response.blob())
 
       const downloadFileText: string = await downloadFile.text()
@@ -1351,7 +1351,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           }}
                         >
                           <a 
-                            href={`http://85.193.88.125:3000/techContracts/${contractFileServer.name}`}
+                            href={`http://localhost:3000/techContracts/${contractFileServer.name}`}
                             target="_blank"
                             style={{ 
                               textAlign: 'center', 
@@ -1433,7 +1433,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           }}
                         >
                           <a 
-                            href={`http://85.193.88.125:3000/techContracts/${contractFileServerPDF.name}`}
+                            href={`http://localhost:3000/techContracts/${contractFileServerPDF.name}`}
                             target="_blank"
                             style={{ 
                               textAlign: 'center', 
@@ -4426,7 +4426,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       { avatarFile === 200 && <img
                       
                         alt={""}
-                        src={`http://85.193.88.125:3000/techDocs/${USER_ID}.avatar.jpg`}
+                        src={`http://localhost:3000/techDocs/${USER_ID}.avatar.jpg`}
                         style={{ height: '100%' }}
                         onClick={changeAvatar}
                         

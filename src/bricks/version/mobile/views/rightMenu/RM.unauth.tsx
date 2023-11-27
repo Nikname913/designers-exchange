@@ -1,7 +1,10 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { ShowRM, MenuActive } from '../../Context'
 import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
+import { setShow, setShowType } from '../../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
 import ButtonComponent from '../../../desktop/comps/button/Button'
 import css from '../../styles/css.css'
 
@@ -17,12 +20,40 @@ const RM: React.FC = () => {
   const [ ,setSelectMenu ] = useContext(MenuActive)
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const menuItem: CSSProperties = {
     color: 'white',
     marginBottom: '16px',
     cursor: 'pointer',
   }
+
+  function authLogin(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authLogin'))
+    dispatch(setShowRCC('undefined'))
+  }
+
+  function authCreate(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authCreate'))
+    dispatch(setShowRCC('undefined'))
+  }
+
+  useEffect(() => {
+
+    if (  USER_ROLE !== 'UNDEFINED' ) {
+
+      setShowRM({
+        show: false,
+        type: 'auth'
+      })
+
+    }
+
+  }, [ USER_ROLE, setShowRM ])
 
   return (
     <React.Fragment>
@@ -125,7 +156,7 @@ const RM: React.FC = () => {
           <ButtonComponent
             inner={"Регистрация"} 
             type='CONTAINED_DEFAULT' 
-            action={() => {}}
+            action={authCreate}
             actionData={null}
             widthType={'px'}
             widthValue={220}
@@ -151,10 +182,24 @@ const RM: React.FC = () => {
           <span style={menuItem}>Уже есть аккаунт?</span>
         </RMe.ContentLine>
         <RMe.ContentLine>
+          <span
+            style={{
+              display: 'block',
+              position: 'relative',
+              width: '220px',
+              height: '2px',
+              borderRadius: '2px',
+              backgroundColor: 'white',
+              marginBottom: '20px',
+              marginTop: '9px',
+            }}
+          />
+        </RMe.ContentLine>
+        <RMe.ContentLine>
           <ButtonComponent
             inner={"Вход в приложение"} 
             type='CONTAINED_DEFAULT' 
-            action={() => {}}
+            action={authLogin}
             actionData={null}
             widthType={'px'}
             widthValue={220}

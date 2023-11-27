@@ -1,6 +1,9 @@
 import React, { useContext } from 'react'
+import { useAppSelector, useAppDispatch } from '../../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { MenuActive } from '../Context'
+import { setShow, setShowType } from '../../../store/slices/fos-slice'
+import { setShow as setShowRCC } from '../../../store/slices/right-content-slice'
 import css from '../styles/css.css'
 
 import exchange from '../img/exchange.svg'
@@ -14,10 +17,48 @@ const { Foooter } = css
 const MobileFooter: React.FC = () => {
 
   const [ selectMenu, setSelectMenu ] = useContext(MenuActive)
+  const USER_ROLE = useAppSelector(state => state.roleTypeReducer.activeRole)
 
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
 
-  const changeStep = (param: 1 | 2 | 3 | 4 | 5) => setSelectMenu(param)
+  const changeStep = (param: 1 | 2 | 3 | 4 | 5) => {
+    
+    console.log(USER_ROLE)
+
+    if ( param !== 1 ) {
+
+      if ( USER_ROLE !== 'CUSTOMER' && USER_ROLE !== 'EXECUTOR' ) {
+
+        authLogin()
+
+      } else {
+
+        setSelectMenu(param)
+        console.log(USER_ROLE)
+
+        if ( param === 5 ) {
+
+          USER_ROLE === 'EXECUTOR' && navigate('/exec-office/cabinet')
+          USER_ROLE === 'CUSTOMER' && navigate('/cust-office/cabinet')
+
+        }
+
+      }
+    
+    } else {
+
+      setSelectMenu(param)
+
+    }
+
+  }
+
+  function authLogin(): void {
+    dispatch(setShow(true))
+    dispatch(setShowType('authLogin'))
+    dispatch(setShowRCC('undefined'))
+  }
 
   return <Foooter.Container style={{ overflow: 'hidden' }}>
 
