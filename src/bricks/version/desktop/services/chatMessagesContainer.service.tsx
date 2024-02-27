@@ -27,6 +27,7 @@ const ChatMessagesContainer: React.FC<IChatMessageContainer> = (props: IChatMess
   const [ showLikes, setShowLikes ] = useState<boolean>(false)
 
   const messageBackground = useAppSelector(state => state.theme.bg)
+  const messageMeBackground = useAppSelector(state => state.theme.blue3)
   const timeColor = useAppSelector(state => state.theme.grey2)
   const sizeColor = useAppSelector(state => state.theme.grey)
 
@@ -95,10 +96,10 @@ const ChatMessagesContainer: React.FC<IChatMessageContainer> = (props: IChatMess
 
   return (
     <React.Fragment>
-      { data.map(( item: { date: string, messages: Array<any> }, index: number ): React.ReactNode | React.ReactFragment => {
+      { data.map(( item: { date: string, messages: Array<any> } | null, index: number ): React.ReactNode | React.ReactFragment => {
 
         return (
-          <React.Fragment key={index}>
+          item ? <React.Fragment key={index}>
             <DateTitle>{ item.date }</DateTitle>
             <React.Fragment>{ item.messages.map(
               ( mess: { 
@@ -118,7 +119,7 @@ const ChatMessagesContainer: React.FC<IChatMessageContainer> = (props: IChatMess
 
                           return (
                             <SendMessageContainer>
-                              <Message backgroundColor={messageBackground}>
+                              <Message backgroundColor={messageMeBackground}>
                                 { oneMess.text }
                                 <MessageTime 
                                   color={timeColor}
@@ -232,7 +233,20 @@ const ChatMessagesContainer: React.FC<IChatMessageContainer> = (props: IChatMess
                 )
 
             })}</React.Fragment>
-          </React.Fragment>
+          </React.Fragment> : <SendMessageContainer>
+
+            <span 
+              style={{ 
+                color: timeColor,
+                width: '100%',
+                textAlign: 'center',
+                marginTop: '38.6px' 
+              }}
+            >
+              В этом диалоге пока нет сообщений
+            </span>
+
+          </SendMessageContainer>
         )    
 
       })}

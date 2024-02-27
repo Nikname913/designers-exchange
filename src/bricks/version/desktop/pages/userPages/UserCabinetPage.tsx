@@ -949,7 +949,7 @@ const ExecutorProfilePage: React.FC = () => {
                 }}
               >{"BIM"}</span>
               <div style={{ width: '100%', marginTop: '20px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
+                <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Информация о пользователе</span>
               </div>
               <div style={{ width: '100%', marginTop: '24px' }}>
                 <span style={{ lineHeight: '20px' }}>
@@ -964,8 +964,7 @@ const ExecutorProfilePage: React.FC = () => {
             { profileViewStep === 'about' && viewtype === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы</span>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', opacity: 0.4 }}>Оставленные мной</span>
+                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы о пользователе</span>
                 </div>
                 <SelectField 
                   placeholder={"Сначала новые"}
@@ -1993,8 +1992,8 @@ const ExecutorProfilePage: React.FC = () => {
                 </React.Fragment> }
               <ReviewsContentLine style={{ marginTop: '19px', marginBottom: '36px', justifyContent: 'space-between' }}>
                 <ButtonComponent
-                  inner={"Пройти проверку данных"} 
-                  type='CONTAINED_DEFAULT' 
+                  inner={"временная кнопка"} 
+                  type='CONTAINED_DISABLED' 
                   action={() => {}}
                   actionData={null}
                   widthType={'px'}
@@ -2010,7 +2009,7 @@ const ExecutorProfilePage: React.FC = () => {
                     boxSizing: 'border-box',
                     padding: '4px',
                     backgroundColor: blueColor3,
-                    color: 'black',
+                    color: 'gray',
                     width: '56px',
                     height: '43px',
                   }}
@@ -2220,7 +2219,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>25 000₽</span>
+                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>28 000 ₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -2362,7 +2361,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>25 000₽</span>
+                    <span style={{ color: greyColor2, fontSize: '28px', fontWeight: 'bold' }}>28 000 ₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -2747,7 +2746,7 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContent>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginTop: '14px' }}>
-                <span style={{ fontWeight: 'bold' }}>Операции по счету</span>
+                <span style={{ fontWeight: 'bold' }}>Операции по вашему счету</span>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                   <div style={{ width: '200px', marginRight: '20px' }}>
                     <SelectField 
@@ -3882,7 +3881,7 @@ const ExecutorProfilePage: React.FC = () => {
                 }}
               >{"BIM"}</span>
               <div style={{ width: '100%', marginTop: '20px' }}>
-                <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>О себе</span>
+                <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0' }}>Информация о пользователе</span>
               </div>
               <div style={{ width: '100%', marginTop: '24px' }}>
                 <span style={{ lineHeight: '20px' }}>
@@ -3897,8 +3896,7 @@ const ExecutorProfilePage: React.FC = () => {
             { profileViewStep === 'about' && viewtype === 'about' && <ReviewsContent style={{ marginBottom: '36px' }}>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', cursor: 'pointer' }}>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы</span>
-                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', opacity: 0.4 }}>Оставленные мной</span>
+                  <span style={{ fontSize: '20px', fontWeight: 'bold', margin: '0', marginRight: '30px' }}>Отзывы о пользователе</span>
                 </div>
                 <SelectField 
                   placeholder={"Сначала новые"}
@@ -4273,12 +4271,11 @@ const ExecutorProfilePage: React.FC = () => {
                     <span style={{ display: 'block', width: '20px' }} />
                     <div style={{ display: 'block', width: '50%' }} />
                   </ReviewsContentLine>
-                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '26px' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '26px', zIndex: 5 }}>
                     <Box sx={{ m: 1, position: 'relative' }}>
                       <Fab
                         aria-label="save"
                         color="primary"
-                        sx={buttonSx}
                         style={{
                           textTransform: 'none',
                           fontSize: '16px',
@@ -4304,7 +4301,6 @@ const ExecutorProfilePage: React.FC = () => {
                     <Box sx={{ m: 1, position: 'relative' }}>
                       <Button
                         variant="contained"
-                        sx={buttonSx}
                         style={{
                           width: '270px',
                           height: '43px',
@@ -4881,8 +4877,8 @@ const ExecutorProfilePage: React.FC = () => {
                 </React.Fragment> }
               <ReviewsContentLine style={{ marginTop: '19px', marginBottom: '36px', justifyContent: 'space-between' }}>
                 <ButtonComponent
-                  inner={"Пройти проверку данных"} 
-                  type='CONTAINED_DEFAULT' 
+                  inner={"временная кнопка"} 
+                  type='CONTAINED_DISABLED' 
                   action={() => {}}
                   actionData={null}
                   widthType={'px'}
@@ -4898,7 +4894,7 @@ const ExecutorProfilePage: React.FC = () => {
                     boxSizing: 'border-box',
                     padding: '4px',
                     backgroundColor: blueColor3,
-                    color: 'black',
+                    color: 'gray',
                     width: '56px',
                     height: '43px',
                   }}
@@ -5109,7 +5105,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>0 ₽</span>
+                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>28 000 ₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -5251,7 +5247,7 @@ const ExecutorProfilePage: React.FC = () => {
                         }}
                       />
                     </BootstrapTooltip>
-                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>25 000 ₽</span>
+                    <span style={{ color: greyColor2, fontSize: '32px', fontWeight: 'bold' }}>28 000 ₽</span>
                   </div>
                 </div>
               </ReviewsContent> 
@@ -5601,9 +5597,9 @@ const ExecutorProfilePage: React.FC = () => {
                 />
               </ReviewsContent>
               <ReviewsContentLine style={{ justifyContent: 'space-between', marginTop: '14px' }}>
-                <span style={{ fontWeight: 'bold' }}>Операции по счету</span>
+                <span style={{ fontWeight: 'bold' }}>Операции по вашему счету</span>
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <div style={{ width: '200px', marginRight: '20px' }}>
+                  <div style={{ width: '240px', marginRight: '20px' }}>
                     <SelectField 
                       placeholder={"Выбрать месяц"}
                       params={{ height: 50 }}
@@ -5638,10 +5634,10 @@ const ExecutorProfilePage: React.FC = () => {
                     heightValue={'50px'}
                     label={"Выбор года"}
                     isError={false}
-                    isDisabled={false}
+                    isDisabled={true}
                     labelShrinkLeft={"0px"}
                     innerLabel={null}
-                    store={[ "2023", () => null ]}
+                    store={[ "2024", () => null ]}
                     css={{
                       fontSize: '12px',
                       position: 'relative',

@@ -75,7 +75,7 @@ const css = {
       position: relative;
       width: 100%;
       min-height: 100px;
-      height: 800px;
+      height: auto;
       background-color: ${props => props.backgroundColor};
       border: ${props => props.border};
       border-radius: 4px;

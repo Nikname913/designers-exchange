@@ -56,6 +56,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const [ authDataPassError, setAuthDataPassError ] = useState<boolean>(false)
   const [ whoInvite, setWhoInvite ] = useState<string>('')
   const [ category, setCategory ] = useState<string>('')
+  const [ localImage, setLocalImage ] = useState<any>()
   const [ supportInfoColor, setSupportInfoColor ] = useState<string>('rgb(253, 237, 237)')
   const [ supportInfoMessage, setSupportInfoMessage ] = useState<string>('Для отправки обращения, пожалуйста, заполните все поля на форме')
 
@@ -428,9 +429,10 @@ const FOS: React.FC<IFos> = (props: IFos) => {
   const changeAvatarCustomSend = () => {
 
     SET_AVATAR_CUSTOM_REQUEST(true)
-    dispatch(setUpdating(true))
+    dispatch(setUpdating(false))
     setTimeout(() => {
 
+      dispatch(setUpdating(true))
       SET_AVATAR_CUSTOM_REQUEST(false)
 
     }, 1300)
@@ -470,6 +472,24 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     }
 
   }
+
+  function readIMG() {
+    if ( customAavatar ) {
+      var reader = new FileReader()
+  
+      reader.onload = function(e) {
+        e.target && setLocalImage(e.target.result)
+      }
+  
+      reader.readAsDataURL(customAavatar)
+    }
+  }
+
+  useEffect(() => {
+
+    readIMG()
+
+  }, [ customAavatar ])
 
   useEffect(() => {
 
@@ -590,7 +610,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
     return () => {
       dispatch(setUpdating(true)) 
     } 
-  }, [ ])
+  }, [])
 
   return (
     <React.Fragment>
@@ -2437,8 +2457,43 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                     </div>
                   </div>
                 </ChangeAvatar.ContentLine>
-                <ChangeAvatar.ContentLine>
-                  <div style={downloadAreaCSS}>
+                <ChangeAvatar.ContentLine style={{ gap: '16px' }}>
+                  { localImage && <div 
+                    style={{
+                      display: 'flex',
+                      flexFlow: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                      width: '200px',
+                      height: '200px',
+                      marginTop: '30px',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      backgroundColor: 'rgb(235, 235, 236)',
+                      padding: '13px',
+                      boxSizing: 'border-box'
+                    }}
+                  >
+                    <img
+                      alt=""
+                      src={localImage}
+                      style={{
+                        display: 'block',
+                        position: 'relative',
+                        height: '100%',
+                        width: '100%',
+                        objectFit: 'contain',
+                      }}
+                    />
+                  </div> }
+                  <div 
+                    style={
+                      localImage 
+                        ? { ...downloadAreaCSS, width: 'calc(100% - 220px)' } 
+                        : downloadAreaCSS
+                      }
+                    >
 
                     <ButtonComponent
                       inner={''} 
@@ -2479,7 +2534,7 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                   </div>
                 </ChangeAvatar.ContentLine>
                 <ChangeAvatar.ContentLine style={{ justifyContent: 'space-around', marginTop: '32px' }}>
-                  <ButtonComponent
+                  { customAavatar ? <ButtonComponent
                     inner={"Сохранить аватар"} 
                     type='CONTAINED_DEFAULT' 
                     action={changeAvatarCustomSend}
@@ -2497,6 +2552,52 @@ const FOS: React.FC<IFos> = (props: IFos) => {
                       boxSizing: 'border-box',
                       padding: '4px',
                       backgroundColor: blueColor2,
+                      color: 'white',
+                      width: '56px',
+                      height: '43px',
+                    }}
+                  /> : <ButtonComponent
+                    inner={"Сохранить аватар"} 
+                    type='CONTAINED_DISABLED' 
+                    action={() => {}}
+                    actionData={null}
+                    widthType={'px'}
+                    widthValue={240}
+                    children={""}
+                    childrenCss={undefined}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={30}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      padding: '4px',
+                      backgroundColor: blueColor2,
+                      color: 'white',
+                      width: '56px',
+                      height: '43px',
+                    }}
+                  /> }
+                  <span style={{ color: 'gray' }}>или</span>
+                  <ButtonComponent
+                    inner={"Удалить аватар"} 
+                    type='CONTAINED_DEFAULT' 
+                    action={() => {}}
+                    actionData={null}
+                    widthType={'px'}
+                    widthValue={240}
+                    children={""}
+                    childrenCss={undefined}
+                    iconSrc={null}
+                    iconCss={undefined}
+                    muiIconSize={30}
+                    MuiIconChildren={EmailIcon}
+                    css={{
+                      position: 'relative',
+                      boxSizing: 'border-box',
+                      padding: '4px',
+                      backgroundColor: 'rgb(192 78 78)',
                       color: 'white',
                       width: '56px',
                       height: '43px',

@@ -801,7 +801,7 @@ const CreateTaskPage: React.FC = () => {
         />
       </MenuContainer>
       <CustExecContentInnerArea>
-        <TextFieldTitle>Данные о заказе</TextFieldTitle>
+        <TextFieldTitle>Основные данные в новом задании</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
@@ -980,7 +980,7 @@ const CreateTaskPage: React.FC = () => {
             </FormGroup>
           </div>
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '22px' }}>Заказ условия</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Стоимость и экспертиза заказа</TextFieldTitle>
         <TextFieldSubTitle style={{ fontSize: '14px' }} mt={'0px'} mb={'18px'}>Предварительное решение</TextFieldSubTitle>
         <TextFieldContainerLine>
           { agreeCoast === false && <InputComponent
@@ -1121,7 +1121,7 @@ const CreateTaskPage: React.FC = () => {
             </div>
           </React.Fragment> }
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '22px' }}>Данные об объекте</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Данные об объекте в заказе</TextFieldTitle>
         <TextFieldContainerLine style={{ marginTop: '8px' }}>
           <SelectField 
             placeholder={"Вид строительства"}
@@ -1322,7 +1322,7 @@ const CreateTaskPage: React.FC = () => {
           <span style={spanDelimiterCSS} />
           <span style={{ ...spanDelimiterCSS, width: '50%' }} />
         </TextFieldContainerLine>
-        <TextFieldTitle style={{ marginTop: '22px' }}>Описание задачи</TextFieldTitle>
+        <TextFieldTitle style={{ marginTop: '22px' }}>Подробное описание задания</TextFieldTitle>
         <TextFieldContainerLine>
           <InputComponent
             type={'TEXT_INPUT_OUTLINE_NEW_TASK'}
@@ -1349,11 +1349,17 @@ const CreateTaskPage: React.FC = () => {
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginBottom: '12px', marginTop: '10px' }}>
           <div style={{ ...divHalfWidthCSS }}>
-            <TextFieldTitle>Техническое задание ( .txt или .pdf )</TextFieldTitle>
+            <TextFieldTitle
+              style={{
+                lineHeight: '25px'
+              }}
+            >
+              Техническое задание ( .txt или .pdf - допустимый вес документа до 30 Mb )
+            </TextFieldTitle>
           </div>
           <span style={spanDelimiterCSS}></span>
           <div style={{ ...divHalfWidthCSS }}>
-            <TextFieldTitle>Дополнительные вложения</TextFieldTitle>
+            <TextFieldTitle style={{ display: 'none' }}>Дополнительные вложения</TextFieldTitle>
           </div>
         </TextFieldContainerLine>
         <TextFieldContainerLine style={{ marginBottom: '2px' }}>
@@ -1399,6 +1405,7 @@ const CreateTaskPage: React.FC = () => {
               muiIconSize={null}
               MuiIconChildren={EmailIcon}
               css={{
+                display: 'none',
                 backgroundColor: uploadButtonBackground,
                 color: blackColor,
                 fontSize: '12px',
@@ -1456,7 +1463,9 @@ const CreateTaskPage: React.FC = () => {
                     display: 'flex', 
                     flexDirection: 'row', 
                     alignItems: 'center', 
-                    justifyContent: 'space-between' 
+                    justifyContent: 'space-between',
+                    marginTop: '-3px',
+                    marginBottom: '6px'
                   }}
                 >
                   <span 
@@ -1471,7 +1480,7 @@ const CreateTaskPage: React.FC = () => {
                     }}
                   >{`Неверный формат файла`}</span>
                   <CloseIcon 
-                    style={{ width: '16px', cursor: 'pointer' }}
+                    style={{ width: '16px', cursor: 'pointer', marginTop: '2px'}}
                     onClick={() => dispatch(resetTechTaskFile(''))}
                   />
                 </div> }

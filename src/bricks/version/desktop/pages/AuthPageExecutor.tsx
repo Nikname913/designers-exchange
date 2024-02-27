@@ -85,7 +85,7 @@ const AuthPage: React.FC = () => {
       && passValid2 === true
       && passValid3 === true ) {
 
-        if ( FACE_TYPE === 'IP_FACE' ) {
+        if ( FACE_TYPE === 'IP_FACE_FACE' ) {
 
         const urlString = 'http://localhost:3000/check-face'
 

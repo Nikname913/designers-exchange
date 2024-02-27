@@ -15,7 +15,7 @@ export interface IChatMessageContainer {
         likes?: number  
       }>,
     }>
-  }>
+  } | null>
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

@@ -432,14 +432,15 @@ const Updater: React.FC = () => {
 
       await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => { 
-        
+          
+          console.log(response)
           dispatch(setAvatarFile(response.status))
         
         })
 
     })()
 
-  }, [ ])
+  }, [])
 
   return (
     <React.Fragment>

@@ -42,6 +42,7 @@ const css = {
       color: ${props => props.color};
       line-height: 20px;
       margin-bottom: 30px;
+      padding-right: 70px;
       cursor: pointer;
     `,
   }

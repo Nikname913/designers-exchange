@@ -19,7 +19,6 @@ import EmailIcon from '@mui/icons-material/Email'
 
 import arraySortIcon from '../../../../img/icons/sortArray.svg'
 import arraySortFilter from '../../../../img/icons/sortFilter.svg'
-import plusIcon from '../../../../img/icons/plusWhite.svg'
 import logo from '../../../../img/stock/logo.svg'
 
 const { ContentArea, CustExecContentInnerArea, PageTitle } = cssContentArea
@@ -247,7 +246,7 @@ const ExchangePage: React.FC = () => {
           widthValue={100}
           children={""}
           childrenCss={{}}
-          iconSrc={plusIcon}
+          iconSrc={null}
           iconCss={{
             display: 'block',
             position: 'absolute',
@@ -315,7 +314,7 @@ const ExchangePage: React.FC = () => {
             }}
             style={{ 
               marginTop: '0px', 
-              marginBottom: '4px', 
+              marginBottom: '10px', 
               fontWeight: 'bold', 
               color: typeShowTasks === 'noactive' ? greyColor2 : 'inherit',
               cursor: 'pointer' 
@@ -333,7 +332,7 @@ const ExchangePage: React.FC = () => {
           /> }
         </div>
 
-        { typeShowTasks === 'active' && <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '23px' }} backgroundColor={delimiterColor}/> }
+        <ExchangePageTaskCSS.MenuDelimeter style={{ marginTop: '23px' }} backgroundColor={delimiterColor}/>
         
         <React.Fragment>
 

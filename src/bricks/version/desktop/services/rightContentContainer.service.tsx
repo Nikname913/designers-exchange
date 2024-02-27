@@ -1,4 +1,6 @@
 // ----------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// ----------------------------------------------------------------
 /* eslint-disable react-hooks/exhaustive-deps */
 // ----------------------------------------------------------------
 import React, { ReactElement, useState, useEffect } from 'react'
@@ -9,6 +11,7 @@ import { setShow as setShowFOS,
   setShowType as setShowTypeFOS } from '../../../store/slices/fos-slice'
 import { setContractFile, resetContractFile, setCompleteFile, resetCompleteFile } from '../../../store/slices/create-task-slice'
 import { setAboutText } from '../../../store/slices/about-text-slice'
+import CircularProgress from '@mui/material/CircularProgress'
 import { setCaseName,
   setCaseSY,
   setCaseSM,
@@ -35,6 +38,7 @@ import { addInEducation1Title,
   addInSkills1Job,
   addInSkills1JobTasks
 }  from '../../../store/slices/new-skills-slice'
+import { useGetMessagesQuery } from '../../../store/api/chat-slice.builder'
 
 import DocumentLine from '../views/localViews/DocumentLine'
 import Switch from '@mui/material/Switch'
@@ -46,6 +50,7 @@ import Checkbox from '@mui/material/Checkbox'
 import ButtonComponent from '../comps/button/Button'
 import InputComponent from '../comps/input/Input'
 import SelectField from '../comps/select/SelectField'
+import SelectFieldMulti from '../comps/select/SelectFieldPWMulti'
 import SelectFieldPercent from '../comps/select/SelectFieldPercentWidth'
 import ChatMessagesContainer from './chatMessagesContainer.service'
 import CommunicationTable from '../views/localViews/CommunicationTable'
@@ -72,8 +77,6 @@ import clipIcon from '../../../img/icons/clip.svg'
 import tillIcon from '../../../img/icons/till.svg'
 import linesIcon from '../../../img/icons/lines.svg'
 import arraySortIcon from '../../../img/icons/sortArray.svg'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import document from '../../../img/icons/chatActions/blankRound.svg'
 import semiMenu from '../../../img/icons/semiMenu.svg'
 import correctIcon from '../../../img/icons/correct.svg'
 import docCorrect from '../../../img/icons/docCorrect.svg'
@@ -95,9 +98,18 @@ const { ShadowContainer,
 
 const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightContentContainer) => {
 
+  const { 
+    contentType,
+    scroll, 
+    chatData: { chatID }
+  } = props
+
   const dispatch = useAppDispatch()
+  const { data: chatData, isLoading: chatLoading } = useGetMessagesQuery(chatID)
+
   const [ docviewFormat, setDocviewFormat ] = useState<'lines' | 'tiles'>('tiles')
-  const [ spec, setSpec ] = useState<string>('')
+  const [ spec, setSpec ] = useState<Array<string>>([''])
+  const [ updateSpec, setUpdateSpec ] = useState<boolean>(false)
   const [ masterDocsShadowContent, setMasterDocsShadowContent ] = useState<boolean>(false)
   const [ localImage, setLocalImage ] = useState<any>()
 
@@ -121,6 +133,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     description: string 
 
   }>>([{ title: '', tags: [], description: '' }])
+
   const [ contractFileServer, setContractFileServer ] = useState<{ name: string, size: number, text: string }>({
 
     name: '',
@@ -148,15 +161,6 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const ordersList = useAppSelector(state => state.taskContentReducer.TASKS_DATA.listOrders)
 
   const localText = 'Nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et. Posuere fringilla erat consectetur mi commodo congue erat sed pellentesque. Adipiscing in eget lacinia amet dui eu sit facilisi. Neque id tortor ut egestas nunc in blandit. Sed elit nulla nibh dolor massa facilisis in urna. Ac morbi lobortis nulla justo. Nisl leo a lobortis et. Fusce habitasse id blandit non felis tortor eget turpis. Diam eleifend varius luctus leo. Suspendisse ornare enim egestas in velit feugiat purus vulputate. Egestas odio vitae cras in. Auctor consectetur feugiat molestie adipiscing non tortor parturient et. Sed leo orci vitae adipiscing. Sit posuere massa vel vestibulum sollicitudin'
-
-  const { contentType,
-    scroll, 
-    chatData: { 
-      userID, 
-      userName, 
-      userLastctive 
-    }
-  } = props
 
   const backgroundColor = useAppSelector(state => state.theme.bg)
   const greyColor = useAppSelector(state => state.theme.grey)
@@ -254,7 +258,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
     paddingBottom: '22px',
   }
   const clipDivCSS: CSSProperties = {
-    display: 'flex',
+    display: 'none',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
@@ -353,6 +357,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
       SET_SEND_COMPLETE_REQUEST(false) 
     }, 1300)
   }
+
   const changeTechTaskFile = (param: File) => {
     dispatch(resetContractFile(''))
     dispatch(setContractFile(param))
@@ -374,11 +379,8 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   const changeCaseTags = (param: string) => {
     dispatch(setCaseTags(param))
   }
-
   const newCaseFile = (param: File) => {
-
     dispatch(setCaseFiles(param))
-
   }
 
   const sendEducation = () => {
@@ -611,7 +613,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
   }
 
   function readIMG() {
-    if (CASE_FILE && CASE_FILE[0]) {
+    if ( CASE_FILE && CASE_FILE[0] ) {
       var reader = new FileReader()
   
       reader.onload = function(e) {
@@ -639,7 +641,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
   useEffect(() => {
 
-    if ( spec ) {
+    if ( spec[0] !== '' ) {
 
       SET_SPEC_REQUEST(true)
       setTimeout(() => { SET_SPEC_REQUEST(false) }, 1300)
@@ -823,6 +825,19 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
 
   }, [])
 
+  useEffect(() => {
+
+    if ( spec[0] !== "" ) {
+
+      setUpdateSpec(true)
+      setTimeout(() => setUpdateSpec(false), 800)
+
+    }
+
+  }, [ spec ])
+
+  useEffect(() => { console.log(chatData) }, [ chatData ])
+
   return (
     <React.Fragment>
 
@@ -967,7 +982,14 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
           /* базовое окно с чатом
           /* ---------------------------------------- */
 
-            ? <ChatFork.ChatContainer style={{ paddingTop: '40px' }} backgroundColor={backgroundColor} id={userID}>
+            ? <ChatFork.ChatContainer 
+                id={chatID}
+                backgroundColor={backgroundColor} 
+                style={{ 
+                  paddingTop: '40px', 
+                  height: '100vh' 
+                }} 
+              >
                 <ChatFork.CloseIconContainer>
                   <ChatFork.CloseIcon onClick={showrightContent}>
                     <img
@@ -986,14 +1008,27 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       />
                     </ChatFork.ChatHeaderAvatar>
                     <ChatFork.ChatHeaderName>
-                      <span style={nameSpanCSS}>{ userName }</span>
-                      <span style={lastActiveSpanCSS}>{ userLastctive }</span>
+                      <span style={nameSpanCSS}>{ chatID !== '0000' ? chatID : 'Выберите сообщение' }</span>
+                      <span style={lastActiveSpanCSS}>{ chatID !== '0000' ? chatID : 'Период не выбран' }</span>
                     </ChatFork.ChatHeaderName>
                   </div>
                   <div style={divCSS}>
                     <ChatFork.ChatHeaderEnableDocs>
-                      <span style={{ ...lastActiveSpanCSS, fontSize: '15px' }}>Документы</span>
-                      <Switch color={"primary"} defaultChecked />
+                      <span 
+                        style={{ 
+                          ...lastActiveSpanCSS, 
+                          fontSize: '14px', 
+                          marginTop: '-1px',
+                          marginRight: '6px' 
+                        }}
+                      >
+                        Вложения разрешены
+                      </span>
+                      <Switch 
+                        color={"primary"} 
+                        disabled 
+                        checked={false} 
+                      />
                     </ChatFork.ChatHeaderEnableDocs>
                     <InputComponent
                       type={'TEXT_INPUT_OUTLINE_SEARCH'}
@@ -1027,52 +1062,29 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   >
                     <ChatMessagesContainer
                       data={[
-                        { 
-                          date: '05.01.2022', 
-                          messages: [
-                            { 
-                              type: 'me', 
-                              content: [
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:05' },
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:05' }
-                              ]
-                            },
-                            { 
-                              type: 'you', 
-                              content: [
-                                { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', time: '20:06' },
-                              ]
-                            },
-                            { 
-                              type: 'me', 
-                              content: [
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:08' },
-                              ]
-                            },
-                            { 
-                              type: 'you', 
-                              content: [
-                                { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', time: '20:10' },
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:10' },
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:10' },
-                              ]
-                            },
-                            { 
-                              type: 'me', 
-                              content: [
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:08' },
-                              ]
-                            },
-                            { 
-                              type: 'you', 
-                              content: [
-                                { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', time: '20:10' },
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:10' },
-                                { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:10' },
-                              ]
-                            }
-                          ]
-                        }
+                        // ----------------------------------------------------------------
+                        // ----------------------------------------------------------------
+                        // { 
+                        //   date: '05.01.2022', 
+                        //   messages: [
+                        //     { 
+                        //       type: 'me', 
+                        //       content: [
+                        //         { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:05' },
+                        //         { text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit', time: '20:05' }
+                        //       ]
+                        //     },
+                        //     { 
+                        //       type: 'you', 
+                        //       content: [
+                        //         { text: 'Ipsum nunc amet sit faucibus sed. Pellentesque aliquam fermentum eleifend tellus gravida ultricies vitae senectus et', time: '20:06' },
+                        //       ]
+                        //     }
+                        //   ]
+                        // }
+                        // ----------------------------------------------------------------
+                        // ----------------------------------------------------------------
+                        null
                       ]}
                     />
                   </ChatFork.ChatBodyInner>
@@ -4581,9 +4593,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                               widthType={'%'}
                               widthValue={33}
                               heightValue={'50px'}
-                              label={"Фамилия"}
+                              label={"Ваша фамилия"}
                               isError={false}
-                              isDisabled={false}
+                              isDisabled={true}
                               labelShrinkLeft={"0px"}
                               innerLabel={null}
                               store={[ 
@@ -4608,9 +4620,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                               widthType={'%'}
                               widthValue={33}
                               heightValue={'50px'}
-                              label={"Имя"}
+                              label={"Ваше имя"}
                               isError={false}
-                              isDisabled={false}
+                              isDisabled={true}
                               labelShrinkLeft={"0px"}
                               innerLabel={null}
                               store={[ 
@@ -4635,9 +4647,9 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                               widthType={'%'}
                               widthValue={33}
                               heightValue={'50px'}
-                              label={"Отчество"}
+                              label={"Ваше отчество"}
                               isError={false}
-                              isDisabled={false}
+                              isDisabled={true}
                               labelShrinkLeft={"0px"}
                               innerLabel={null}
                               store={[ 
@@ -4704,10 +4716,20 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   <EditProfileFork.Delimiter style={{ marginTop: '50px', marginBottom: '44px' }} />
                   <EditProfileFork.ContentLine>
                     <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Специализация</span>
+                    <div style={{ display: 'block', position: 'relative', width: '20px', height: '20px' }}>
+                      { updateSpec && <CircularProgress 
+                        size={20} 
+                        thickness={4}
+                        variant={"indeterminate"}
+                        sx={{
+                          marginLeft: '13px'
+                        }}
+                      /> }
+                    </div>
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
-                    <SelectField 
-                      placeholder={"Выберите новую специализацию [ временно одна ]"}
+                    <SelectFieldMulti 
+                      placeholder={"Выберите новую специализацию [ список временно сокращен ]"}
                       params={{ width: 1400, mb: '0px', height: 50 }}
                       data={[
                         { value: 'Инженерно-геодезические изыскания', label: 'Геодезические изыскания' },
@@ -4744,7 +4766,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         { value: 'Сметная документация', label: 'Сметная документация' },
                         { value: 'Иная документация', label: 'Иная документация' }
                       ]}
-                      multy={false}
+                      multy={true}
                       action={setSpec}
                       actionType={"AUTH_SPEC_TYPE"}
                       actionParams={[]}
@@ -4757,10 +4779,10 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       }}
                     />
                   </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '30px' }}>
+                  { false && <EditProfileFork.ContentLine style={{ marginTop: '30px' }}>
                     <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Мои навыки</span>
-                  </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
+                  </EditProfileFork.ContentLine> }
+                  { false && <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
                     <RadioGroup
                       row
                       aria-labelledby="demo-row-radio-buttons-group-label"
@@ -4770,11 +4792,11 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       <FormControlLabel value="male" control={<Radio disabled />} label="3D" />
                       <FormControlLabel value="other" control={<Radio checked disabled />} label="BIM" />
                     </RadioGroup>
+                  </EditProfileFork.ContentLine> }
+                  <EditProfileFork.ContentLine style={{ marginTop: '22px' }}>
+                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Информация о себе - расскажите о себе что-нибудь интересное</span>
                   </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
-                    <span style={{ fontWeight: 'bold', marginLeft: '0px' }}>Информация о себе</span>
-                  </EditProfileFork.ContentLine>
-                  <EditProfileFork.ContentLine style={{ marginTop: '16px' }}>
+                  <EditProfileFork.ContentLine style={{ marginTop: '22px' }}>
                     <InputComponent
                       type={'TEXT_INPUT_OUTLINE_ABOUT_TEXT'}
                       valueType='text'
@@ -4800,7 +4822,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                   </EditProfileFork.ContentLine>
                   <EditProfileFork.ContentLine style={{ marginTop: '23px' }}>
                     <ButtonComponent
-                      inner={"Обновить информацию"} 
+                      inner={"Обновить описание"} 
                       type='CONTAINED_DEFAULT' 
                       action={changeAboutText}
                       actionData={null}
@@ -5122,7 +5144,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     </span>
                   </EditProjectsEducationFork.ContentLine>
                   <EditProjectsEducationFork.ContentLine>
-                    <span style={{ color: '#516674', lineHeight: '22px' }}>
+                    <span style={{ color: '#516674', lineHeight: '24px' }}>
                       Добавьте файлы по проекту в формате .pdf или .jpg<br/>
                       Максимально 3 файла, до 100 Мб<br/>
                       Превью добавится из первого загруженного файла
@@ -5159,26 +5181,26 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                     style={{
                       display: 'block',
                       position: 'relative',
-                      width: '50%',
-                      marginTop: '29px',
+                      width: '66%',
+                      marginTop: '34px',
                       borderRadius: '6px',
                       boxShadow: '0px 3px 1px -2px rgba(0,0,0,0.2), 0px 2px 2px 0px rgba(0,0,0,0.14), 0px 1px 5px 0px rgba(0,0,0,0.12)'
                     }}
                   /> }
-                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px', marginBottom: '8px' }}>
+                  { false && <EditProjectsEducationFork.ContentLine style={{ marginTop: '30px', marginBottom: '8px' }}>
                     <span 
                       style={{ color: '#516674' }}>
                         <i style={{ fontWeight: 'bold', fontStyle: 'normal' }}>Вложения и превью</i> ( необязательно )
                       </span>
-                  </EditProjectsEducationFork.ContentLine>
-                  <EditProjectsEducationFork.ContentLine>
-                    <span style={{ color: '#516674', lineHeight: '22px' }}>
+                  </EditProjectsEducationFork.ContentLine> }
+                  { false && <EditProjectsEducationFork.ContentLine>
+                    <span style={{ color: '#516674', lineHeight: '24px' }}>
                       Добавьте файлы по проекту в формате .pdf или .jpg<br/>
                       Максимально 3 файла, до 100 Мб<br/>
                       Превью добавится из первого загруженного файла
                     </span>
-                  </EditProjectsEducationFork.ContentLine>
-                  <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
+                  </EditProjectsEducationFork.ContentLine> }
+                  { false && <EditProjectsEducationFork.ContentLine style={{ marginTop: '20px' }}>
                     <ButtonComponent
                       inner={"Добавить файлы"} 
                       type='CONTAINED_DISABLED' 
@@ -5202,7 +5224,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                         height: '46px',
                       }}
                     />
-                  </EditProjectsEducationFork.ContentLine>
+                  </EditProjectsEducationFork.ContentLine> }
                   <EditProjectsEducationFork.ContentLine style={{ marginTop: '28px' }}>
                     <span style={{ fontWeight: 'bold' }}>Заполните параметры объекта</span>
                   </EditProjectsEducationFork.ContentLine>
@@ -5419,7 +5441,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       </EditProjectsEducationFork.CloseIcon>
                     </EditProjectsEducationFork.CloseIconContainer>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px' }}>
-                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Данные об образовании</h3>
+                      <h3 style={{ fontSize: '23px', margin: 0, marginBottom: 0 }}>Ваше полное образование</h3>
                     </EditProjectsEducationFork.ContentLine>
 
                     { Array(educationCounter).fill(null).map((item, index) => <React.Fragment>  
@@ -5585,7 +5607,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                       />
                     </EditProjectsEducationFork.ContentLine>
                     <EditProjectsEducationFork.ContentLine style={{ justifyContent: 'space-between', marginBottom: '0px', marginTop: '8px' }}>
-                      <h3 style={{ fontSize: '25px', margin: 0, marginBottom: 0 }}>Опыт работы пользователя</h3>
+                      <h3 style={{ fontSize: '23px', margin: 0, marginBottom: 0 }}>Ваш полный опыт работы</h3>
                     </EditProjectsEducationFork.ContentLine>
 
                     { Array(skillCounter).fill(null).map((item, index) => <React.Fragment>
@@ -5770,7 +5792,7 @@ const RightContentContainer: React.FC<IRightContentContainer> = (props: IRightCo
                           />
                         </div>
                       </EditProjectsEducationFork.ContentLine>
-                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '6px' }}>
+                      <EditProjectsEducationFork.ContentLine style={{ marginTop: '6px', display: 'none' }}>
                         <div style={{ display: 'block', width: '27%' }} />
                         <div style={{ display: 'block', width: '23%' }} />
                         <span style={{ display: 'block', width: '16px' }}/>

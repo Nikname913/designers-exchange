@@ -140,9 +140,7 @@ const Main: React.FC = () => {
           contentType={typeRightContent}
           scroll={scrollRightContent}
           chatData={{
-            userID: '0000008',
-            userName: 'Иванов Петр Владимирович',
-            userLastctive: 'вчера в 12:43'
+            chatID: '0000'
           }}
         /> }
         { showFos && <FOS 

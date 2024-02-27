@@ -203,7 +203,7 @@ const ExchangePage: React.FC = () => {
     >
 
       <div style={headBlockCSS}>
-        <PageTitle>Задания</PageTitle>
+        <PageTitle>Все задания</PageTitle>
         <div style={divCSS}>
           <span style={{ ...spanActiveCSS }}>Открытые задания ({TASKS_LIST.filter(item => item.status === 'searching').length})</span>
           { false && <span style={{ ...spanActiveCSS, opacity: 0.6 }} onClick={orders}>В работе ({TASKS_LIST.filter(item => item.status === 'work').length})</span> }
@@ -341,7 +341,7 @@ const ExchangePage: React.FC = () => {
 
           </span> }
 
-          <TextFieldTitle style={{ marginTop: '33px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
+          <TextFieldTitle style={{ marginTop: '28px', marginBottom: '20px' }}>Сортировать по</TextFieldTitle>
           <SelectField 
             placeholder={"Новизне"}
             params={{ width: 300, mb: '0px', height: 50 }}
@@ -372,7 +372,7 @@ const ExchangePage: React.FC = () => {
               lineHeight: '41.2222px',
               paddingLeft: '16px',
               boxSizing: 'border-box',
-              marginBottom: '33px',
+              marginBottom: '28px',
               marginTop: '12px',
               cursor: 'pointer',
               fontSize: '13px',
@@ -450,18 +450,19 @@ const ExchangePage: React.FC = () => {
               width: '34px',
             }}
           />
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Условие задания</TextFieldTitle>
           <FormGroup>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Только задания ТС"/>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Безопасная сделка"/>
             <FormControlLabel control={<Checkbox disabled/>} label="Простая сделка"/>
           </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Навыки в задании</TextFieldTitle>
-          <FormGroup style={{ fontSize: '15px !important' }}>
+          { false && <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Навыки в задании</TextFieldTitle> }
+          { false && <FormGroup style={{ fontSize: '15px !important' }}>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="2D"/>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="3D"/>
             <FormControlLabel control={<Checkbox disabled/>} label="BIM"/>
-          </FormGroup>
-          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '26px' }}>Вид экспертизы</TextFieldTitle>
+          </FormGroup> }
+          <TextFieldTitle style={{ marginBottom: '10px', marginTop: '20px' }}>Вид экспертизы</TextFieldTitle>
           <FormGroup>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Государственная"/>
             <FormControlLabel control={<Checkbox disabled defaultChecked/>} label="Без экспертизы"/>

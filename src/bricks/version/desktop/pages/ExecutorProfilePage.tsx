@@ -1,3 +1,6 @@
+// ------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+// ------------------------------------------------------------------
 import React, { ReactElement, useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Fade } from '@mui/material'
@@ -131,14 +134,10 @@ const ExecutorProfilePage: React.FC = () => {
     const timer = setInterval(() => {
       setTextSpredLine((prev: string): any => {
         let value: string = ''
-
-        // ------------------------------------------------------------------
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        
         prev === '' ? value = '.'
           : prev === '.' ? value = '..'
           : prev === '..' ? value = '...'
-          // ----------------------------------------------------------------
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           : prev === '...' ? value = '' : null
 
         return value

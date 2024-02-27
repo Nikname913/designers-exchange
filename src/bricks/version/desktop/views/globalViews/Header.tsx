@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 import { CSSProperties } from 'styled-components'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
 import { setShow, setShowType } from '../../../../store/slices/fos-slice'
-import { setShow as setShowRCC } from '../../../../store/slices/right-content-slice'
+import { setShow as setShowRCC, setShowType as setShowTypeRCC } from '../../../../store/slices/right-content-slice'
 import { setAlertData } from '../../../../store/slices/header-slice'
 import RequestActionsComponent from '../../services/request.service'
 import css from '../../styles/views/header.css'
@@ -117,12 +117,14 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
   const questionIconStyle: CSSProperties = {
     display: 'block',
     position: 'relative',
-    width: '11px'
+    width: '11px',
+    cursor: 'pointer',
   }
   const postIconStyle: CSSProperties = {
     display: 'block',
     position: 'relative',
-    width: '22px'
+    width: '22px',
+    cursor: 'pointer',
   }
   const bellIconStyle: CSSProperties = {
     display: 'block',
@@ -257,8 +259,16 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
       
       /> }  
 
-      <HeadWrapper style={{ position: 'fixed', zIndex: 100, opacity: showRCC ? 1 : 1 }} backgroundColor={"transparent"}>
-        { showChat && <div 
+      <HeadWrapper 
+        backgroundColor={"transparent"}
+        style={{ 
+          position: 'fixed', 
+          zIndex: 100, 
+          opacity: showRCC ? 1 : 1,
+        }} 
+      >
+        
+        { showChat && false && <div 
           style={{ 
             display: 'block', 
             position: 'absolute',
@@ -304,6 +314,16 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
         </div> }
         <HeadWrapperShadow></HeadWrapperShadow>
         <HeadWrapperInner backgroundColor={whiteColor}>
+          <div 
+            style={{
+              display: 'flex',
+              flexFlow: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              position: 'relative',
+              width: '100%'
+            }}
+          >
           <div style={logoContainerStyle} onClick={() => navigate('/task-list-all')}>
             <img
               alt={""}
@@ -323,11 +343,13 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
                 opacity: 0.8
               }}
             >
-              { userCity }
+              { false && userCity }
+              { USER_ROLE === 'CUSTOMER' && "Кабинет заказчика" }
+              { USER_ROLE === 'EXECUTOR' && "Кабинет исполнителя" }
             </span>
           </div>
           <HeadMenu>
-            <span style={menuItemStyle} onClick={() => navigate('/task-list-all')}>Биржа</span>
+            <span style={menuItemStyle} onClick={() => navigate('/task-list-all')}>Все задания</span>
             <span style={{ ...menuItemStyle, marginRight: '3px' }} onClick={navigation}>{ execCustButtonInner }</span>
             { execCustButtonInner === 'Исполнители' && <span onClick={reverseButton} style={menuItemIconStyle}>
               <img
@@ -370,8 +392,12 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
             </HeadControllersIcon>
             <HeadControllersIcon 
               backgroundColor={'transparent'}
-              style={{ marginRight: '20px' }}
-              onClick={() => setShowChat(true)}
+              style={{ marginRight: '16px' }}
+              onClick={() => {
+                setShowChat(!showChat)
+                dispatch(setShowRCC(true))
+                dispatch(setShowTypeRCC('ECC'))
+              }}
             >
               <img
                 alt={""}
@@ -625,6 +651,7 @@ const Header: React.FC<{ userCity?: string, mainScroll?: number | undefined }> =
               }}
             />
           </HeadControllers> }
+          </div>
         </HeadWrapperInner>
       </HeadWrapper>
     </React.Fragment>

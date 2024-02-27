@@ -1,9 +1,12 @@
+// ------------------------------------------------------------------
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable array-callback-return */
+// ------------------------------------------------------------------
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import EmailIcon from '@mui/icons-material/Email'
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks'
-import { setShow } from '../../../../store/slices/right-content-slice'
+import { setShow, setShowType } from '../../../../store/slices/right-content-slice'
 import { ICustExecCardPrevProps } from '../../../../models-ts/views/cust-exec-card-prev-models'
 import ButtonComponent from '../../comps/button/Button'
 import css from '../../styles/views/customerExecutorCardPrev.css'
@@ -142,6 +145,7 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
 
   function showRightContent(): void {
     dispatch(setShow(true))
+    dispatch(setShowType('ECC'))
   }
 
   function openProfile(): void {
@@ -154,13 +158,9 @@ const CustomerExecutorCardPreview: React.FC<ICustExecCardPrevProps> = (
       setTextSpredLine((prev: string): any => {
         let value: string = ''
 
-        // ------------------------------------------------------------------
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         prev === '' ? value = '.'
           : prev === '.' ? value = '..'
           : prev === '..' ? value = '...'
-          // ----------------------------------------------------------------
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           : prev === '...' ? value = '' : null
 
         return value

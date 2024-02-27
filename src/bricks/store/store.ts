@@ -26,9 +26,18 @@ import supportFormReducer from './slices/support-form-slice'
 import changeAgreeReducer from './slices/change-agree-slice'
 import newCaseReducer from './slices/new-case-slice'
 import newSkillsReducer from './slices/new-skills-slice'
+import chatSlice from './slices/chat-slice.noactive'
+
+// ----------------------------------------------------------------
+// ----------------------------------------------------------------
+
+import { chatApi } from './api/chat-slice.builder'
 
 export const store = configureStore({
   reducer: {
+    
+    [ chatApi.reducerPath ] : chatApi.reducer,
+
     theme: themeReducer,
     headerReducer: headerReducer,
     paginationReducer: paginationReducer,
@@ -55,8 +64,11 @@ export const store = configureStore({
     supportFormReducer: supportFormReducer,
     changeAgreeReducer: changeAgreeReducer,
     newCaseReducer: newCaseReducer,
-    newSkillsReducer: newSkillsReducer
+    newSkillsReducer: newSkillsReducer,
+    chatSlice: chatSlice
   },
+  middleware: (getDefaultMiddleware) => 
+    getDefaultMiddleware().concat(chatApi.middleware)
 })
 
 export type RootState = ReturnType<typeof store.getState>

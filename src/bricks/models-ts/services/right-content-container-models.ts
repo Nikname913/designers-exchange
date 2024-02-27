@@ -1,10 +1,8 @@
 export interface IRightContentContainer {
   contentType?: 
-    'ECC' | 'ExecutorChatCpntainer' | 'ChapterCC' | 'ExpertCC' | 'AgreementCC' | 'EditProfileCC' | string,
+    'ECC' | 'ExecutorChatContainer' | 'ChapterCC' | 'ExpertCC' | 'AgreementCC' | 'EditProfileCC' | string,
   chatData: {
-    userID: string,
-    userName: string,
-    userLastctive: string,
+    chatID: string,
   },
   scroll: number,
 }

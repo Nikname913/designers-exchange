@@ -411,9 +411,6 @@ const ExecutorPage: React.FC = () => {
       <CustExecContentInnerArea>
         { filterLoading === false && <React.Fragment>
           { executors.map((item: any, index: number): ReactJSXElement => {
-
-            console.log(item)
-
             return (
               <CustomerExecutorCardPreview
                 key={index}

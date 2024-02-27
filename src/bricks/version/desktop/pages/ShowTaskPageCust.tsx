@@ -231,6 +231,8 @@ const ShowTaskPage: React.FC = () => {
         redirect: 'follow'
       };
 
+      console.log(requestOptions)
+
       const downloadFile = await fetch("http://localhost:3000/send-file-techtask", requestOptions)
         .then(response => response.blob())
 
